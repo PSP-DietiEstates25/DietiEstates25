@@ -1,14 +1,14 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.8 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" scale="1" border="0" version="24.7.8">
   <diagram name="Pagina-1" id="ZWpR9cmueOfMFITq08wA">
-    <mxGraphModel dx="1687" dy="984" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
+    <mxGraphModel dx="1434" dy="836" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="dQ5Ys0_l53QWUdIFUhAE-28" value="System Under Development" style="shape=rect;html=1;verticalAlign=top;fontStyle=1;whiteSpace=wrap;align=center;" parent="1" vertex="1">
-          <mxGeometry x="294" y="55" width="300" height="970" as="geometry" />
+          <mxGeometry x="294" y="55" width="300" height="895" as="geometry" />
         </mxCell>
         <mxCell id="dQ5Ys0_l53QWUdIFUhAE-25" value="System Under Development" style="shape=rect;html=1;verticalAlign=top;fontStyle=1;whiteSpace=wrap;align=center;" parent="1" vertex="1">
-          <mxGeometry x="1086.25" y="310" width="300" height="410" as="geometry" />
+          <mxGeometry x="1086.25" y="310" width="300" height="400" as="geometry" />
         </mxCell>
         <mxCell id="UcdNawBROZa9Rbr6OOtc-10" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;jumpStyle=none;flowAnimation=0;shadow=0;endArrow=none;endFill=0;" parent="1" source="UcdNawBROZa9Rbr6OOtc-1" target="dQ5Ys0_l53QWUdIFUhAE-8" edge="1">
           <mxGeometry relative="1" as="geometry">
@@ -93,10 +93,10 @@
             <mxPoint x="135" y="513" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="dQ5Ys0_l53QWUdIFUhAE-20" value="Effettua login" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="dQ5Ys0_l53QWUdIFUhAE-20" value="Effettua sign-in" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="1186.25" y="370" width="92.5" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="dQ5Ys0_l53QWUdIFUhAE-22" value="Effettua login manualmente" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="dQ5Ys0_l53QWUdIFUhAE-22" value="Effettua sign-in manualmente" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="1170" y="510" width="125" height="60" as="geometry" />
         </mxCell>
         <mxCell id="dQ5Ys0_l53QWUdIFUhAE-23" value="Effettua sign-up manualmente" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
@@ -144,7 +144,7 @@
         <mxCell id="dQ5Ys0_l53QWUdIFUhAE-5" value="Crea un&#39;asta inversa" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="375" y="95" width="140" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="dQ5Ys0_l53QWUdIFUhAE-6" value="Avanza offerta segreta" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="dQ5Ys0_l53QWUdIFUhAE-6" value="Avanza un&#39;&lt;span style=&quot;background-color: initial;&quot;&gt;offerta segreta&lt;/span&gt;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="375" y="145" width="140" height="40" as="geometry" />
         </mxCell>
         <mxCell id="dQ5Ys0_l53QWUdIFUhAE-7" value="Ripubblica un&#39;asta" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
@@ -159,7 +159,7 @@
         <mxCell id="dQ5Ys0_l53QWUdIFUhAE-12" value="Visualizza storico delle aste create" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="345" y="418.5" width="200" height="55" as="geometry" />
         </mxCell>
-        <mxCell id="dQ5Ys0_l53QWUdIFUhAE-13" value="Visualizza profilo banditore asta" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="dQ5Ys0_l53QWUdIFUhAE-13" value="Visualizza profilo del banditore di un&#39;asta" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="375" y="500.5" width="140" height="50" as="geometry" />
         </mxCell>
         <mxCell id="dQ5Ys0_l53QWUdIFUhAE-14" value="Cambia modalità" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
@@ -168,16 +168,16 @@
         <mxCell id="dQ5Ys0_l53QWUdIFUhAE-15" value="Crea un&#39;asta silenziosa" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="374" y="735" width="140" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="dQ5Ys0_l53QWUdIFUhAE-16" value="Valuta l&#39;offerta vincente" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="dQ5Ys0_l53QWUdIFUhAE-16" value="Valuta l&#39;offerta vincente della propria asta" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="374" y="805" width="140" height="50" as="geometry" />
         </mxCell>
         <mxCell id="dQ5Ys0_l53QWUdIFUhAE-17" value="Avanza un&#39;offerta al ribasso" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="373" y="875" width="140" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="mK1e8or-9muM-dHLoK4r-4" value="Visualizza tutte le offerte ricevute" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="mK1e8or-9muM-dHLoK4r-4" value="Visualizza tutte le offerte ricevute alla propria asta" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="375" y="640" width="140" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="mK1e8or-9muM-dHLoK4r-5" value="" style="edgeStyle=none;html=1;endArrow=none;verticalAlign=bottom;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="UcdNawBROZa9Rbr6OOtc-1" target="mK1e8or-9muM-dHLoK4r-4">
+        <mxCell id="mK1e8or-9muM-dHLoK4r-5" value="" style="edgeStyle=none;html=1;endArrow=none;verticalAlign=bottom;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="UcdNawBROZa9Rbr6OOtc-1" target="mK1e8or-9muM-dHLoK4r-4" edge="1">
           <mxGeometry width="160" relative="1" as="geometry">
             <mxPoint x="140" y="640" as="sourcePoint" />
             <mxPoint x="300" y="640" as="targetPoint" />
