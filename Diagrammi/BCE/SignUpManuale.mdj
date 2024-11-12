@@ -2642,7 +2642,7 @@
 											"top": 683,
 											"width": 170.03173828125,
 											"height": 13,
-											"text": "profilePhoto: Image",
+											"text": "uploadProfilePhoto: Button",
 											"horizontalAlignment": 0
 										},
 										{
@@ -4512,8 +4512,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGTIZgasRSEoPw="
 							},
-							"name": "profilePhoto",
-							"type": "Image"
+							"name": "uploadProfilePhoto",
+							"type": "Button"
 						},
 						{
 							"_type": "UMLAttribute",
@@ -4662,9 +4662,9 @@
 												"$ref": "AAAAAAGTIY2EUH0tEsY="
 											},
 											"font": "Arial;13;0",
-											"left": 32.72998046875,
+											"left": 30.55908203125,
 											"top": 13,
-											"width": 114.9052734375,
+											"width": 101.791015625,
 											"height": 13,
 											"text": "SequenceDiagram1"
 										},
@@ -4677,7 +4677,7 @@
 											"font": "Arial;13;1",
 											"left": 13,
 											"top": 13,
-											"width": 13.72998046875,
+											"width": 11.55908203125,
 											"height": 13,
 											"text": "sd"
 										}
