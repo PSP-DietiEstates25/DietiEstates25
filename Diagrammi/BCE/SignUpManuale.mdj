@@ -66,7 +66,7 @@
 											"top": 996,
 											"width": 179.15966796875,
 											"height": 13,
-											"text": "Utente"
+											"text": "User"
 										},
 										{
 											"_type": "LabelView",
@@ -858,7 +858,7 @@
 											"top": 316,
 											"width": 145.1806640625,
 											"height": 13,
-											"text": "SignIpForm"
+											"text": "SignInForm"
 										},
 										{
 											"_type": "LabelView",
@@ -3569,7 +3569,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
 					},
-					"name": "Utente",
+					"name": "User",
 					"ownedElements": [
 						{
 							"_type": "UMLAssociation",
@@ -4241,7 +4241,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
 					},
-					"name": "SignIpForm",
+					"name": "SignInForm",
 					"stereotype": "boundary",
 					"attributes": [
 						{
