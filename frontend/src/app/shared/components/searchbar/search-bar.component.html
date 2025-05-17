@@ -1,0 +1,17 @@
+<div class="filters">
+  <button class="filter-btn">Contract ⌄</button>
+  <button class="filter-btn">Estate ⌄</button>
+  <button class="filter-btn">Rooms ⌄</button>
+  <button class="filter-btn">Price ⌄</button>
+</div>
+
+<div class="search-box">
+  <input type="text" [(ngModel)]="location" placeholder="Your desired location goes here" />
+  <ul *ngIf="location">
+    <li *ngFor="let suggestion of filteredSuggestions">
+      {{ suggestion }}
+    </li>
+  </ul>
+</div>
+
+<button class="search-btn">🔍 Search</button>

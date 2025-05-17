@@ -1,0 +1,20 @@
+<nav class="navbar">
+  <div class="navbar-left">
+    <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+    <a routerLink="/listings" routerLinkActive="active-link">Listings</a>
+    <a routerLink="/members" routerLinkActive="active-link">Members</a>
+    <a routerLink="/history" routerLinkActive="active-link">History</a>
+    <a routerLink="/pages" routerLinkActive="active-link">Pages</a>
+    <a routerLink="/notices" routerLinkActive="active-link">Notices</a>
+  </div>
+
+  <div class="navbar-center">
+    <img src="assets/logo.svg" alt="Logo" />
+    <span class="brand"></span>
+  </div>
+
+  <div class="navbar-right">
+    <span class="icon">👤</span>
+    <button class="login-btn">Log in</button>
+  </div>
+</nav>

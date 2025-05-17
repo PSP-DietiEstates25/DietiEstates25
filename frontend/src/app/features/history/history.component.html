@@ -1,0 +1,65 @@
+<app-navbar></app-navbar>
+
+<section class="history-section">
+  <div class="overlay">
+    <h1 class="title">Property <span>History</span></h1>
+
+<div class="filters">
+        <!-- Location input -->
+      <div class="search-box">
+        <input type="text" placeholder="Your desired location goes here" />
+      </div>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Contract</mat-label>
+    <mat-select [(ngModel)]="filters.contract">
+      <mat-option *ngFor="let option of contractOptions" [value]="option">
+        {{ option }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Estate</mat-label>
+    <mat-select [(ngModel)]="filters.estate">
+      <mat-option *ngFor="let option of estateOptions" [value]="option">
+        {{ option }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Rooms</mat-label>
+    <mat-select [(ngModel)]="filters.rooms">
+      <mat-option *ngFor="let option of roomOptions" [value]="option">
+        {{ option }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Price</mat-label>
+    <mat-select [(ngModel)]="filters.price">
+      <mat-option *ngFor="let option of priceOptions" [value]="option">
+        {{ option }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Energy class</mat-label>
+    <mat-select [(ngModel)]="filters.energy">
+      <mat-option *ngFor="let option of energyOptions" [value]="option">
+        {{ option }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <button class="search-btn" (click)="onSearch()">Search</button>
+</div>
+
+    <div class="no-results">
+      <p>Your search returned no results, please try again.</p>
+    </div>
+  </div>
+</section>
