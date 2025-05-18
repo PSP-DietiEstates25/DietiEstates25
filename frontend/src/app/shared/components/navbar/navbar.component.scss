@@ -1,0 +1,81 @@
+.navbar {
+  position: fixed; // 'fixed' per mantenerla visibile anche scrollando
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 1rem 2rem;
+
+  background: rgba(255, 255, 255, 0.7); // bianco semitrasparente
+  backdrop-filter: blur(8px); // effetto vetro 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  box-sizing: border-box;
+  overflow-x: hidden;
+
+  .navbar-left,
+  .navbar-right {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .navbar-left {
+    justify-content: flex-start;
+  }
+
+  .navbar-right {
+    justify-content: flex-end;
+  }
+
+  .navbar-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    img {
+      height: 40px;
+    }
+
+    .brand {
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+  }
+
+  a {
+    text-decoration: none;
+    color: black;
+    font-weight: 500;
+
+    &.active-link {
+      color: #0070f3;
+      border-bottom: 2px solid #0070f3;
+    }
+
+    &:hover {
+      color: #0070f3;
+    }
+  }
+
+.login-btn {
+  border: none;
+  background-color: #1d3c89;
+  color: white;
+  padding: 0.4rem 1.2rem;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #0f2a60;
+  }
+}
+}

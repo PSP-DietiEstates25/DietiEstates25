@@ -1,0 +1,127 @@
+.hero {
+  height: 100vh;
+  margin: 0;
+  padding: 0 2rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  background-image: url('/assets/city-background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center bottom;
+  background-attachment: scroll;
+
+  .hero-text {
+    margin-bottom: 2rem;
+    h1 {
+      font-size: 3rem;
+      font-weight: bold;
+      .highlight {
+        color: #0066ff;
+      }
+    }
+  }
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-top: 2rem;
+}
+
+.filter-field {
+  width: auto;
+  min-width: 150px;
+
+  .mat-form-field-outline {
+    display: none; // nasconde il bordo Material
+  }
+
+  .mat-form-field-flex {
+    border-radius: 999px;
+    background-color: white;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mat-select-trigger {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+
+  .filter-icon {
+    font-size: 1.1rem;
+    color: #0045b7;
+  }
+
+  .mat-select-arrow {
+    color: #222;
+  }
+}
+
+.search-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  margin-top: 2rem;
+}
+
+.search-input-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+
+  input {
+    width: 100%;
+    padding: 0.75rem 1.2rem 0.75rem 2.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    outline: none;
+    transition: border 0.2s ease;
+
+    &:focus {
+      border-color: #1d3c89;
+    }
+  }
+
+  .icon {
+    position: absolute;
+    left: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    color: #d63384;
+  }
+}
+
+    .search-btn {
+      height: 48px;
+      padding: 0 1.5rem;
+      background-color: #1d3c89;
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: #0f2a60;
+      }
+    }
+}

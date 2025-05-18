@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<app-navbar></app-navbar>
+
+<section class="hero">
+  <div class="hero-text">
+    <h1>
+      The <span class="highlight">#1</span> <br />
+      real estate <br />
+      web site
+    </h1>
+  </div>
+
+  <div class="filters">
+  <mat-form-field appearance="outline">
+    <mat-label>Contract</mat-label>
+    <mat-select [(value)]="selectedContract">
+      <mat-option *ngFor="let option of contractOptions" [value]="option">{{ option }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Estate</mat-label>
+    <mat-select [(value)]="selectedEstate">
+      <mat-option *ngFor="let option of estateOptions" [value]="option">{{ option }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Rooms</mat-label>
+    <mat-select [(value)]="selectedRooms">
+      <mat-option *ngFor="let option of roomOptions" [value]="option">{{ option }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Price</mat-label>
+    <mat-select [(value)]="selectedPrice">
+      <mat-option *ngFor="let option of priceOptions" [value]="option">{{ option }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<div class="search-bar">
+  <div class="search-input-wrapper">
+    <input type="text" placeholder="Enter location..." />
+  </div>
+
+  <button class="search-btn">
+    Search
+  </button>
+</div>
+
+</section>
