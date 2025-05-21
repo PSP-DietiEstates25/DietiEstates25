@@ -1,53 +1,77 @@
-<!DOCTYPE html>
 <app-navbar></app-navbar>
 
 <section class="hero">
   <div class="hero-text">
     <h1>
-      The <span class="highlight">#1</span> <br />
-      real estate <br />
+      The <span class="highlight">#1</span><br />
+      real estate<br />
       web site
     </h1>
   </div>
 
   <div class="filters">
-  <mat-form-field appearance="outline">
-    <mat-label>Contract</mat-label>
-    <mat-select [(value)]="selectedContract">
-      <mat-option *ngFor="let option of contractOptions" [value]="option">{{ option }}</mat-option>
-    </mat-select>
-  </mat-form-field>
+    <!-- Contract -->
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Contract</mat-label>
+      <mat-select [(value)]="selectedContract">
+        <mat-option *ngFor="let option of contractOptions" [value]="option">
+          {{ option }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Estate</mat-label>
-    <mat-select [(value)]="selectedEstate">
-      <mat-option *ngFor="let option of estateOptions" [value]="option">{{ option }}</mat-option>
-    </mat-select>
-  </mat-form-field>
+    <!-- Estate -->
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Estate</mat-label>
+      <mat-select [(value)]="selectedEstate">
+        <mat-option *ngFor="let option of estateOptions" [value]="option">
+          {{ option }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Rooms</mat-label>
-    <mat-select [(value)]="selectedRooms">
-      <mat-option *ngFor="let option of roomOptions" [value]="option">{{ option }}</mat-option>
-    </mat-select>
-  </mat-form-field>
+    <!-- Rooms -->
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Rooms</mat-label>
+      <mat-select [(value)]="selectedRooms">
+        <mat-option *ngFor="let option of roomOptions" [value]="option">
+          {{ option }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Price</mat-label>
-    <mat-select [(value)]="selectedPrice">
-      <mat-option *ngFor="let option of priceOptions" [value]="option">{{ option }}</mat-option>
-    </mat-select>
-  </mat-form-field>
-</div>
-
-<div class="search-bar">
-  <div class="search-input-wrapper">
-    <input type="text" placeholder="Enter location..." />
+    <!-- Price -->
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Price</mat-label>
+      <mat-select [(value)]="selectedPrice">
+        <mat-option *ngFor="let option of priceOptions" [value]="option">
+          {{ option }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
 
-  <button class="search-btn">
-    Search
-  </button>
-</div>
+  <!-- Location + Search -->
+  <div class="search-bar">
+    <mat-form-field appearance="outline" class="location-input">
+      <input
+        type="text"
+        matInput
+        placeholder="Enter location..."
+        [(ngModel)]="locationInput"
+        (input)="onLocationChange(locationInput)"
+        [matAutocomplete]="auto"
+      />
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option
+          *ngFor="let option of locationOptions"
+          [value]="option"
+        >
+          {{ option }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
 
+    <button class="search-btn" (click)="onSearch()">Search</button>
+  </div>
 </section>
