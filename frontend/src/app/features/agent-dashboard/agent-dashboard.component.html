@@ -1,0 +1,34 @@
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="user-info">
+      <mat-icon>person</mat-icon>
+      <span>Agente: pippo</span>
+    </div>
+    <nav class="menu">
+      <a
+        routerLink="."
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <mat-icon>home</mat-icon>
+        <span>Annunci pubblicati</span>
+      </a>
+      <a routerLink="add" routerLinkActive="active">
+        <mat-icon>add</mat-icon>
+        <span>Aggiungi annuncio</span>
+      </a>
+      <a routerLink="visits" routerLinkActive="active">
+        <mat-icon>calendar_today</mat-icon>
+        <span>Visite prenotate</span>
+      </a>
+      <!-- altri link… -->
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <section class="main-content">
+    <!-- qui inietteremo i sotto-componenti via routing -->
+    <router-outlet></router-outlet>
+  </section>
+</div>
