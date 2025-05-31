@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
 	
 	@GetMapping("/")
-	public void home() {
-		System.out.println("User is sending request");
+	public String home() {
+		return "home";
 	}
 }
