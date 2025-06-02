@@ -33,7 +33,8 @@ public class Offer {
     @JoinColumn(name = "property_id", nullable = false)
     private RealEstate property;
 
-    public Offer() { }
+    public Offer() {
+    }
 
     public Offer(BigDecimal offerPrice, String status, User madeBy, RealEstate property) {
         this.offerPrice = offerPrice;
@@ -42,5 +43,45 @@ public class Offer {
         this.property = property;
     }
 
-    // getter / setter …
+    // GETTER / SETTER
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public BigDecimal getOfferPrice() {
+        return offerPrice;
+    }
+
+    public void setOfferPrice(BigDecimal offerPrice) {
+        this.offerPrice = offerPrice;
+    }
+
+    public String getStatus() {
+        return status;
+    }   
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public User getMadeBy() {
+        return madeBy;
+    }
+
+    public void setMadeBy(User madeBy) {
+        this.madeBy = madeBy;
+    }
+
+    public RealEstate getProperty() {
+        return property;
+    }
+
+    public void setProperty(RealEstate property) {
+        this.property = property;
+    }
 }

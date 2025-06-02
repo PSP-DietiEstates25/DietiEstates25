@@ -22,7 +22,7 @@ public class Notification {
     // “NEW_PROPERTY”, “VISIT_RESPONSE”, “PROMOTIONAL”
 
     @Column(nullable = false)
-    private boolean active;  // true => attiva, false => disattivata
+    private boolean active; // true => attiva, false => disattivata
 
     // RELAZIONE:
     // Un utente può ricevere molte notifiche – ManyToOne
@@ -30,10 +30,11 @@ public class Notification {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Notification() { }
+    public Notification() {
+    }
 
-    public Notification(String message, LocalDateTime dateCreated, 
-                        String notificationType, boolean active, User user) {
+    public Notification(String message, LocalDateTime dateCreated,
+            String notificationType, boolean active, User user) {
         this.message = message;
         this.dateCreated = dateCreated;
         this.notificationType = notificationType;
@@ -41,5 +42,53 @@ public class Notification {
         this.user = user;
     }
 
-    // getter / setter …
+    // GETTER / SETTER
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public LocalDateTime getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(LocalDateTime dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public String getNotificationType() {
+        return notificationType;
+    }
+
+    public void setNotificationType(String notificationType) {
+        this.notificationType = notificationType;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

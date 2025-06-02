@@ -12,10 +12,10 @@ public class Visit {
     private Long id;
 
     @Column(nullable = false)
-    private LocalDateTime requestDate; 
+    private LocalDateTime requestDate;
 
     @Column(nullable = false)
-    private String status;  
+    private String status;
     // “IN_ATTESA”, “CONFERMATA”, “RIFIUTATA”
 
     // RELAZIONI:
@@ -25,7 +25,7 @@ public class Visit {
     @JoinColumn(name = "requested_by_user_id", nullable = false)
     private User requestedBy;
 
-    // Un Visit è “ricevuto” da un agente o all’amministrazione?  
+    // Un Visit è “ricevuto” da un agente o all’amministrazione?
     // Se vogliamo tenere traccia di “a chi è spettato gestire la visita”, potremmo
     // aggiungere un @ManyToOne verso User (ruolo AGENT)
     // il “requestedBy” è sufficiente per mostrare allo stesso utente lo stato.
@@ -35,7 +35,8 @@ public class Visit {
     @JoinColumn(name = "property_id", nullable = false)
     private RealEstate property;
 
-    public Visit() { }
+    public Visit() {
+    }
 
     public Visit(LocalDateTime requestDate, String status, User requestedBy, RealEstate property) {
         this.requestDate = requestDate;
@@ -44,5 +45,45 @@ public class Visit {
         this.property = property;
     }
 
-    // getter / setter …
+    // GETTER / SETTER
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getRequestDate() {
+        return requestDate;
+    }
+
+    public void setRequestDate(LocalDateTime requestDate) {
+        this.requestDate = requestDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public User getRequestedBy() {
+        return requestedBy;
+    }
+
+    public void setRequestedBy(User requestedBy) {
+        this.requestedBy = requestedBy;
+    }
+
+    public RealEstate getProperty() {
+        return property;
+    }
+
+    public void setProperty(RealEstate property) {
+        this.property = property;
+    }
 }

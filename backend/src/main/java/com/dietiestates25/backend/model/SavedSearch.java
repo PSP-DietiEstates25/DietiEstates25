@@ -24,7 +24,8 @@ public class SavedSearch {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public SavedSearch() { }
+    public SavedSearch() {
+    }
 
     public SavedSearch(String params, User user) {
         this.params = params;
@@ -34,9 +35,16 @@ public class SavedSearch {
     // getter / setter …
 }
 
-/* spiegazione su “params”:
 
-il campo params è di tipo TEXT (o VARCHAR) e conterrà (per esempio) un JSON stringificato dei filtri selezionati dall’utente ({"contract":"SALE","minPrice":50000,"city":"Napoli"}),
-oppure una stringa separata da delimitatori, ad esempio "SALE;50000;200000;3;B;Milano;10".
-in fase di ricerca successiva, il server può “deserializzare” quel JSON in oggetto SearchFilterDto
-e comporre nuovamente la query dinamica */
+/*
+ * spiegazione su “params”:
+ * 
+ * il campo params è di tipo TEXT (o VARCHAR) e conterrà (per esempio) un JSON
+ * stringificato dei filtri selezionati dall’utente
+ * ({"contract":"SALE","minPrice":50000,"city":"Napoli"}),
+ * oppure una stringa separata da delimitatori, ad esempio
+ * "SALE;50000;200000;3;B;Milano;10".
+ * in fase di ricerca successiva, il server può “deserializzare” quel JSON in
+ * oggetto SearchFilterDto
+ * e comporre nuovamente la query dinamica
+ */
