@@ -1,0 +1,244 @@
+<div class="auth-root">
+  <!-- Logo in cima -->
+  <div class="logo-container">
+    <img src="assets/logo.svg" alt="DietiEstates25" class="app-logo" />
+  </div>
+
+  <!-- Card centrale con Material Tabs -->
+  <mat-tab-group class="auth-card" mat-stretch-tabs>
+    <!-- ====================== TAB 1: LOGIN ====================== -->
+    <mat-tab label="Login">
+      <form
+        [formGroup]="loginForm"
+        (ngSubmit)="onLogin()"
+        class="form-container"
+      >
+        <!-- Email -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input
+            matInput
+            formControlName="email"
+            placeholder="Inserisci la tua email"
+          />
+          <mat-error
+            *ngIf="lf['email'].hasError('required') && lf['email'].touched"
+          >
+            L’email è obbligatoria
+          </mat-error>
+          <mat-error
+            *ngIf="lf['email'].hasError('email') && lf['email'].touched"
+          >
+            Formato email non valido
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Password -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            [type]="hideLoginPassword ? 'password' : 'text'"
+            formControlName="password"
+            placeholder="Inserisci la password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="hideLoginPassword = !hideLoginPassword"
+            [attr.aria-label]="'Toggle password visibility'"
+            [attr.aria-pressed]="!hideLoginPassword"
+          >
+            <mat-icon>{{
+              hideLoginPassword ? "visibility_off" : "visibility"
+            }}</mat-icon>
+          </button>
+          <mat-error
+            *ngIf="
+              lf['password'].hasError('required') && lf['password'].touched
+            "
+          >
+            La password è obbligatoria
+          </mat-error>
+          <mat-error
+            *ngIf="
+              lf['password'].hasError('minlength') && lf['password'].touched
+            "
+          >
+            La password deve essere lunga almeno 6 caratteri
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Pulsante Login -->
+        <button
+          mat-raised-button
+          color="primary"
+          class="full-width"
+          type="submit"
+        >
+          Accedi
+        </button>
+
+        <!-- Separator -->
+        <div class="divider"><span>oppure</span></div>
+
+        <!-- LOGIN SOCIAL (placeholder) -->
+        <button
+          mat-stroked-button
+          color="warn"
+          class="full-width"
+          style="margin-bottom: 8px"
+        >
+          <mat-icon class="soc-icon">google</mat-icon>
+          Accedi con Google
+        </button>
+        <button mat-stroked-button color="accent" class="full-width">
+          <mat-icon class="soc-icon">facebook</mat-icon>
+          Accedi con Facebook
+        </button>
+      </form>
+    </mat-tab>
+
+    <!-- REGISTRAZIONE  -->
+    <mat-tab label="Registrazione">
+      <form
+        [formGroup]="registerForm"
+        (ngSubmit)="onRegister()"
+        class="form-container"
+      >
+        <!-- Username -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Username</mat-label>
+          <input
+            matInput
+            formControlName="username"
+            placeholder="Scegli un username"
+          />
+          <mat-error
+            *ngIf="
+              rf['username'].hasError('required') && rf['username'].touched
+            "
+          >
+            Username obbligatorio
+          </mat-error>
+          <mat-error
+            *ngIf="
+              rf['username'].hasError('minlength') && rf['username'].touched
+            "
+          >
+            Almeno 3 caratteri
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Email -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input
+            matInput
+            formControlName="email"
+            placeholder="Inserisci la tua email"
+          />
+          <mat-error
+            *ngif="rf['email'].hasError('required') && rf['email'].touched"
+          >
+            L’email è obbligatoria
+          </mat-error>
+          <mat-error
+            *ngif="rf['email'].hasError('email') && rf['email'].touched"
+          >
+            Formato email non valido
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Password -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            [type]="hideRegisterPassword ? 'password' : 'text'"
+            formControlName="password"
+            placeholder="Scegli una password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="hideRegisterPassword = !hideRegisterPassword"
+            [attr.aria-label]="'Toggle password visibility'"
+            [attr.aria-pressed]="!hideRegisterPassword"
+          >
+            <mat-icon>{{
+              hideRegisterPassword ? "visibility_off" : "visibility"
+            }}</mat-icon>
+          </button>
+          <mat-error
+            *ngif="
+              rf['password'].hasError('required') && rf['password'].touched
+            "
+          >
+            La password è obbligatoria
+          </mat-error>
+          <mat-error
+            *ngif="
+              rf['password'].hasError('minlength') && rf['password'].touched
+            "
+          >
+            Almeno 6 caratteri
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Conferma Password -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Conferma Password</mat-label>
+          <input
+            matInput
+            [type]="hideRegisterConfirm ? 'password' : 'text'"
+            formControlName="confirmPassword"
+            placeholder="Ripeti la password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="hideRegisterConfirm = !hideRegisterConfirm"
+            [attr.aria-label]="'Toggle confirm visibility'"
+            [attr.aria-pressed]="!hideRegisterConfirm"
+          >
+            <mat-icon>{{
+              hideRegisterConfirm ? "visibility_off" : "visibility"
+            }}</mat-icon>
+          </button>
+          <mat-error
+            *ngif="
+              rf['confirmPassword'].hasError('required') &&
+              rf['confirmPassword'].touched
+            "
+          >
+            Conferma password obbligatoria
+          </mat-error>
+          <mat-error
+            *ngif="
+              rf['confirmPassword'].hasError('notMatching') &&
+              rf['confirmPassword'].touched
+            "
+          >
+            Le password non coincidono
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Pulsante Registrati -->
+        <button
+          mat-raised-button
+          color="primary"
+          class="full-width"
+          type="submit"
+        >
+          Registrati
+        </button>
+      </form>
+    </mat-tab>
+  </mat-tab-group>
+
+  <!-- Footer con una piccola nota/credit -->
+  <div class="auth-footer">
+    <span>© DietiEstates25</span>
+  </div>
+</div>

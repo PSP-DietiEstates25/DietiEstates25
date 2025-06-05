@@ -9,6 +9,6 @@ export class LocationService {
   constructor(private http: HttpClient) {}
 
   search(query: string): Observable<string[]> {
-    return this.http.get<string[]>(`${this.baseUrl}/search?query=${query}`);
+    return this.http.get<string[]>(`${this.baseUrl}/search?query=${query}`); // chiama l'API per cercare le località
   }
 }

@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
-import { LocationService } from '../../core/service/location.service';
+import { LocationService } from '../../core/services/location.service';
 
 @Component({
   selector: 'app-home',
@@ -47,6 +47,8 @@ export class HomeComponent {
   constructor(private locationService: LocationService) {}
 
   // Esegue chiamata API quando cambia l'input
+  // La chiamata API restituisce un array di location che vengono visualizzate come opzioni
+  // La chiamata API viene effettuata tramite il servizio LocationService, che gestisce la logica di ricerca delle location
   onLocationChange(query: string): void {
     if (query && query.length > 1) {
       this.locationService.search(query).subscribe({
