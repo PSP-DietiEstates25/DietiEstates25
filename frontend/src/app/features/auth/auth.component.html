@@ -139,12 +139,12 @@
             placeholder="Inserisci la tua email"
           />
           <mat-error
-            *ngif="rf['email'].hasError('required') && rf['email'].touched"
+            *ngIf="rf['email'].hasError('required') && rf['email'].touched"
           >
             L’email è obbligatoria
           </mat-error>
           <mat-error
-            *ngif="rf['email'].hasError('email') && rf['email'].touched"
+            *ngIf="rf['email'].hasError('email') && rf['email'].touched"
           >
             Formato email non valido
           </mat-error>
@@ -171,14 +171,14 @@
             }}</mat-icon>
           </button>
           <mat-error
-            *ngif="
+            *ngIf="
               rf['password'].hasError('required') && rf['password'].touched
             "
           >
             La password è obbligatoria
           </mat-error>
           <mat-error
-            *ngif="
+            *ngIf="
               rf['password'].hasError('minlength') && rf['password'].touched
             "
           >
@@ -207,7 +207,7 @@
             }}</mat-icon>
           </button>
           <mat-error
-            *ngif="
+            *ngIf="
               rf['confirmPassword'].hasError('required') &&
               rf['confirmPassword'].touched
             "
@@ -215,7 +215,7 @@
             Conferma password obbligatoria
           </mat-error>
           <mat-error
-            *ngif="
+            *ngIf="
               rf['confirmPassword'].hasError('notMatching') &&
               rf['confirmPassword'].touched
             "

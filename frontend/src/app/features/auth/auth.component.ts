@@ -1,34 +1,35 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 
 // Material Modules
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-auth',
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
+    FormsModule,
     ReactiveFormsModule,
-    MatTabsModule,
-    MatFormFieldModule,
-    MatInputModule,
+    // Angular Material
+    MatCardModule,
     MatIconModule,
     MatButtonModule,
-    MatTooltipModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatTabsModule,
+    MatDividerModule
   ],
+
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss'],
 })
