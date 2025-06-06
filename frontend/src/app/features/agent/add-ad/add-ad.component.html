@@ -1,0 +1,210 @@
+<!-- add-ad.component.html -->
+
+<mat-horizontal-stepper [linear]="true">
+  <!-- [STEP 1] General ad information -->
+  <mat-step [stepControl]="generalGroup">
+    <ng-template matStepLabel>General ad information</ng-template>
+
+    <form [formGroup]="generalGroup" class="step-form">
+      <!-- UPLOAD FOTO -->
+      <label for="fileUpload" class="file-upload-label">
+        <div class="file-dropzone">
+          <mat-icon>cloud_upload</mat-icon>
+          <span>Drag & drop or Browse</span>
+        </div>
+      </label>
+      <input
+        type="file"
+        id="fileUpload"
+        multiple
+        (change)="onFileSelected($event)"
+        style="display: none"
+      />
+
+      <div class="uploaded-list" *ngIf="uploadedFiles.length > 0">
+        <mat-icon>photo</mat-icon>
+        <span *ngFor="let f of uploadedFiles; let i = index">
+          {{ f.name }}
+          <button mat-icon-button (click)="removeFile(i)">
+            <mat-icon color="warn">delete</mat-icon>
+          </button>
+        </span>
+      </div>
+
+      <!-- PRICE -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Price</mat-label>
+        <input matInput formControlName="price" type="number" />
+        <mat-error *ngIf="generalGroup.get('price')!.hasError('required')">
+          Price is required
+        </mat-error>
+        <mat-error *ngIf="generalGroup.get('price')!.hasError('min')">
+          Price must be ≥ 0
+        </mat-error>
+      </mat-form-field>
+
+      <!-- CATEGORY -->
+      <div class="category-group">
+        <label>Category:</label>
+        <mat-radio-group formControlName="category">
+          <mat-radio-button *ngFor="let c of categories" [value]="c">
+            {{ c | titlecase }}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+      <mat-error *ngIf="generalGroup.get('category')!.hasError('required')">
+        Category is required
+      </mat-error>
+
+      <!-- DESCRIPTION -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="4"></textarea>
+        <mat-error
+          *ngIf="generalGroup.get('description')!.hasError('required')"
+        >
+          Description is required
+        </mat-error>
+        <mat-error
+          *ngIf="generalGroup.get('description')!.hasError('minlength')"
+        >
+          Minimum 10 characters
+        </mat-error>
+      </mat-form-field>
+
+      <div class="step-buttons">
+        <button mat-button matStepperNext [disabled]="generalGroup.invalid">
+          Next
+        </button>
+      </div>
+    </form>
+  </mat-step>
+
+  <!-- Address selection -->
+  <mat-step [stepControl]="addressGroup">
+    <ng-template matStepLabel>Address selection</ng-template>
+    <form [formGroup]="addressGroup" class="step-form">
+      <!-- Campo di testo per l’indirizzo -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Address</mat-label>
+        <input
+          matInput
+          formControlName="addressText"
+          (input)="onAddressInput()"
+          autocomplete="off"
+        />
+        <mat-error
+          *ngIf="addressGroup.get('addressText')!.hasError('required')"
+        >
+          Address is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Lista dei suggerimenti -->
+      <div class="suggestions" *ngIf="addressSuggestions.length">
+        <mat-list>
+          <mat-list-item
+            *ngFor="let sug of addressSuggestions"
+            (click)="selectAddress(sug)"
+          >
+            {{ sug }}
+          </mat-list-item>
+        </mat-list>
+      </div>
+
+      <!-- Con Leaflet usiamo un div con #mapContainer -->
+      <div #mapContainer class="map-container"></div>
+
+      <div class="step-buttons">
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext [disabled]="addressGroup.invalid">
+          Next
+        </button>
+      </div>
+    </form>
+  </mat-step>
+
+  <!-- Property details -->
+  <mat-step [stepControl]="detailsGroup">
+    <ng-template matStepLabel>Property details</ng-template>
+
+    <form [formGroup]="detailsGroup" class="step-form">
+      <!-- Campo Square Meters -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Square Meters</mat-label>
+        <input matInput formControlName="squareMeters" type="number" />
+        <!-- ERRORE LEGATO A squareMeters, NON a rooms -->
+        <mat-error
+          *ngIf="detailsGroup.get('squareMeters')!.hasError('required')"
+        >
+          Required
+        </mat-error>
+        <mat-error *ngIf="detailsGroup.get('squareMeters')!.hasError('min')">
+          Must be ≥ 1
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Campo Rooms -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Rooms</mat-label>
+        <input matInput formControlName="rooms" type="number" />
+        <mat-error *ngIf="detailsGroup.get('rooms')!.hasError('required')">
+          Required
+        </mat-error>
+        <mat-error *ngIf="detailsGroup.get('rooms')!.hasError('min')">
+          Must be ≥ 1
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Campo Floor -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Floor</mat-label>
+        <input matInput formControlName="floor" type="number" />
+        <mat-error *ngIf="detailsGroup.get('floor')!.hasError('required')">
+          Required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Campo Energy Class -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Energy Class</mat-label>
+        <mat-select formControlName="energyClass">
+          <mat-option value="A">A</mat-option>
+          <mat-option value="B">B</mat-option>
+          <mat-option value="C">C</mat-option>
+          <mat-option value="D">D</mat-option>
+          <!-- … fino alle classi disponibili … -->
+        </mat-select>
+        <mat-error
+          *ngIf="detailsGroup.get('energyClass')!.hasError('required')"
+        >
+          Required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Services (checkbox dinamiche) -->
+      <div class="features-group">
+        <label>Services:</label>
+        <div *ngFor="let svc of servicesList" class="service-checkbox">
+          <mat-checkbox
+            [checked]="detailsGroup.get('services')!.value.includes(svc.id)"
+            (change)="onServiceToggle(svc.id, $event.checked)"
+          >
+            {{ svc.name }}
+          </mat-checkbox>
+        </div>
+      </div>
+
+      <div class="step-buttons">
+        <button mat-button matStepperPrevious>Back</button>
+        <button
+          mat-button
+          (click)="onSubmit()"
+          [disabled]="detailsGroup.invalid"
+        >
+          Finish
+        </button>
+      </div>
+    </form>
+  </mat-step>
+</mat-horizontal-stepper>
