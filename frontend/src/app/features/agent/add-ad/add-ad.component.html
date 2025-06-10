@@ -197,14 +197,76 @@
 
       <div class="step-buttons">
         <button mat-button matStepperPrevious>Back</button>
-        <button
-          mat-button
-          (click)="onSubmit()"
-          [disabled]="detailsGroup.invalid"
-        >
-          Finish
+        <button mat-button matStepperNext [disabled]="addressGroup.invalid">
+          Next
         </button>
       </div>
     </form>
+  </mat-step>
+  
+  <!-- RECAP -->
+  <mat-step>
+    <ng-template matStepLabel>Recap</ng-template>
+
+    <div class="recap-container">
+      <!-- 1) Carousel di immagini -->
+      <div class="recap-gallery">
+        <button mat-icon-button (click)="prevImage()">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <img [src]="currentImageUrl" alt="Preview" class="main-image" />
+        <button mat-icon-button (click)="nextImage()">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+
+        <!-- mini-thumbnails -->
+        <div class="thumbs">
+          <img
+            *ngFor="let f of uploadedFiles; let i = index"
+            [src]="fileToObjectURL(f)"
+            [class.active]="i === currentImageIndex"
+            (click)="currentImageIndex = i"
+          />
+        </div>
+      </div>
+
+      <!-- 2) Riepilogo dati principali -->
+      <div class="recap-summary">
+        <div class="price-box">
+          {{ generalGroup.value.price | currency:'EUR':'symbol':'1.0-0' }}
+        </div>
+        <div class="icons-row">
+          <div class="icon-item">
+            <mat-icon>home</mat-icon>
+            <span>{{ generalGroup.value.category | titlecase }}</span>
+          </div>
+          <div class="icon-item">
+            <mat-icon>square_foot</mat-icon>
+            <span>{{ detailsGroup.value.squareMeters }} m²</span>
+          </div>
+          <div class="icon-item">
+            <mat-icon>place</mat-icon>
+            <span>{{ addressGroup.value.addressText.split(',')[0] }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3) Mappa in miniatura + descrizione -->
+      <div class="recap-details">
+        <div class="map-mini" #recapMapContainer></div>
+        <div class="description-box">
+          <h3>Description</h3>
+          <p>{{ generalGroup.value.description }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- navigation buttons -->
+    <div class="step-buttons">
+      <button mat-button matStepperPrevious>Previous</button>
+      <button mat-raised-button color="primary" (click)="onPublish()">
+        Publish
+      </button>
+    </div>
   </mat-step>
 </mat-horizontal-stepper>

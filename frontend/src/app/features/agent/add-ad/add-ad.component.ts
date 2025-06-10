@@ -5,7 +5,6 @@ import {
   ViewChild,
   ElementRef
 } from '@angular/core';
-
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -21,10 +20,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import {MatListModule} from '@angular/material/list';
-
+import { MatListModule } from '@angular/material/list';
 import * as L from 'leaflet';
-
 import { LocationService, Coords } from '../../../core/services/location.service';
 import { MetadataService, ServiceDto } from '../../../core/services/metadata.service';
 
@@ -49,6 +46,7 @@ import { MetadataService, ServiceDto } from '../../../core/services/metadata.ser
 })
 export class AddAdComponent implements OnInit, AfterViewInit {
   @ViewChild('mapContainer', { static: false }) mapEl!: ElementRef<HTMLDivElement>;
+  @ViewChild('recapMapContainer', { static: false }) recapMapEl!: ElementRef<HTMLDivElement>;
 
   adForm!: FormGroup;
 
@@ -59,7 +57,12 @@ export class AddAdComponent implements OnInit, AfterViewInit {
   addressSuggestions: string[] = [];
   uploadedFiles: File[] = [];
 
+  // carousel
+  currentImageIndex = 0;
+
+  // leaflet
   private map!: L.Map;
+  private recapMap!: L.Map;
   private marker!: L.Marker;
 
   constructor(
@@ -118,6 +121,14 @@ export class AddAdComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     // Inizializziamo Leaflet con coordinate di default
     this.initLeafletMap(45.4642, 9.1900);
+
+    // inizializza mappa di recap solo quando il DOM è pronto
+    setTimeout(() => {
+      this.initRecapMap(
+        this.adForm.get('address.locationCoords.lat')!.value || 45.4642,
+        this.adForm.get('address.locationCoords.lng')!.value || 9.1900
+      );
+    });
   }
 
   private initLeafletMap(lat: number, lng: number) {
@@ -207,6 +218,47 @@ export class AddAdComponent implements OnInit, AfterViewInit {
     const payload = this.adForm.value;
     console.log('Dati annuncio da inviare:', payload);
     // this.adService.createAd(payload).subscribe(...)
+  }
+
+    // ————— Carousel helpers —————
+  get currentImageUrl(): string {
+    if (!this.uploadedFiles.length) return '';
+    return this.fileToObjectURL(this.uploadedFiles[this.currentImageIndex]);
+  }
+
+  prevImage() {
+    this.currentImageIndex =
+      (this.currentImageIndex - 1 + this.uploadedFiles.length) %
+      this.uploadedFiles.length;
+  }
+  nextImage() {
+    this.currentImageIndex =
+      (this.currentImageIndex + 1) % this.uploadedFiles.length;
+  }
+
+  fileToObjectURL(file: File): string {
+    return URL.createObjectURL(file);
+  }
+
+  private initRecapMap(lat: number, lng: number) {
+    if (this.recapMap) {
+      this.recapMap.setView([lat, lng], 13);
+      return;
+    }
+    this.recapMap = L.map(this.recapMapEl.nativeElement).setView([lat, lng], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution:
+        '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+    }).addTo(this.recapMap);
+    L.marker([lat, lng]).addTo(this.recapMap);
+  }
+
+  // ————— Submit finale —————
+  onPublish() {
+    const payload = this.adForm.value;
+    // chiama il tuo service per salvare l'annuncio:
+    // this.adService.createAd(payload).subscribe(...)
+    console.log('Publishing AD:', payload);
   }
 
   // Getter per le formGroup
