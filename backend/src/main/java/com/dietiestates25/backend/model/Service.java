@@ -1,8 +1,8 @@
 package com.dietiestates25.backend.model;
 
 import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+
+import io.micrometer.common.lang.NonNull;
 
 @Entity
 @Table(name = "services")
@@ -12,21 +12,22 @@ public class Service {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /**
-     * Es. “portineria”, “climatizzazione”, “parcheggio”, ecc.
-     */
-    @Column(nullable = false, unique = true)
-    private String tipo;
+    @NonNull
+    @Column
+    private boolean hasElevator;
 
-    // RELAZIONE INVERSA MANY-TO-MANY con RealEstate
-    @ManyToMany(mappedBy = "services")
-    private List<RealEstate> properties = new ArrayList<>();
+    @NonNull
+    @Column
+    private boolean hasDoorman;
+
+    @NonNull
+    @Column
+    private boolean hasAirConditioning;
+
+    @OneToOne(mappedBy = "services")
+    private RealEstate realEstate;
 
     public Service() {
-    }
-
-    public Service(String tipo) {
-        this.tipo = tipo;
     }
 
     // GETTER / SETTER
@@ -37,36 +38,5 @@ public class Service {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    public List<RealEstate> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<RealEstate> properties) {
-        this.properties = properties;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof Service))
-            return false;
-        Service service = (Service) o;
-        return id != null && id.equals(service.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return 31;
     }
 }

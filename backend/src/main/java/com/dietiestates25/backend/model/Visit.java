@@ -3,18 +3,23 @@ package com.dietiestates25.backend.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+import io.micrometer.common.lang.NonNull;
+
 @Entity
 @Table(name = "visits")
 public class Visit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NonNull
     private Long id;
 
-    @Column(nullable = false)
+    @NonNull
+    @Column
     private LocalDateTime requestDate;
 
-    @Column(nullable = false)
+    @NonNull
+    @Column
     private String status;
     // “IN_ATTESA”, “CONFERMATA”, “RIFIUTATA”
 
@@ -22,17 +27,16 @@ public class Visit {
 
     // Un Visit è richiesto da un User (cliente) – ManyToOne
     @ManyToOne(optional = false)
-    @JoinColumn(name = "requested_by_user_id", nullable = false)
+    @JoinColumn(name = "requested_by_user_id")
     private User requestedBy;
 
-    // Un Visit è “ricevuto” da un agente o all’amministrazione?
-    // Se vogliamo tenere traccia di “a chi è spettato gestire la visita”, potremmo
-    // aggiungere un @ManyToOne verso User (ruolo AGENT)
-    // il “requestedBy” è sufficiente per mostrare allo stesso utente lo stato.
+    @ManyToOne
+    @JoinColumn(name = "estate_agent_id")
+    private EstateAgent estateAgent; // chi risponde
 
     // Un Visit è associato a un immobile (RealEstate) – ManyToOne
     @ManyToOne(optional = false)
-    @JoinColumn(name = "property_id", nullable = false)
+    @JoinColumn(name = "property_id")
     private RealEstate property;
 
     public Visit() {
