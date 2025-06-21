@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dietiestates25.model.RealEstate;
-
 @Entity
 @Table(name = "users") // “user” è parola riservata in alcuni DB, evitiamo
 public class User {
