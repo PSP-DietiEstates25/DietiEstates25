@@ -1,6 +1,15 @@
 package com.dietiestates25.backend.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,18 +20,18 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     @Column(nullable = false, length = 1000)
     private String message;
 
+    @NotNull
     @Column(nullable = false)
     private LocalDateTime dateCreated;
 
+    @NotNull
     @Column(nullable = false)
     private String notificationType;
     // “NEW_PROPERTY”, “VISIT_RESPONSE”, “PROMOTIONAL”
-
-    @Column(nullable = false)
-    private boolean active; // true => attiva, false => disattivata
 
     // RELAZIONE:
     // Un utente può ricevere molte notifiche – ManyToOne
