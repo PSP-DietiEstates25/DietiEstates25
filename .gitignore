@@ -64,4 +64,6 @@ Thumbs.db
 /.metadata/
 
 # Spring
-application.properties/
+# Spring Boot config
+/backend/src/main/resources/application.properties
+
