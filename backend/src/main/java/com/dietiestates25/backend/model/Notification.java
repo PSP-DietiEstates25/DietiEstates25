@@ -20,7 +20,7 @@ public class Notification {
 	private Category category;
 
 	@ManyToMany(mappedBy = "seenNotifications")
-	private Set<AccountHolder> seenBy = new HashSet<>();
+	private Set<User> seenBy = new HashSet<>();
 
 	// Getters & setters
 	public Long getId() {
@@ -43,11 +43,11 @@ public class Notification {
 		this.category = category;
 	}
 
-	public Set<AccountHolder> getSeenBy() {
+	public Set<User> getSeenBy() {
 		return seenBy;
 	}
 
-	public void setSeenBy(Set<AccountHolder> seenBy) {
+	public void setSeenBy(Set<User> seenBy) {
 		this.seenBy = seenBy;
 	}
 }

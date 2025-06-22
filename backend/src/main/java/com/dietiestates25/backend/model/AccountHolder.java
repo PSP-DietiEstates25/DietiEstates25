@@ -18,10 +18,6 @@ public abstract class AccountHolder {
     @OneToOne(mappedBy = "holder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Account account;
 
-    @ManyToMany
-    @JoinTable(name = "notification_seen_by", joinColumns = @JoinColumn(name = "account_holder_id"), inverseJoinColumns = @JoinColumn(name = "notification_id"))
-    private Set<Notification> seenNotifications = new HashSet<>();
-
     // Getters & setters
     public Long getId() {
         return id;
@@ -37,13 +33,5 @@ public abstract class AccountHolder {
 
     public void setAccount(Account account) {
         this.account = account;
-    }
-
-    public Set<Notification> getSeenNotifications() {
-        return seenNotifications;
-    }
-
-    public void setSeenNotifications(Set<Notification> seenNotifications) {
-        this.seenNotifications = seenNotifications;
     }
 }
