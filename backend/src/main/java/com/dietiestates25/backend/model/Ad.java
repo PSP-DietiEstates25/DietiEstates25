@@ -1,5 +1,8 @@
 package com.dietiestates25.backend.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,9 +16,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import java.util.HashSet;
-import java.util.Set;
-
 import jakarta.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
@@ -46,8 +46,10 @@ public class Ad {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @NotNull
     private String photo;
     
+    @NotNull
     private String description;
 
     @NotNull
@@ -55,6 +57,7 @@ public class Ad {
     @Column(nullable = false)
     private AdCategories category;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "real_estate_id", nullable = false)
     private RealEstate realEstate;

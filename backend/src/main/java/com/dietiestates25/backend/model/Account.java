@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,17 +26,15 @@ import lombok.ToString;
 @Entity
 @Table(name = "account")
 public class Account {
-	
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private String email;
 
-    @Column(nullable = false)
+    @NotNull
     private String password;
 
+    @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_holder_id", nullable = false)
     private AccountHolder holder;
