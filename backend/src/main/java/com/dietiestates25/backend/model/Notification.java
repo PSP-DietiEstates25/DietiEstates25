@@ -1,13 +1,30 @@
 package com.dietiestates25.backend.model;
 
-import java.util.Set;
-import java.util.HashSet;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.NoArgsConstructor;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 
-import jakarta.persistence.*;
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 
 @Entity
 @Table(name = "notification")
 public class Notification {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -22,33 +39,4 @@ public class Notification {
 	/*@ManyToMany(mappedBy = "seenNotifications")
 	private Set<User> seenBy = new HashSet<>();*/
 
-	// Getters & setters
-	public Long getId() {
-		return id;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public Category getCategory() {
-		return category;
-	}
-
-	public void setCategory(Category category) {
-		this.category = category;
-	}
-/* 
-	public Set<User> getSeenBy() {
-		return seenBy;
-	}
-
-	public void setSeenBy(Set<User> seenBy) {
-		this.seenBy = seenBy;
-	}
-		*/
 }

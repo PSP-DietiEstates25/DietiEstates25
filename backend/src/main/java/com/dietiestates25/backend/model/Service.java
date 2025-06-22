@@ -1,8 +1,24 @@
 package com.dietiestates25.backend.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
-import io.micrometer.common.lang.NonNull;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 
 @Entity
 @Table(name = "services")
@@ -12,31 +28,16 @@ public class Service {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NonNull
     @Column
     private boolean hasElevator;
 
-    @NonNull
     @Column
     private boolean hasDoorman;
 
-    @NonNull
     @Column
     private boolean hasAirConditioning;
 
     @OneToOne(mappedBy = "services")
     private RealEstate realEstate;
 
-    public Service() {
-    }
-
-    // GETTER / SETTER
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }

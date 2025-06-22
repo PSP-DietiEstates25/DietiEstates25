@@ -18,12 +18,11 @@ import java.util.Set;
 
 import jakarta.validation.constraints.NotNull;
 
-import lombok.*;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Rappresenta un annuncio (advertisement) pubblicato da un agente o da un
@@ -33,13 +32,22 @@ import java.util.List;
  * tipo di contratto, stato) e “punta” all’immobile strutturale (RealEstate).
  */
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+
 @Entity
 @Table(name = "ad")
 public class Ad {
+	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
     private String photo;
+    
     private String description;
 
     @NotNull
@@ -53,6 +61,5 @@ public class Ad {
 
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Offer> offers = new HashSet<>();
-
-    // Getters & setters
+    
 }
