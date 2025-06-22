@@ -8,9 +8,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.validation.constraints.NotNull;
 
@@ -28,165 +32,27 @@ import java.util.List;
  * pubblicazione,
  * tipo di contratto, stato) e “punta” all’immobile strutturale (RealEstate).
  */
-@Entity
-@Table(name = "ads")
-//@NoArgsConstructor @AllArgsConstructor @Builder
-public class Ad {
 
+@Entity
+@Table(name = "ad")
+public class Ad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotNull
-    @Column(nullable = false, length = 200)
-    private String title;
-
-    @NotNull
-    @Column(length = 2000)
+    private String photo;
     private String description;
 
-    /*@NotNull
-    @Column(nullable = false, length = 20)
-    private AdCategory adCategory; // “vendita” o “affitto”*/
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AdCategories category;
 
-    // RELAZIONI
-
-    // Un annuncio è inserito da un utente (Agente o Owner).
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "inserted_by_user", nullable = false)
-    private User insertedBy;
-
-    // @ManyToOne(optional = false)
-    // @JoinColumn(name = "agency_id", nullable = false)
-    // private Agency agency; // ha senso se vogliamo tenere traccia dell'agenzia che pubblica l'immobile, altrimenti possiamo ometterlo
-
-    // Un annuncio punta a un immobile strutturale (RealEstate).
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name = "real_estate_id", nullable = false, unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "real_estate_id", nullable = false)
     private RealEstate realEstate;
 
-    // Un annuncio può ricevere più offerte (Offer) da parte di clienti.
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Offer> offersReceived = new ArrayList<>();
+    private Set<Offer> offers = new HashSet<>();
 
-    // Un annuncio può avere più visite prenotate (Visit).
-    @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Visit> visits = new ArrayList<>();
-
-    public Ad() {
-    }
-
-    /**
-     * Costruttore “sintetico”.
-     * Se l’immobile strutturale venisse inserito a parte, potremmo passare
-     * l’istanza di RealEstate
-     * a questo costruttore solo quando creiamo l’annuncio.
-     */
-    public Ad(String title,
-            String description,
-            BigDecimal price,
-            String contractType,
-            String status,
-            User insertedBy,
-            // Agency agency,
-            RealEstate realEstate) {
-        this.title = title;
-        this.description = description;
-       /* this.price = price;
-        this.contractType = contractType;
-        this.status = status;*/
-        this.insertedBy = insertedBy;
-        // this.agency = agency;
-        this.realEstate = realEstate;
-    }
-
-    // GETTER / SETTER
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
- /* 
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public String getContractType() {
-        return contractType;
-    }
-
-    public void setContractType(String contractType) {
-        this.contractType = contractType;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-*/
-    public User getInsertedBy() {
-        return insertedBy;
-    }
-
-    public void setInsertedBy(User insertedBy) {
-        this.insertedBy = insertedBy;
-    }
-
-    // public Agency getAgency() {
-    //     return agency;
-    // }
-
-    // public void setAgency(Agency agency) {
-    //     this.agency = agency;
-    // }
-
-    public RealEstate getRealEstate() {
-        return realEstate;
-    }
-
-    public void setRealEstate(RealEstate realEstate) {
-        this.realEstate = realEstate;
-    }
-
-    public List<Offer> getOffersReceived() {
-        return offersReceived;
-    }
-
-    public void setOffersReceived(List<Offer> offersReceived) {
-        this.offersReceived = offersReceived;
-    }
-
-    public List<Visit> getVisits() {
-        return visits;
-    }
-
-    public void setVisits(List<Visit> visits) {
-        this.visits = visits;
-    }
+    // Getters & setters
 }

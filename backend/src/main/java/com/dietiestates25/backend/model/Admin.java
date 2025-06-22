@@ -7,7 +7,7 @@ import java.util.Set;
 @Entity
 @DiscriminatorValue("ADMIN")
 @Table(name = "admin")
-public class Admin /*extends Staffer*/ {
+public class Admin extends Staffer {
     @OneToMany(mappedBy = "nominatedBy", cascade = CascadeType.ALL)
     private Set<EstateAgent> nominatedAgents = new HashSet<>();
 

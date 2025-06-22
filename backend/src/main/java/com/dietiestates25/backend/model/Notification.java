@@ -19,8 +19,8 @@ public class Notification {
 	@JoinColumn(name = "category_id", nullable = false)
 	private Category category;
 
-	@ManyToMany(mappedBy = "seenNotifications")
-	private Set<User> seenBy = new HashSet<>();
+	/*@ManyToMany(mappedBy = "seenNotifications")
+	private Set<User> seenBy = new HashSet<>();*/
 
 	// Getters & setters
 	public Long getId() {
@@ -42,7 +42,7 @@ public class Notification {
 	public void setCategory(Category category) {
 		this.category = category;
 	}
-
+/* 
 	public Set<User> getSeenBy() {
 		return seenBy;
 	}
@@ -50,4 +50,5 @@ public class Notification {
 	public void setSeenBy(Set<User> seenBy) {
 		this.seenBy = seenBy;
 	}
+		*/
 }
