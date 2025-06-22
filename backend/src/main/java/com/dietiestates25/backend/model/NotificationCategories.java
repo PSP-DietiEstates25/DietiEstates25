@@ -1,7 +1,7 @@
 package com.dietiestates25.backend.model;
 
 public enum NotificationCategories {
-    PROMOTIONAL,
-    REALESTATES,
-    OFFERS
+    PROPERTY_ALERT,
+    VISIT_REQUEST,
+    OFFER_ALERT
 }

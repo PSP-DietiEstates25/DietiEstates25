@@ -4,47 +4,29 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "offers")
+@Table(name = "offer")
 public class Offer {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private BigDecimal price;
 
-    @Column(nullable = false)
-    private BigDecimal offerPrice;
+    @Enumerated(EnumType.STRING)
+    private OfferState state;
 
-    @Column(nullable = false)
-    private String status;
-    // “INVIATA”, “ACCETTATA”, “RIFIUTATA”, “CONTROPROPOSTA”
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    // RELAZIONI:
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ad_id", nullable = false)
+    private Ad ad;
 
-    // L’offerta è “effettuata da” (madeBy) un User (cliente) – ManyToOne
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "made_by_user_id", nullable = false)
-    private User madeBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "estate_agent_id")
+    private EstateAgent estateAgent;
 
-    // L’offerta “riceve” risposta da un Agent (owner): il back-end potrà
-    // inviare notifica a quell’agente oppure l’agente la vede nel suo cruscotto.
-    // Ma in genere basta il “madeBy” e il “property” per capire chi deve gestire.
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "property_id", nullable = false)
-    private RealEstate property;
-
-    public Offer() {
-    }
-
-    public Offer(BigDecimal offerPrice, String status, User madeBy, RealEstate property) {
-        this.offerPrice = offerPrice;
-        this.status = status;
-        this.madeBy = madeBy;
-        this.property = property;
-    }
-
-    // GETTER / SETTER
-
+    // Getters & setters
     public Long getId() {
         return id;
     }
@@ -53,35 +35,43 @@ public class Offer {
         this.id = id;
     }
 
-    public BigDecimal getOfferPrice() {
-        return offerPrice;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setOfferPrice(BigDecimal offerPrice) {
-        this.offerPrice = offerPrice;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
-    public String getStatus() {
-        return status;
-    }   
-
-    public void setStatus(String status) {
-        this.status = status;
+    public OfferState getState() {
+        return state;
     }
 
-    public User getMadeBy() {
-        return madeBy;
+    public void setState(OfferState state) {
+        this.state = state;
     }
 
-    public void setMadeBy(User madeBy) {
-        this.madeBy = madeBy;
+    public User getUser() {
+        return user;
     }
 
-    public RealEstate getProperty() {
-        return property;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public void setProperty(RealEstate property) {
-        this.property = property;
+    public Ad getAd() {
+        return ad;
+    }
+
+    public void setAd(Ad ad) {
+        this.ad = ad;
+    }
+
+    public EstateAgent getEstateAgent() {
+        return estateAgent;
+    }
+
+    public void setEstateAgent(EstateAgent estateAgent) {
+        this.estateAgent = estateAgent;
     }
 }

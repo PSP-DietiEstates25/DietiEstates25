@@ -6,50 +6,22 @@ import java.time.LocalDateTime;
 import io.micrometer.common.lang.NonNull;
 
 @Entity
-@Table(name = "visits")
+@Table(name = "visit")
 public class Visit {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NonNull
     private Long id;
+    private LocalDateTime dateTime;
 
-    @NonNull
-    @Column
-    private LocalDateTime requestDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @NonNull
-    @Column
-    private String status;
-    // “IN_ATTESA”, “CONFERMATA”, “RIFIUTATA”
-
-    // RELAZIONI:
-
-    // Un Visit è richiesto da un User (cliente) – ManyToOne
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "requested_by_user_id")
-    private User requestedBy;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estate_agent_id")
-    private EstateAgent estateAgent; // chi risponde
+    private EstateAgent estateAgent;
 
-    // Un Visit è associato a un immobile (RealEstate) – ManyToOne
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "property_id")
-    private RealEstate property;
-
-    public Visit() {
-    }
-
-    public Visit(LocalDateTime requestDate, String status, User requestedBy, RealEstate property) {
-        this.requestDate = requestDate;
-        this.status = status;
-        this.requestedBy = requestedBy;
-        this.property = property;
-    }
-
-    // GETTER / SETTER
+    // Getters & setters
 
     public Long getId() {
         return id;
@@ -59,35 +31,27 @@ public class Visit {
         this.id = id;
     }
 
-    public LocalDateTime getRequestDate() {
-        return requestDate;
+    public LocalDateTime getDateTime() {
+        return dateTime;
     }
 
-    public void setRequestDate(LocalDateTime requestDate) {
-        this.requestDate = requestDate;
+    public void setDateTime(@NonNull LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 
-    public String getStatus() {
-        return status;
+    public User getUser() {
+        return user;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setUser(@NonNull User user) {
+        this.user = user;
     }
 
-    public User getRequestedBy() {
-        return requestedBy;
+    public EstateAgent getEstateAgent() {
+        return estateAgent;
     }
 
-    public void setRequestedBy(User requestedBy) {
-        this.requestedBy = requestedBy;
-    }
-
-    public RealEstate getProperty() {
-        return property;
-    }
-
-    public void setProperty(RealEstate property) {
-        this.property = property;
+    public void setEstateAgent(EstateAgent estateAgent) {
+        this.estateAgent = estateAgent;
     }
 }
