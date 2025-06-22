@@ -30,7 +30,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "ads")
-@NoArgsConstructor @AllArgsConstructor @Builder
+//@NoArgsConstructor @AllArgsConstructor @Builder
 public class Ad {
 
     @Id
@@ -45,9 +45,9 @@ public class Ad {
     @Column(length = 2000)
     private String description;
 
-    @NotNull
+    /*@NotNull
     @Column(nullable = false, length = 20)
-    private AdCategory adCategory; // “vendita” o “affitto”
+    private AdCategory adCategory; // “vendita” o “affitto”*/
 
     // RELAZIONI
 
@@ -92,9 +92,9 @@ public class Ad {
             RealEstate realEstate) {
         this.title = title;
         this.description = description;
-        this.price = price;
+       /* this.price = price;
         this.contractType = contractType;
-        this.status = status;
+        this.status = status;*/
         this.insertedBy = insertedBy;
         // this.agency = agency;
         this.realEstate = realEstate;
@@ -125,7 +125,7 @@ public class Ad {
     public void setDescription(String description) {
         this.description = description;
     }
-
+ /* 
     public BigDecimal getPrice() {
         return price;
     }
@@ -149,7 +149,7 @@ public class Ad {
     public void setStatus(String status) {
         this.status = status;
     }
-
+*/
     public User getInsertedBy() {
         return insertedBy;
     }

@@ -7,8 +7,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import com.example.accessingdatajpa.Customer;
-import com.example.accessingdatajpa.CustomerRepository;
+/*import com.example.accessingdatajpa.Customer;
+import com.example.accessingdatajpa.CustomerRepository;*/
 
 @SpringBootApplication
 public class BackendApplication {
@@ -18,7 +18,7 @@ public class BackendApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BackendApplication.class, args);
 	}
-
+ /* 
 	@Bean
 	public CommandLineRunner demo(CustomerRepository repository) {
 		return (args) -> {
@@ -52,5 +52,5 @@ public class BackendApplication {
 	      });
 	      log.info("");
 	    };
-	  }
+	  } */
 }

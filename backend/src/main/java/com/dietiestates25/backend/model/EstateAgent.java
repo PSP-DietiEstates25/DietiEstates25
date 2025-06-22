@@ -7,7 +7,7 @@ import java.util.Set;
 @Entity
 @DiscriminatorValue("ESTATE_AGENT")
 @Table(name = "estate_agent")
-public class EstateAgent extends Staffer {
+public class EstateAgent /*extends Staffer*/ {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_id")
     private Admin nominatedBy;
