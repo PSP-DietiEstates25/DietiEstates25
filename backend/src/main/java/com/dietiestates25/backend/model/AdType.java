@@ -1,6 +1,6 @@
 package com.dietiestates25.backend.model;
 
-public enum AdCategories {
+public enum AdType {
     SALE,
     RENT
 }

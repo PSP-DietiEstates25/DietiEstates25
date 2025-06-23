@@ -1,7 +1,7 @@
 package com.dietiestates25.backend.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -13,7 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -32,11 +32,12 @@ public class Category {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private NotificationCategories name;
+    private NotificationType name;
 
+    @NotNull
     private boolean isActive;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private Set<Notification> notifications = new HashSet<>();
+    private List<Notification> notifications = new ArrayList<>();
 
 }

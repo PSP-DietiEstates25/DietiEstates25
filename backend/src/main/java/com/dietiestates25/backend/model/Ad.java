@@ -55,7 +55,7 @@ public class Ad {
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private AdCategories category;
+    private AdType category;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
