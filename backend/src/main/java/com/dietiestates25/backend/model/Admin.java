@@ -1,11 +1,14 @@
 package com.dietiestates25.backend.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -29,7 +32,17 @@ public class Admin extends Staffer {
 	@NotNull
 	private StafferRole role = StafferRole.ADMIN;
 	
+	@NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "admin_id")
+    private Admin nominatedByAdmin;
+
+	@NotNull
+	@OneToMany(fetch = FetchType.LAZY)
+	private List<Admin> electedAdmins = new ArrayList<>();
+	
+	@NotNull
     @OneToMany(mappedBy = "nominatedBy", cascade = CascadeType.ALL)
-    private Set<EstateAgent> nominatedAgents = new HashSet<>();
+    private List<EstateAgent> nominatedAgents = new ArrayList<>();
 
 }

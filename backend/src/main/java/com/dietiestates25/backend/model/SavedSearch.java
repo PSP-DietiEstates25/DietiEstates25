@@ -1,14 +1,18 @@
 package com.dietiestates25.backend.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -29,6 +33,28 @@ public class SavedSearch {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
+    @ManyToMany(mappedBy = "users")
+    private List<User> users = new ArrayList<>();
+    
+    @NotNull
+    @ManyToMany(mappedBy = "ads")
+    private List<Ad> ads = new ArrayList<>();
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /*
      * Possiamo salvare i parametri di ricerca
      * come JSON (colonna text) o come stringa serializzata.
@@ -36,13 +62,6 @@ public class SavedSearch {
      */
     @Column(columnDefinition = "TEXT", nullable = false)
     private String params;
-
-    // RELAZIONI:
-    // Un SavedSearch appartiene a un User – ManyToOne
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
 }
 
 

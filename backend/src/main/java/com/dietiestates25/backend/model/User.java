@@ -1,11 +1,15 @@
 package com.dietiestates25.backend.model;
 
 import java.util.List;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -28,19 +32,32 @@ import lombok.AllArgsConstructor;
 public class User extends BaseUser {
 	
 	@NotNull
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Offer> offers = new ArrayList<>();
 
 	@NotNull
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Visit> visits = new ArrayList<>();
 	
 	@NotNull
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Notification> notifications = new ArrayList<>();
 	
+	//parte forte dell'associazione, un utente potrebbe potenzialmente eliminare e creare saved searchs
 	@NotNull
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	@ManyToMany
+	@JoinTable(
+			name = "user_savedSearch",
+			joinColumns = @JoinColumn(name = "user_id"),
+			inverseJoinColumns = @JoinColumn(name = "savedSearch_id")
+	)
 	private List<SavedSearch> savedSearchs = new ArrayList<>();
 
+	//id price state user ad estateagent
+	public Offer makeOffer(Ad ad, EstateAgent ag) {
+		//return new Offer(20L, new BigDecimal(40), OfferState.PENDING, this, ad, ag);
+		return new Offer();
+	}
+	
+	public Visit bookVisit(){ return new Visit(); }
 }
