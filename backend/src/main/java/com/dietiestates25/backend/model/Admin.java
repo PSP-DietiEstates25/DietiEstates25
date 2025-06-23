@@ -8,7 +8,7 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -25,6 +25,9 @@ import lombok.AllArgsConstructor;
 @DiscriminatorValue("ADMIN")
 @Table(name = "admin")
 public class Admin extends Staffer {
+	
+	@NotNull
+	private StafferRole role = StafferRole.ADMIN;
 	
     @OneToMany(mappedBy = "nominatedBy", cascade = CascadeType.ALL)
     private Set<EstateAgent> nominatedAgents = new HashSet<>();
