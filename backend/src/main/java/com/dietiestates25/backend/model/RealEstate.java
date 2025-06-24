@@ -33,23 +33,23 @@ import lombok.AllArgsConstructor;
 @Entity
 @Table(name = "real_estate")
 public class RealEstate {
-	
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @NotNull
     private BigDecimal price;
-    
+
     @NotNull
     private double size;
-   
+
     @NotNull
     private String address;
-    
+
     @NotNull
     private int rooms;
-    
+
     @NotNull
     private int floor;
 

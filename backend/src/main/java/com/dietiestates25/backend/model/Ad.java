@@ -44,7 +44,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "ad")
 public class Ad {
-	
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -63,7 +63,7 @@ public class Ad {
     @NotNull
     @OneToOne(mappedBy = "ad")
     private RealEstate realEstate;
-    
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estate_agent_id", nullable = false)
@@ -72,11 +72,11 @@ public class Ad {
     @NotNull
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Offer> offers = new ArrayList<>();
-    
+
     @NotNull
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Visit> visits = new ArrayList<>();
-    
+ 
     @NotNull
     @ManyToMany
     @JoinTable(
@@ -85,5 +85,5 @@ public class Ad {
     		inverseJoinColumns = @JoinColumn(name = "savedSearch_id")
     	)
     private List<SavedSearch> savedSearches = new ArrayList<>();
-    
+
 }
