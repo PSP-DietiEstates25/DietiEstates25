@@ -3,6 +3,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 
+export interface User {
+  id: string;
+  name: string;
+  email?: string;
+}
+
 export interface LoginResponse {
   token: string;
   role: 'CLIENT' | 'AGENT' | 'ADMIN';
@@ -13,6 +19,9 @@ export interface LoginResponse {
 export class AuthService {
   // Un BehaviorSubject che tiene il ruolo corrente (o null se non loggato)
   private _userRole$ = new BehaviorSubject<'CLIENT' | 'AGENT' | 'ADMIN' | null>(null);
+
+  // BehaviorSubject per memorizzare i dati dell'utente loggato (o null se non loggato)
+  private userSubject = new BehaviorSubject<User | null>(null);
 
   constructor(private http: HttpClient) {
     // Al caricamento dell’app, prova a leggere lo “userRole” da localStorage
@@ -47,6 +56,25 @@ export class AuthService {
     localStorage.removeItem('app-token');
     localStorage.removeItem('app-role');
     this._userRole$.next(null);
+  }
+
+    getUser(): Observable<User> {
+    if (!this.userSubject.value) {
+      // sostituisci '/api/user-profile' con il tuo endpoint reale
+      this.http.get<User>('/api/user-profile')
+        .pipe(
+          tap(user => this.userSubject.next(user))
+        )
+        .subscribe({
+          next: () => {},
+          error: err => {
+            console.error('Errore nel recupero utente', err);
+            // puoi gestire il logout/redirect qui se 401, ecc.
+          }
+        });
+    }
+    // qui il BehaviorSubject emette l’ultimo valore (appena ricevuto o già in cache)
+    return this.userSubject.asObservable() as Observable<User>;
   }
 
   // ... aggiungere metodi per login OAuth/Google/Facebook,

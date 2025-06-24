@@ -1,16 +1,33 @@
-<aside class="sidebar">
-  <div class="user">
-    <div class="avatar">👤</div>
-  </div>
+<!-- Bottone hamburger (visibile solo da mobile) -->
+<button class="hamburger-btn" (click)="toggleSidebar()">
+  <mat-icon>menu</mat-icon>
+</button>
+
+<aside class="sidebar" [class.open]="isOpen">
+  <span class="username">Agente: {{ userName }}</span>
 
   <input class="search" placeholder="Search for..." />
 
   <nav class="menu">
-    <a href="#" class="active">Annunci pubblicati</a>
-    <a href="#">Aggiungi annuncio</a>
-    <a href="#">Visite prenotate</a>
-    <a href="#">Fourteen</a>
-    <a href="#">Fifteen</a>
-    <a href="#">Sixteen</a>
+    <a
+      routerLink="."
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <mat-icon>home</mat-icon>
+      <span>Annunci pubblicati</span>
+    </a>
+
+    <!-- /agent/add -->
+    <a routerLink="add" routerLinkActive="active">
+      <mat-icon>post_add</mat-icon>
+      <span>Aggiungi annuncio</span>
+    </a>
+
+    <!-- /agent/visits -->
+    <a routerLink="visits" routerLinkActive="active">
+      <mat-icon>today</mat-icon>
+      <span>Visite prenotate</span>
+    </a>
   </nav>
 </aside>

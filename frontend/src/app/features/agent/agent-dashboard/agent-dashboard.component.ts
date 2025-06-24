@@ -5,6 +5,8 @@ import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
+import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+
 @Component({
   selector: 'app-agent-dashboard',
   standalone: true,
@@ -12,7 +14,8 @@ import { MatButtonModule } from '@angular/material/button';
     CommonModule,
     RouterModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    SidebarComponent
   ],
   templateUrl: './agent-dashboard.component.html',
   styleUrls: ['./agent-dashboard.component.scss'],
