@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.FetchType;
 
+import jakarta.validation.constraints.NotNull;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -26,14 +28,19 @@ public class GeographicalPosition {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @NotNull
     private double latitude;
     
+    @NotNull
     private double longitude;
     
+    @NotNull
     private String city;
     
+    @NotNull
     private String municipality;
     
+    @NotNull
     private double abitableRadius;
 
     @OneToOne(mappedBy = "geographicalPosition", fetch = FetchType.LAZY)

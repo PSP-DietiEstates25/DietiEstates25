@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.HashSet;
 import java.math.BigDecimal;
@@ -37,25 +38,34 @@ public class RealEstate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @NotNull
     private BigDecimal price;
     
+    @NotNull
     private double size;
-    
+   
+    @NotNull
     private String address;
     
+    @NotNull
     private int rooms;
     
+    @NotNull
     private int floor;
 
     @Enumerated(EnumType.STRING)
     private EnergyClass energyClass;
 
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "ad_id")
+    private Ad ad;
+    
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "services_id")
     private Service services;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "geo_position_id")
+    @JoinColumn(name = "geographical_position_id")
     private GeographicalPosition geographicalPosition;
 
     @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)

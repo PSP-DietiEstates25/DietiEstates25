@@ -7,7 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -28,13 +28,13 @@ public class Service {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @NotNull
     private boolean hasElevator;
 
-    @Column
+    @NotNull
     private boolean hasDoorman;
 
-    @Column
+    @NotNull
     private boolean hasAirConditioning;
 
     @OneToOne(mappedBy = "services")
