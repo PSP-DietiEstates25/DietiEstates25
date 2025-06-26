@@ -34,11 +34,11 @@ public class SavedSearch {
     private Long id;
 
     @NotNull
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany(mappedBy = "savedSearches")
     private List<User> users = new ArrayList<>();
     
     @NotNull
-    @ManyToMany(mappedBy = "ads")
+    @ManyToMany(mappedBy = "savedSearches")
     private List<Ad> ads = new ArrayList<>();
     
     

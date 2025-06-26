@@ -31,7 +31,7 @@ import lombok.AllArgsConstructor;
 @ToString
 
 @Entity
-@Table(name = "real_estate")
+@Table(name = "real_estates")
 public class RealEstate {
 
     @Id
@@ -43,9 +43,6 @@ public class RealEstate {
 
     @NotNull
     private double size;
-
-    @NotNull
-    private String address;
 
     @NotNull
     private int rooms;
@@ -67,8 +64,4 @@ public class RealEstate {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "geographical_position_id")
     private GeographicalPosition geographicalPosition;
-
-    @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Ad> ads = new HashSet<>();
-
 }

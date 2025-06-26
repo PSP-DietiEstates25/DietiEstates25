@@ -23,7 +23,7 @@ import lombok.AllArgsConstructor;
 @ToString
 
 @Entity
-@Table(name = "notification")
+@Table(name = "notifications")
 public class Notification {
 	
 	@Id

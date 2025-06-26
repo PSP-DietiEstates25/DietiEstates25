@@ -26,7 +26,7 @@ import lombok.AllArgsConstructor;
 
 @Entity
 @DiscriminatorValue("ADMIN")
-@Table(name = "admin")
+@Table(name = "admins")
 public class Admin extends Staffer {
 	
 	@NotNull
@@ -42,7 +42,7 @@ public class Admin extends Staffer {
 	private List<Admin> electedAdmins = new ArrayList<>();
 	
 	@NotNull
-    @OneToMany(mappedBy = "nominatedBy", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "nominatedByAdmin", cascade = CascadeType.ALL)
     private List<EstateAgent> nominatedAgents = new ArrayList<>();
 
 }

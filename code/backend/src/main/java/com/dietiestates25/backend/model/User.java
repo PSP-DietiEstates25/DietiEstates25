@@ -28,19 +28,19 @@ import lombok.AllArgsConstructor;
 
 @Entity
 @DiscriminatorValue("USER")
-@Table(name = "app_user")
+@Table(name = "users")
 public class User extends BaseUser {
 	
 	@NotNull
-    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Offer> offers = new ArrayList<>();
 
 	@NotNull
-    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Visit> visits = new ArrayList<>();
 	
 	@NotNull
-	@OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Notification> notifications = new ArrayList<>();
 	
 	//parte forte dell'associazione, un utente potrebbe potenzialmente eliminare e creare saved searchs
@@ -51,7 +51,7 @@ public class User extends BaseUser {
 			joinColumns = @JoinColumn(name = "user_id"),
 			inverseJoinColumns = @JoinColumn(name = "savedSearch_id")
 	)
-	private List<SavedSearch> savedSearchs = new ArrayList<>();
+	private List<SavedSearch> savedSearches = new ArrayList<>();
 
 	//id price state user ad estateagent
 	public Offer makeOffer(Ad ad, EstateAgent ag) {

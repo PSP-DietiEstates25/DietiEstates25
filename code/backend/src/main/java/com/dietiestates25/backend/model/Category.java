@@ -27,7 +27,7 @@ import lombok.AllArgsConstructor;
 @ToString
 
 @Entity
-@Table(name = "notification_category")
+@Table(name = "notification_categories")
 public class Category {
 
     @Id

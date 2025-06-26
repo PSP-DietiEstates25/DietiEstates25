@@ -5,6 +5,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import jakarta.persistence.FetchType;
 
 import jakarta.validation.constraints.NotNull;
@@ -22,6 +23,7 @@ import lombok.AllArgsConstructor;
 @ToString
 
 @Entity
+@Table(name = "geographical_positions")
 public class GeographicalPosition {
 	
     @Id

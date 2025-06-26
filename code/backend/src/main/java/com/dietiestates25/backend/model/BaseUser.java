@@ -23,15 +23,16 @@ import lombok.ToString;
 @ToString
 
 @Entity
-@Table(name = "account_holder")
+@Table(name = "base_users")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "type")
 public abstract class BaseUser {
 
 	@Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private String email;
 
     @NotNull
     private String password;
+    
+    
 }
