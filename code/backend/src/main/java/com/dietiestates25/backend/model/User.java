@@ -1,7 +1,6 @@
 package com.dietiestates25.backend.model;
 
 import java.util.List;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import jakarta.persistence.CascadeType;
