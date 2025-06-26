@@ -38,6 +38,7 @@ public class Offer {
     private BigDecimal price;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private Status state;
 
     @NotNull

@@ -1,17 +1,9 @@
 package com.dietiestates25.backend.model;
 
-import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
-<<<<<<< Updated upstream
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-=======
->>>>>>> Stashed changes
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
