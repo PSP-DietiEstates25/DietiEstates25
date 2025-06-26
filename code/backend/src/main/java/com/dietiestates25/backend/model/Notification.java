@@ -27,19 +27,20 @@ import lombok.AllArgsConstructor;
 public class Notification {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
+	@NotNull
 	@Column(nullable = false)
 	private String message;
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "notification_category_id", nullable = false)
+	@JoinColumn(name = "notification_category_name", nullable = false)
 	private NotificationCategory notificationCategory;
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", nullable = false)
+	@JoinColumn(name = "user_email", nullable = false)
 	private User user;
 }

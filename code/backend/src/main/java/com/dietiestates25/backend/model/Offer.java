@@ -38,8 +38,7 @@ public class Offer {
     private BigDecimal price;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private OfferState state;
+    private Status state;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)

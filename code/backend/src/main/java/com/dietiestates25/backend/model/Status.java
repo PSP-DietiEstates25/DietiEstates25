@@ -1,6 +1,6 @@
 package com.dietiestates25.backend.model;
 
-public enum OfferState {
+public enum Status {
     PENDING,
     ACCEPTED,
     REJECTED

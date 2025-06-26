@@ -37,7 +37,7 @@ public class NotificationCategory {
     @NotNull
     private boolean isActive;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "notificationCategory", cascade = CascadeType.ALL)
     private List<Notification> notifications = new ArrayList<>();
 
 }

@@ -27,10 +27,13 @@ import lombok.AllArgsConstructor;
 @ToString
 
 @Entity
-@DiscriminatorValue("USER")
+//@DiscriminatorValue("USER")
 @Table(name = "users")
 public class User extends BaseUser {
-	
+
+	@NotNull
+	private BaseUserType baseUserType = BaseUserType.USER;
+
 	@NotNull
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Offer> offers = new ArrayList<>();
@@ -47,12 +50,17 @@ public class User extends BaseUser {
 	@NotNull
 	@ManyToMany
 	@JoinTable(
-			name = "user_savedSearch",
+			name = "users_savedSearches",
 			joinColumns = @JoinColumn(name = "user_id"),
 			inverseJoinColumns = @JoinColumn(name = "savedSearch_id")
 	)
 	private List<SavedSearch> savedSearches = new ArrayList<>();
 
+	
+	
+	
+	
+	
 	//id price state user ad estateagent
 	public Offer makeOffer(Ad ad, EstateAgent ag) {
 		//return new Offer(20L, new BigDecimal(40), OfferState.PENDING, this, ad, ag);

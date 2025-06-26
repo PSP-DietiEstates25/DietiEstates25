@@ -28,8 +28,11 @@ import lombok.AllArgsConstructor;
 public class Visit {
 	
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    
+    @NotNull
+    private Status status;
     
     @NotNull
     private LocalDateTime dateTime;
@@ -41,6 +44,6 @@ public class Visit {
     
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ad_id")
+    @JoinColumn(name = "ad_id", nullable = false)
     private Ad ad;
 }

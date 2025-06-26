@@ -2,6 +2,8 @@ package com.dietiestates25.backend.model;
 
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,8 +26,7 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "base_users")
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "type")
+//@DiscriminatorColumn(name = "type")
 public abstract class BaseUser {
 
 	@Id
@@ -34,5 +35,7 @@ public abstract class BaseUser {
     @NotNull
     private String password;
     
-    
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private BaseUserType baseUserType;
 }
