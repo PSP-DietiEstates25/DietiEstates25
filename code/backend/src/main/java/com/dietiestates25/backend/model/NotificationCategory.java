@@ -28,11 +28,11 @@ import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "notification_categories")
-public class Category {
+public class NotificationCategory {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private NotificationType name;
+    @Enumerated(EnumType.STRING)
+    private NotificationCategoryType name;
 
     @NotNull
     private boolean isActive;

@@ -35,8 +35,8 @@ public class Notification {
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "category_id", nullable = false)
-	private Category category;
+	@JoinColumn(name = "notification_category_id", nullable = false)
+	private NotificationCategory notificationCategory;
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)

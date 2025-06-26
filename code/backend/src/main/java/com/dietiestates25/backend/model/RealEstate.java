@@ -54,7 +54,7 @@ public class RealEstate {
     private EnergyClass energyClass;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ad_id")
+    @JoinColumn(name = "ad_id", unique = true)
     private Ad ad;
     
     @OneToOne(cascade = CascadeType.ALL)

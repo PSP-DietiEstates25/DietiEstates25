@@ -2,6 +2,7 @@ package com.dietiestates25.backend.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -55,6 +56,8 @@ public class Ad {
     @NotNull
     private String description;
 
+    private LocalDate deletedAt;
+    
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

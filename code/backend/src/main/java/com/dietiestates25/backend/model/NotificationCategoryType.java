@@ -1,6 +1,6 @@
 package com.dietiestates25.backend.model;
 
-public enum NotificationType {
+public enum NotificationCategoryType {
     PROPERTY_ALERT,
     VISIT_REQUEST,
     OFFER_ALERT

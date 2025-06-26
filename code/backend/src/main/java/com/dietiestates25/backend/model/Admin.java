@@ -38,7 +38,7 @@ public class Admin extends Staffer {
     private Admin nominatedByAdmin;
 
 	@NotNull
-	@OneToMany(fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "nominatedByAdmin", fetch = FetchType.LAZY)
 	private List<Admin> electedAdmins = new ArrayList<>();
 	
 	@NotNull
