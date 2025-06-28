@@ -45,6 +45,7 @@ public class User extends BaseUser {
 	private List<Notification> notifications = new ArrayList<>();
 	
 	//parte forte dell'associazione, un utente potrebbe potenzialmente eliminare e creare saved searchs
+	//è il lato owner perchè "uno studente effettua una ricerca, quindi è la parte attiva"
 	@NotNull
 	@ManyToMany
 	@JoinTable(

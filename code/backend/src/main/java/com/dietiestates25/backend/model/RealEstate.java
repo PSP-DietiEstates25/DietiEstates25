@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -46,18 +47,20 @@ public class RealEstate {
     @NotNull
     private int floor;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private EnergyClass energyClass;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ad_id", unique = true)
+    @NotNull
+    @OneToOne(mappedBy = "realEstate")
     private Ad ad;
+
+    @NotNull
+    @OneToOne(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = false)
+    private GeographicalPosition geographicalPosition;
     
-    @OneToOne(cascade = CascadeType.ALL)
+    @NotNull
+    @ManyToOne
     @JoinColumn(name = "services_id")
     private Service services;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "geographical_position_id")
-    private GeographicalPosition geographicalPosition;
 }

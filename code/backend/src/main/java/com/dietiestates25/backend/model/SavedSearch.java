@@ -9,7 +9,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,22 +36,39 @@ public class SavedSearch {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //lato inverso della relazione perchè un utente crea una ricerca.
     @NotNull
     @ManyToMany(mappedBy = "savedSearches")
     private List<User> users = new ArrayList<>();
     
+    //viene scelto come lato owner della relazione perchè una ricerca seleziona attivamente degli annunci immobiliari da mostrare
     @NotNull
-    @ManyToMany(mappedBy = "savedSearches")
+    @ManyToMany
+    @JoinTable(
+    		name = "savedSearches_ads",
+    		joinColumns = @JoinColumn(name = "savedSearch_id"),
+    		inverseJoinColumns = @JoinColumn(name = "ad_id")
+    )
     private List<Ad> ads = new ArrayList<>();
+    
+   //lato owner perchè una ricerca setta dei servizi booleani
+    @ManyToOne
+    @JoinColumn(name = "service_id")
+    private Service services;
+    
+    @ManyToOne
+    @JoinColumn(name = "geographical_position_coordinates")
+    private GeographicalPosition geographicalPosition;
     
     
     /*
      * Possiamo salvare i parametri di ricerca
      * come JSON (colonna text) o come stringa serializzata.
      * Qui lo memorizziamo in un’unica colonna “params” di tipo TEXT.
-     */
     @Column(columnDefinition = "TEXT", nullable = false)
     private String params;
+    
+    */
 }
 
 

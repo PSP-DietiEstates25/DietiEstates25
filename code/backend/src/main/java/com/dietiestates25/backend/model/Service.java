@@ -1,10 +1,12 @@
 package com.dietiestates25.backend.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -23,10 +25,9 @@ import lombok.AllArgsConstructor;
 @Table(name = "services")
 public class Service {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+	@Id
+	private Long id;
+	
     @NotNull
     private boolean hasElevator;
 
@@ -35,8 +36,11 @@ public class Service {
 
     @NotNull
     private boolean hasAirConditioning;
-
-    @OneToOne(mappedBy = "services")
+    
+    @OneToMany(mappedBy = "services", cascade = CascadeType.ALL, orphanRemoval = true)
     private RealEstate realEstate;
+    
+    @OneToMany(mappedBy = "services", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SavedSearch> savedSearches = new ArrayList<>();
 
 }

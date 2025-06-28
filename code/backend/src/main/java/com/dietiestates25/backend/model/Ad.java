@@ -64,7 +64,8 @@ public class Ad {
     private AdType category;
 
     @NotNull
-    @OneToOne(mappedBy = "ad")
+    @OneToOne
+    @JoinColumn(name = "real_estate_id")
     private RealEstate realEstate;
 
     @NotNull
@@ -80,13 +81,9 @@ public class Ad {
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Visit> visits = new ArrayList<>();
  
+    //parte debole dell'associazione multipla perchè viene selezionata da una ricerca salvata
     @NotNull
-    @ManyToMany
-    @JoinTable(
-    		name = "ad_savedSearch",
-    		joinColumns = @JoinColumn(name = "ad_id"),
-    		inverseJoinColumns = @JoinColumn(name = "savedSearch_id")
-    	)
+    @ManyToMany(mappedBy = "ads")
     private List<SavedSearch> savedSearches = new ArrayList<>();
 
 }
