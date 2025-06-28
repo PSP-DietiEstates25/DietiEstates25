@@ -16,4 +16,5 @@ public class Esempio {
 	private String name;
 	private String password;
 	//modifica
+	private String ciao;
 }
