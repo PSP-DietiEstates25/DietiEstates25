@@ -37,4 +37,14 @@ public class NotificationCategory {
     @OneToMany(mappedBy = "notificationCategory", cascade = CascadeType.ALL)
     private List<Notification> notifications = new ArrayList<>();
 
+    // Metodi:
+
+    public void markAsRead() {
+        this.isActive = true;
+    }
+
+    public void markAsUnread() {
+        this.isActive = false;
+    }
+
 }

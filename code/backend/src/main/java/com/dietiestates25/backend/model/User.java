@@ -57,7 +57,7 @@ public class User extends BaseUser {
 	
 	
 	
-	
+	// Metodi:
 	
 	//id price state user ad estateagent
 	public Offer makeOffer(Ad ad, EstateAgent ag) {
@@ -66,4 +66,27 @@ public class User extends BaseUser {
 	}
 	
 	public Visit bookVisit(){ return new Visit(); }
+
+	// Aggiunge una notifica all'utente
+	public void addNotification(Notification notification) {
+		if (notification != null) {
+			notification.setUser(this);
+			this.notifications.add(notification);
+		}
+	}
+
+	/*
+	// Ritorna il numero di notifiche non lette
+	public long getUnreadNotificationsCount() {
+    	return this.notifications.stream().filter(n -> !n.isRead()).count();
+	}
+	*/
+
+	// Aggiunge una ricerca salvata all'utente
+	public void addSavedSearch(SavedSearch savedSearch) {
+		if (savedSearch != null) {
+			savedSearch.getUsers().add(this);
+			this.savedSearches.add(savedSearch);
+		}
+	}
 }

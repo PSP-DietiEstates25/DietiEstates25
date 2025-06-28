@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import com.dietiestates25.backend.model.Service;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -60,4 +61,30 @@ public class RealEstate {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "geographical_position_id")
     private GeographicalPosition geographicalPosition;
+
+
+    // Metodi:
+
+    // Verifica se l'immobile è attivo
+    public boolean isActive() {
+        return ad != null && ad.getDeletedAt() == null;
+    }
+
+    /* 
+    // Aggiunge un servizio all'immobile
+    public void addService(Service service) {
+        if (service != null) {
+            if (this.services == null) {
+                this.services = new Service();
+            }
+            this.services.addService(service);
+            service.setRealEstate(this);
+        }
+    }
+    */
+
+    // Ritorna l'annuncio associato all'immobile
+    public Ad getAd() {
+        return ad;
+    }   
 }

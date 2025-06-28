@@ -29,13 +29,13 @@ import lombok.AllArgsConstructor;
 @Entity
 @Table(name = "offers")
 public class Offer {
-	
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @NotNull
-    private BigDecimal price;
+    private BigDecimal amount;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -50,5 +50,17 @@ public class Offer {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ad_id", nullable = false)
     private Ad ad;
+
+    // Metodi:
+
+    // Controlla se l'offerta è valida
+    public boolean isValid() {
+        return this.amount != null && this.user != null && this.ad != null;
+    }
+
+    // Verifica se è una offerta superiore al prezzo dell'annuncio
+    public boolean isHigherThanListingPrice() {
+        return this.amount.compareTo(this.ad.getPrice()) > 0;
+    }
 
 }

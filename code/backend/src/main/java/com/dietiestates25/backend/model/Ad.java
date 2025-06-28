@@ -2,6 +2,7 @@ package com.dietiestates25.backend.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import jakarta.persistence.Entity;
@@ -89,4 +90,23 @@ public class Ad {
     	)
     private List<SavedSearch> savedSearches = new ArrayList<>();
 
+
+    // Metodi:
+
+    // Verifica se l'annuncio è ancora valido
+    public boolean isActive() {
+        return this.deletedAt == null || this.deletedAt.isAfter(LocalDate.now());
+    }
+
+    // Aggiunge un'offerta all'annuncio
+    public void addOffer(Offer offer) {
+        if (offer != null) {
+            this.offers.add(offer);
+            offer.setAd(this);
+        }
+    }
+
+    public BigDecimal getPrice() {
+        return this.realEstate != null ? this.realEstate.getPrice() : BigDecimal.ZERO;
+    }
 }
