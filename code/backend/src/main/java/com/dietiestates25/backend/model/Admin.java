@@ -26,7 +26,7 @@ import lombok.AllArgsConstructor;
 
 @Entity
 @DiscriminatorValue("ADMIN")
-@Table(name = "admins")
+//@Table(name = "admins")
 public class Admin extends Staffer {
 	
 	@NotNull

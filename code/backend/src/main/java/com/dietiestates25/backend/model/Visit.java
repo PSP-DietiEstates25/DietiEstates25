@@ -26,14 +26,14 @@ import lombok.AllArgsConstructor;
 @Entity
 @Table(name = "visits")
 public class Visit {
-	
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
+
     @NotNull
     private Status status;
-    
+
     @NotNull
     private LocalDateTime dateTime;
 
@@ -41,9 +41,21 @@ public class Visit {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ad_id", nullable = false)
     private Ad ad;
+
+    // Metodi:
+
+    // Controlla se la visita è futura
+    public boolean isUpcoming() {
+        return this.dateTime != null && this.dateTime.isAfter(LocalDateTime.now());
+    }
+
+    // Controlla se la visita è avvenuta
+    public boolean isCompleted() {
+        return this.dateTime != null && this.dateTime.isBefore(LocalDateTime.now());
+    }
 }
