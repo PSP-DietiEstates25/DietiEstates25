@@ -22,6 +22,7 @@ public class BackendApplication {
 	public CommandLineRunner demo() {
 		return (args) -> {
 			//codice da testare
+			//test del commit
 		};
 	}
 }
