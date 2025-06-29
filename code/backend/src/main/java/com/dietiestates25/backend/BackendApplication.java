@@ -21,15 +21,7 @@ public class BackendApplication {
 	@Bean
 	public CommandLineRunner demo() {
 		return (args) -> {
-			Esempio e1 = new Esempio();
-			Esempio e2 = new Esempio("ciao", "bello");
-			
-			log.info("----------ESEMPIO DEMONSTRATION----------");
-			log.info(e1.toString());
-			log.info(e2.toString());
-			e1.setName("luca");
-			e1.setPassword("miapass");
-			log.info(e1.toString());
+			//codice da testare
 		};
 	}
 }
