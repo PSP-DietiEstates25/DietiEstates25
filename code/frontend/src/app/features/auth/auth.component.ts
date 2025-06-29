@@ -87,12 +87,10 @@ export class AuthComponent implements OnInit {
     }
 
     const { email, password } = this.loginForm.value;
-    // TODO → sostituisci con il tuo AuthService:
     // this.authService.loginWithEmail(email, password).subscribe( … )
     console.log('[DUMMY] Effettuo login con:', { email, password });
 
     // Simulo redirect “in base al ruolo” (ad esempio “Agent” o “Client”):
-    // scorri la risposta nel backend e vedi resp.role
     const fintoRuolo: string = 'CLIENT'; // oppure “AGENT” o “ADMIN”
     if (fintoRuolo === 'AGENT') {
       this.router.navigate(['/agent']);
@@ -111,7 +109,6 @@ export class AuthComponent implements OnInit {
     }
 
     const { username, email, password } = this.registerForm.value;
-    // TODO → sostituisci con il tuo AuthService:
     // this.authService.register({ username, email, password }).subscribe( … )
     console.log('[DUMMY] Effettuo registrazione con:', {
       username,

@@ -60,7 +60,7 @@ export class AuthService {
 
     getUser(): Observable<User> {
     if (!this.userSubject.value) {
-      // sostituisci '/api/user-profile' con il tuo endpoint reale
+      // sostituisci '/api/user-profile' con endpoint corretto
       this.http.get<User>('/api/user-profile')
         .pipe(
           tap(user => this.userSubject.next(user))
