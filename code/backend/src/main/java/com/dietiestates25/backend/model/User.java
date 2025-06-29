@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.JoinColumn;
@@ -47,7 +48,7 @@ public class User extends BaseUser {
 	
 	//parte forte dell'associazione, un utente potrebbe potenzialmente eliminare e creare saved searchs
 	@NotNull
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 			name = "users_savedSearches",
 			joinColumns = @JoinColumn(name = "user_id"),

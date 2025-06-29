@@ -1,6 +1,9 @@
 package com.dietiestates25.backend.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+
+import org.hibernate.annotations.NaturalId;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -34,6 +37,9 @@ public class Offer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NaturalId
+    private LocalDate dateTime;
+    
     @NotNull
     private BigDecimal amount;
 

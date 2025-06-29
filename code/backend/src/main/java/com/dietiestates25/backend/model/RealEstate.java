@@ -54,7 +54,7 @@ public class RealEstate {
     @JoinColumn(name = "ad_id", unique = true)
     private Ad ad;
     
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "services_id")
     private Service services;
 

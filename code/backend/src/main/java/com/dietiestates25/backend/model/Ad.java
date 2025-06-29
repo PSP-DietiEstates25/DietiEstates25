@@ -11,7 +11,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -48,9 +47,9 @@ import lombok.ToString;
 public class Ad {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+    
     @NotNull
     private String photo;
 
@@ -82,7 +81,6 @@ public class Ad {
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Visit> visits = new ArrayList<>();
  
-    //parte debole dell'associazione multipla perchè viene selezionata da una ricerca salvata
     @NotNull
     @ManyToMany(mappedBy = "ads")
     private List<SavedSearch> savedSearches = new ArrayList<>();
