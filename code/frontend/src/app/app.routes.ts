@@ -24,6 +24,14 @@ export const routes: Routes = [
   },
 
   {
+    path: 'notification',
+    loadComponent: () =>
+      import('./features/notification/notification.component').then(
+        (m) => m.NotificationComponent
+      ),
+  },
+
+  {
     path: 'agent',
     component: AgentDashboardComponent,
     //canActivate: [AgentGuard],

@@ -1,0 +1,32 @@
+.notification-section {
+  padding: 6rem 2rem 2rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+
+  .overlay {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+
+    span {
+      color: #1d3c89;
+    }
+  }
+  .no-notification {
+    margin-top: 2rem;
+    font-size: 1rem;
+    color: #666;
+    margin: 0 auto;
+  }
+
+}
