@@ -13,4 +13,6 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
     List<Offer> findByUserEmail(String userEmail);
     List<Offer> findByStatus(String status);
     List<Offer> findByEstate(RealEstate estate);
+
+    List<Offer> findByAdId(Long adId);
 }

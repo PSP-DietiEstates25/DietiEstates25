@@ -3,14 +3,14 @@ import {
   OnInit,
   AfterViewInit,
   ViewChild,
-  ElementRef
+  ElementRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
   FormBuilder,
   FormGroup,
-  Validators
+  Validators,
 } from '@angular/forms';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -22,8 +22,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import * as L from 'leaflet';
-import { LocationService, Coords } from '../../../core/services/location.service';
-import { MetadataService, ServiceDto } from '../../../core/services/metadata.service';
+import {
+  LocationService,
+  Coords,
+} from '../../../core/services/location.service';
+import {
+  MetadataService,
+  ServiceDto,
+} from '../../../core/services/metadata.service';
+import { AdService } from '../../../core/services/ad.service';
 
 @Component({
   selector: 'app-add-ad',
@@ -39,14 +46,16 @@ import { MetadataService, ServiceDto } from '../../../core/services/metadata.ser
     MatCheckboxModule,
     MatButtonModule,
     MatIconModule,
-    MatListModule
+    MatListModule,
   ],
   templateUrl: './add-ad.component.html',
-  styleUrls: ['./add-ad.component.scss']
+  styleUrls: ['./add-ad.component.scss'],
 })
 export class AddAdComponent implements OnInit, AfterViewInit {
-  @ViewChild('mapContainer', { static: false }) mapEl!: ElementRef<HTMLDivElement>;
-  @ViewChild('recapMapContainer', { static: false }) recapMapEl!: ElementRef<HTMLDivElement>;
+  @ViewChild('mapContainer', { static: false })
+  mapEl!: ElementRef<HTMLDivElement>;
+  @ViewChild('recapMapContainer', { static: false })
+  recapMapEl!: ElementRef<HTMLDivElement>;
 
   adForm!: FormGroup;
 
@@ -68,11 +77,12 @@ export class AddAdComponent implements OnInit, AfterViewInit {
   constructor(
     private fb: FormBuilder,
     private locationService: LocationService,
-    private metadataService: MetadataService
+    private metadataService: MetadataService,
+    private adService: AdService
   ) {}
 
   ngOnInit(): void {
-    // Costrusciamo il form: 
+    // Costrusciamo il form:
     // - category viene inizialmente impostato a '' (vuoto) perché la popoleremo dal backend.
     // - features (services) inizialmente empty, ma li gestiremo come FormArray via checkbox dinamiche.
     this.adForm = this.fb.group({
@@ -80,14 +90,14 @@ export class AddAdComponent implements OnInit, AfterViewInit {
         photos: [[]],
         price: [null, [Validators.required, Validators.min(0)]],
         category: ['', Validators.required],
-        description: ['', [Validators.required, Validators.minLength(10)]]
+        description: ['', [Validators.required, Validators.minLength(10)]],
       }),
       address: this.fb.group({
         addressText: ['', Validators.required],
         locationCoords: this.fb.group({
           lat: [null, Validators.required],
-          lng: [null, Validators.required]
-        })
+          lng: [null, Validators.required],
+        }),
       }),
       details: this.fb.group({
         squareMeters: [null, [Validators.required, Validators.min(1)]],
@@ -95,18 +105,18 @@ export class AddAdComponent implements OnInit, AfterViewInit {
         floor: [null, Validators.required],
         energyClass: ['', Validators.required],
         // Qui memorizzeremo un array di ID di servizi selezionati
-        services: this.fb.control<number[]>([])
-      })
+        services: this.fb.control<number[]>([]),
+      }),
     });
 
     // 1) Carichiamo le categorie dal backend
     this.metadataService.getCategories().subscribe({
       next: (cats) => {
-        this.categories = cats; 
+        this.categories = cats;
         // Se vuoi scegliere di default la prima categoria, potresti fare:
         // this.adForm.get('general.category')!.setValue(this.categories[0]);
       },
-      error: (err) => console.error('Errore caricamento categories:', err)
+      error: (err) => console.error('Errore caricamento categories:', err),
     });
 
     // 2) Carichiamo i servizi dal backend
@@ -114,19 +124,19 @@ export class AddAdComponent implements OnInit, AfterViewInit {
       next: (svcs) => {
         this.servicesList = svcs;
       },
-      error: (err) => console.error('Errore caricamento services:', err)
+      error: (err) => console.error('Errore caricamento services:', err),
     });
   }
 
   ngAfterViewInit(): void {
     // Inizializziamo Leaflet con coordinate di default
-    this.initLeafletMap(45.4642, 9.1900);
+    this.initLeafletMap(45.4642, 9.19);
 
     // inizializza mappa di recap solo quando il DOM è pronto
     setTimeout(() => {
       this.initRecapMap(
         this.adForm.get('address.locationCoords.lat')!.value || 45.4642,
-        this.adForm.get('address.locationCoords.lng')!.value || 9.1900
+        this.adForm.get('address.locationCoords.lng')!.value || 9.19
       );
     });
   }
@@ -145,7 +155,7 @@ export class AddAdComponent implements OnInit, AfterViewInit {
     this.map = L.map(this.mapEl.nativeElement).setView([lat, lng], 15);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(this.map);
     this.marker = L.marker([lat, lng]).addTo(this.map);
   }
@@ -158,7 +168,7 @@ export class AddAdComponent implements OnInit, AfterViewInit {
         error: (err) => {
           console.error('Errore location.search:', err);
           this.addressSuggestions = [];
-        }
+        },
       });
     } else {
       this.addressSuggestions = [];
@@ -175,14 +185,16 @@ export class AddAdComponent implements OnInit, AfterViewInit {
         this.adForm.get('address.locationCoords.lng')!.setValue(coords.lng);
         this.initLeafletMap(coords.lat, coords.lng);
       },
-      error: (err) => console.error('Errore getCoordsFromAddress:', err)
+      error: (err) => console.error('Errore getCoordsFromAddress:', err),
     });
   }
 
   // Gestione upload file (come prima)
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
-    if (!input.files) { return; }
+    if (!input.files) {
+      return;
+    }
     for (let i = 0; i < input.files.length; i++) {
       this.uploadedFiles.push(input.files[i]);
     }
@@ -198,10 +210,13 @@ export class AddAdComponent implements OnInit, AfterViewInit {
    * Al click su una checkbox di un servizio, aggiorna l'array di ID
    */
   onServiceToggle(serviceId: number, checked: boolean) {
-    const servicesArray = this.adForm.get('details.services')!.value as number[];
+    const servicesArray = this.adForm.get('details.services')!
+      .value as number[];
     if (checked) {
       // aggiungo l'ID nella lista
-      this.adForm.get('details.services')!.setValue([...servicesArray, serviceId]);
+      this.adForm
+        .get('details.services')!
+        .setValue([...servicesArray, serviceId]);
     } else {
       // rimuovo l'ID
       this.adForm
@@ -216,11 +231,17 @@ export class AddAdComponent implements OnInit, AfterViewInit {
       return;
     }
     const payload = this.adForm.value;
-    console.log('Dati annuncio da inviare:', payload);
-    // this.adService.createAd(payload).subscribe(...)
+    this.adService.createAd(payload).subscribe({
+      next: (result) => {
+        console.log('Annuncio creato con successo:', result);
+      },
+      error: (err) => {
+        console.error('Errore nella creazione annuncio:', err);
+      },
+    });
   }
 
-    // ————— Carousel helpers —————
+  // ————— Carousel helpers —————
   get currentImageUrl(): string {
     if (!this.uploadedFiles.length) return '';
     return this.fileToObjectURL(this.uploadedFiles[this.currentImageIndex]);
@@ -245,10 +266,13 @@ export class AddAdComponent implements OnInit, AfterViewInit {
       this.recapMap.setView([lat, lng], 13);
       return;
     }
-    this.recapMap = L.map(this.recapMapEl.nativeElement).setView([lat, lng], 13);
+    this.recapMap = L.map(this.recapMapEl.nativeElement).setView(
+      [lat, lng],
+      13
+    );
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution:
-        '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+        '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
     }).addTo(this.recapMap);
     L.marker([lat, lng]).addTo(this.recapMap);
   }
@@ -256,7 +280,6 @@ export class AddAdComponent implements OnInit, AfterViewInit {
   // ————— Submit finale —————
   onPublish() {
     const payload = this.adForm.value;
-    // chiama il tuo service per salvare l'annuncio:
     // this.adService.createAd(payload).subscribe(...)
     console.log('Publishing AD:', payload);
   }

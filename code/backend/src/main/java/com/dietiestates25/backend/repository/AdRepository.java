@@ -19,4 +19,6 @@ public interface AdRepository extends JpaRepository<Ad, Long> {
 
     @Query("SELECT a FROM Ad a WHERE a.deletedAt IS NULL")
     List<Ad> findActiveAds();
+
+    List<Ad> findByAgentId(Long agentId);
 }

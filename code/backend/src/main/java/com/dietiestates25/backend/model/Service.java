@@ -38,7 +38,7 @@ public class Service {
     private boolean hasAirConditioning;
     
     @OneToMany(mappedBy = "services", cascade = CascadeType.ALL, orphanRemoval = true)
-    private RealEstate realEstate;
+    private List<RealEstate> realEstate;
     
     @OneToMany(mappedBy = "services", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SavedSearch> savedSearches = new ArrayList<>();
