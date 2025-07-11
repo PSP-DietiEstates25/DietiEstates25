@@ -1,13 +1,9 @@
-<app-navbar></app-navbar>
-
-<section class="notification-section">
-    <div class="overlay">
-        <h1 class="title">Property <span>Notification</span></h1>
-    </div>
 
 
-    <div class="no-notification">
-      <p>You have no notifications.</p>
-    </div>
-
-</section>
+<div class="notification-container" *ngIf="visible">
+  <div class="notification-content">
+    <span class="notification-icon">🔔</span>
+    <span class="notification-message">{{ message }}</span>
+    <button class="notification-close" (click)="visible = false">×</button>
+  </div>
+</div>
