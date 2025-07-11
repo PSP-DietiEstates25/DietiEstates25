@@ -75,11 +75,7 @@ public class Ad {
 
     @NotNull
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Offer> offers = new ArrayList<>();
-
-    @NotNull
-    @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Visit> visits = new ArrayList<>();
+    private List<Proposal> proposals = new ArrayList<>();
  
     @NotNull
     @ManyToMany(mappedBy = "ads")
@@ -96,8 +92,8 @@ public class Ad {
     // Aggiunge un'offerta all'annuncio
     public void addOffer(Offer offer) {
         if (offer != null) {
-            this.offers.add(offer);
-            offer.setAd(this);
+            this.proposals.add(offer);
+            //offer.setAd(this);
         }
     }
 
