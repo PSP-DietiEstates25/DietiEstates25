@@ -1,6 +1,6 @@
 package com.dietiestates25.backend.controller;
 
-import com.dietiestates25.backend.model.Service;
+import com.dietiestates25.backend.model.Services;
 import com.dietiestates25.backend.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,18 +16,18 @@ public class ServiceController {
     private ServiceRepository serviceRepository;
 
     @GetMapping
-    public List<Service> getAllServices() {
+    public List<Services> getAllServices() {
         return serviceRepository.findAll();
     }
 
     @GetMapping("/{id}")
-    public Service getServiceById(@PathVariable Long id) {
+    public Services getServiceById(@PathVariable Long id) {
         return serviceRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Service not found"));
     }
 
     @PostMapping
-    public Service createService(@RequestBody Service service) {
+    public Services createService(@RequestBody Services service) {
         return serviceRepository.save(service);
     }
 

@@ -1,6 +1,7 @@
 package com.dietiestates25.backend.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -47,5 +48,9 @@ public class GeographicalPosition {
 
     @OneToMany(mappedBy = "geographicalPosition", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SavedSearch> savedSearches = new ArrayList<>();
+    
+    public List<SavedSearch> getSavedSearches() {
+    	return Collections.unmodifiableList(savedSearches);
+    }
 
 }

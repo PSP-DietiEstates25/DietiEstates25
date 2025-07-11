@@ -54,7 +54,7 @@ public class SavedSearch {
    //lato owner perchè una ricerca setta dei servizi booleani
     @ManyToOne
     @JoinColumn(name = "service_id")
-    private Service services;
+    private Services services;
     
     @ManyToOne
     @JoinColumn(name = "geographical_position_coordinates")

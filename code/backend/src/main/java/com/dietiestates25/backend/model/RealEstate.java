@@ -8,12 +8,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
-import com.dietiestates25.backend.model.Service;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -32,8 +32,8 @@ import lombok.AllArgsConstructor;
 public class RealEstate {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long propertyId;
 
     @NotNull
     private BigDecimal price;
@@ -56,7 +56,7 @@ public class RealEstate {
     
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "services_id")
-    private Service services;
+    private Services services;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "geographical_position_id")
