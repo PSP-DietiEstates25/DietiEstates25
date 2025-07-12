@@ -66,7 +66,7 @@
         type="text"
         matInput
         placeholder="Enter location..."
-        @description(locationinput)
+        [(ngModel)]="locationInput"
         (input)="onLocationChange(locationInput)"
         [matAutocomplete]="auto"
       />
