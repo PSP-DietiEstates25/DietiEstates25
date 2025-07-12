@@ -22,7 +22,7 @@ export const routes: Routes = [
         (m) => m.HistoryComponent
       ),
   },
-
+/*
   {
     path: 'notification',
     loadComponent: () =>
@@ -30,7 +30,7 @@ export const routes: Routes = [
         (m) => m.NotificationComponent
       ),
   },
-
+*/
   {
     path: 'agent',
     component: AgentDashboardComponent,
