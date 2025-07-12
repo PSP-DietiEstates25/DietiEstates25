@@ -21,6 +21,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { ChangeDetectorRef } from '@angular/core';
 import * as L from 'leaflet';
 import {
   LocationService,
@@ -65,6 +66,7 @@ export class AddAdComponent implements OnInit, AfterViewInit {
 
   addressSuggestions: string[] = [];
   uploadedFiles: File[] = [];
+  uploadedFileUrls: string[] = [];
 
   // carousel
   currentImageIndex = 0;
@@ -78,7 +80,8 @@ export class AddAdComponent implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private locationService: LocationService,
     private metadataService: MetadataService,
-    private adService: AdService
+    private adService: AdService,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -197,15 +200,21 @@ export class AddAdComponent implements OnInit, AfterViewInit {
     }
     for (let i = 0; i < input.files.length; i++) {
       this.uploadedFiles.push(input.files[i]);
+      this.uploadedFileUrls.push(URL.createObjectURL(input.files[i]));
     }
     this.adForm.get('general.photos')!.setValue(this.uploadedFiles);
+    this.cd.detectChanges();
   }
 
   removeFile(index: number) {
     this.uploadedFiles.splice(index, 1);
+    this.uploadedFileUrls.splice(index, 1);
     this.adForm.get('general.photos')!.setValue(this.uploadedFiles);
+    if (this.currentImageIndex >= this.uploadedFiles.length) {
+      this.currentImageIndex = Math.max(this.uploadedFiles.length - 1, 0);
+    }
+    this.cd.detectChanges();
   }
-
   /**
    * Al click su una checkbox di un servizio, aggiorna l'array di ID
    */

@@ -51,16 +51,14 @@
         <label>Category:</label>
         <mat-radio-group formControlName="category">
           @for (c of categories; track c) {
-            <mat-radio-button [value]="c">
-              {{ c | titlecase }}
-            </mat-radio-button>
+          <mat-radio-button [value]="c">
+            {{ c | titlecase }}
+          </mat-radio-button>
           }
         </mat-radio-group>
       </div>
       @if (generalGroup.get('category')!.hasError('required')) {
-        <mat-error>
-          Category is required
-        </mat-error>
+      <mat-error> Category is required </mat-error>
       }
 
       <!-- DESCRIPTION -->
@@ -181,14 +179,14 @@
       <div class="features-group">
         <label>Services:</label>
         @for (svc of servicesList; track svc.id) {
-          <div class="service-checkbox">
-            <mat-checkbox
-              [checked]="detailsGroup.get('services')!.value.includes(svc.id)"
-              (change)="onServiceToggle(svc.id, $event.checked)"
-            >
-              {{ svc.name }}
-            </mat-checkbox>
-          </div>
+        <div class="service-checkbox">
+          <mat-checkbox
+            [checked]="detailsGroup.get('services')!.value.includes(svc.id)"
+            (change)="onServiceToggle(svc.id, $event.checked)"
+          >
+            {{ svc.name }}
+          </mat-checkbox>
+        </div>
         }
       </div>
 
@@ -211,7 +209,11 @@
         <button mat-icon-button (click)="prevImage()">
           <mat-icon>chevron_left</mat-icon>
         </button>
-        <img [src]="currentImageUrl" alt="Preview" class="main-image" />
+        <img
+          [src]="uploadedFileUrls[currentImageIndex]"
+          alt="Preview"
+          class="main-image"
+        />
         <button mat-icon-button (click)="nextImage()">
           <mat-icon>chevron_right</mat-icon>
         </button>
@@ -219,11 +221,11 @@
         <!-- mini-thumbnails -->
         <div class="thumbs">
           @for (f of uploadedFiles; track f) {
-            <img
-              [src]="fileToObjectURL(f)"
-              [class.active]="$index === currentImageIndex"
-              (click)="currentImageIndex = $index"
-            />
+          <img
+            [src]="uploadedFileUrls[$index]"
+            [class.active]="$index === currentImageIndex"
+            (click)="currentImageIndex = $index"
+          />
           }
         </div>
       </div>
