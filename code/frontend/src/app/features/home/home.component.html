@@ -14,9 +14,11 @@
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Contract</mat-label>
       <mat-select [(value)]="selectedContract">
-        <mat-option *ngFor="let option of contractOptions" [value]="option">
-          {{ option }}
-        </mat-option>
+        @for (option of contractOptions; track option) {
+          <mat-option [value]="option">
+            {{ option }}
+          </mat-option>
+        }
       </mat-select>
     </mat-form-field>
 
@@ -24,9 +26,11 @@
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Estate</mat-label>
       <mat-select [(value)]="selectedEstate">
-        <mat-option *ngFor="let option of estateOptions" [value]="option">
-          {{ option }}
-        </mat-option>
+        @for (option of estateOptions; track option) {
+          <mat-option [value]="option">
+            {{ option }}
+          </mat-option>
+        }
       </mat-select>
     </mat-form-field>
 
@@ -34,9 +38,11 @@
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Rooms</mat-label>
       <mat-select [(value)]="selectedRooms">
-        <mat-option *ngFor="let option of roomOptions" [value]="option">
-          {{ option }}
-        </mat-option>
+        @for (option of roomOptions; track option) {
+          <mat-option [value]="option">
+            {{ option }}
+          </mat-option>
+        }
       </mat-select>
     </mat-form-field>
 
@@ -44,9 +50,11 @@
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Price</mat-label>
       <mat-select [(value)]="selectedPrice">
-        <mat-option *ngFor="let option of priceOptions" [value]="option">
-          {{ option }}
-        </mat-option>
+        @for (option of priceOptions; track option) {
+          <mat-option [value]="option">
+            {{ option }}
+          </mat-option>
+        }
       </mat-select>
     </mat-form-field>
   </div>
@@ -56,19 +64,18 @@
     <mat-form-field appearance="outline" class="location-input">
       <input
         type="text"
-        matInput
+        matinput
         placeholder="Enter location..."
-        [(ngModel)]="locationInput"
+        @description(locationinput)
         (input)="onLocationChange(locationInput)"
         [matAutocomplete]="auto"
       />
       <mat-autocomplete #auto="matAutocomplete">
-        <mat-option
-          *ngFor="let option of locationOptions"
-          [value]="option"
-        >
-          {{ option }}
-        </mat-option>
+        @for (option of locationOptions; track option) {
+          <mat-option [value]="option">
+            {{ option }}
+          </mat-option>
+        }
       </mat-autocomplete>
     </mat-form-field>
 

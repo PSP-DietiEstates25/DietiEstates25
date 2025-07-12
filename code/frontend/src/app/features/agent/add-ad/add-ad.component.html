@@ -21,55 +21,51 @@
         style="display: none"
       />
 
-      <div class="uploaded-list" *ngIf="uploadedFiles.length > 0">
+      @if (uploadedFiles.length > 0) {
+      <div class="uploaded-list">
         <mat-icon>photo</mat-icon>
-        <span *ngFor="let f of uploadedFiles; let i = index">
+        @for (f of uploadedFiles; track f) {
+        <span>
           {{ f.name }}
-          <button mat-icon-button (click)="removeFile(i)">
+          <button mat-icon-button (click)="removeFile($index)">
             <mat-icon color="warn">delete</mat-icon>
           </button>
         </span>
+        }
       </div>
+      }
 
       <!-- PRICE -->
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Price</mat-label>
         <input matInput formControlName="price" type="number" />
-        <mat-error *ngIf="generalGroup.get('price')!.hasError('required')">
-          Price is required
-        </mat-error>
-        <mat-error *ngIf="generalGroup.get('price')!.hasError('min')">
-          Price must be ≥ 0
-        </mat-error>
+        @if (generalGroup.get('price')!.hasError('required')) {
+        <mat-error> Price is required </mat-error>
+        } @if (generalGroup.get('price')!.hasError('min')) {
+        <mat-error> Price must be ≥ 0 </mat-error>
+        }
       </mat-form-field>
 
       <!-- CATEGORY -->
-      <div class="category-group">
-        <label>Category:</label>
-        <mat-radio-group formControlName="category">
-          <mat-radio-button *ngFor="let c of categories" [value]="c">
-            {{ c | titlecase }}
-          </mat-radio-button>
-        </mat-radio-group>
-      </div>
-      <mat-error *ngIf="generalGroup.get('category')!.hasError('required')">
-        Category is required
-      </mat-error>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Price</mat-label>
+        <input matInput formControlName="price" type="number" />
+        @if (generalGroup.get('price')!.hasError('required')) {
+        <mat-error> Price is required </mat-error>
+        } @if (generalGroup.get('price')!.hasError('min')) {
+        <mat-error> Price must be ≥ 0 </mat-error>
+        }
+      </mat-form-field>
 
       <!-- DESCRIPTION -->
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Description</mat-label>
         <textarea matInput formControlName="description" rows="4"></textarea>
-        <mat-error
-          *ngIf="generalGroup.get('description')!.hasError('required')"
-        >
-          Description is required
-        </mat-error>
-        <mat-error
-          *ngIf="generalGroup.get('description')!.hasError('minlength')"
-        >
-          Minimum 10 characters
-        </mat-error>
+        @if (generalGroup.get('description')!.hasError('required')) {
+        <mat-error> Description is required </mat-error>
+        } @if (generalGroup.get('description')!.hasError('minlength')) {
+        <mat-error> Minimum 10 characters </mat-error>
+        }
       </mat-form-field>
 
       <div class="step-buttons">
@@ -93,24 +89,23 @@
           (input)="onAddressInput()"
           autocomplete="off"
         />
-        <mat-error
-          *ngIf="addressGroup.get('addressText')!.hasError('required')"
-        >
-          Address is required
-        </mat-error>
+        @if (addressGroup.get('addressText')!.hasError('required')) {
+        <mat-error> Address is required </mat-error>
+        }
       </mat-form-field>
 
       <!-- Lista dei suggerimenti -->
-      <div class="suggestions" *ngIf="addressSuggestions.length">
+      @if (addressSuggestions.length) {
+      <div class="suggestions">
         <mat-list>
-          <mat-list-item
-            *ngFor="let sug of addressSuggestions"
-            (click)="selectAddress(sug)"
-          >
+          @for (sug of addressSuggestions; track sug) {
+          <mat-list-item (click)="selectAddress(sug)">
             {{ sug }}
           </mat-list-item>
+          }
         </mat-list>
       </div>
+      }
 
       <!-- Con Leaflet usiamo un div con #mapContainer -->
       <div #mapContainer class="map-container"></div>
@@ -134,35 +129,31 @@
         <mat-label>Square Meters</mat-label>
         <input matInput formControlName="squareMeters" type="number" />
         <!-- ERRORE LEGATO A squareMeters, NON a rooms -->
-        <mat-error
-          *ngIf="detailsGroup.get('squareMeters')!.hasError('required')"
-        >
-          Required
-        </mat-error>
-        <mat-error *ngIf="detailsGroup.get('squareMeters')!.hasError('min')">
-          Must be ≥ 1
-        </mat-error>
+        @if (detailsGroup.get('squareMeters')!.hasError('required')) {
+        <mat-error> Required </mat-error>
+        } @if (detailsGroup.get('squareMeters')!.hasError('min')) {
+        <mat-error> Must be ≥ 1 </mat-error>
+        }
       </mat-form-field>
 
       <!-- Campo Rooms -->
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Rooms</mat-label>
         <input matInput formControlName="rooms" type="number" />
-        <mat-error *ngIf="detailsGroup.get('rooms')!.hasError('required')">
-          Required
-        </mat-error>
-        <mat-error *ngIf="detailsGroup.get('rooms')!.hasError('min')">
-          Must be ≥ 1
-        </mat-error>
+        @if (detailsGroup.get('rooms')!.hasError('required')) {
+        <mat-error> Required </mat-error>
+        } @if (detailsGroup.get('rooms')!.hasError('min')) {
+        <mat-error> Must be ≥ 1 </mat-error>
+        }
       </mat-form-field>
 
       <!-- Campo Floor -->
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Floor</mat-label>
         <input matInput formControlName="floor" type="number" />
-        <mat-error *ngIf="detailsGroup.get('floor')!.hasError('required')">
-          Required
-        </mat-error>
+        @if (detailsGroup.get('floor')!.hasError('required')) {
+        <mat-error> Required </mat-error>
+        }
       </mat-form-field>
 
       <!-- Campo Energy Class -->
@@ -175,24 +166,24 @@
           <mat-option value="D">D</mat-option>
           <!-- … fino alle classi disponibili … -->
         </mat-select>
-        <mat-error
-          *ngIf="detailsGroup.get('energyClass')!.hasError('required')"
-        >
-          Required
-        </mat-error>
+        @if (detailsGroup.get('energyClass')!.hasError('required')) {
+        <mat-error> Required </mat-error>
+        }
       </mat-form-field>
 
       <!-- Services (checkbox dinamiche) -->
       <div class="features-group">
         <label>Services:</label>
-        <div *ngFor="let svc of servicesList" class="service-checkbox">
-          <mat-checkbox
-            [checked]="detailsGroup.get('services')!.value.includes(svc.id)"
-            (change)="onServiceToggle(svc.id, $event.checked)"
-          >
-            {{ svc.name }}
-          </mat-checkbox>
-        </div>
+        @for (svc of servicesList; track svc.id) {
+          <div class="service-checkbox">
+            <mat-checkbox
+              [checked]="detailsGroup.get('services')!.value.includes(svc.id)"
+              (change)="onServiceToggle(svc.id, $event.checked)"
+            >
+              {{ svc.name }}
+            </mat-checkbox>
+          </div>
+        }
       </div>
 
       <div class="step-buttons">
@@ -203,7 +194,7 @@
       </div>
     </form>
   </mat-step>
-  
+
   <!-- RECAP -->
   <mat-step>
     <ng-template matStepLabel>Recap</ng-template>
@@ -221,19 +212,20 @@
 
         <!-- mini-thumbnails -->
         <div class="thumbs">
-          <img
-            *ngFor="let f of uploadedFiles; let i = index"
-            [src]="fileToObjectURL(f)"
-            [class.active]="i === currentImageIndex"
-            (click)="currentImageIndex = i"
-          />
+          @for (f of uploadedFiles; track f) {
+            <img
+              [src]="fileToObjectURL(f)"
+              [class.active]="$index === currentImageIndex"
+              (click)="currentImageIndex = $index"
+            />
+          }
         </div>
       </div>
 
       <!-- 2) Riepilogo dati principali -->
       <div class="recap-summary">
         <div class="price-box">
-          {{ generalGroup.value.price | currency:'EUR':'symbol':'1.0-0' }}
+          {{ generalGroup.value.price | currency : "EUR" : "symbol" : "1.0-0" }}
         </div>
         <div class="icons-row">
           <div class="icon-item">
@@ -246,7 +238,7 @@
           </div>
           <div class="icon-item">
             <mat-icon>place</mat-icon>
-            <span>{{ addressGroup.value.addressText.split(',')[0] }}</span>
+            <span>{{ addressGroup.value.addressText.split(",")[0] }}</span>
           </div>
         </div>
       </div>

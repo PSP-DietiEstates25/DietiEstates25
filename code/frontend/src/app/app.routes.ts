@@ -22,6 +22,7 @@ export const routes: Routes = [
         (m) => m.HistoryComponent
       ),
   },
+
 /*
   {
     path: 'notification',
@@ -31,6 +32,7 @@ export const routes: Routes = [
       ),
   },
 */
+
   {
     path: 'agent',
     component: AgentDashboardComponent,
