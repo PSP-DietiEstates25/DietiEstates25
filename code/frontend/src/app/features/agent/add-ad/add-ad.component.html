@@ -47,15 +47,21 @@
       </mat-form-field>
 
       <!-- CATEGORY -->
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Price</mat-label>
-        <input matInput formControlName="price" type="number" />
-        @if (generalGroup.get('price')!.hasError('required')) {
-        <mat-error> Price is required </mat-error>
-        } @if (generalGroup.get('price')!.hasError('min')) {
-        <mat-error> Price must be ≥ 0 </mat-error>
-        }
-      </mat-form-field>
+      <div class="category-group">
+        <label>Category:</label>
+        <mat-radio-group formControlName="category">
+          @for (c of categories; track c) {
+            <mat-radio-button [value]="c">
+              {{ c | titlecase }}
+            </mat-radio-button>
+          }
+        </mat-radio-group>
+      </div>
+      @if (generalGroup.get('category')!.hasError('required')) {
+        <mat-error>
+          Category is required
+        </mat-error>
+      }
 
       <!-- DESCRIPTION -->
       <mat-form-field appearance="outline" class="full-width">
