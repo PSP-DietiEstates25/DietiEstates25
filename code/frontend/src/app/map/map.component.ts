@@ -13,6 +13,8 @@ import {
   tileLayer
 } from 'leaflet';
 
+import { environment } from '../../environments/environment.development';
+
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -22,7 +24,7 @@ export class MapComponent implements OnInit, AfterViewInit{
 
   @ViewChild('map')
   private mapContainter!: ElementRef<HTMLElement>;
-
+  
   constructor(){
 
   };
