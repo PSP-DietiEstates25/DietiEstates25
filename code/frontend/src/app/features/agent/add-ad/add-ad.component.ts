@@ -12,6 +12,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -23,10 +24,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { ChangeDetectorRef } from '@angular/core';
 import * as L from 'leaflet';
+
 import {
   LocationService,
   Coords,
 } from '../../../core/services/location.service';
+
 import {
   MetadataService,
   ServiceDto,
@@ -52,16 +55,21 @@ import { AdService } from '../../../core/services/ad.service';
   templateUrl: './add-ad.component.html',
   styleUrls: ['./add-ad.component.scss'],
 })
-export class AddAdComponent implements OnInit, AfterViewInit {
+export class AddAdComponent implements OnInit {//, AfterViewInit {
+
+  /*
   @ViewChild('mapContainer', { static: false })
   mapEl!: ElementRef<HTMLDivElement>;
+
   @ViewChild('recapMapContainer', { static: false })
   recapMapEl!: ElementRef<HTMLDivElement>;
+
+  */
 
   adForm!: FormGroup;
 
   // Nuove variabili: categorie e servizi vengono popolate dinamicamente
-  categories: string[] = [];
+  categories: string[] = ["Ciao"];
   servicesList: ServiceDto[] = [];
 
   addressSuggestions: string[] = [];
@@ -71,11 +79,12 @@ export class AddAdComponent implements OnInit, AfterViewInit {
   // carousel
   currentImageIndex = 0;
 
+  /*
   // leaflet
   private map!: L.Map;
   private recapMap!: L.Map;
   private marker!: L.Marker;
-
+  */
   constructor(
     private fb: FormBuilder,
     private locationService: LocationService,
@@ -131,6 +140,7 @@ export class AddAdComponent implements OnInit, AfterViewInit {
     });
   }
 
+  /*
   ngAfterViewInit(): void {
     // Inizializziamo Leaflet con coordinate di default
     this.initLeafletMap(45.4642, 9.19);
@@ -163,6 +173,8 @@ export class AddAdComponent implements OnInit, AfterViewInit {
     this.marker = L.marker([lat, lng]).addTo(this.map);
   }
 
+  */
+
   onAddressInput() {
     const text = this.adForm.get('address.addressText')!.value;
     if (text && text.length > 2) {
@@ -178,6 +190,8 @@ export class AddAdComponent implements OnInit, AfterViewInit {
     }
   }
 
+  /*
+
   selectAddress(suggestion: string) {
     this.adForm.get('address.addressText')!.setValue(suggestion);
     this.addressSuggestions = [];
@@ -191,6 +205,8 @@ export class AddAdComponent implements OnInit, AfterViewInit {
       error: (err) => console.error('Errore getCoordsFromAddress:', err),
     });
   }
+
+  */
 
   // Gestione upload file (come prima)
   onFileSelected(event: Event) {
@@ -270,6 +286,8 @@ export class AddAdComponent implements OnInit, AfterViewInit {
     return URL.createObjectURL(file);
   }
 
+  /*
+
   private initRecapMap(lat: number, lng: number) {
     if (this.recapMap) {
       this.recapMap.setView([lat, lng], 13);
@@ -285,6 +303,8 @@ export class AddAdComponent implements OnInit, AfterViewInit {
     }).addTo(this.recapMap);
     L.marker([lat, lng]).addTo(this.recapMap);
   }
+
+  */
 
   // ————— Submit finale —————
   onPublish() {
