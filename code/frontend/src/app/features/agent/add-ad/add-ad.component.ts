@@ -190,9 +190,8 @@ export class AddAdComponent implements OnInit {//, AfterViewInit {
     }
   }
 
-  /*
-
   selectAddress(suggestion: string) {
+  /*
     this.adForm.get('address.addressText')!.setValue(suggestion);
     this.addressSuggestions = [];
 
@@ -204,9 +203,9 @@ export class AddAdComponent implements OnInit {//, AfterViewInit {
       },
       error: (err) => console.error('Errore getCoordsFromAddress:', err),
     });
+    */
   }
 
-  */
 
   // Gestione upload file (come prima)
   onFileSelected(event: Event) {
