@@ -21,16 +21,16 @@
             formControlName="email"
             placeholder="Inserisci la tua email"
           />
-          <mat-error
-            *ngIf="lf['email'].hasError('required') && lf['email'].touched"
-          >
-            L’email è obbligatoria
-          </mat-error>
-          <mat-error
-            *ngIf="lf['email'].hasError('email') && lf['email'].touched"
-          >
-            Formato email non valido
-          </mat-error>
+          @if (lf['email'].hasError('required') && lf['email'].touched) {
+            <mat-error>
+              L’email è obbligatoria
+            </mat-error>
+          }
+          @if (lf['email'].hasError('email') && lf['email'].touched) {
+            <mat-error>
+              Formato email non valido
+            </mat-error>
+          }
         </mat-form-field>
 
         <!-- Password -->
@@ -49,24 +49,20 @@
             [attr.aria-label]="'Toggle password visibility'"
             [attr.aria-pressed]="!hideLoginPassword"
           >
-            <mat-icon>{{
-              hideLoginPassword ? "visibility_off" : "visibility"
-            }}</mat-icon>
+            <mat-icon>
+              {{ hideLoginPassword ? "visibility_off" : "visibility" }}
+            </mat-icon>
           </button>
-          <mat-error
-            *ngIf="
-              lf['password'].hasError('required') && lf['password'].touched
-            "
-          >
-            La password è obbligatoria
-          </mat-error>
-          <mat-error
-            *ngIf="
-              lf['password'].hasError('minlength') && lf['password'].touched
-            "
-          >
-            La password deve essere lunga almeno 6 caratteri
-          </mat-error>
+          @if (lf['password'].hasError('required') && lf['password'].touched) {
+            <mat-error>
+              La password è obbligatoria
+            </mat-error>
+          }
+          @if (lf['password'].hasError('minlength') && lf['password'].touched) {
+            <mat-error>
+              La password deve essere lunga almeno 6 caratteri
+            </mat-error>
+          }
         </mat-form-field>
 
         <!-- Pulsante Login -->
@@ -114,20 +110,16 @@
             formControlName="username"
             placeholder="Scegli un username"
           />
-          <mat-error
-            *ngIf="
-              rf['username'].hasError('required') && rf['username'].touched
-            "
-          >
-            Username obbligatorio
-          </mat-error>
-          <mat-error
-            *ngIf="
-              rf['username'].hasError('minlength') && rf['username'].touched
-            "
-          >
-            Almeno 3 caratteri
-          </mat-error>
+          @if (rf['username'].hasError('required') && rf['username'].touched) {
+            <mat-error>
+              Username obbligatorio
+            </mat-error>
+          }
+          @if (rf['username'].hasError('minlength') && rf['username'].touched) {
+            <mat-error>
+              Almeno 3 caratteri
+            </mat-error>
+          }
         </mat-form-field>
 
         <!-- Email -->
@@ -138,16 +130,16 @@
             formControlName="email"
             placeholder="Inserisci la tua email"
           />
-          <mat-error
-            *ngIf="rf['email'].hasError('required') && rf['email'].touched"
-          >
-            L’email è obbligatoria
-          </mat-error>
-          <mat-error
-            *ngIf="rf['email'].hasError('email') && rf['email'].touched"
-          >
-            Formato email non valido
-          </mat-error>
+          @if (rf['email'].hasError('required') && rf['email'].touched) {
+            <mat-error>
+              L’email è obbligatoria
+            </mat-error>
+          }
+          @if (rf['email'].hasError('email') && rf['email'].touched) {
+            <mat-error>
+              Formato email non valido
+            </mat-error>
+          }
         </mat-form-field>
 
         <!-- Password -->
@@ -166,24 +158,20 @@
             [attr.aria-label]="'Toggle password visibility'"
             [attr.aria-pressed]="!hideRegisterPassword"
           >
-            <mat-icon>{{
-              hideRegisterPassword ? "visibility_off" : "visibility"
-            }}</mat-icon>
+            <mat-icon>
+              {{ hideRegisterPassword ? "visibility_off" : "visibility" }}
+            </mat-icon>
           </button>
-          <mat-error
-            *ngIf="
-              rf['password'].hasError('required') && rf['password'].touched
-            "
-          >
-            La password è obbligatoria
-          </mat-error>
-          <mat-error
-            *ngIf="
-              rf['password'].hasError('minlength') && rf['password'].touched
-            "
-          >
-            Almeno 6 caratteri
-          </mat-error>
+          @if (rf['password'].hasError('required') && rf['password'].touched) {
+            <mat-error>
+              La password è obbligatoria
+            </mat-error>
+          }
+          @if (rf['password'].hasError('minlength') && rf['password'].touched) {
+            <mat-error>
+              Almeno 6 caratteri
+            </mat-error>
+          }
         </mat-form-field>
 
         <!-- Conferma Password -->
@@ -202,26 +190,20 @@
             [attr.aria-label]="'Toggle confirm visibility'"
             [attr.aria-pressed]="!hideRegisterConfirm"
           >
-            <mat-icon>{{
-              hideRegisterConfirm ? "visibility_off" : "visibility"
-            }}</mat-icon>
+            <mat-icon>
+              {{ hideRegisterConfirm ? "visibility_off" : "visibility" }}
+            </mat-icon>
           </button>
-          <mat-error
-            *ngIf="
-              rf['confirmPassword'].hasError('required') &&
-              rf['confirmPassword'].touched
-            "
-          >
-            Conferma password obbligatoria
-          </mat-error>
-          <mat-error
-            *ngIf="
-              rf['confirmPassword'].hasError('notMatching') &&
-              rf['confirmPassword'].touched
-            "
-          >
-            Le password non coincidono
-          </mat-error>
+          @if (rf['confirmPassword'].hasError('required') && rf['confirmPassword'].touched) {
+            <mat-error>
+              Conferma password obbligatoria
+            </mat-error>
+          }
+          @if (rf['confirmPassword'].hasError('notMatching') && rf['confirmPassword'].touched) {
+            <mat-error>
+              Le password non coincidono
+            </mat-error>
+          }
         </mat-form-field>
 
         <!-- Pulsante Registrati -->

@@ -6,12 +6,18 @@
 </div>
 
 <div class="search-box">
-  <input type="text" [(ngModel)]="location" placeholder="Your desired location goes here" />
-  <ul *ngIf="location">
-    <li *ngFor="let suggestion of filteredSuggestions">
+  <input
+    type="text"
+    [(ngModel)]="location"
+    placeholder="Your desired location goes here"
+  />
+  @if (location) {
+  <ul>
+    @for (suggestion of filteredSuggestions; track suggestion) {
+    <li>
       {{ suggestion }}
     </li>
+    }
   </ul>
+  }
 </div>
-
-<button class="search-btn">🔍 Search</button>
