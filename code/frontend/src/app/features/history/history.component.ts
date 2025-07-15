@@ -30,7 +30,7 @@ export class HistoryComponent {
   estateOptions = ['Apartment', 'House'];
   roomOptions = ['1', '2', '3', '4+'];
   priceOptions = ['< €500', '€500–€1000', '€1000–€1500', '> €1500'];
-  energyOptions = ['A++', 'A+', 'A', 'B', 'C', 'D'];
+  energyOptions = ['🍃A++', '🌱A+', '✅A', '👍B', '💡C', '❌D'];
 
   filters = {
     contract: '',

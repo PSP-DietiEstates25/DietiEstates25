@@ -12,7 +12,7 @@
   <div class="filters">
     <!-- Contract -->
     <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>Contract</mat-label>
+      <mat-label>🔑Contract</mat-label>
       <mat-select [(value)]="selectedContract">
         @for (option of contractOptions; track option) {
           <mat-option [value]="option">
@@ -24,7 +24,7 @@
 
     <!-- Estate -->
     <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>Estate</mat-label>
+      <mat-label>🏠Estate</mat-label>
       <mat-select [(value)]="selectedEstate">
         @for (option of estateOptions; track option) {
           <mat-option [value]="option">
@@ -36,7 +36,7 @@
 
     <!-- Rooms -->
     <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>Rooms</mat-label>
+      <mat-label>🛏️Rooms</mat-label>
       <mat-select [(value)]="selectedRooms">
         @for (option of roomOptions; track option) {
           <mat-option [value]="option">
@@ -48,7 +48,7 @@
 
     <!-- Price -->
     <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>Price</mat-label>
+      <mat-label>💲Price</mat-label>
       <mat-select [(value)]="selectedPrice">
         @for (option of priceOptions; track option) {
           <mat-option [value]="option">
@@ -65,7 +65,7 @@
       <input
         type="text"
         matInput
-        placeholder="Enter location..."
+        placeholder="📍Enter location..."
         [(ngModel)]="locationInput"
         (input)="onLocationChange(locationInput)"
         [matAutocomplete]="auto"
@@ -79,6 +79,6 @@
       </mat-autocomplete>
     </mat-form-field>
 
-    <button class="search-btn" (click)="onSearch()">Search</button>
+    <button class="search-btn" (click)="onSearch()">🔍Search</button>
   </div>
 </section>
