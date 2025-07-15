@@ -25,4 +25,8 @@ export class NotificationComponent implements OnInit {
       }, 3000);
     });
   }
+
+  setFalse(){
+
+  }
 }

@@ -6,8 +6,14 @@ import { AddAdComponent } from './features/agent/add-ad/add-ad.component';
 import { AgentGuard } from './core/guards/agent.guard';
 import { ClientGuard } from './core/guards/client.guard';
 
+import { MapComponent } from './map/map.component';
+
 export const routes: Routes = [
-  { path: 'auth', component: AuthComponent },
+  
+  { 
+    path: 'auth', 
+    component: AuthComponent 
+  },
 
   {
     path: '',
@@ -21,6 +27,11 @@ export const routes: Routes = [
       import('./features/history/history.component').then(
         (m) => m.HistoryComponent
       ),
+  },
+  {
+    path: 'map',
+    title: 'Mappa di prova',
+    component: MapComponent
   },
 /*
   {
