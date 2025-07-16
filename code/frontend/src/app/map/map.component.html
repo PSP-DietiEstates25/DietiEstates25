@@ -1,2 +1,11 @@
-<div class="map-container" #map></div>
+<mgl-map
+    [style]="style"
+    [zoom]="initialZoom"
+    [center]="initialCenter"
+    [canvasContextAttributes]="initialCanvasContextAttribute"
+>
+    @for (indirizzo of indirizzi; track $index) {
+        <mgl-marker [lngLat]="indirizzo"></mgl-marker>
+    }
 
+</mgl-map>

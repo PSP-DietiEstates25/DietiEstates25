@@ -1,41 +1,36 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { Map } from 'maplibre-gl';
 
-import { environment } from '../../environments/environment';
+import { Component } from '@angular/core';
+import { MapComponent, MarkerComponent } from '@maplibre/ngx-maplibre-gl';
+
 import { environmentMap } from '../../environments/environment.map';
 
 @Component({
   selector: 'app-map',
+  standalone: true,
   templateUrl: './map.component.html',
-  styleUrls: ['./map.component.scss']
+  styleUrls: ['./map.component.scss'],
+  imports: [MapComponent, MarkerComponent],
 })
-export class MapComponent implements OnInit, AfterViewInit {
+export class Map {
 
-  @ViewChild('map')
-  private mapContainer!: ElementRef<HTMLElement>;
+  style: string = environmentMap.map_osm_bright;
 
-  private map!: Map;
+  initialLatitude: number = environmentMap.initialLatitude;
+  initialLongitude: number = environmentMap.initialLongitude;
+  initialZoom: [number] = [environmentMap.initialZoom];
+  initialCenter: [number, number] = [environmentMap.initialLongitude, environmentMap.initialLatitude];
 
-  constructor() { }
+  initialCanvasContextAttribute = environmentMap.initialCanvasContextAttribute;
 
-  ngOnInit() {
-  }
+  indirizzoValentina: [number, number] = [14.367754323, 40.784007384];
+  indirizzoGiovanni: [number, number] = [14.2420118, 40.85155];
+  indirizzoRoberto: [number, number] = [14.209218, 40.926221];
+  indirizzoLuca: [number, number] = [14.247382014, 40.872010897]
 
-  ngAfterViewInit() {
-    const myAPIKey = environment.geoapifyAPIKey;
-    const mapStyle = environmentMap.map_klokantech_basic;
-
-    const initialState = {
-      lng: 11,
-      lat: 49,
-      zoom: 4
-    };
-
-    this.map = new Map({
-      container: this.mapContainer.nativeElement,
-      style: `${mapStyle}?apiKey=${myAPIKey}`,
-      center: [initialState.lng, initialState.lat],
-      zoom: initialState.zoom
-    });
-  }
+  indirizzi = [
+    this.indirizzoValentina,
+    this.indirizzoGiovanni,
+    this.indirizzoRoberto,
+    this.indirizzoLuca
+  ];
 }
