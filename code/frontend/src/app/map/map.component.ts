@@ -1,5 +1,5 @@
 
-import { Component } from '@angular/core';
+import { Component, signal} from '@angular/core';
 import { MapComponent, MarkerComponent } from '@maplibre/ngx-maplibre-gl';
 
 import { environmentMap } from '../../environments/environment.map';
