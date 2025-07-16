@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angula
 import { Map } from 'maplibre-gl';
 
 import { environment } from '../../environments/environment';
+import { environmentMap } from '../../environments/environment.map';
 
 @Component({
   selector: 'app-map',
@@ -22,7 +23,7 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     const myAPIKey = environment.geoapifyAPIKey;
-    const mapStyle = environment.map_klokantech_basic;
+    const mapStyle = environmentMap.map_klokantech_basic;
 
     const initialState = {
       lng: 11,
