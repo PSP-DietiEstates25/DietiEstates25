@@ -1,46 +1,40 @@
-import {
-  Component,
-  ElementRef,
-  OnDestroy,
-  AfterViewInit,
-  ViewChild
-} from '@angular/core';
-import { Loader } from '@googlemaps/js-api-loader';
-import { environment } from '../../environments/environment';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Map } from 'maplibre-gl';
 
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-map',
-  standalone: true,
-  imports: [],
   templateUrl: './map.component.html',
-  styleUrl: './map.component.scss'
+  styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements AfterViewInit {
+export class MapComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('map', { static: true }) 
-  mapElement!: ElementRef<HTMLElement>;
-  
-  private map!: google.maps.Map;
+  @ViewChild('map')
+  private mapContainer!: ElementRef<HTMLElement>;
 
-  private loader = new Loader({
-    apiKey: environment.mapsPlatformAPIKey,
-    version: 'weekly',
-    libraries: ['places']  // se ti serve anche Places
-  });
+  private map!: Map;
 
-  async ngAfterViewInit(): Promise<void> {
-    try {
-      // carica *solo* la libreria 'maps' e ne estrae la classe Map
-      const { Map } = await this.loader.importLibrary('maps');  
-      // inizializza
-      this.map = new Map(this.mapElement.nativeElement, {
-        center: { lat: 45.4642, lng: 9.1900 },
-        zoom: 12
-      });
-    } catch (err) {
-      console.error('Google Maps failed to load', err);
-    }
+  constructor() { }
+
+  ngOnInit() {
   }
 
+  ngAfterViewInit() {
+    const myAPIKey = environment.geoapifyAPIKey;
+    const mapStyle = environment.map_klokantech_basic;
+
+    const initialState = {
+      lng: 11,
+      lat: 49,
+      zoom: 4
+    };
+
+    this.map = new Map({
+      container: this.mapContainer.nativeElement,
+      style: `${mapStyle}?apiKey=${myAPIKey}`,
+      center: [initialState.lng, initialState.lat],
+      zoom: initialState.zoom
+    });
+  }
 }

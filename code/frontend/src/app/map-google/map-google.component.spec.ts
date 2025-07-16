@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MapComponent } from './map.component';
+import { MapComponent } from './map-google.component';
 
-describe('MapComponent', () => {
+describe('Map2Component', () => {
   let component: MapComponent;
   let fixture: ComponentFixture<MapComponent>;
 
