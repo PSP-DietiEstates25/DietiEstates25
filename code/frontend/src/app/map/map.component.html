@@ -1,23 +1,4 @@
 
 <div #mapContainer class="map-container">
-    <app-autocompleter></app-autocompleter>
+    <app-autocompleter [(map)]="map"></app-autocompleter>
 </div>
-
-
-<!--
-
-<div class="map-container" #mapContainer>
-    <input id="autocomplete" placeholder="Cerca indirizzo..." />
-</div>
-
-@for (indirizzo of indirizzi; track $index) {
-        <mgl-marker [lngLat]="indirizzo"></mgl-marker>
-    }
-
-    
-Marker custom (per definizione è un layer, non un marker) da utilizzare al posto di quello attuale
-https://api.geoapify.com/v2/icon/?type=awesome&color=%230573d2&size=42&icon=house&contentSize=15&noWhiteCircle&apiKey=YOUR_API_KEY
-
-type:awesome;color:%230573d2;size:42;icon:house;contentsize:15;whitecircle:no
-
--->
