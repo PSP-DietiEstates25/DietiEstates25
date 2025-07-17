@@ -1,36 +1,34 @@
 
-import { Component, signal} from '@angular/core';
+import { Component, signal, input, InputSignal, computed} from '@angular/core';
 import { MapComponent, MarkerComponent } from '@maplibre/ngx-maplibre-gl';
 
 import { environmentMap } from '../../environments/environment.map';
+import { AutocompleterComponent } from '../autocompleter/autocompleter.component';
+import { LngLatLike } from 'maplibre-gl';
 
 @Component({
   selector: 'app-map',
   standalone: true,
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
-  imports: [MapComponent, MarkerComponent],
+  imports: [MapComponent, MarkerComponent, AutocompleterComponent],
 })
 export class Map {
 
-  style: string = environmentMap.map_osm_bright;
+  baseStyle: string = environmentMap.map_osm_bright;
 
-  initialLatitude: number = environmentMap.initialLatitude;
-  initialLongitude: number = environmentMap.initialLongitude;
-  initialZoom: [number] = [environmentMap.initialZoom];
-  initialCenter: [number, number] = [environmentMap.initialLongitude, environmentMap.initialLatitude];
+  // Signal “reattivi”
+  latitude = signal<number>(environmentMap.initialLatitude);
+  longitude = signal<number>(environmentMap.initialLongitude);
 
-  initialCanvasContextAttribute = environmentMap.initialCanvasContextAttribute;
+  zoom = signal<[number]>([environmentMap.initialZoom]);
 
-  indirizzoValentina: [number, number] = [14.367754323, 40.784007384];
-  indirizzoGiovanni: [number, number] = [14.2420118, 40.85155];
-  indirizzoRoberto: [number, number] = [14.209218, 40.926221];
-  indirizzoLuca: [number, number] = [14.247382014, 40.872010897]
+  // computed che restituisce sempre [lng, lat]
+  center = computed<LngLatLike>(() => [
+    this.longitude(),
+    this.latitude(),
+  ]);
 
-  indirizzi = [
-    this.indirizzoValentina,
-    this.indirizzoGiovanni,
-    this.indirizzoRoberto,
-    this.indirizzoLuca
-  ];
+  initialCanvasContextAttribute = signal(environmentMap.initialCanvasContextAttribute);
+
 }

@@ -1,15 +1,23 @@
-<!--
-https://api.geoapify.com/v2/icon/?type=awesome&color=%230573d2&size=42&icon=house&contentSize=15&noWhiteCircle&apiKey=YOUR_API_KEY
--->
-
-<mgl-map
-    [style]="style"
-    [zoom]="initialZoom"
-    [center]="initialCenter"
-    [canvasContextAttributes]="initialCanvasContextAttribute"
+<mgl-map id="map"
+    [style]="baseStyle"
+    [zoom]="zoom()"
+    [center]="center()"
+    [canvasContextAttributes]="initialCanvasContextAttribute()"
 >
-    @for (indirizzo of indirizzi; track $index) {
+
+</mgl-map>
+<app-autocompleter></app-autocompleter>
+
+<!--
+
+@for (indirizzo of indirizzi; track $index) {
         <mgl-marker [lngLat]="indirizzo"></mgl-marker>
     }
 
-</mgl-map>
+    
+Marker custom (per definizione è un layer, non un marker) da utilizzare al posto di quello attuale
+https://api.geoapify.com/v2/icon/?type=awesome&color=%230573d2&size=42&icon=house&contentSize=15&noWhiteCircle&apiKey=YOUR_API_KEY
+
+type:awesome;color:%230573d2;size:42;icon:house;contentsize:15;whitecircle:no
+
+-->
