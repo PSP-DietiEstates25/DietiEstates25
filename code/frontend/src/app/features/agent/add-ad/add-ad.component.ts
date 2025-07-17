@@ -1,11 +1,7 @@
-import {
-  Component,
-  OnInit,
-  AfterViewInit,
-  ViewChild,
-  ElementRef,
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
+
 import {
   ReactiveFormsModule,
   FormBuilder,
@@ -24,16 +20,19 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { ChangeDetectorRef } from '@angular/core';
 
-import {
-  LocationService,
-  Coords,
-} from '../../../core/services/location.service';
+import { LocationService } from '../../../core/services/location.service';
 
 import {
   MetadataService,
   ServiceDto,
 } from '../../../core/services/metadata.service';
+
 import { AdService } from '../../../core/services/ad.service';
+
+import { AdRecapStepComponent } from './steps/ad-step-recap/ad-step-recap.component';
+import { AdGeneralStepComponent } from './steps/ad-step-general/ad-step-general.component';
+import { AdAddressStepComponent } from './steps/ad-step-address/ad-step-address.component';
+import { AdDetailsStepComponent } from './steps/ad-step-details/ad-step-details.component';
 
 @Component({
   selector: 'app-add-ad',
@@ -50,25 +49,24 @@ import { AdService } from '../../../core/services/ad.service';
     MatButtonModule,
     MatIconModule,
     MatListModule,
+    AdRecapStepComponent,
+    AdGeneralStepComponent,
+    AdAddressStepComponent,
+    AdDetailsStepComponent,
   ],
   templateUrl: './add-ad.component.html',
   styleUrls: ['./add-ad.component.scss'],
 })
-export class AddAdComponent implements OnInit {//, AfterViewInit {
-
-  /*
-  @ViewChild('mapContainer', { static: false })
-  mapEl!: ElementRef<HTMLDivElement>;
-
-  @ViewChild('recapMapContainer', { static: false })
-  recapMapEl!: ElementRef<HTMLDivElement>;
-
-  */
+export class AddAdComponent implements OnInit {
+  // === FormGroups per i 3 step ===
+  generalGroup: FormGroup;
+  addressGroup: FormGroup;
+  detailsGroup: FormGroup;
 
   adForm!: FormGroup;
 
   // Nuove variabili: categorie e servizi vengono popolate dinamicamente
-  categories: string[] = ["Ciao"];
+  categories: string[] = ['Ciao'];
   servicesList: ServiceDto[] = [];
 
   addressSuggestions: string[] = [];
@@ -78,22 +76,34 @@ export class AddAdComponent implements OnInit {//, AfterViewInit {
   // carousel
   currentImageIndex = 0;
 
-  /*
-  // leaflet
-  private map!: L.Map;
-  private recapMap!: L.Map;
-  private marker!: L.Marker;
-  */
   constructor(
     private fb: FormBuilder,
     private locationService: LocationService,
     private metadataService: MetadataService,
     private adService: AdService,
     private cd: ChangeDetectorRef
-  ) {}
+  ) {
+    this.generalGroup = this.fb.group({
+      price: [null, [Validators.required, Validators.min(0)]],
+      category: [null, Validators.required],
+      description: [null, [Validators.required, Validators.minLength(10)]],
+    });
+
+    this.addressGroup = this.fb.group({
+      addressText: [null, Validators.required],
+    });
+
+    this.detailsGroup = this.fb.group({
+      squareMeters: [null, [Validators.required, Validators.min(1)]],
+      rooms: [null, [Validators.required, Validators.min(1)]],
+      floor: [null, Validators.required],
+      energyClass: [null, Validators.required],
+      services: [[]],
+    });
+  }
 
   ngOnInit(): void {
-    // Costrusciamo il form:
+    // Costruiamo il form:
     // - category viene inizialmente impostato a '' (vuoto) perché la popoleremo dal backend.
     // - features (services) inizialmente empty, ma li gestiremo come FormArray via checkbox dinamiche.
     this.adForm = this.fb.group({
@@ -124,7 +134,7 @@ export class AddAdComponent implements OnInit {//, AfterViewInit {
     this.metadataService.getCategories().subscribe({
       next: (cats) => {
         this.categories = cats;
-        // Se vuoi scegliere di default la prima categoria, potresti fare:
+        // Se si vuole scegliere di default la prima categoria, fare:
         // this.adForm.get('general.category')!.setValue(this.categories[0]);
       },
       error: (err) => console.error('Errore caricamento categories:', err),
@@ -138,41 +148,6 @@ export class AddAdComponent implements OnInit {//, AfterViewInit {
       error: (err) => console.error('Errore caricamento services:', err),
     });
   }
-
-  /*
-  ngAfterViewInit(): void {
-    // Inizializziamo Leaflet con coordinate di default
-    this.initLeafletMap(45.4642, 9.19);
-
-    // inizializza mappa di recap solo quando il DOM è pronto
-    setTimeout(() => {
-      this.initRecapMap(
-        this.adForm.get('address.locationCoords.lat')!.value || 45.4642,
-        this.adForm.get('address.locationCoords.lng')!.value || 9.19
-      );
-    });
-  }
-
-  private initLeafletMap(lat: number, lng: number) {
-    if (this.map) {
-      this.map.setView([lat, lng], 15);
-      if (this.marker) {
-        this.marker.setLatLng([lat, lng]);
-      } else {
-        this.marker = L.marker([lat, lng]).addTo(this.map);
-      }
-      return;
-    }
-
-    this.map = L.map(this.mapEl.nativeElement).setView([lat, lng], 15);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(this.map);
-    this.marker = L.marker([lat, lng]).addTo(this.map);
-  }
-
-  */
 
   onAddressInput() {
     const text = this.adForm.get('address.addressText')!.value;
@@ -189,24 +164,7 @@ export class AddAdComponent implements OnInit {//, AfterViewInit {
     }
   }
 
-  selectAddress(suggestion: string) {
-  /*
-    this.adForm.get('address.addressText')!.setValue(suggestion);
-    this.addressSuggestions = [];
-
-    this.locationService.getCoordsFromAddress(suggestion).subscribe({
-      next: (coords: Coords) => {
-        this.adForm.get('address.locationCoords.lat')!.setValue(coords.lat);
-        this.adForm.get('address.locationCoords.lng')!.setValue(coords.lng);
-        this.initLeafletMap(coords.lat, coords.lng);
-      },
-      error: (err) => console.error('Errore getCoordsFromAddress:', err),
-    });
-    */
-  }
-
-
-  // Gestione upload file (come prima)
+  // Gestione upload file
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files) {
@@ -284,41 +242,10 @@ export class AddAdComponent implements OnInit {//, AfterViewInit {
     return URL.createObjectURL(file);
   }
 
-  /*
-
-  private initRecapMap(lat: number, lng: number) {
-    if (this.recapMap) {
-      this.recapMap.setView([lat, lng], 13);
-      return;
-    }
-    this.recapMap = L.map(this.recapMapEl.nativeElement).setView(
-      [lat, lng],
-      13
-    );
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution:
-        '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
-    }).addTo(this.recapMap);
-    L.marker([lat, lng]).addTo(this.recapMap);
-  }
-
-  */
-
   // ————— Submit finale —————
   onPublish() {
     const payload = this.adForm.value;
     // this.adService.createAd(payload).subscribe(...)
     console.log('Publishing AD:', payload);
-  }
-
-  // Getter per le formGroup
-  get generalGroup(): FormGroup {
-    return this.adForm.get('general') as FormGroup;
-  }
-  get addressGroup(): FormGroup {
-    return this.adForm.get('address') as FormGroup;
-  }
-  get detailsGroup(): FormGroup {
-    return this.adForm.get('details') as FormGroup;
   }
 }
