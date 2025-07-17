@@ -1,14 +1,14 @@
-<mgl-map id="map"
-    [style]="baseStyle"
-    [zoom]="zoom()"
-    [center]="center()"
-    [canvasContextAttributes]="initialCanvasContextAttribute()"
->
 
-</mgl-map>
-<app-autocompleter></app-autocompleter>
+<div #mapContainer class="map-container">
+    <app-autocompleter></app-autocompleter>
+</div>
+
 
 <!--
+
+<div class="map-container" #mapContainer>
+    <input id="autocomplete" placeholder="Cerca indirizzo..." />
+</div>
 
 @for (indirizzo of indirizzi; track $index) {
         <mgl-marker [lngLat]="indirizzo"></mgl-marker>

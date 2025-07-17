@@ -1,34 +1,34 @@
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import * as maplibregl from 'maplibre-gl';
 
-import { Component, signal, input, InputSignal, computed} from '@angular/core';
-import { MapComponent, MarkerComponent } from '@maplibre/ngx-maplibre-gl';
-
-import { environmentMap } from '../../environments/environment.map';
 import { AutocompleterComponent } from '../autocompleter/autocompleter.component';
-import { LngLatLike } from 'maplibre-gl';
+import { environmentMap } from '../../environments/environment.map';
 
 @Component({
   selector: 'app-map',
   standalone: true,
+  imports: [AutocompleterComponent],
   templateUrl: './map.component.html',
-  styleUrls: ['./map.component.scss'],
-  imports: [MapComponent, MarkerComponent, AutocompleterComponent],
+  styleUrls: ['./map.component.scss']
 })
-export class Map {
+export class MapComponent implements OnInit {
 
-  baseStyle: string = environmentMap.map_osm_bright;
+  @ViewChild('mapContainer', { static: true })
+  mapContainer!: ElementRef;
+  
+  map!: maplibregl.Map;
 
-  // Signal “reattivi”
-  latitude = signal<number>(environmentMap.initialLatitude);
-  longitude = signal<number>(environmentMap.initialLongitude);
+  ngOnInit(): void {
+    this.initMap();
+  }
 
-  zoom = signal<[number]>([environmentMap.initialZoom]);
-
-  // computed che restituisce sempre [lng, lat]
-  center = computed<LngLatLike>(() => [
-    this.longitude(),
-    this.latitude(),
-  ]);
-
-  initialCanvasContextAttribute = signal(environmentMap.initialCanvasContextAttribute);
+  private initMap(): void {
+    this.map = new maplibregl.Map({
+      container: this.mapContainer.nativeElement,
+      style: environmentMap.map_osm_bright,
+      center: [12.4964, 41.9028], // Roma
+      zoom: 12
+    });
+  }
 
 }

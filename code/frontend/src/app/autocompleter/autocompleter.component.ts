@@ -5,8 +5,6 @@ import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-autocompleter',
-  standalone: true,
-  imports: [],
   templateUrl: './autocompleter.component.html',
   styleUrl: './autocompleter.component.scss'
 })
@@ -26,6 +24,15 @@ export class AutocompleterComponent {
     };
 
     // Create an instance of Geocoder-Autocomplete
-    this.geocoderAutocomplete = new GeocoderAutocomplete(container, environment.geoapifyAPIKey, options);
+    this.geocoderAutocomplete = new GeocoderAutocomplete(
+      container,
+      environment.geoapifyAPIKey, 
+      options);
+
+      // Al click su un risultato
+    this.geocoderAutocomplete.on('select', (value: any) => {
+      const { lon, lat } = value.properties;
+      //this.map.flyTo({ center: [lon, lat], zoom: 15 });
+    });
   }
 }

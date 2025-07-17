@@ -1,23 +1,14 @@
 html,
 body,
-#map {
+
+#mapContainer {
   width: 100%;
   height: 100%;
   margin: 0;
 }
 
-/*
-
-:host
-:host {
-  display: block;      
-  height: 100%;      
+.map-container  {
+  width: 100%;
+  height: 100%;
+  margin: 0;
 }
-
-mgl-map {
-    width: 100%;
-    height: 75vh;      
-    position: relative; 
-}
-
-*/

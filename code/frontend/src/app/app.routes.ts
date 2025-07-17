@@ -6,7 +6,7 @@ import { AddAdComponent } from './features/agent/add-ad/add-ad.component';
 import { AgentGuard } from './core/guards/agent.guard';
 import { ClientGuard } from './core/guards/client.guard';
 
-import { Map } from './map/map.component';
+import { MapComponent } from './map/map.component';
 
 export const routes: Routes = [
   
@@ -31,7 +31,7 @@ export const routes: Routes = [
   {
     path: 'map',
     title: 'Mappa di prova',
-    component: Map
+    component: MapComponent
   },
 /*
   {
