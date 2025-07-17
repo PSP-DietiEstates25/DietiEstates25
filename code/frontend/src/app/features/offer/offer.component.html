@@ -1,0 +1,58 @@
+<app-navbar></app-navbar>
+
+<section class="hero">
+  <div class="offer-section">
+    <div class="overlay">
+      <h1 class="title">Offer <span>History</span></h1>
+    </div>
+   
+    <!-- Contenitore per le card degli appartamenti -->
+    <div class="apartments-container">
+        <!-- Se ci sono appartamenti -->
+      @if (appartamenti.length > 0) {
+        <!-- Loop attraverso ogni appartamento -->
+        @for (apt of appartamenti; track apt) {
+            <!-- Card dell'appartamento - al click attiva/disattiva la selezione -->
+          <div class="apartment-card" 
+               (click)="toggleApartment(apt)" 
+               [class.selected]="isSelected(apt)">
+               <!-- Intestazione della card con nome e freccia indicatore -->
+            <div class="card-header">
+              <h3>{{ apt.nome }}</h3>
+              <span class="arrow">{{ isSelected(apt) ? '▲' : '▼' }}</span>
+            </div>
+            
+            <!-- Sezione dettagli (visibile solo se selezionato) -->
+            @if (isSelected(apt)) {
+              <div class="card-details">
+                <div class="offers">
+                  <h4>Your Offers</h4>
+                  <ul>
+                    @for (offerta of apt.mieOfferte; track offerta) {
+                      <li>{{ offerta | number }} €</li> <!-- Formatta il numero -->
+                    }
+                  </ul>
+                </div>
+
+                <div class="counteroffers">
+                  <h4>Agent's Counteroffers</h4>
+                  @if (hasCounteroffers()) {
+                    <ul>
+                      @for (c of apt.controfferte; track c) {
+                        <li>{{ c | number }} €</li>
+                      }
+                    </ul>
+                  } @else {
+                    <p><em>No counteroffers received.</em></p>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      } @else {
+        <p class="no-apartments"><em>No apartments with offers.</em></p>
+      }
+    </div>
+  </div>
+</section>

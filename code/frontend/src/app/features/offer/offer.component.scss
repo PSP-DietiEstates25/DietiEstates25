@@ -1,0 +1,143 @@
+.hero {
+  height: 100vh;
+  margin: 0;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  
+  background-image: url('/assets/city-background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center bottom;
+  background-attachment: scroll;
+
+  .offer-section {
+    margin-top: 200px;
+    padding: 6rem 2rem 2rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: transparent;
+    width: 100%;
+    max-width: 1200px;
+
+    .overlay {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      width: 100%;
+
+      .title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        color: #1d3c89;
+
+        span {
+          color: black;
+        }
+      }
+    }
+
+    .apartments-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+      width: 100%;
+
+      .no-apartments {
+        width: 100%;
+        text-align: center;
+        font-size: 1.2rem;
+        color: #666;
+        margin-top: 2rem;
+      }
+
+      .apartment-card {
+        background: #f9f9f9;
+        border: 2px solid #ccc;
+        border-radius: 10px;
+        padding: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 300px;
+        box-sizing: border-box;
+        margin-bottom: 1.5rem;
+
+        &:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        &.selected {
+          border-color: #007bff;
+          background: #eef6ff;
+          box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+        }
+
+        .card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #333;
+          }
+
+          .arrow {
+            font-size: 1.2rem;
+            color: #555;
+            transition: transform 0.3s ease;
+          }
+        }
+
+        .card-details {
+          margin-top: 1rem;
+          animation: fadeIn 0.3s ease-out;
+
+          h4 {
+            margin-bottom: 0.5rem;
+            color: #222;
+            font-size: 1.1rem;
+          }
+
+          ul {
+            margin: 0;
+            padding-left: 1.2rem;
+
+            li {
+              margin-bottom: 0.3rem;
+              list-style-type: disc;
+              color: #444;
+            }
+          }
+
+          p {
+            margin: 0;
+            color: #777;
+            font-style: italic;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
