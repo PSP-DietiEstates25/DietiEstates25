@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MapComponent } from './map-google.component';
+import { AutocompleterComponent } from './autocompleter.component';
 
-describe('Map2Component', () => {
-  let component: MapComponent;
-  let fixture: ComponentFixture<MapComponent>;
+describe('AutocompleterComponent', () => {
+  let component: AutocompleterComponent;
+  let fixture: ComponentFixture<AutocompleterComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MapComponent]
+      imports: [AutocompleterComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MapComponent);
+    fixture = TestBed.createComponent(AutocompleterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

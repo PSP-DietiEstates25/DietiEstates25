@@ -1,36 +1,31 @@
-
-import { Component, signal} from '@angular/core';
-import { MapComponent, MarkerComponent } from '@maplibre/ngx-maplibre-gl';
+import { Component, OnInit, ViewChild, ElementRef, WritableSignal, signal } from '@angular/core';
+import * as maplibregl from 'maplibre-gl';
 
 import { environmentMap } from '../../environments/environment.map';
+import { AutocompleterComponent } from '../autocompleter/autocompleter.component';
 
 @Component({
   selector: 'app-map',
   standalone: true,
+  imports: [AutocompleterComponent],
   templateUrl: './map.component.html',
-  styleUrls: ['./map.component.scss'],
-  imports: [MapComponent, MarkerComponent],
+  styleUrls: ['./map.component.scss']
 })
-export class Map {
+export class MapComponent implements OnInit {
+  @ViewChild('mapContainer', { static: true })
+  mapContainer!: ElementRef;
 
-  style: string = environmentMap.map_osm_bright;
+  // 1) signal condivisa col child
+  map!: WritableSignal<maplibregl.Map>;
 
-  initialLatitude: number = environmentMap.initialLatitude;
-  initialLongitude: number = environmentMap.initialLongitude;
-  initialZoom: [number] = [environmentMap.initialZoom];
-  initialCenter: [number, number] = [environmentMap.initialLongitude, environmentMap.initialLatitude];
-
-  initialCanvasContextAttribute = environmentMap.initialCanvasContextAttribute;
-
-  indirizzoValentina: [number, number] = [14.367754323, 40.784007384];
-  indirizzoGiovanni: [number, number] = [14.2420118, 40.85155];
-  indirizzoRoberto: [number, number] = [14.209218, 40.926221];
-  indirizzoLuca: [number, number] = [14.247382014, 40.872010897]
-
-  indirizzi = [
-    this.indirizzoValentina,
-    this.indirizzoGiovanni,
-    this.indirizzoRoberto,
-    this.indirizzoLuca
-  ];
+  ngOnInit(): void {
+    this.map = signal(
+      new maplibregl.Map({
+        container: this.mapContainer.nativeElement,
+        style: environmentMap.map_osm_bright,
+        center: [12.4964, 41.9028], // Roma
+        zoom: 12
+      })
+    );
+  }
 }
