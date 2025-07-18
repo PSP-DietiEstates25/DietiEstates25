@@ -25,6 +25,15 @@ export const routes: Routes = [
         (m) => m.HistoryComponent
       ),
   },
+
+  {
+  path: 'offer',
+    loadComponent: () =>
+      import('./features/offer/offer.component').then(
+        (m) => m.OfferComponent
+      ),
+  },
+
   {
     path: 'map',
     title: 'Mappa di prova',
