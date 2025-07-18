@@ -68,7 +68,7 @@ export class OfferComponent {
   //  Mostra messaggio se non ci sono controfferte
   hasCounteroffers(): boolean {
     return (
-      this.selectedApartment?.controfferte?.length > 0
+      this.selectedApartment?.controfferte?.length! > 0
     );
   }
 }

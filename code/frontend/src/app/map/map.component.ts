@@ -12,6 +12,7 @@ import { AutocompleterComponent } from '../autocompleter/autocompleter.component
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit {
+
   @ViewChild('mapContainer', { static: true })
   mapContainer!: ElementRef;
 
