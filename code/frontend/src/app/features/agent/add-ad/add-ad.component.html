@@ -1,272 +1,52 @@
-<!-- add-ad.component.html -->
-
 <mat-horizontal-stepper [linear]="true">
-  <!-- [STEP 1] General ad information -->
+  
+  <!-- Step 1: General info -->
   <mat-step [stepControl]="generalGroup">
     <ng-template matStepLabel>General ad information</ng-template>
-
-    <form [formGroup]="generalGroup" class="step-form">
-      <!-- UPLOAD FOTO -->
-      <label for="fileUpload" class="file-upload-label">
-        <div class="file-dropzone">
-          <mat-icon>cloud_upload</mat-icon>
-          <span>Drag & drop or Browse</span>
-        </div>
-      </label>
-      <input
-        type="file"
-        id="fileUpload"
-        multiple
-        (change)="onFileSelected($event)"
-        style="display: none"
-      />
-
-      @if (uploadedFiles.length > 0) {
-      <div class="uploaded-list">
-        <mat-icon>photo</mat-icon>
-        @for (f of uploadedFiles; track f) {
-        <span>
-          {{ f.name }}
-          <button mat-icon-button (click)="removeFile($index)">
-            <mat-icon color="warn">delete</mat-icon>
-          </button>
-        </span>
-        }
-      </div>
-      }
-
-      <!-- PRICE -->
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Price</mat-label>
-        <input matInput formControlName="price" type="number" />
-        @if (generalGroup.get('price')!.hasError('required')) {
-        <mat-error> Price is required </mat-error>
-        } @if (generalGroup.get('price')!.hasError('min')) {
-        <mat-error> Price must be ≥ 0 </mat-error>
-        }
-      </mat-form-field>
-
-      <!-- CATEGORY -->
-      <div class="category-group">
-        <label>Category:</label>
-        <mat-radio-group formControlName="category">
-          @for (c of categories; track c) {
-          <mat-radio-button [value]="c">
-            {{ c | titlecase }}
-          </mat-radio-button>
-          }
-        </mat-radio-group>
-      </div>
-      @if (generalGroup.get('category')!.hasError('required')) {
-      <mat-error> Category is required </mat-error>
-      }
-
-      <!-- DESCRIPTION -->
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Description</mat-label>
-        <textarea matInput formControlName="description" rows="4"></textarea>
-        @if (generalGroup.get('description')!.hasError('required')) {
-        <mat-error> Description is required </mat-error>
-        } @if (generalGroup.get('description')!.hasError('minlength')) {
-        <mat-error> Minimum 10 characters </mat-error>
-        }
-      </mat-form-field>
-
-      <div class="step-buttons">
-        <button mat-button matStepperNext [disabled]="generalGroup.invalid">
-          Next
-        </button>
-      </div>
-    </form>
+    <ad-step-general
+      [formGroup]="generalGroup"
+      [categories]="categories"
+      [uploadedFiles]="uploadedFiles"
+      [uploadedFileUrls]="uploadedFileUrls"
+      (fileSelected)="onFileSelected($event)"
+      (fileRemoved)="removeFile($event)"
+    ></ad-step-general>
   </mat-step>
 
-  <!-- Address selection -->
+  <!-- Step 2: Address -->
   <mat-step [stepControl]="addressGroup">
     <ng-template matStepLabel>Address selection</ng-template>
-    <form [formGroup]="addressGroup" class="step-form">
-      <!-- Campo di testo per l’indirizzo -->
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Address</mat-label>
-        <input
-          matInput
-          formControlName="addressText"
-          (input)="onAddressInput()"
-          autocomplete="off"
-        />
-        @if (addressGroup.get('addressText')!.hasError('required')) {
-        <mat-error> Address is required </mat-error>
-        }
-      </mat-form-field>
-
-      <!-- Lista dei suggerimenti -->
-      @if (addressSuggestions.length) {
-      <div class="suggestions">
-        <mat-list>
-          @for (sug of addressSuggestions; track sug) {
-          <mat-list-item (click)="selectAddress(sug)">
-            {{ sug }}
-          </mat-list-item>
-          }
-        </mat-list>
-      </div>
-      }
-
-      <!-- Con Leaflet usiamo un div con #mapContainer -->
-      <div #mapContainer class="map-container"></div>
-
-      <div class="step-buttons">
-        <button mat-button matStepperPrevious>Back</button>
-        <button mat-button matStepperNext [disabled]="addressGroup.invalid">
-          Next
-        </button>
-      </div>
-    </form>
+    <ad-step-address
+      [formGroup]="addressGroup"
+      [addressSuggestions]="addressSuggestions"
+      (addressInput)="onAddressInput()"
+    ></ad-step-address>
   </mat-step>
 
-  <!-- Property details -->
+  <!-- Step 3: Property details -->
   <mat-step [stepControl]="detailsGroup">
     <ng-template matStepLabel>Property details</ng-template>
-
-    <form [formGroup]="detailsGroup" class="step-form">
-      <!-- Campo Square Meters -->
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Square Meters</mat-label>
-        <input matInput formControlName="squareMeters" type="number" />
-        <!-- ERRORE LEGATO A squareMeters, NON a rooms -->
-        @if (detailsGroup.get('squareMeters')!.hasError('required')) {
-        <mat-error> Required </mat-error>
-        } @if (detailsGroup.get('squareMeters')!.hasError('min')) {
-        <mat-error> Must be ≥ 1 </mat-error>
-        }
-      </mat-form-field>
-
-      <!-- Campo Rooms -->
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Rooms</mat-label>
-        <input matInput formControlName="rooms" type="number" />
-        @if (detailsGroup.get('rooms')!.hasError('required')) {
-        <mat-error> Required </mat-error>
-        } @if (detailsGroup.get('rooms')!.hasError('min')) {
-        <mat-error> Must be ≥ 1 </mat-error>
-        }
-      </mat-form-field>
-
-      <!-- Campo Floor -->
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Floor</mat-label>
-        <input matInput formControlName="floor" type="number" />
-        @if (detailsGroup.get('floor')!.hasError('required')) {
-        <mat-error> Required </mat-error>
-        }
-      </mat-form-field>
-
-      <!-- Campo Energy Class -->
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Energy Class</mat-label>
-        <mat-select formControlName="energyClass">
-          <mat-option value="A">A</mat-option>
-          <mat-option value="B">B</mat-option>
-          <mat-option value="C">C</mat-option>
-          <mat-option value="D">D</mat-option>
-          <!-- … fino alle classi disponibili … -->
-        </mat-select>
-        @if (detailsGroup.get('energyClass')!.hasError('required')) {
-        <mat-error> Required </mat-error>
-        }
-      </mat-form-field>
-
-      <!-- Services (checkbox dinamiche) -->
-      <div class="features-group">
-        <label>Services:</label>
-        @for (svc of servicesList; track svc.id) {
-        <div class="service-checkbox">
-          <mat-checkbox
-            [checked]="detailsGroup.get('services')!.value.includes(svc.id)"
-            (change)="onServiceToggle(svc.id, $event.checked)"
-          >
-            {{ svc.name }}
-          </mat-checkbox>
-        </div>
-        }
-      </div>
-
-      <div class="step-buttons">
-        <button mat-button matStepperPrevious>Back</button>
-        <button mat-button matStepperNext [disabled]="addressGroup.invalid">
-          Next
-        </button>
-      </div>
-    </form>
+    <ad-step-details
+      [formGroup]="detailsGroup"
+      [servicesList]="servicesList"
+      (serviceToggle)="onServiceToggle($event.id, $event.checked)"
+    ></ad-step-details>
   </mat-step>
 
-  <!-- RECAP -->
+  <!-- Step 4: Recap -->
   <mat-step>
     <ng-template matStepLabel>Recap</ng-template>
-
-    <div class="recap-container">
-      <!-- 1) Carousel di immagini -->
-      <div class="recap-gallery">
-        <button mat-icon-button (click)="prevImage()">
-          <mat-icon>chevron_left</mat-icon>
-        </button>
-        <img
-          [src]="uploadedFileUrls[currentImageIndex]"
-          alt="Preview"
-          class="main-image"
-        />
-        <button mat-icon-button (click)="nextImage()">
-          <mat-icon>chevron_right</mat-icon>
-        </button>
-
-        <!-- mini-thumbnails -->
-        <div class="thumbs">
-          @for (f of uploadedFiles; track f) {
-          <img
-            [src]="uploadedFileUrls[$index]"
-            [class.active]="$index === currentImageIndex"
-            (click)="currentImageIndex = $index"
-          />
-          }
-        </div>
-      </div>
-
-      <!-- 2) Riepilogo dati principali -->
-      <div class="recap-summary">
-        <div class="price-box">
-          {{ generalGroup.value.price | currency : "EUR" : "symbol" : "1.0-0" }}
-        </div>
-        <div class="icons-row">
-          <div class="icon-item">
-            <mat-icon>home</mat-icon>
-            <span>{{ generalGroup.value.category | titlecase }}</span>
-          </div>
-          <div class="icon-item">
-            <mat-icon>square_foot</mat-icon>
-            <span>{{ detailsGroup.value.squareMeters }} m²</span>
-          </div>
-          <div class="icon-item">
-            <mat-icon>place</mat-icon>
-            <span>{{ addressGroup.value.addressText.split(",")[0] }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 3) Mappa in miniatura + descrizione -->
-      <div class="recap-details">
-        <div class="map-mini" #recapMapContainer></div>
-        <div class="description-box">
-          <h3>Description</h3>
-          <p>{{ generalGroup.value.description }}</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- navigation buttons -->
-    <div class="step-buttons">
-      <button mat-button matStepperPrevious>Previous</button>
-      <button mat-raised-button color="primary" (click)="onPublish()">
-        Publish
-      </button>
-    </div>
+    <ad-step-recap
+      [generalGroup]="generalGroup"
+      [addressGroup]="addressGroup"
+      [detailsGroup]="detailsGroup"
+      [uploadedFiles]="uploadedFiles"
+      [uploadedFileUrls]="uploadedFileUrls"
+      [currentImageIndex]="currentImageIndex"
+      (prevImage)="prevImage()"
+      (nextImage)="nextImage()"
+      (imageSelected)="currentImageIndex = $event"
+      (publish)="onPublish()"
+    ></ad-step-recap>
   </mat-step>
 </mat-horizontal-stepper>
