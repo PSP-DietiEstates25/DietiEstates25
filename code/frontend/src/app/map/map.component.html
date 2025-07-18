@@ -1,11 +1,4 @@
-<mgl-map
-    [style]="style"
-    [zoom]="initialZoom"
-    [center]="initialCenter"
-    [canvasContextAttributes]="initialCanvasContextAttribute"
->
-    @for (indirizzo of indirizzi; track $index) {
-        <mgl-marker [lngLat]="indirizzo"></mgl-marker>
-    }
 
-</mgl-map>
+<div #mapContainer class="map-container">
+    <app-autocompleter [(map)]="map"></app-autocompleter>
+</div>
