@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, WritableSignal, signal } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, WritableSignal, signal, Output, EventEmitter } from '@angular/core';
 import * as maplibregl from 'maplibre-gl';
 
 import { environmentMap } from '../../environments/environment.map';
@@ -12,12 +12,18 @@ import { AutocompleterComponent } from '../autocompleter/autocompleter.component
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit {
-
+  
   @ViewChild('mapContainer', { static: true })
   mapContainer!: ElementRef;
 
   // 1) signal condivisa col child
   map!: WritableSignal<maplibregl.Map>;
+
+  @Output()
+  latitude = new EventEmitter<number>();
+
+  @Output()
+  longitude = new EventEmitter<number>();
 
   ngOnInit(): void {
     this.map = signal(
@@ -28,5 +34,10 @@ export class MapComponent implements OnInit {
         zoom: 12
       })
     );
+  }
+
+  ngOnDestroy(){
+    this.latitude.emit();
+    this.longitude.emit();
   }
 }

@@ -40,7 +40,7 @@ export class OfferComponent {
     },
   ];
 
-   //  Variabile privata interna
+  //Vcvcfariabile privata interna
   private _selectedApartment: Appartamento | null = null;
 
   //  Getter: per leggere il valore

@@ -24,6 +24,12 @@ export class AutocompleterComponent implements AfterViewInit {
   @Output()
   mapChange = new EventEmitter<maplibregl.Map>();
 
+  @Output()
+  longitude = new EventEmitter<number>();
+
+  @Output()
+  latitude = new EventEmitter<number>();
+
   private geocoderAutocomplete!: GeocoderAutocomplete;
 
   private _mapEffect = effect(() => {
@@ -54,6 +60,8 @@ export class AutocompleterComponent implements AfterViewInit {
       this.flyOnPosition(this._mapSignal()!, lon, lat);
       this.updateMarkerPosition(this._mapSignal()!, lon, lat);
       this.mapChange.emit(this._mapSignal()!);
+      this.longitude.emit(lon);
+      this.latitude.emit(lat);
     });
   }
 
