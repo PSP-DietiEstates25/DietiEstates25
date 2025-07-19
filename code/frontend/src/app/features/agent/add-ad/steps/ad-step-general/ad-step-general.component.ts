@@ -5,6 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatRadioModule } from '@angular/material/radio';
 import { TitleCasePipe } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'ad-step-general',
@@ -16,6 +17,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatRadioModule,
     TitleCasePipe,
     ReactiveFormsModule,
+    MatInputModule,
   ],
 })
 export class AdGeneralStepComponent {

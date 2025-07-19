@@ -3,13 +3,19 @@ import { FormGroup } from '@angular/forms';
 import { MatListModule } from '@angular/material/list';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'ad-step-address',
   templateUrl: './ad-step-address.component.html',
   styleUrls: ['../../add-ad.component.scss'],
   standalone: true,
-  imports: [MatListModule, MatFormFieldModule, ReactiveFormsModule],
+  imports: [
+    MatListModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatInputModule,
+  ],
 })
 export class AdAddressStepComponent {
   @Input() formGroup!: FormGroup;

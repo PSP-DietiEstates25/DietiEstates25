@@ -59,9 +59,11 @@ import { AdDetailsStepComponent } from './steps/ad-step-details/ad-step-details.
 })
 export class AddAdComponent implements OnInit {
   // === FormGroups per i 3 step ===
+  /* 
   generalGroup: FormGroup;
   addressGroup: FormGroup;
   detailsGroup: FormGroup;
+  */
 
   adForm!: FormGroup;
 
@@ -83,6 +85,7 @@ export class AddAdComponent implements OnInit {
     private adService: AdService,
     private cd: ChangeDetectorRef
   ) {
+    /*
     this.generalGroup = this.fb.group({
       price: [null, [Validators.required, Validators.min(0)]],
       category: [null, Validators.required],
@@ -99,7 +102,7 @@ export class AddAdComponent implements OnInit {
       floor: [null, Validators.required],
       energyClass: [null, Validators.required],
       services: [[]],
-    });
+    });*/
   }
 
   ngOnInit(): void {
@@ -129,7 +132,10 @@ export class AddAdComponent implements OnInit {
         services: this.fb.control<number[]>([]),
       }),
     });
+    console.log('generalGroup controls:', this.generalGroup.controls);
+console.log('adForm:', this.adForm);
 
+/*
     // 1) Carichiamo le categorie dal backend
     this.metadataService.getCategories().subscribe({
       next: (cats) => {
@@ -139,7 +145,6 @@ export class AddAdComponent implements OnInit {
       },
       error: (err) => console.error('Errore caricamento categories:', err),
     });
-
     // 2) Carichiamo i servizi dal backend
     this.metadataService.getServices().subscribe({
       next: (svcs) => {
@@ -147,21 +152,18 @@ export class AddAdComponent implements OnInit {
       },
       error: (err) => console.error('Errore caricamento services:', err),
     });
-  }
-
-  onAddressInput() {
-    const text = this.adForm.get('address.addressText')!.value;
-    if (text && text.length > 2) {
-      this.locationService.search(text).subscribe({
-        next: (suggestions) => (this.addressSuggestions = suggestions),
-        error: (err) => {
-          console.error('Errore location.search:', err);
-          this.addressSuggestions = [];
-        },
-      });
-    } else {
-      this.addressSuggestions = [];
+*/
     }
+  
+
+  get generalGroup() {
+    return this.adForm.get('general') as FormGroup;
+  }
+  get addressGroup() {
+    return this.adForm.get('address') as FormGroup;
+  }
+  get detailsGroup() {
+    return this.adForm.get('details') as FormGroup;
   }
 
   // Gestione upload file
