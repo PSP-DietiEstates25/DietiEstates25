@@ -4,6 +4,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'ad-step-details',
@@ -14,6 +15,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatSelectModule,
     MatCheckboxModule,
     ReactiveFormsModule,
+    MatInputModule
   ],
 })
 export class AdDetailsStepComponent {

@@ -1,4 +1,15 @@
-import { Component, ElementRef, AfterViewInit, ViewChild, Input, Output, EventEmitter, effect, WritableSignal, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  AfterViewInit,
+  ViewChild,
+  Input,
+  Output,
+  EventEmitter,
+  effect,
+  WritableSignal,
+  signal,
+} from '@angular/core';
 import * as maplibregl from 'maplibre-gl';
 import { GeocoderAutocomplete } from '@geoapify/geocoder-autocomplete';
 import { environment } from '../../environments/environment';
@@ -7,18 +18,17 @@ import { environmentMap } from '../../environments/environment.map';
 @Component({
   selector: 'app-autocompleter',
   templateUrl: './autocompleter.component.html',
-  styleUrls: ['./autocompleter.component.scss']
+  styleUrls: ['./autocompleter.component.scss'],
 })
 export class AutocompleterComponent implements AfterViewInit {
-
   @ViewChild('autocompleteContainer', { static: true })
   autocompleteContainer!: ElementRef;
 
   private _mapSignal: WritableSignal<maplibregl.Map | null> = signal(null);
 
   @Input()
-  set map(m: maplibregl.Map) {
-    this._mapSignal.set(m);
+  set map(m: maplibregl.Map | null) {
+    if (m) this._mapSignal.set(m);  // se il parent passa momentaneamente null (o ancora non la crea) il componente non va in errore
   }
 
   @Output()
@@ -30,10 +40,12 @@ export class AutocompleterComponent implements AfterViewInit {
   @Output()
   latitude = new EventEmitter<number>();
 
+  @Output()
+  addressText = new EventEmitter<string>();
+
   private geocoderAutocomplete!: GeocoderAutocomplete;
 
   private _mapEffect = effect(() => {
-
     const m = this._mapSignal();
     if (!m) return;
 
@@ -45,7 +57,6 @@ export class AutocompleterComponent implements AfterViewInit {
   });
 
   ngAfterViewInit(): void {
-
     // init Geoapify autocomplete (usa viewChild, quindi qui)
     this.geocoderAutocomplete = new GeocoderAutocomplete(
       this.autocompleteContainer.nativeElement,
@@ -53,8 +64,7 @@ export class AutocompleterComponent implements AfterViewInit {
     );
 
     this.geocoderAutocomplete.on('select', ({ properties }: any) => {
-
-      const {lon, lat} = properties;
+      const { lon, lat, formatted } = properties;
 
       //mi sto fidando che la map non sia null, si presuppone che l'hook effect abbia già eseguito il controllo
       this.flyOnPosition(this._mapSignal()!, lon, lat);
@@ -62,45 +72,54 @@ export class AutocompleterComponent implements AfterViewInit {
       this.mapChange.emit(this._mapSignal()!);
       this.longitude.emit(lon);
       this.latitude.emit(lat);
+      this.addressText.emit(formatted);
     });
   }
 
   /**
-   * Serve per far transire la mappa verso la posizione specificata con una corrispettiva animazione 
-   * @param map 
-   * @param position 
+   * Serve per far transire la mappa verso la posizione specificata con una corrispettiva animazione
+   * @param map
+   * @param position
    */
-  private flyOnPosition(map: maplibregl.Map, longitude: number, latitude: number){
+  private flyOnPosition(
+    map: maplibregl.Map,
+    longitude: number,
+    latitude: number
+  ) {
     map.flyTo({
       center: [longitude, latitude],
-      zoom: environmentMap.initialZoom
-    })
+      zoom: environmentMap.initialZoom,
+    });
   }
 
   /**
    * Aggiorna il marker alla posizione corrente configurato come nuova source GeoJSON della mappa
-   * La funzione updatePositionMarker aggiorna il dato della GeoJSON source creato in setupMarkerLayer, 
+   * La funzione updatePositionMarker aggiorna il dato della GeoJSON source creato in setupMarkerLayer,
    * in modo da riposizionare il marker sulla mappa senza modificare di nuovo il layer o l’icona.
    * @param map
    * @param position
    */
-  private updateMarkerPosition(map: maplibregl.Map, longitude: number, latitude: number){
-
+  private updateMarkerPosition(
+    map: maplibregl.Map,
+    longitude: number,
+    latitude: number
+  ) {
     const source = map.getSource('marker-source') as maplibregl.GeoJSONSource;
 
     source.setData({
-        type: 'FeatureCollection',
-        features: [{
+      type: 'FeatureCollection',
+      features: [
+        {
           type: 'Feature',
           geometry: { type: 'Point', coordinates: [longitude, latitude] },
-          properties: {}
-        }]
-      });
+          properties: {},
+        },
+      ],
+    });
   }
 
   private setupMarkerLayer(map: maplibregl.Map) {
-
-  // se è già stato fatto, skip
+    // se è già stato fatto, skip
     if (map.getLayer('marker-layer')) return;
 
     // 1) registra immagine custom
@@ -114,7 +133,7 @@ export class AutocompleterComponent implements AfterViewInit {
       // 2) crea source GeoJSON vuota
       map.addSource('marker-source', {
         type: 'geojson',
-        data: { type: 'FeatureCollection', features: [] }
+        data: { type: 'FeatureCollection', features: [] },
       });
       // 3) crea layer symbol
       map.addLayer({
@@ -125,10 +144,10 @@ export class AutocompleterComponent implements AfterViewInit {
           'icon-image': 'house-icon',
           'icon-size': 1,
           'icon-anchor': 'bottom',
-          'icon-allow-overlap': true
-        }
+          'icon-allow-overlap': true,
+        },
       });
     };
-    img.onerror = e => console.error('Errore caricamento icona custom:', e);
+    img.onerror = (e) => console.error('Errore caricamento icona custom:', e);
   }
 }

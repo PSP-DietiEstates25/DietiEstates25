@@ -18,8 +18,6 @@
     <ng-template matStepLabel>Address selection</ng-template>
     <ad-step-address
       [formGroup]="addressGroup"
-      [addressSuggestions]="addressSuggestions"
-      (addressInput)="onAddressInput()"
     ></ad-step-address>
   </mat-step>
 
@@ -47,6 +45,7 @@
       (nextImage)="nextImage()"
       (imageSelected)="currentImageIndex = $event"
       (publish)="onPublish()"
+      (discard)="onDiscard()"
     ></ad-step-recap>
   </mat-step>
 </mat-horizontal-stepper>

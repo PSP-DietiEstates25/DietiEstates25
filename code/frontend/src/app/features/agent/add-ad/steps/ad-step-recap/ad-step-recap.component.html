@@ -1,65 +1,71 @@
-<div class="recap-container">
-  <!-- 1) Carousel di immagini -->
-  <div class="recap-gallery">
-    <button mat-icon-button (click)="prevImage">
-      <mat-icon>chevron_left</mat-icon>
-    </button>
-    <img
-      [src]="uploadedFileUrls[currentImageIndex]"
-      alt="Preview"
-      class="main-image"
-    />
-    <button mat-icon-button (click)="nextImage">
-      <mat-icon>chevron_right</mat-icon>
-    </button>
-
-    <!-- mini-thumbnails -->
-    <div class="thumbs">
-      @for (f of uploadedFiles; track f) {
-      <img
-        [src]="uploadedFileUrls[$index]"
-        [class.active]="$index === currentImageIndex"
-        (click)="currentImageIndex = $index"
-      />
-      }
-    </div>
-  </div>
-
-  <!-- 2) Riepilogo dati principali -->
-  <div class="recap-summary">
-    <div class="price-box">
-      {{ generalGroup.value.price | currency : "EUR" : "symbol" : "1.0-0" }}
-    </div>
-    <div class="icons-row">
-      <div class="icon-item">
-        <mat-icon>home</mat-icon>
-        <span>{{ generalGroup.value.category | titlecase }}</span>
-      </div>
-      <div class="icon-item">
-        <mat-icon>square_foot</mat-icon>
-        <span>{{ detailsGroup.value.squareMeters }} m²</span>
-      </div>
-      <div class="icon-item">
-        <mat-icon>place</mat-icon>
-        <span>{{ addressGroup.value.addressText.split(",")[0] }}</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3) Mappa in miniatura + descrizione -->
-  <div class="recap-details">
-    <div class="map-mini" #recapMapContainer></div>
-    <div class="description-box">
-      <h3>Description</h3>
-      <p>{{ generalGroup.value.description }}</p>
-    </div>
-  </div>
-</div>
-
-<!-- navigation buttons -->
-<div class="step-buttons">
-  <button mat-button matStepperPrevious>Previous</button>
-  <button mat-raised-button color="primary" (click)="publish">
-    Publish
+<div class="recap-root">
+  <h1 class="recap-title">Recap</h1>
+  <button class="recap-discard" (click)="discard.emit()">
+    Discard <mat-icon>delete_outline</mat-icon>
   </button>
+
+  <!-- Galleria -->
+  <div class="recap-gallery">
+    <img
+      class="main-img"
+      [src]="uploadedFileUrls[currentImageIndex]"
+      alt="Main image"
+    />
+    <div class="gallery-nav">
+      <button mat-icon-button (click)="prevImage.emit()">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <div class="thumbnails">
+        @for (f of uploadedFiles; track f) {
+        <img
+          [src]="uploadedFileUrls[$index]"
+          [class.selected]="$index === currentImageIndex"
+          (click)="currentImageIndex = $index"
+        />
+        }
+      </div>
+      <button mat-icon-button (click)="nextImage.emit()">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Riga info principali -->
+  <div class="recap-info-row">
+    <div class="recap-price-box">
+      <div class="price-label">Price:</div>
+      <div class="price-value">
+        {{ generalGroup.value.price | currency : "EUR" : "symbol" : "1.0-0" }}
+      </div>
+    </div>
+    <div class="recap-info-item">
+      <mat-icon>home</mat-icon>
+      <div class="info-text">{{ generalGroup.value.category | titlecase }}</div>
+    </div>
+    <div class="recap-info-item">
+      <mat-icon>square_foot</mat-icon>
+      <div class="info-text">{{ detailsGroup.value.squareMeters }} m²</div>
+    </div>
+    <div class="recap-info-item">
+      <mat-icon>place</mat-icon>
+      <div class="info-text">
+        {{
+          addressGroup.value.addressText.replace(", Italy", "") ||
+            addressGroup.value.addressText
+        }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Descrizione -->
+  <div class="recap-description">
+    <div class="description-title"><b>Description</b></div>
+    <div class="description-body">{{ generalGroup.value.description }}</div>
+  </div>
+
+  <div class="step-buttons end">
+    <button mat-button color="accent" (click)="publish.emit()">
+      Publish <mat-icon>check</mat-icon>
+    </button>
+  </div>
 </div>

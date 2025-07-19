@@ -19,7 +19,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { ChangeDetectorRef } from '@angular/core';
-
+import { Router } from '@angular/router';
+ 
 import { LocationService } from '../../../core/services/location.service';
 
 import {
@@ -60,9 +61,12 @@ import { AdDetailsStepComponent } from './steps/ad-step-details/ad-step-details.
 export class AddAdComponent implements OnInit {
 
   // === FormGroups per i 3 step ===
+  /* 
   generalGroup: FormGroup;
   addressGroup: FormGroup;
   detailsGroup: FormGroup;
+  */
+  
   adForm!: FormGroup;
 
   // Nuove variabili: categorie e servizi vengono popolate dinamicamente
@@ -81,8 +85,10 @@ export class AddAdComponent implements OnInit {
     private locationService: LocationService,
     private metadataService: MetadataService,
     private adService: AdService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private router: Router
   ) {
+    /*
     this.generalGroup = this.fb.group({
       price: [null, [Validators.required, Validators.min(0)]],
       category: [null, Validators.required],
@@ -99,7 +105,7 @@ export class AddAdComponent implements OnInit {
       floor: [null, Validators.required],
       energyClass: [null, Validators.required],
       services: [[]],
-    });
+    });*/
   }
 
   ngOnInit(): void {
@@ -130,6 +136,7 @@ export class AddAdComponent implements OnInit {
       }),
     });
 
+/*
     // 1) Carichiamo le categorie dal backend
     this.metadataService.getCategories().subscribe({
       next: (cats) => {
@@ -139,7 +146,6 @@ export class AddAdComponent implements OnInit {
       },
       error: (err) => console.error('Errore caricamento categories:', err),
     });
-
     // 2) Carichiamo i servizi dal backend
     this.metadataService.getServices().subscribe({
       next: (svcs) => {
@@ -147,21 +153,18 @@ export class AddAdComponent implements OnInit {
       },
       error: (err) => console.error('Errore caricamento services:', err),
     });
-  }
-
-  onAddressInput() {
-    const text = this.adForm.get('address.addressText')!.value;
-    if (text && text.length > 2) {
-      this.locationService.search(text).subscribe({
-        next: (suggestions) => (this.addressSuggestions = suggestions),
-        error: (err) => {
-          console.error('Errore location.search:', err);
-          this.addressSuggestions = [];
-        },
-      });
-    } else {
-      this.addressSuggestions = [];
+*/
     }
+  
+
+  get generalGroup() {
+    return this.adForm.get('general') as FormGroup;
+  }
+  get addressGroup() {
+    return this.adForm.get('address') as FormGroup;
+  }
+  get detailsGroup() {
+    return this.adForm.get('details') as FormGroup;
   }
 
   // Gestione upload file
@@ -222,7 +225,7 @@ export class AddAdComponent implements OnInit {
     });
   }
 
-  // ————— Carousel helpers —————
+  // Carousel helpers 
   get currentImageUrl(): string {
     if (!this.uploadedFiles.length) return '';
     return this.fileToObjectURL(this.uploadedFiles[this.currentImageIndex]);
@@ -242,10 +245,23 @@ export class AddAdComponent implements OnInit {
     return URL.createObjectURL(file);
   }
 
-  // ————— Submit finale —————
+  // Submit finale
   onPublish() {
     const payload = this.adForm.value;
     // this.adService.createAd(payload).subscribe(...)
     console.log('Publishing AD:', payload);
   }
+
+  // Discard del form
+  onDiscard() {
+  if (confirm('Sei sicuro di voler scartare l\'annuncio?')) {
+    this.adForm.reset();
+    this.uploadedFiles = [];
+    this.uploadedFileUrls = [];
+    this.currentImageIndex = 0;
+    // volendo reindirizzamento a /agent
+    this.router.navigate(['/agent']);
+  }
+}
+
 }

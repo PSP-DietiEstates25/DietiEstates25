@@ -1,4 +1,6 @@
 <form [formGroup]="formGroup" class="step-form">
+    <h1 class="genral-title">General Informations</h1>
+
   <!-- UPLOAD FOTO -->
   <label for="fileUpload" class="file-upload-label">
     <div class="file-dropzone">
@@ -64,9 +66,4 @@
     <mat-error> Minimum 10 characters </mat-error>
     }
   </mat-form-field>
-  <div class="step-buttons">
-    <button mat-button matStepperNext [disabled]="formGroup.invalid">
-      Next
-    </button>
-  </div>
 </form>

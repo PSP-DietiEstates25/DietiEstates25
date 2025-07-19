@@ -1,38 +1,11 @@
 <form [formGroup]="formGroup" class="step-form">
-  <!-- Campo di testo per l’indirizzo -->
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Address</mat-label>
-    <input
-      matInput
-      formControlName="addressText"
-      (input)="addressInput.emit()"
-      autocomplete="off"
-    />
-    @if (formGroup.get('addressText')!.hasError('required')) {
-    <mat-error> Address is required </mat-error>
-    }
-  </mat-form-field>
+    <h1 class="title">Address</h1>
 
-  <!-- Lista dei suggerimenti -->
-  @if (addressSuggestions.length) {
-  <div class="suggestions">
-    <mat-list>
-      @for (sug of addressSuggestions; track sug) {
-      <mat-list-item (click)="addressSuggestions = []">
-        {{ sug }}
-      </mat-list-item>
-      }
-    </mat-list>
-  </div>
-  }
+  <app-map
+    (latitude)="onLatitude($event)"
+    (longitude)="onLongitude($event)"
+    (addressText)="onAddressText($event)"
+  >
+  </app-map>
 
-  <!-- Con Leaflet usiamo un div con #mapContainer -->
-  <div #mapContainer class="map-container"></div>
-
-  <div class="step-buttons">
-    <button mat-button matStepperPrevious>Back</button>
-    <button mat-button matStepperNext [disabled]="formGroup.invalid">
-      Next
-    </button>
-  </div>
 </form>
