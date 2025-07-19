@@ -59,13 +59,14 @@ import { AdDetailsStepComponent } from './steps/ad-step-details/ad-step-details.
   styleUrls: ['./add-ad.component.scss'],
 })
 export class AddAdComponent implements OnInit {
+
   // === FormGroups per i 3 step ===
   /* 
   generalGroup: FormGroup;
   addressGroup: FormGroup;
   detailsGroup: FormGroup;
   */
-
+  
   adForm!: FormGroup;
 
   // Nuove variabili: categorie e servizi vengono popolate dinamicamente
