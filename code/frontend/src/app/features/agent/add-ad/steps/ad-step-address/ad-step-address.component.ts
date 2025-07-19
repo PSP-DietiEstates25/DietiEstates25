@@ -4,6 +4,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
+import { MapComponent } from '../../../../../map/map.component';
 
 @Component({
   selector: 'ad-step-address',
@@ -15,6 +16,7 @@ import { MatInputModule } from '@angular/material/input';
     MatFormFieldModule,
     ReactiveFormsModule,
     MatInputModule,
+    MapComponent,
   ],
 })
 export class AdAddressStepComponent {
@@ -23,4 +25,14 @@ export class AdAddressStepComponent {
   @Output() addressInput = new EventEmitter<void>();
   @Output() addressSelected = new EventEmitter<string>();
   @Output() mapReady = new EventEmitter<any>();
+
+  onLatitude(lat: number) {
+    this.formGroup.get('locationCoords.lat')?.setValue(lat);
+  }
+  onLongitude(lon: number) {
+    this.formGroup.get('locationCoords.lng')?.setValue(lon);
+  }
+  onAddressText(address: string) {
+    this.formGroup.get('addressText')?.setValue(address);
+  }
 }

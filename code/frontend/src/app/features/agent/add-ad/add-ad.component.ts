@@ -19,7 +19,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { ChangeDetectorRef } from '@angular/core';
-
+import { Router } from '@angular/router';
+ 
 import { LocationService } from '../../../core/services/location.service';
 
 import {
@@ -83,7 +84,8 @@ export class AddAdComponent implements OnInit {
     private locationService: LocationService,
     private metadataService: MetadataService,
     private adService: AdService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private router: Router
   ) {
     /*
     this.generalGroup = this.fb.group({
@@ -132,8 +134,6 @@ export class AddAdComponent implements OnInit {
         services: this.fb.control<number[]>([]),
       }),
     });
-    console.log('generalGroup controls:', this.generalGroup.controls);
-console.log('adForm:', this.adForm);
 
 /*
     // 1) Carichiamo le categorie dal backend
@@ -224,7 +224,7 @@ console.log('adForm:', this.adForm);
     });
   }
 
-  // ————— Carousel helpers —————
+  // Carousel helpers 
   get currentImageUrl(): string {
     if (!this.uploadedFiles.length) return '';
     return this.fileToObjectURL(this.uploadedFiles[this.currentImageIndex]);
@@ -244,10 +244,23 @@ console.log('adForm:', this.adForm);
     return URL.createObjectURL(file);
   }
 
-  // ————— Submit finale —————
+  // Submit finale
   onPublish() {
     const payload = this.adForm.value;
     // this.adService.createAd(payload).subscribe(...)
     console.log('Publishing AD:', payload);
   }
+
+  // Discard del form
+  onDiscard() {
+  if (confirm('Sei sicuro di voler scartare l\'annuncio?')) {
+    this.adForm.reset();
+    this.uploadedFiles = [];
+    this.uploadedFileUrls = [];
+    this.currentImageIndex = 0;
+    // volendo reindirizzamento a /agent
+    this.router.navigate(['/agent']);
+  }
+}
+
 }

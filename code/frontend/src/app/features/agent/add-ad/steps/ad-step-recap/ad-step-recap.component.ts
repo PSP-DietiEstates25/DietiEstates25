@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { TitleCasePipe } from '@angular/common';
@@ -8,7 +8,7 @@ import { CurrencyPipe } from '@angular/common';
   selector: 'ad-step-recap',
   templateUrl: './ad-step-recap.component.html',
   styleUrls: ['../../add-ad.component.scss'],
-  imports: [MatIconModule, TitleCasePipe, CurrencyPipe]
+  imports: [MatIconModule, TitleCasePipe, CurrencyPipe],
 })
 export class AdRecapStepComponent {
   @Input() generalGroup!: FormGroup;
@@ -22,4 +22,5 @@ export class AdRecapStepComponent {
   @Output() imageSelected = new EventEmitter<number>();
   @Output() publish = new EventEmitter<void>();
   @Output() mapReady = new EventEmitter<any>();
+  @Output() discard = new EventEmitter<any>();
 }

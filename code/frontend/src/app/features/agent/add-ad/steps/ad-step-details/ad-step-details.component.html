@@ -1,4 +1,5 @@
 <form [formGroup]="formGroup" class="step-form">
+    <h1 class="title">Details</h1>
   <!-- Campo Square Meters -->
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Square Meters</mat-label>
@@ -59,12 +60,5 @@
       </mat-checkbox>
     </div>
     }
-  </div>
-
-  <div class="step-buttons">
-    <button mat-button matStepperPrevious>Back</button>
-    <button mat-button matStepperNext [disabled]="formGroup.invalid">
-      Next
-    </button>
   </div>
 </form>
