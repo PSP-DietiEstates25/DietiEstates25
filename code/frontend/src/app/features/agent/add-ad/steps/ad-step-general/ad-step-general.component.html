@@ -1,6 +1,22 @@
 <form [formGroup]="formGroup" class="step-form">
     <h1 class="genral-title">General Informations</h1>
 
+  <!-- UPLOAD FOTO VECCHIO 
+  <label for="fileUpload" class="file-upload-label">
+    <div class="file-dropzone">
+      <mat-icon>cloud_upload</mat-icon>
+      <span>Drag & drop or Browse</span>
+    </div>
+  </label>
+  <input
+    id="fileUpload"
+    type="file"
+    accept=".jpg, .jpeg, .png"
+    multiple
+    (change)="fileSelected.emit($event)"
+    style="display: none"
+  />
+  -->
   <!-- UPLOAD FOTO -->
   <label for="fileUpload" class="file-upload-label">
     <div class="file-dropzone">
@@ -9,13 +25,15 @@
     </div>
   </label>
   <input
-    type="file"
     id="fileUpload"
+    type="file"
+    accept=".jpg, .jpeg, .png"
     multiple
-    (change)="fileSelected.emit($event)"
+    (change)="selectFiles()"
     style="display: none"
   />
 
+  <!-- VECCHIO, pre refactoring
   @if (uploadedFiles.length > 0) {
   <div class="uploaded-list">
     <mat-icon>photo</mat-icon>
@@ -23,6 +41,20 @@
     <span>
       {{ f.name }}
       <button mat-icon-button (click)="fileRemoved.emit($index)">
+        <mat-icon color="warn">delete</mat-icon>
+      </button>
+    </span>
+    }
+  </div>
+  }
+  -->
+  @if (uploadedFiles.length > 0) {
+  <div class="uploaded-list">
+    <mat-icon>photo</mat-icon>
+    @for (file of uploadedFiles; track $index) {
+    <span>
+      {{ file.name }}
+      <button mat-icon-button (click)="sendFileRemoved($index)">
         <mat-icon color="warn">delete</mat-icon>
       </button>
     </span>
@@ -41,6 +73,8 @@
     }
   </mat-form-field>
 
+  <!--Vecchio, precedente refactoring
+  -->
   <!-- CATEGORY -->
   <div class="category-group">
     <label>Category:</label>

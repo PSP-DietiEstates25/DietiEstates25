@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatListModule } from '@angular/material/list';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,11 +20,13 @@ import { MapComponent } from '../../../../../map/map.component';
   ],
 })
 export class AdAddressStepComponent {
-  @Input() formGroup!: FormGroup;
-  @Input() addressSuggestions: string[] = [];
-  @Output() addressInput = new EventEmitter<void>();
-  @Output() addressSelected = new EventEmitter<string>();
-  @Output() mapReady = new EventEmitter<any>();
+
+  formGroup = input<FormGroup>();
+  addressSuggestions = input<string[]>();
+
+  addressInput = output<void>();
+  addressSelected = output<string>();
+  mapReady = output<any>();
 
   onLatitude(lat: number) {
     this.formGroup.get('locationCoords.lat')?.setValue(lat);

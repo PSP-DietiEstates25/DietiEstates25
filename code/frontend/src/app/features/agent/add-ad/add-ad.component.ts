@@ -23,10 +23,8 @@ import { Router } from '@angular/router';
  
 import { LocationService } from '../../../core/services/location.service';
 
-import {
-  MetadataService,
-  ServiceDto,
-} from '../../../core/services/metadata.service';
+import { MetadataService } from '../../../core/services/metadata.service';
+import { ServiceDTO } from '../../../interfaces/service-dto';
 
 import { AdService } from '../../../core/services/ad.service';
 
@@ -34,6 +32,8 @@ import { AdRecapStepComponent } from './steps/ad-step-recap/ad-step-recap.compon
 import { AdGeneralStepComponent } from './steps/ad-step-general/ad-step-general.component';
 import { AdAddressStepComponent } from './steps/ad-step-address/ad-step-address.component';
 import { AdDetailsStepComponent } from './steps/ad-step-details/ad-step-details.component';
+
+import { AdCategory } from '../../../enums/ad-category';
 
 @Component({
   selector: 'app-add-ad',
@@ -60,101 +60,75 @@ import { AdDetailsStepComponent } from './steps/ad-step-details/ad-step-details.
 })
 export class AddAdComponent implements OnInit {
 
-  // === FormGroups per i 3 step ===
-  /* 
-  generalGroup: FormGroup;
-  addressGroup: FormGroup;
-  detailsGroup: FormGroup;
-  */
-  
   adForm!: FormGroup;
 
+  /*
   // Nuove variabili: categorie e servizi vengono popolate dinamicamente
+  // se vengono popolate dinamicamente (fetchate dal backend) devono essere inserite in ngOnInit
   categories: string[] = ['Ciao'];
-  servicesList: ServiceDto[] = [];
+  servicesList: ServiceDTO[] = [];
 
   addressSuggestions: string[] = [];
   uploadedFiles: File[] = [];
   uploadedFileUrls: string[] = [];
-
-  // carousel
-  currentImageIndex = 0;
+  */
+  categories!: string[];
+  servicesList!: ServiceDTO[];
+  addressSuggestions!: string[];
+  uploadedFiles!: File[];
+  uploadedFileUrls!: string[];
+  currentImageIndex!: number; //carousel
 
   constructor(
-    private fb: FormBuilder,
+    private formBuilder: FormBuilder,
     private locationService: LocationService,
     private metadataService: MetadataService,
     private adService: AdService,
     private cd: ChangeDetectorRef,
     private router: Router
   ) {
-    /*
-    this.generalGroup = this.fb.group({
-      price: [null, [Validators.required, Validators.min(0)]],
-      category: [null, Validators.required],
-      description: [null, [Validators.required, Validators.minLength(10)]],
-    });
-
-    this.addressGroup = this.fb.group({
-      addressText: [null, Validators.required],
-    });
-
-    this.detailsGroup = this.fb.group({
-      squareMeters: [null, [Validators.required, Validators.min(1)]],
-      rooms: [null, [Validators.required, Validators.min(1)]],
-      floor: [null, Validators.required],
-      energyClass: [null, Validators.required],
-      services: [[]],
-    });*/
+    //deve essere utilizzato solo per iniettare services
   }
 
   ngOnInit(): void {
+
+    //fetchate dal backend, vedere riga 67
+    this.categories = ['Ciao'];
+    this.servicesList = [];
+    this.addressSuggestions = [];
+    this.uploadedFiles = [];
+    this.uploadedFileUrls = [];
+    this.currentImageIndex = 0;
+
+
+
     // Costruiamo il form:
     // - category viene inizialmente impostato a '' (vuoto) perché la popoleremo dal backend.
     // - features (services) inizialmente empty, ma li gestiremo come FormArray via checkbox dinamiche.
-    this.adForm = this.fb.group({
-      general: this.fb.group({
+    this.adForm = this.formBuilder.group({
+      general: this.formBuilder.group({
         photos: [[]],
         price: [null, [Validators.required, Validators.min(0)]],
         category: ['', Validators.required],
         description: ['', [Validators.required, Validators.minLength(10)]],
       }),
-      address: this.fb.group({
+      address: this.formBuilder.group({
         addressText: ['', Validators.required],
-        locationCoords: this.fb.group({
+        locationCoords: this.formBuilder.group({
           lat: [null, Validators.required],
           lng: [null, Validators.required],
         }),
       }),
-      details: this.fb.group({
+      details: this.formBuilder.group({
         squareMeters: [null, [Validators.required, Validators.min(1)]],
         rooms: [null, [Validators.required, Validators.min(1)]],
         floor: [null, Validators.required],
         energyClass: ['', Validators.required],
         // Qui memorizzeremo un array di ID di servizi selezionati
-        services: this.fb.control<number[]>([]),
+        services: this.formBuilder.control<number[]>([]),
       }),
     });
-
-/*
-    // 1) Carichiamo le categorie dal backend
-    this.metadataService.getCategories().subscribe({
-      next: (cats) => {
-        this.categories = cats;
-        // Se si vuole scegliere di default la prima categoria, fare:
-        // this.adForm.get('general.category')!.setValue(this.categories[0]);
-      },
-      error: (err) => console.error('Errore caricamento categories:', err),
-    });
-    // 2) Carichiamo i servizi dal backend
-    this.metadataService.getServices().subscribe({
-      next: (svcs) => {
-        this.servicesList = svcs;
-      },
-      error: (err) => console.error('Errore caricamento services:', err),
-    });
-*/
-    }
+  }
   
 
   get generalGroup() {

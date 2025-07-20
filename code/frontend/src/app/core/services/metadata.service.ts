@@ -2,10 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export interface ServiceDto {
-  id: number;
-  name: string;
-}
+import { ServiceDTO } from '../../interfaces/service-dto';
 
 @Injectable({ providedIn: 'root' })
 export class MetadataService {
@@ -25,7 +22,7 @@ export class MetadataService {
    * Restituisce un array di ServiceDto { id, name }
    * Esempio di risposta: [{ id: 1, name: "Balcony" }, { id: 2, name: "Parking" }, ...]
    */
-  getServices(): Observable<ServiceDto[]> {
-    return this.http.get<ServiceDto[]>(`${this.baseUrl}/services`);
+  getServices(): Observable<ServiceDTO[]> {
+    return this.http.get<ServiceDTO[]>(`${this.baseUrl}/services`);
   }
 }

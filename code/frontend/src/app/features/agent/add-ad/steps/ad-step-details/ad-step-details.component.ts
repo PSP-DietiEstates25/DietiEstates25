@@ -1,10 +1,12 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
+
+import { ServiceToggle } from '../../../../../interfaces/service-toggle';
 
 @Component({
   selector: 'ad-step-details',
@@ -19,10 +21,9 @@ import { MatInputModule } from '@angular/material/input';
   ],
 })
 export class AdDetailsStepComponent {
-  @Input() formGroup!: FormGroup;
-  @Input() servicesList: { id: number; name: string }[] = [];
-  @Output() serviceToggle = new EventEmitter<{
-    id: number;
-    checked: boolean;
-  }>();
+
+  formGroup = input<FormGroup>();
+  serviceList = input<ServiceToggle>();
+  
+  serviceToggle = output<ServiceToggle>();
 }

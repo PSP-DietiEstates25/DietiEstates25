@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter, output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { Component, input, output } from '@angular/core';
+import { Form, FormGroup } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { TitleCasePipe } from '@angular/common';
 import { CurrencyPipe } from '@angular/common';
@@ -11,16 +11,22 @@ import { CurrencyPipe } from '@angular/common';
   imports: [MatIconModule, TitleCasePipe, CurrencyPipe],
 })
 export class AdRecapStepComponent {
-  @Input() generalGroup!: FormGroup;
-  @Input() addressGroup!: FormGroup;
-  @Input() detailsGroup!: FormGroup;
-  @Input() uploadedFiles: File[] = [];
-  @Input() uploadedFileUrls: string[] = [];
-  @Input() currentImageIndex!: number;
-  @Output() prevImage = new EventEmitter<void>();
-  @Output() nextImage = new EventEmitter<void>();
-  @Output() imageSelected = new EventEmitter<number>();
-  @Output() publish = new EventEmitter<void>();
-  @Output() mapReady = new EventEmitter<any>();
-  @Output() discard = new EventEmitter<any>();
+  
+  generalGroup = input<FormGroup>();
+  addressGroup = input<FormGroup>();
+  detailsGroup = input<FormGroup>();
+  uploadedFiles = input<File[]>();
+  uploadedFileUrls = input<string[]>();
+  currentImageIndex = input<number>();
+
+  //per il recupero di valori che cambiano (prevImage e nextImage) bisogna utilizzare l'hook apposito ngOnChange(changes: SimpleChange){} di OnChanges
+  prevImage = output<void>();
+  nextImage = output<void>();
+  
+  imageSelected = output<number>();
+  publish = output<void>();
+  mapReady = output<any>();
+
+  //se l'intento è quello configurare un comportamento dopo la pressione del bottone "discard", bisogna utilizzare onDestroy di OnDestroy
+  discard = output<any>();
 }

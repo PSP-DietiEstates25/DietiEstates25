@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -21,10 +21,22 @@ import { MatInputModule } from '@angular/material/input';
   ],
 })
 export class AdGeneralStepComponent {
-  @Input() formGroup!: FormGroup;
-  @Input() categories: string[] = [];
-  @Input() uploadedFiles: File[] = [];
-  @Input() uploadedFileUrls: string[] = [];
-  @Output() fileSelected = new EventEmitter<Event>();
-  @Output() fileRemoved = new EventEmitter<number>();
+
+  formGroup = input<FormGroup>();
+
+  //cateogries = input
+  categories = input<string[]>();
+  uploadedFiles = input<File[]>();
+  uploadedFileUrls = input<string[]>();
+
+  filesSelected = output<FileList>();
+  fileRemoved = output<number>();
+
+  selectFiles(collectedFilesEvent: FileList) {
+    this.filesSelected.emit(collectedFilesEvent);
+  }
+
+  sendFileRemoved(index: any){
+    this.fileRemoved.emit(index);
+  }
 }
