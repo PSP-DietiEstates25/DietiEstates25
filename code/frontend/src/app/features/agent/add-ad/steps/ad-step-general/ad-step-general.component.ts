@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
   selector: 'ad-step-general',
   templateUrl: './ad-step-general.component.html',
   styleUrls: ['../../add-ad.component.scss'],
+  standalone: true,
   imports: [
     MatIconModule,
     MatFormFieldModule,
@@ -21,22 +22,24 @@ import { MatInputModule } from '@angular/material/input';
   ],
 })
 export class AdGeneralStepComponent {
+  form = input.required<FormGroup>();
 
-  formGroup = input<FormGroup>();
-
-  //cateogries = input
   categories = input<string[]>();
+
   uploadedFiles = input<File[]>();
-  uploadedFileUrls = input<string[]>();
 
   filesSelected = output<FileList>();
+
   fileRemoved = output<number>();
 
-  selectFiles(collectedFilesEvent: FileList) {
-    this.filesSelected.emit(collectedFilesEvent);
+  selectFiles(event: Event) {
+    const inputEl = event.target as HTMLInputElement;
+    if (inputEl.files && inputEl.files.length > 0) {
+      this.filesSelected.emit(inputEl.files);
+    }
   }
 
-  sendFileRemoved(index: any){
+  sendFileRemoved(index: number) {
     this.fileRemoved.emit(index);
   }
 }

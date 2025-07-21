@@ -1,4 +1,4 @@
-<form [formGroup]="formGroup" class="step-form">
+<form [formGroup]="form()" class="step-form">
     <h1 class="genral-title">General Informations</h1>
 
   <!-- UPLOAD FOTO VECCHIO 
@@ -29,7 +29,7 @@
     type="file"
     accept=".jpg, .jpeg, .png"
     multiple
-    (change)="selectFiles()"
+    (change)="selectFiles($event)"
     style="display: none"
   />
 
@@ -49,27 +49,28 @@
   }
   -->
   @if (uploadedFiles.length > 0) {
-  <div class="uploaded-list">
-    <mat-icon>photo</mat-icon>
-    @for (file of uploadedFiles; track $index) {
-    <span>
-      {{ file.name }}
-      <button mat-icon-button (click)="sendFileRemoved($index)">
-        <mat-icon color="warn">delete</mat-icon>
-      </button>
-    </span>
-    }
-  </div>
+    <div class="uploaded-list">
+      <mat-icon>photo</mat-icon>
+      @for (file of uploadedFiles(); track $index) {
+        <span>
+          {{ file.name }}
+          <button mat-icon-button (click)="sendFileRemoved($index)">
+            <mat-icon color="warn">delete</mat-icon>
+          </button>
+        </span>
+      }
+    </div>
   }
 
   <!-- PRICE -->
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Price</mat-label>
     <input matInput formControlName="price" type="number" />
-    @if (formGroup.get('price')!.hasError('required')) {
-    <mat-error> Price is required </mat-error>
-    } @if (formGroup.get('price')!.hasError('min')) {
-    <mat-error> Price must be ≥ 0 </mat-error>
+    @if (form().get('price')?.hasError('required')) {
+      <mat-error> Price is required </mat-error>
+    }
+    @if (form().get('price')?.hasError('min')) {
+      <mat-error> Price must be ≥ 0 </mat-error>
     }
   </mat-form-field>
 
@@ -79,25 +80,24 @@
   <div class="category-group">
     <label>Category:</label>
     <mat-radio-group formControlName="category">
-      @for (c of categories; track c) {
-      <mat-radio-button [value]="c">
-        {{ c | titlecase }}
-      </mat-radio-button>
+      @for (c of categories(); track c) {
+        <mat-radio-button [value]="c">{{ c | titlecase }}</mat-radio-button>
       }
     </mat-radio-group>
   </div>
-  @if (formGroup.get('category')!.hasError('required')) {
-  <mat-error> Category is required </mat-error>
+  @if (form().get('category')?.hasError('required')) {
+    <mat-error> Category is required </mat-error>
   }
 
   <!-- DESCRIPTION -->
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Description</mat-label>
     <textarea matInput formControlName="description" rows="4"></textarea>
-    @if (formGroup.get('description')!.hasError('required')) {
-    <mat-error> Description is required </mat-error>
-    } @if (formGroup.get('description')!.hasError('minlength')) {
-    <mat-error> Minimum 10 characters </mat-error>
+    @if (form().get('description')?.hasError('required')) {
+      <mat-error> Description is required </mat-error>
+    }
+    @if (form().get('description')?.hasError('minlength')) {
+      <mat-error> Minimum 10 characters </mat-error>
     }
   </mat-form-field>
 </form>

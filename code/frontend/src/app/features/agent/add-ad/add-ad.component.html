@@ -4,10 +4,9 @@
   <mat-step [stepControl]="generalGroup">
     <ng-template matStepLabel>General ad information</ng-template>
     <ad-step-general
-      [formGroup]="generalGroup"
+      [form]="generalGroup"
       [categories]="categories"
       [uploadedFiles]="uploadedFiles"
-      [uploadedFileUrls]="uploadedFileUrls"
       (fileSelected)="onFileSelected($event)"
       (fileRemoved)="removeFile($event)"
     ></ad-step-general>

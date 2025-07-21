@@ -20,21 +20,24 @@ import { MapComponent } from '../../../../../map/map.component';
   ],
 })
 export class AdAddressStepComponent {
-
-  formGroup = input<FormGroup>();
+  formGroup = input.required<FormGroup>();
   addressSuggestions = input<string[]>();
 
   addressInput = output<void>();
   addressSelected = output<string>();
   mapReady = output<any>();
 
+  get locationCoordsGroup() {
+    return this.formGroup()?.get('locationCoords') as FormGroup;
+  }
+
   onLatitude(lat: number) {
-    this.formGroup.get('locationCoords.lat')?.setValue(lat);
+    this.locationCoordsGroup?.get('lat')?.setValue(lat);
   }
   onLongitude(lon: number) {
-    this.formGroup.get('locationCoords.lng')?.setValue(lon);
+    this.locationCoordsGroup?.get('lng')?.setValue(lon);
   }
   onAddressText(address: string) {
-    this.formGroup.get('addressText')?.setValue(address);
+    this.formGroup().get('addressText')?.setValue(address);
   }
 }
