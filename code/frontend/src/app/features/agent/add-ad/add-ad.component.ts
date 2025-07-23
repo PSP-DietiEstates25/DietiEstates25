@@ -73,7 +73,7 @@ export class AddAdComponent implements OnInit {
   uploadedFileUrls: string[] = [];
   */
   categories!: string[];
-  servicesList!: ServiceDTO[];
+  serviceList!: ServiceDTO[];
   addressSuggestions!: string[];
   uploadedFiles!: File[];
   uploadedFileUrls!: string[];
@@ -94,7 +94,7 @@ export class AddAdComponent implements OnInit {
 
     //fetchate dal backend, vedere riga 67
     this.categories = ['Ciao'];
-    this.servicesList = [];
+    this.serviceList = [];
     this.addressSuggestions = [];
     this.uploadedFiles = [];
     this.uploadedFileUrls = [];

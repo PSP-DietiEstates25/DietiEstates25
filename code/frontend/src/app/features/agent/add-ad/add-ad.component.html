@@ -1,5 +1,4 @@
 <mat-horizontal-stepper [linear]="true">
-  
   <!-- Step 1: General info -->
   <mat-step [stepControl]="generalGroup">
     <ng-template matStepLabel>General ad information</ng-template>
@@ -15,9 +14,7 @@
   <!-- Step 2: Address -->
   <mat-step [stepControl]="addressGroup">
     <ng-template matStepLabel>Address selection</ng-template>
-    <ad-step-address
-      [formGroup]="addressGroup"
-    ></ad-step-address>
+    <ad-step-address [formGroup]="addressGroup"></ad-step-address>
   </mat-step>
 
   <!-- Step 3: Property details -->
@@ -26,7 +23,7 @@
     <ad-step-details
       [formGroup]="detailsGroup"
       [servicesList]="servicesList"
-      (serviceToggle)="onServiceToggle($event.id, $event.checked)"
+      (serviceToggle)="onServiceToggle($event[0], $event[1])"
     ></ad-step-details>
   </mat-step>
 

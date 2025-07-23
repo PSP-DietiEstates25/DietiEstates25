@@ -17,13 +17,12 @@ import { ServiceToggle } from '../../../../../interfaces/service-toggle';
     MatSelectModule,
     MatCheckboxModule,
     ReactiveFormsModule,
-    MatInputModule
+    MatInputModule,
   ],
 })
 export class AdDetailsStepComponent {
+  formGroup = input.required<FormGroup>();
+  serviceList = input<ServiceToggle[]>();
 
-  formGroup = input<FormGroup>();
-  serviceList = input<ServiceToggle>();
-  
-  serviceToggle = output<ServiceToggle>();
+  serviceToggle = output<[number, boolean]>();
 }
