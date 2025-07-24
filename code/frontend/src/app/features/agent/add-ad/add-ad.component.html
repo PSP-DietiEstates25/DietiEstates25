@@ -6,7 +6,8 @@
       [form]="generalGroup"
       [categories]="categories"
       [uploadedFiles]="uploadedFiles"
-      (fileSelected)="onFileSelected($event)"
+      [uploadedFileUrls]="uploadedFileUrls"
+      (filesSelected)="onFileSelected($event)"
       (fileRemoved)="removeFile($event)"
     ></ad-step-general>
   </mat-step>
@@ -22,7 +23,7 @@
     <ng-template matStepLabel>Property details</ng-template>
     <ad-step-details
       [formGroup]="detailsGroup"
-      [servicesList]="servicesList"
+      [serviceList]="serviceList"
       (serviceToggle)="onServiceToggle($event[0], $event[1])"
     ></ad-step-details>
   </mat-step>
