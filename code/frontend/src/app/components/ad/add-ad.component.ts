@@ -77,8 +77,8 @@ export class AddAdComponent implements OnInit {
   //prima era ServiceDTO
   servicesList!: ServiceToggle[];
   addressSuggestions!: string[];
-  uploadedFiles: File[] = [];
-  uploadedFileUrls: string[] = [];
+  uploadedFiles!: File[];
+  uploadedFileUrls!: string[];
   currentImageIndex!: number; //carousel
 
   constructor(
