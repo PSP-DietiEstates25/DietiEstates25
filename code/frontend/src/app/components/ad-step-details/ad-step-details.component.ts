@@ -20,13 +20,11 @@ import { KeyValuePipe } from '@angular/common';
     MatCheckboxModule,
     ReactiveFormsModule,
     MatInputModule,
-    KeyValuePipe
   ],
 })
 export class AdDetailsStepComponent {
-
   formGroup = input.required<FormGroup>();
-  servicesList = input<ServiceToggle[]>();
-  
-  serviceToggle = output<ServiceToggle>();
+  serviceList = input<ServiceToggle[]>();
+
+  serviceToggle = output<[number, boolean]>();
 }

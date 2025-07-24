@@ -60,7 +60,6 @@ import { AdCategory } from '../../enums/ad-category.enum';
   styleUrls: ['./add-ad.component.scss'],
 })
 export class AddAdComponent implements OnInit {
-
   adForm!: FormGroup;
 
   /*
@@ -78,8 +77,8 @@ export class AddAdComponent implements OnInit {
   //prima era ServiceDTO
   servicesList!: ServiceToggle[];
   addressSuggestions!: string[];
-  uploadedFiles!: File[];
-  uploadedFileUrls!: string[];
+  uploadedFiles: File[] = [];
+  uploadedFileUrls: string[] = [];
   currentImageIndex!: number; //carousel
 
   constructor(
@@ -94,16 +93,13 @@ export class AddAdComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     //fetchate dal backend, vedere riga 67
     this.categories = ['Ciao'];
-    this.servicesList = [];
+    this.serviceList = [];
     this.addressSuggestions = [];
     this.uploadedFiles = [];
     this.uploadedFileUrls = [];
     this.currentImageIndex = 0;
-
-
 
     // Costruiamo il form:
     // - category viene inizialmente impostato a '' (vuoto) perché la popoleremo dal backend.
@@ -132,7 +128,6 @@ export class AddAdComponent implements OnInit {
       }),
     });
   }
-  
 
   get generalGroup() {
     return this.adForm.get('general') as FormGroup;
@@ -145,17 +140,15 @@ export class AddAdComponent implements OnInit {
   }
 
   // Gestione upload file
-  onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (!input.files) {
-      return;
-    }
-    for (let i = 0; i < input.files.length; i++) {
-      this.uploadedFiles.push(input.files[i]);
-      this.uploadedFileUrls.push(URL.createObjectURL(input.files[i]));
-    }
+  onFileSelected(fileList: FileList) {
+    const newFiles = Array.from(fileList);
+    this.uploadedFiles = [...this.uploadedFiles, ...newFiles];
+    this.uploadedFileUrls = [
+      ...this.uploadedFileUrls,
+      ...newFiles.map((f) => URL.createObjectURL(f)),
+    ];
     this.adForm.get('general.photos')!.setValue(this.uploadedFiles);
-    this.cd.detectChanges();
+    console.log('FileUrls:', this.uploadedFileUrls);
   }
 
   removeFile(index: number) {
@@ -202,7 +195,7 @@ export class AddAdComponent implements OnInit {
     });
   }
 
-  // Carousel helpers 
+  // Carousel helpers
   get currentImageUrl(): string {
     if (!this.uploadedFiles.length) return '';
     return this.fileToObjectURL(this.uploadedFiles[this.currentImageIndex]);
@@ -231,14 +224,13 @@ export class AddAdComponent implements OnInit {
 
   // Discard del form
   onDiscard() {
-  if (confirm('Sei sicuro di voler scartare l\'annuncio?')) {
-    this.adForm.reset();
-    this.uploadedFiles = [];
-    this.uploadedFileUrls = [];
-    this.currentImageIndex = 0;
-    // volendo reindirizzamento a /agent
-    this.router.navigate(['/agent']);
+    if (confirm("Sei sicuro di voler scartare l'annuncio?")) {
+      this.adForm.reset();
+      this.uploadedFiles = [];
+      this.uploadedFileUrls = [];
+      this.currentImageIndex = 0;
+      // volendo reindirizzamento a /agent
+      this.router.navigate(['/agent']);
+    }
   }
-}
-
 }

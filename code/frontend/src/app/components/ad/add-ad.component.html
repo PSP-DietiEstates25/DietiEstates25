@@ -1,5 +1,4 @@
 <mat-horizontal-stepper [linear]="true">
-  
   <!-- Step 1: General info -->
   <mat-step [stepControl]="generalGroup">
     <ng-template matStepLabel>General ad information</ng-template>
@@ -7,7 +6,8 @@
       [form]="generalGroup"
       [categories]="categories"
       [uploadedFiles]="uploadedFiles"
-      (fileSelected)="onFileSelected($event)"
+      [uploadedFileUrls]="uploadedFileUrls"
+      (filesSelected)="onFileSelected($event)"
       (fileRemoved)="removeFile($event)"
     ></ad-step-general>
   </mat-step>
@@ -15,9 +15,7 @@
   <!-- Step 2: Address -->
   <mat-step [stepControl]="addressGroup">
     <ng-template matStepLabel>Address selection</ng-template>
-    <ad-step-address
-      [formGroup]="addressGroup"
-    ></ad-step-address>
+    <ad-step-address [formGroup]="addressGroup"></ad-step-address>
   </mat-step>
 
   <!-- Step 3: Property details -->
@@ -25,8 +23,8 @@
     <ng-template matStepLabel>Property details</ng-template>
     <ad-step-details
       [formGroup]="detailsGroup"
-      [servicesList]="servicesList"
-      (serviceToggle)="onServiceToggle($event.id, $event.checked)"
+      [serviceList]="serviceList"
+      (serviceToggle)="onServiceToggle($event[0], $event[1])"
     ></ad-step-details>
   </mat-step>
 

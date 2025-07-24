@@ -20,7 +20,6 @@ export class AdRecapStepComponent {
   uploadedFileUrls = input<string[]>();
   currentImageIndex = input<number>();
 
-  //per il recupero di valori che cambiano (prevImage e nextImage) bisogna utilizzare l'hook apposito ngOnChange(changes: SimpleChange){} di OnChanges
   prevImage = output<void>();
   nextImage = output<void>();
   

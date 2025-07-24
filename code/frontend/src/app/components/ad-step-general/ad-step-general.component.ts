@@ -28,6 +28,8 @@ export class AdGeneralStepComponent {
 
   uploadedFiles = input<File[]>();
 
+  uploadedFileUrls = input<string[]>();
+
   filesSelected = output<FileList>();
 
   fileRemoved = output<number>();
