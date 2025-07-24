@@ -1,0 +1,73 @@
+<div class="recap-root">
+  <h1 class="recap-title">Recap</h1>
+  <button class="recap-discard" (click)="discard.emit(null)">
+    Discard <mat-icon>delete_outline</mat-icon>
+  </button>
+
+  <!-- Galleria -->
+
+  <div class="recap-gallery">
+    <img
+      class="main-img"
+      [src]="uploadedFileUrls()![currentImageIndex()!]"
+      alt="Main image"
+    />
+    <div class="gallery-nav">
+      <button mat-icon-button (click)="prevImage.emit()">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <div class="thumbnails">
+        @for (file of uploadedFiles(); track file) {
+
+          <!-- ho tolto l'evento (click)="currentImageIndex = $index" per questioni di errori-->
+        <img
+          [src]="uploadedFileUrls()![$index]"
+          [class.selected]="$index === currentImageIndex()"
+        />
+        }
+      </div>
+      <button mat-icon-button (click)="nextImage.emit()">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Riga info principali -->
+  <div class="recap-info-row">
+    <div class="recap-price-box">
+      <div class="price-label">Price:</div>
+      <div class="price-value">
+        {{ generalGroup()!.value.price | currency : "EUR" : "symbol" : "1.0-0" }}
+      </div>
+    </div>
+    <div class="recap-info-item">
+      <mat-icon>home</mat-icon>
+      <div class="info-text">{{ generalGroup()!.value.category | titlecase }}</div>
+    </div>
+    <div class="recap-info-item">
+      <mat-icon>square_foot</mat-icon>
+      <div class="info-text">{{ detailsGroup()!.value.squareMeters }} m²</div>
+    </div>
+    <div class="recap-info-item">
+      <mat-icon>place</mat-icon>
+      <div class="info-text">
+        {{
+          addressGroup()!.value.addressText.replace(", Italy", "") ||
+            addressGroup()!.value.addressText
+        }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Descrizione -->
+  <div class="recap-description">
+    <div class="description-title"><b>Description</b></div>
+    <div class="description-body">{{ generalGroup()!.value.description }}</div>
+  </div>
+
+  <div class="step-buttons end">
+    <button mat-button color="accent" (click)="publish.emit()">
+      Publish <mat-icon>check</mat-icon>
+    </button>
+  </div>
+</div>

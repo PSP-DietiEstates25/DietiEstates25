@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { AuthComponent } from './features/auth/auth.component';
-import { HomeComponent } from './features/home/home.component';
-import { AgentDashboardComponent } from './features/agent/agent-dashboard/agent-dashboard.component';
-import { ClientGuard } from './core/guards/client.guard';
+import { AuthComponent } from './components/auth/auth.component';
+import { HomeComponent } from './components/home/home.component';
+import { AgentDashboardComponent } from './components/agent-dashboard/agent-dashboard.component';
+import { ClientGuard } from './guards/client.guard';
 
-import { MapComponent } from './map/map.component';
+import { MapComponent } from './components/map/map.component';
 
 export const routes: Routes = [
   {
@@ -21,7 +21,7 @@ export const routes: Routes = [
   {
     path: 'history',
     loadComponent: () =>
-      import('./features/history/history.component').then(
+      import('./components/history/history.component').then(
         (m) => m.HistoryComponent
       ),
   },
@@ -29,7 +29,7 @@ export const routes: Routes = [
   {
   path: 'offer',
     loadComponent: () =>
-      import('./features/offer/offer.component').then(
+      import('./components/offer/offer.component').then(
         (m) => m.OfferComponent
       ),
   },
@@ -63,7 +63,7 @@ export const routes: Routes = [
       {
         path: 'add',
         loadComponent: () =>
-          import('./features/agent/add-ad/add-ad.component').then(
+          import('./components/ad/add-ad.component').then(
             (m) => m.AddAdComponent
           ),
       },
