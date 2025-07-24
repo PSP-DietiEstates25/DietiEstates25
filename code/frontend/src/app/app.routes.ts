@@ -3,7 +3,6 @@ import { AuthComponent } from './components/auth/auth.component';
 import { HomeComponent } from './components/home/home.component';
 import { AgentDashboardComponent } from './components/agent-dashboard/agent-dashboard.component';
 import { ClientGuard } from './guards/client.guard';
-
 import { MapComponent } from './components/map/map.component';
 
 export const routes: Routes = [
@@ -29,8 +28,8 @@ export const routes: Routes = [
   {
   path: 'offer',
     loadComponent: () =>
-      import('./components/offer/offer.component').then(
-        (m) => m.OfferComponent
+      import('./components/offer-list/offer-list.component').then(
+        (m) => m.OfferListComponent
       ),
   },
 

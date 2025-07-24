@@ -24,7 +24,7 @@ import { KeyValuePipe } from '@angular/common';
 })
 export class AdDetailsStepComponent {
   formGroup = input.required<FormGroup>();
-  serviceList = input<ServiceToggle[]>();
+  servicesList = input<ServiceToggle[]>();
 
   serviceToggle = output<[number, boolean]>();
 }

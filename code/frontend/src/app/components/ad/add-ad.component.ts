@@ -95,7 +95,7 @@ export class AddAdComponent implements OnInit {
   ngOnInit(): void {
     //fetchate dal backend, vedere riga 67
     this.categories = ['Ciao'];
-    this.serviceList = [];
+    this.servicesList = [];
     this.addressSuggestions = [];
     this.uploadedFiles = [];
     this.uploadedFileUrls = [];

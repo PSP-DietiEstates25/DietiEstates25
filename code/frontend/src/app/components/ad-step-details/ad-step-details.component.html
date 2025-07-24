@@ -54,7 +54,7 @@
     <div class="service-checkbox">
       <mat-checkbox
         [checked]="formGroup()?.get('services')!.value.includes(service.id)"
-        (change)="serviceToggle.emit({ id: service.id, checked: $event.checked })"
+        (change)="serviceToggle.emit([service.id, $event.checked])"
       >
         {{ service.id}} Prima c'era service.title
       </mat-checkbox>

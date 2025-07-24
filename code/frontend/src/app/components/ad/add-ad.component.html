@@ -23,7 +23,7 @@
     <ng-template matStepLabel>Property details</ng-template>
     <ad-step-details
       [formGroup]="detailsGroup"
-      [serviceList]="serviceList"
+      [servicesList]="servicesList"
       (serviceToggle)="onServiceToggle($event[0], $event[1])"
     ></ad-step-details>
   </mat-step>
@@ -40,7 +40,7 @@
       [currentImageIndex]="currentImageIndex"
       (prevImage)="prevImage()"
       (nextImage)="nextImage()"
-      (imageSelected)="currentImageIndex.set($event)"
+      (imageSelected)="currentImageIndex = $event"
       (publish)="onPublish()"
       (discard)="onDiscard()"
     ></ad-step-recap>
