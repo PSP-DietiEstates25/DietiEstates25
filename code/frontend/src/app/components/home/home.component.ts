@@ -22,10 +22,10 @@ import { LocationService } from '../../services/location.service';
     MatOptionModule,
     MatInputModule,
     MatAutocompleteModule,
-    NavbarComponent
+    NavbarComponent,
   ],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent {
   // Selezioni per i menu a tendina
@@ -35,10 +35,10 @@ export class HomeComponent {
   priceOptions: string[] = ['< €500', '€500–€1000', '€1000–€1500', '> €1500'];
 
   // Modelli di binding
-  selectedContract!: string;
-  selectedEstate!: string;
-  selectedRooms!: string;
-  selectedPrice!: string;
+  selectedContract: string = '';
+  selectedEstate: string = '';
+  selectedRooms: string = '';
+  selectedPrice: string = '';
 
   // Autocompletamento
   locationInput: string = '';
@@ -52,11 +52,11 @@ export class HomeComponent {
   onLocationChange(query: string): void {
     if (query && query.length > 1) {
       this.locationService.search(query).subscribe({
-        next: (results) => this.locationOptions = results,
+        next: (results) => (this.locationOptions = results),
         error: (err) => {
           console.error('Errore nel caricamento delle location:', err);
           this.locationOptions = [];
-        }
+        },
       });
     } else {
       this.locationOptions = [];
@@ -69,7 +69,7 @@ export class HomeComponent {
       estate: this.selectedEstate,
       rooms: this.selectedRooms,
       price: this.selectedPrice,
-      location: this.locationInput
+      location: this.locationInput,
     });
     // navigazione verso una pagina di risultati
   }

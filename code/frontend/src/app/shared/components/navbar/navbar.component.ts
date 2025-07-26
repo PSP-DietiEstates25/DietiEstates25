@@ -10,17 +10,22 @@ import { Router } from '@angular/router';
   styleUrls: ['./navbar.component.scss'],
   imports: [RouterModule],
 })
-
 export class NavbarComponent {
-  isMenuOpen = false;
+  mobileMenuOpen: boolean = false;
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  navLinks = [
+    { path: '/', label: 'Home' },
+    { path: '/notification', label: 'Notification' },
+    { path: '/offer', label: 'Offer' },
+    { path: '/history', label: 'History' },
+    { path: '/pages', label: 'Visits' },
+    { path: '/notices', label: 'Notices' },
+  ];
+
+  constructor(private authService: AuthService, private router: Router) {}
 
   toggleMenu(): void {
-    this.isMenuOpen = !this.isMenuOpen;
+    this.mobileMenuOpen = !this.mobileMenuOpen;
   }
 
   logout(): void {

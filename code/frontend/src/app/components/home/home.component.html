@@ -1,84 +1,129 @@
 <app-navbar></app-navbar>
 
-<section class="hero">
-  <div class="hero-text">
-    <h1>
-      The <span class="highlight">#1</span><br />
+<section
+  class="min-h-screen flex flex-col items-center justify-center px-4 bg-cover bg-center text-center relative"
+  style="background-image: url('/assets/city-background.jpg')"
+>
+  <!-- Testo Hero -->
+  <div class="mb-10">
+    <h1
+      class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold leading-tight drop-shadow-lg tracking-tight"
+    >
+      The <span class="text-blue-600">#1</span><br />
       real estate<br />
-      web site
+      <span class="text-blue-900">web site</span>
     </h1>
   </div>
 
-  <div class="filters">
-    <!-- Contract -->
-    <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>🔑Contract</mat-label>
-      <mat-select [(value)]="selectedContract">
+  <!-- Filter Section -->
+  <div
+    class="mx-auto mb-10 px-8 py-6 bg-white/60 backdrop-blur-lg rounded-2xl shadow-lg flex flex-wrap justify-center gap-6 max-w-4xl border border-white/40"
+  >
+    <div class="flex flex-col items-start w-32 sm:w-44">
+      <label
+        for="contract"
+        class="mb-1 sm:mb-2 text-xs sm:text-sm font-semibold text-gray-700 tracking-wide"
+        >Contract</label
+      >
+      <select
+        id="contract"
+        class="w-full px-2 py-1 sm:px-4 sm:py-2 bg-white/80 border border-gray-300 rounded-lg sm:rounded-xl shadow-none sm:shadow focus:ring-2 focus:ring-purple-400 focus:border-purple-600 transition text-sm sm:text-base font-medium text-gray-800"
+        [(ngModel)]="selectedContract"
+      >
+        <option value="" disabled selected>🔑 Contract</option>
         @for (option of contractOptions; track option) {
-          <mat-option [value]="option">
-            {{ option }}
-          </mat-option>
+        <option [value]="option">{{ option }}</option>
         }
-      </mat-select>
-    </mat-form-field>
+      </select>
+    </div>
 
-    <!-- Estate -->
-    <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>🏠Estate</mat-label>
-      <mat-select [(value)]="selectedEstate">
+    <div class="flex flex-col items-start w-32 sm:w-44">
+      <label
+        for="estate"
+        class="mb-1 sm:mb-2 text-xs sm:text-sm font-semibold text-gray-700 tracking-wide"
+        >Estate</label
+      >
+      <select
+        id="estate"
+        class="w-full px-2 py-1 sm:px-4 sm:py-2 bg-white/80 border border-gray-300 rounded-lg sm:rounded-xl shadow-none sm:shadow focus:ring-2 focus:ring-purple-400 focus:border-purple-600 transition text-sm sm:text-base font-medium text-gray-800"
+        [(ngModel)]="selectedEstate"
+      >
+        <option value="" disabled selected>🏠 Estate</option>
         @for (option of estateOptions; track option) {
-          <mat-option [value]="option">
-            {{ option }}
-          </mat-option>
+        <option [value]="option">{{ option }}</option>
         }
-      </mat-select>
-    </mat-form-field>
+      </select>
+    </div>
 
-    <!-- Rooms -->
-    <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>🛏️Rooms</mat-label>
-      <mat-select [(value)]="selectedRooms">
+    <div class="flex flex-col items-start w-32 sm:w-44">
+      <label
+        for="rooms"
+        class="mb-1 sm:mb-2 text-xs sm:text-sm font-semibold text-gray-700 tracking-wide"
+        >Rooms</label
+      >
+      <select
+        id="rooms"
+        class="w-full px-2 py-1 sm:px-4 sm:py-2 bg-white/80 border border-gray-300 rounded-lg sm:rounded-xl shadow-none sm:shadow focus:ring-2 focus:ring-purple-400 focus:border-purple-600 transition text-sm sm:text-base font-medium text-gray-800"
+        [(ngModel)]="selectedRooms"
+      >
+        <option value="" disabled selected>🛏️ Rooms</option>
         @for (option of roomOptions; track option) {
-          <mat-option [value]="option">
-            {{ option }}
-          </mat-option>
+        <option [value]="option">{{ option }}</option>
         }
-      </mat-select>
-    </mat-form-field>
+      </select>
+    </div>
 
-    <!-- Price -->
-    <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>💲Price</mat-label>
-      <mat-select [(value)]="selectedPrice">
+    <div class="flex flex-col items-start w-32 sm:w-44">
+      <label
+        for="price"
+        class="mb-1 sm:mb-2 text-xs sm:text-sm font-semibold text-gray-700 tracking-wide"
+        >Price</label
+      >
+      <select
+        id="price"
+        class="w-full px-2 py-1 sm:px-4 sm:py-2 bg-white/80 border border-gray-300 rounded-lg sm:rounded-xl shadow-none sm:shadow focus:ring-2 focus:ring-purple-400 focus:border-purple-600 transition text-sm sm:text-base font-medium text-gray-800"
+        [(ngModel)]="selectedPrice"
+      >
+        <option value="" disabled selected>💲 Price</option>
         @for (option of priceOptions; track option) {
-          <mat-option [value]="option">
-            {{ option }}
-          </mat-option>
+        <option [value]="option">{{ option }}</option>
         }
-      </mat-select>
-    </mat-form-field>
+      </select>
+    </div>
   </div>
 
-  <!-- Location + Search -->
-  <div class="search-bar">
-    <mat-form-field appearance="outline" class="location-input">
-      <input
-        type="text"
-        matInput
-        placeholder="📍Enter location..."
-        [(ngModel)]="locationInput"
-        (input)="onLocationChange(locationInput)"
-        [matAutocomplete]="auto"
-      />
-      <mat-autocomplete #auto="matAutocomplete">
-        @for (option of locationOptions; track option) {
-          <mat-option [value]="option">
-            {{ option }}
-          </mat-option>
-        }
-      </mat-autocomplete>
-    </mat-form-field>
-
-    <button class="search-btn" (click)="onSearch()">🔍Search</button>
+  <!-- SearchBar -->
+  <div
+    class="flex w-full max-w-xl items-center bg-white/70 backdrop-blur-md shadow rounded-full px-4 py-2 border border-gray-200 focus-within:ring-2 focus-within:ring-purple-500 transition"
+  >
+    <span class="text-purple-500 text-xl mr-2">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        class="w-5 h-5"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"
+        />
+      </svg>
+    </span>
+    <input
+      type="text"
+      placeholder="Enter location..."
+      [(ngModel)]="locationInput"
+      (input)="onLocationChange(locationInput)"
+      class="flex-1 bg-transparent border-0 outline-none text-base text-gray-800 placeholder-gray-400"
+    />
+    <button
+      class="ml-3 bg-purple-900 hover:bg-purple-800 text-white font-semibold rounded-full shadow px-7 py-2 transition"
+      (click)="onSearch()"
+    >
+      <span class="inline-block align-middle mr-1"></span>Search
+    </button>
   </div>
 </section>
