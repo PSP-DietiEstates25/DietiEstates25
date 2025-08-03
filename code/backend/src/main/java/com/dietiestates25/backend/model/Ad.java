@@ -31,9 +31,6 @@ import lombok.ToString;
 /**
  * Rappresenta un annuncio (advertisement) pubblicato da un agente o da un
  * owner.
- * Contiene i dettagli “pubblicitari” (titolo, descrizione, prezzo, data di
- * pubblicazione,
- * tipo di contratto, stato) e “punta” all’immobile strutturale (RealEstate).
  */
 
 @Getter
@@ -49,7 +46,33 @@ public class Ad {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
+
+    // Dati dell'immobile
+    @NotNull
+    private BigDecimal price;
+
+    @NotNull
+    private double size;
+
+    @NotNull
+    private String address;
+
+    @NotNull
+    private int rooms;
+
+    @NotNull
+    private int floor;
+
+    @Enumerated(EnumType.STRING)
+    private EnergyClass energyClass;
+
+    // Categoria annuncio
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AdType category;
+
+    // Extra (foto, descrizione)
     @NotNull
     private String photo;
 
@@ -57,17 +80,8 @@ public class Ad {
     private String description;
 
     private LocalDate deletedAt;
-    
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private AdType category;
 
-    @NotNull
-    @OneToOne
-    @JoinColumn(name = "real_estate_id")
-    private RealEstate realEstate;
-
+    // Relazioni
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estate_agent_id", nullable = false)
@@ -76,13 +90,35 @@ public class Ad {
     @NotNull
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Proposal> proposals = new ArrayList<>();
- 
+
     @NotNull
     @ManyToMany(mappedBy = "ads")
     private List<SavedSearch> savedSearches = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "publisher_id")
+    private EstateAgent publisher;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "position_id")
+    private GeographicalPosition geographicalPosition;
+
+    @ManyToOne
+    @JoinColumn(name = "service_id")
+    private Services services;
+
+    @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Visit> visits = new ArrayList<>();
+
+    @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Offer> offers = new ArrayList<>();
 
     // Metodi:
+
+    // Ritorna l'annuncio associato all'immobile
+    public Ad getAd() {
+        return this;
+    }
 
     // Verifica se l'annuncio è ancora valido
     public boolean isActive() {
@@ -93,11 +129,7 @@ public class Ad {
     public void addOffer(Offer offer) {
         if (offer != null) {
             this.proposals.add(offer);
-            //offer.setAd(this);
+            // offer.setAd(this);
         }
-    }
-
-    public BigDecimal getPrice() {
-        return this.realEstate != null ? this.realEstate.getPrice() : BigDecimal.ZERO;
     }
 }

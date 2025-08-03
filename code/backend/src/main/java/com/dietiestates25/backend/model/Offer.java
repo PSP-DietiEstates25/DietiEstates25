@@ -30,7 +30,7 @@ import lombok.AllArgsConstructor;
 @ToString
 
 @Entity
-@Table(name = "offers")
+// @Table(name = "offers")
 public class Offer extends Proposal {
     
     @NotNull

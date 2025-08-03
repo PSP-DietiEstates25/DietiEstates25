@@ -44,7 +44,7 @@ public class GeographicalPosition {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "realEstate")
-    private RealEstate realEstate;
+    private Ad ad;
 
     @OneToMany(mappedBy = "geographicalPosition", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SavedSearch> savedSearches = new ArrayList<>();

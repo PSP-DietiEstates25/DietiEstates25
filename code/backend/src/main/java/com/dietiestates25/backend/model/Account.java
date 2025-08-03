@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.NoArgsConstructor;
+import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 
 @Getter
@@ -11,6 +12,7 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Embeddable
 
 public class Account {
 

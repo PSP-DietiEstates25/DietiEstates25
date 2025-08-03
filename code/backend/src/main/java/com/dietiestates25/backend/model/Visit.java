@@ -3,6 +3,9 @@ package com.dietiestates25.backend.model;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -18,8 +21,12 @@ import lombok.AllArgsConstructor;
 @ToString
 
 @Entity
-@Table(name = "visits")
+// @Table(name = "visits")
 public class Visit extends Proposal {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     @NotNull
     private LocalDateTime dateTime;
