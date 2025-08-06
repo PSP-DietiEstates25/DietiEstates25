@@ -21,38 +21,29 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.validation.constraints.NotNull;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-/**
- * Rappresenta un annuncio (advertisement) pubblicato da un agente o da un
- * owner.
- */
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-
 @Entity
 @Table(name = "ads")
 public class Ad {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    // Dati dell'immobile
     @NotNull
     private BigDecimal price;
 
     @NotNull
-    private double size;
+    private float size;
 
     @NotNull
     private String address;
@@ -66,13 +57,11 @@ public class Ad {
     @Enumerated(EnumType.STRING)
     private EnergyClass energyClass;
 
-    // Categoria annuncio
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AdType category;
 
-    // Extra (foto, descrizione)
     @NotNull
     private String photo;
 
@@ -81,7 +70,6 @@ public class Ad {
 
     private LocalDate deletedAt;
 
-    // Relazioni
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estate_agent_id", nullable = false)
@@ -112,7 +100,7 @@ public class Ad {
 
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Offer> offers = new ArrayList<>();
-
+    
     // Metodi:
 
     // Ritorna l'annuncio associato all'immobile

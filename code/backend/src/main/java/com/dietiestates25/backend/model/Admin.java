@@ -34,8 +34,10 @@ import lombok.AllArgsConstructor;
 public class Admin extends Staffer {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	private String email;
+	
+	@NotNull
+	private String password;
 
 	@NotNull
 	private StafferRole role = StafferRole.ADMIN;

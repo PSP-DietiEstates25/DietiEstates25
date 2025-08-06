@@ -37,11 +37,9 @@ import lombok.AllArgsConstructor;
 public class User {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-
-	@Embedded
-	private Account account;
+	private String email;
+	
+	private String password;
 	
 	@NotNull
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
