@@ -1,0 +1,10 @@
+spring.application.name = project-name
+
+spring.jpa.hibernate.ddl-auto=update
+spring.datasource.url=jdbc:postgresql://localhost:5432/project-name
+spring.datasource.username=database_username
+spring.datasource.password=database_password
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.show-sql: true
+
+app.geoservice.key = mySecretKey
