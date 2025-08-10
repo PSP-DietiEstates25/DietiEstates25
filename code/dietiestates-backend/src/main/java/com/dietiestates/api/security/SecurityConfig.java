@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -18,6 +19,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 // Configurazione della sicurezza
+@EnableMethodSecurity // per interpretare @PreAuthorize
 @Configuration
 public class SecurityConfig {
 
@@ -35,11 +37,12 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())                        // Disabilita la protezione CSRF, per consentire le richieste API
-                .cors(Customizer.withDefaults())                     // Abilita CORS con impostazioni predefinite, per consentire le richieste da origini diverse
+                .csrf(csrf -> csrf.disable())                              // Disabilita la protezione CSRF, per consentire le richieste API
+                .cors(Customizer.withDefaults())                           // Abilita CORS con impostazioni predefinite, per consentire le richieste da origini diverse
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // Consente l'accesso a tutte le richieste di autenticazione
-                        .anyRequest().authenticated())               // Richiede l'autenticazione per tutte le altre richieste
+                        .requestMatchers("/api/auth/**").permitAll()       // Consente l'accesso a tutte le richieste di autenticazione
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN") // Consente l'accesso alle richieste amministrative solo agli utenti con ruolo ADMIN
+                        .anyRequest().authenticated())                     // Richiede l'autenticazione per tutte le altre richieste
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // Aggiunge il filtro JWT prima del filtro di autenticazione
 
         return http.build();
