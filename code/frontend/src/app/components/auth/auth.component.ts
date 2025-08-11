@@ -1,6 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 
 // Material Modules
@@ -11,6 +17,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDividerModule } from '@angular/material/divider';
+
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -27,32 +35,33 @@ import { MatDividerModule } from '@angular/material/divider';
     MatInputModule,
     MatFormFieldModule,
     MatTabsModule,
-    MatDividerModule
+    MatDividerModule,
   ],
 
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss'],
 })
 export class AuthComponent implements OnInit {
-  // Form reactive
   loginForm!: FormGroup;
   registerForm!: FormGroup;
 
-  // Visibilità password
   hideLoginPassword = true;
   hideRegisterPassword = true;
   hideRegisterConfirm = true;
 
-  constructor(private fb: FormBuilder, private router: Router) {}
+  loading = false;
+  errorMsg = '';
+
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private authService = inject(AuthService);
 
   ngOnInit(): void {
-    // Form di login: email + password
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
 
-    // Form di registrazione: username + email + password + conferma password
     this.registerForm = this.fb.group(
       {
         username: ['', [Validators.required, Validators.minLength(3)]],
@@ -60,13 +69,10 @@ export class AuthComponent implements OnInit {
         password: ['', [Validators.required, Validators.minLength(6)]],
         confirmPassword: ['', [Validators.required]],
       },
-      {
-        validators: this.passwordMatchValidator('password', 'confirmPassword'),
-      }
+      { validators: this.passwordMatchValidator('password', 'confirmPassword') }
     );
   }
 
-  // Validator custom per check password === confirmPassword
   private passwordMatchValidator(passKey: string, confirmKey: string) {
     return (group: FormGroup) => {
       const pass = group.controls[passKey];
@@ -79,57 +85,60 @@ export class AuthComponent implements OnInit {
     };
   }
 
-  // * LOGIN *
-  onLogin(): void {
+  // LOGIN reale
+  async onLogin(): Promise<void> {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
     }
 
     const { email, password } = this.loginForm.value;
-    // this.authService.loginWithEmail(email, password).subscribe( … )
-    console.log('[DUMMY] Effettuo login con:', { email, password });
+    this.loading = true;
+    this.errorMsg = '';
 
-    // Simulo redirect “in base al ruolo” (ad esempio “Agent” o “Client”):
-    const fintoRuolo: string = 'CLIENT'; // oppure “AGENT” o “ADMIN”
-    if (fintoRuolo === 'AGENT') {
-      this.router.navigate(['/agent']);
-    } else if (fintoRuolo === 'ADMIN') {
-      this.router.navigate(['/admin']);
-    } else {
-      this.router.navigate(['/']);
+    try {
+      const res = await this.authService.login(email, password);
+      // redirect in base al ruolo restituito dal backend
+      if (res.role === 'estate_agent') {
+        this.router.navigate(['/agent']);
+      } else if (res.role === 'admin') {
+        this.router.navigate(['/admin']);
+      } else {
+        this.router.navigate(['/']);
+      }
+    } catch (err) {
+      this.errorMsg = 'Credenziali non valide o errore di connessione.';
+    } finally {
+      this.loading = false;
     }
   }
 
-  // * REGISTRAZIONE *
-  onRegister(): void {
+  // REGISTRAZIONE reale
+  async onRegister(): Promise<void> {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       return;
     }
 
-    const { username, email, password } = this.registerForm.value;
-    // this.authService.register({ username, email, password }).subscribe( … )
-    console.log('[DUMMY] Effettuo registrazione con:', {
-      username,
-      email,
-      password,
-    });
+    const { email, password } = this.registerForm.value;
+    this.loading = true;
+    this.errorMsg = '';
 
-    // Dopo la registrazione:
-    // 1) Login automatico, salva token e redirect
-    // 2) Messaggio conferma, rimani sulla tab “login”
-    // 3) Redirect
-
-    // Per esempio, dopo registrazione vado su login:
-    alert('Registrazione avvenuta con successo! Ora puoi fare il login.');
+    try {
+      await this.authService.register(email, password);
+      alert('Registrazione avvenuta con successo! Ora puoi fare il login.');
+      // opzionale: auto-login
+      // await this.onLogin();
+    } catch (err) {
+      this.errorMsg = 'Errore durante la registrazione.';
+    } finally {
+      this.loading = false;
+    }
   }
 
-  // Helper per controllo errori login
   get lf() {
     return this.loginForm.controls;
   }
-  // Helper per controllo errori register
   get rf() {
     return this.registerForm.controls;
   }

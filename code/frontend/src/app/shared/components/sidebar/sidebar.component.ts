@@ -19,9 +19,9 @@ export class SidebarComponent implements OnInit {
   constructor(private auth: AuthService) {}
 
   ngOnInit(): void {
-    // supponendo che getUser() ritorni un Observable<{ name: string }>
-    this.auth.getUser().subscribe(user => {
-      this.userName = user.name;
+    // niente getUser(), niente oggetto user
+    this.auth.displayName$.subscribe((name: string) => {
+      this.userName = name;
     });
   }
 

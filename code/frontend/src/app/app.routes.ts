@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { AuthComponent } from './components/auth/auth.component';
 import { HomeComponent } from './components/home/home.component';
 import { AgentDashboardComponent } from './components/agent-dashboard/agent-dashboard.component';
-import { ClientGuard } from './guards/client.guard';
+import { roleGuard } from './guards/role.guard';
 import { MapComponent } from './components/map/map.component';
 
 export const routes: Routes = [
@@ -14,7 +14,7 @@ export const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
-    //canActivate: [ClientGuard],
+    canActivate: [ roleGuard(['CLIENT']) ],
   },
 
   {
@@ -26,7 +26,7 @@ export const routes: Routes = [
   },
 
   {
-  path: 'offer',
+    path: 'offer',
     loadComponent: () =>
       import('./components/offer-list/offer-list.component').then(
         (m) => m.OfferListComponent
@@ -36,29 +36,14 @@ export const routes: Routes = [
   {
     path: 'map',
     title: 'Mappa di prova',
-    component: MapComponent
-
+    component: MapComponent,
   },
-  /*
-  {
-    path: 'notification',
-    loadComponent: () =>
-      import('./features/notification/notification.component').then(
-        (m) => m.NotificationComponent
-      ),
-  },
-*/
 
   {
     path: 'agent',
     component: AgentDashboardComponent,
-    //canActivate: [AgentGuard],
-
+    canActivate: [roleGuard(['AGENT'], '/')],
     children: [
-      // quando vai su /agent (rotta vuota), mostri un componente “Pubblicati”
-      //{ path: '', loadComponent: () => import('./features/agent-pubblicati/agent-pubblicati.component').then(m => m.AgentPubblicatiComponent) },
-
-      // /agent/add -> componente per “Aggiungi annuncio”
       {
         path: 'add',
         loadComponent: () =>
@@ -66,11 +51,6 @@ export const routes: Routes = [
             (m) => m.AddAdComponent
           ),
       },
-
-      // /agent/visits -> componente “Visite prenotate”
-      //{ path: 'visits', loadComponent: () => import('./features/agent-visits/agent-visits.component').then(m => m.AgentVisitsComponent) },
-
-      // … puoi aggiungere altre sottorotte …
     ],
   },
 ];

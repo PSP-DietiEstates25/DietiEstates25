@@ -1,82 +1,74 @@
-// src/app/core/services/auth.service.ts
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
-
-export interface User {
-  id: string;
-  name: string;
-  email?: string;
-}
-
-export interface LoginResponse {
-  token: string;
-  role: 'CLIENT' | 'AGENT' | 'ADMIN';
-  // username, userId, ecc.
-}
+import { environment } from '../../environments/environment';
+import { LoginRequest, LoginResponse } from '../core/auth.types';
+import { firstValueFrom, BehaviorSubject, map } from 'rxjs';
+import { TokenStorage } from './token-storage.service';
+import { AppRole, mapBackendRoleToApp } from '../core/roles';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  // Un BehaviorSubject che tiene il ruolo corrente (o null se non loggato)
-  private _userRole$ = new BehaviorSubject<'CLIENT' | 'AGENT' | 'ADMIN' | null>(null);
+  private http = inject(HttpClient);
+  private storage = inject(TokenStorage);
+  private base = environment.apiBaseUrl;
 
-  // BehaviorSubject per memorizzare i dati dell'utente loggato (o null se non loggato)
-  private userSubject = new BehaviorSubject<User | null>(null);
+  private _userRole$ = new BehaviorSubject<AppRole | null>(null);
+  userRole$ = this._userRole$.asObservable();
 
-  constructor(private http: HttpClient) {
-    // Al caricamento dell’app, prova a leggere lo “userRole” da localStorage
-    const savedRole = localStorage.getItem('app-role') as any;
-    if (savedRole) {
-      this._userRole$.next(savedRole);
-    }
+  private _email$ = new BehaviorSubject<string | null>(null);
+  email$ = this._email$.asObservable();
+
+  // nome visuale derivato dall'email
+  displayName$ = this.email$.pipe(map((e) => (e ? e.split('@')[0] : '')));
+
+  constructor() {
+    // init da storage (token e role)
+    const token = this.storage.token;
+    const role = this.storage.role;
+    if (role) this._userRole$.next(mapBackendRoleToApp(role));
+    this._email$.next(this.extractEmailFromToken(token));
   }
 
-  // espone come observable la “role” dell’utente loggato
-  get userRole$(): Observable<'CLIENT' | 'AGENT' | 'ADMIN' | null> {
-    return this._userRole$.asObservable();
+  async login(email: string, password: string): Promise<LoginResponse> {
+    const body: LoginRequest = { email, password };
+    const res = await firstValueFrom(
+      this.http.post<LoginResponse>(`${this.base}/api/auth/login`, body)
+    );
+
+    this.storage.set(res.token, res.role, res.subjectType);
+    this._userRole$.next(mapBackendRoleToApp(res.role));
+    this._email$.next(this.extractEmailFromToken(res.token));
+    return res;
   }
 
-  // Metodo di login (POST a /api/auth/login)
-  loginWithEmail(email: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>('/api/auth/login', {
-      email,
-      password
-    }).pipe(
-      tap(resp => {
-        // Quando riceviamo risposta valida, salva token e ruolo in localStorage
-        localStorage.setItem('app-token', resp.token);
-        localStorage.setItem('app-role', resp.role);
-        // Aggiorna il BehaviorSubject
-        this._userRole$.next(resp.role);
+  async register(email: string, password: string): Promise<void> {
+    await firstValueFrom(
+      this.http.post<void>(`${this.base}/api/auth/register`, {
+        email,
+        password,
       })
     );
   }
 
-  logout(): void {
-    localStorage.removeItem('app-token');
-    localStorage.removeItem('app-role');
+  logout() {
+    this.storage.clear();
     this._userRole$.next(null);
+    this._email$.next(null);
   }
 
-    getUser(): Observable<User> {
-    if (!this.userSubject.value) {
-      // sostituisci '/api/user-profile' con endpoint corretto
-      this.http.get<User>('/api/user-profile')
-        .pipe(
-          tap(user => this.userSubject.next(user))
-        )
-        .subscribe({
-          next: () => {},
-          error: err => {
-            console.error('Errore nel recupero utente', err);
-            // puoi gestire il logout/redirect qui se 401, ecc.
-          }
-        });
+  isAuthenticated(): boolean {
+    return !!this.storage.token;
+  }
+
+  // helpers 
+  private extractEmailFromToken(token: string | null): string | null {
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      // nel backend abbiamo messo l'email come subject (sub)
+      return payload?.sub ?? null;
+    } catch {
+      return null;
     }
-    // qui il BehaviorSubject emette l’ultimo valore (appena ricevuto o già in cache)
-    return this.userSubject.asObservable() as Observable<User>;
   }
-
-  // ... aggiungere metodi per login OAuth/Google/Facebook,
-  // oppure per registrazione con email/password, modifica password, ecc
 }
