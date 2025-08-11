@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,27 +20,28 @@ import com.dietiestates.api.security.JwtService;
 
 @Service
 public class AuthService {
-    private final UserRepository userRepo;
-    private final StafferRepository stafferRepo;
-    private final PasswordEncoder encoder;
-    private final JwtService jwt;
-
-    public AuthService(UserRepository userRepo, StafferRepository stafferRepo, PasswordEncoder encoder, JwtService jwt) {
-        this.userRepo = userRepo;
-        this.stafferRepo = stafferRepo;
-        this.encoder = encoder;
-        this.jwt = jwt;
-    }
+	
+	@Autowired
+    private UserRepository userRepository;
+	
+	@Autowired
+    private StafferRepository stafferRepository;
+	
+	@Autowired
+    private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+    private JwtService jwt;
 
     public LoginResponse login(LoginRequest req) {
         String email = req.email();
         String raw = req.password();
 
         // Staffer
-        Optional<Staffer> st = stafferRepo.findById(email);
+        Optional<Staffer> st = stafferRepository.findById(email);
         if (st.isPresent()) {
             Staffer staffer = st.get();
-            if(!encoder.matches(raw, staffer.getPassword())){   // confronto con la password codificata
+            if(!passwordEncoder.matches(raw, staffer.getPassword())){   // confronto con la password codificata
                 throw new IllegalArgumentException("Credenziali non valide");
             }
 
@@ -52,10 +54,10 @@ public class AuthService {
         }
 
         // User
-        Optional<User> us = userRepo.findById(email);
+        Optional<User> us = userRepository.findById(email);
         if(us.isPresent()) {
             User user = us.get();
-            if(!encoder.matches(raw, user.getPassword())) {
+            if(!passwordEncoder.matches(raw, user.getPassword())) {
                 throw new IllegalArgumentException("Credenziali non valide");
             }
 
@@ -70,14 +72,14 @@ public class AuthService {
     }
 
     public void register(RegisterRequest req) {
-        if(userRepo.existsById(req.email())) {
+        if(userRepository.existsById(req.email())) {
             throw new IllegalArgumentException("Email già registrata");
         }
 
         User us = new User();
         us.setEmail(req.email());
-        us.setPassword(encoder.encode(req.password())); // BCrypt
-        userRepo.save(us);
+        us.setPassword(passwordEncoder.encode(req.password())); // BCrypt
+        userRepository.save(us);
     }
 
     private String getRoleFromType(Staffer st) {

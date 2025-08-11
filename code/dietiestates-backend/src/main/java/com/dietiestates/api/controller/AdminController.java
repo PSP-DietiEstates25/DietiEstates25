@@ -1,23 +1,23 @@
 package com.dietiestates.api.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.CreateAgentRequest;
 import com.dietiestates.api.service.EstateAgentService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
-    private final EstateAgentService estateAgentService;
-
-    public AdminController(EstateAgentService estateAgentService) {
-        this.estateAgentService = estateAgentService;
-    }
+	
+	@Autowired
+    private EstateAgentService estateAgentService;
 
     @PostMapping("/agents")
     @PreAuthorize("hasRole('ADMIN')")
