@@ -1,43 +1,49 @@
 package com.dietiestates.api.security;
 
-import org.springframework.stereotype.Service;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.security.Keys;
+import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Map;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-
 @Service
 public class JwtService {
+  @Value("${security.jwt.secret}")
+  private String secret;
 
-    @Value("${security.jwt.secret}")
-    private String secret;
-    
-    // entrambi presi da application.properties
-    @Value("${security.jwt.expiration-ms}")
-    private long expirationMs;
+  @Value("${security.jwt.expiration-ms}")
+  private long expirationMs;
 
-    public String generate(String subjectEmail, Map<String, Object> claims){
-        Date now = new Date();
-        Date exp = new Date(now.getTime() + expirationMs);
+  private SecretKey key() {
+    return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+  }
 
-        return Jwts.builder()                               // jwts è una classe che fornisce metodi per analizzare e generare token JWT
-                .setClaims(claims)                          // claims è un oggetto che contiene le informazioni aggiuntive del token, ad esempio il ruolo 
-                .setSubject(subjectEmail) 
-                .setIssuedAt(now)                           // data di emissione del token
-                .setExpiration(exp)
-                .signWith(SignatureAlgorithm.HS256, secret) // HS256 è un algoritmo di firma HMAC basato su SHA-256, cioè utilizza una chiave segreta per firmare il token
-                .compact();                                 // genera il token JWT
-    }
+  public String generate(String subjectEmail, Map<String, Object> claims){
+    Date now = new Date();
+    Date exp = new Date(now.getTime() + expirationMs);
 
-    public Claims parse(String token){
-        return Jwts.parser()           
-                .setSigningKey(secret) // imposta la chiave segreta per la verifica della firma
-                .parseClaimsJws(token) // analizza il token e verifica la firma, jws è JSON Web Signature serve a garantire l'integrità e l'autenticità del token
-                .getBody();            // restituisce il corpo del token, che contiene le informazioni del token come i claims
-    }
+    return Jwts.builder()
+        .setClaims(claims)
+        .setSubject(subjectEmail)
+        .setIssuedAt(now)
+        .setExpiration(exp)
+        .signWith(key(), SignatureAlgorithm.HS256)
+        .compact();
+  }
+
+  public Claims parse(String token){
+    return Jwts.parserBuilder()
+        .setSigningKey(key())
+        .build()
+        .parseClaimsJws(token)
+        .getBody();
+  }
 }
+
