@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
-import { LocationService } from '../../services/location.service';
+import { LocationService } from '../../_services/location.service';
 
 @Component({
   selector: 'app-home',

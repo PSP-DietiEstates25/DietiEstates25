@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { AuthService } from '../../../services/auth.service';
+import { AuthService } from '../../../_services/auth.service';
 import { OnInit } from '@angular/core';
 
 @Component({

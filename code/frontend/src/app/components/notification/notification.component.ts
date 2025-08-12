@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NotificationService } from '../../services/notification.service';
+import { NotificationService } from '../../_services/notification.service';
 
 @Component({
   selector: 'app-notification',

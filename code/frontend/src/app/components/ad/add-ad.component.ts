@@ -21,16 +21,16 @@ import { MatListModule } from '@angular/material/list';
 import { ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
  
-import { LocationService } from '../../services/location.service';
+import { LocationService } from '../../_services/location.service';
 
-import { MetadataService } from '../../services/metadata.service';
+import { MetadataService } from '../../_services/metadata.service';
 import { ServiceDTO } from '../../interfaces/service-dto';
 import { ServiceToggle } from '../../interfaces/service-toggle';
 
-import { AdService } from '../../services/ad.service';
+import { AdService } from '../../_services/ad.service';
 
-import { AdRecapStepComponent } from '..//../components/ad-step-recap/ad-step-recap.component';
-import { AdGeneralStepComponent } from '../ad-step-general/ad-step-general.component';
+import { AdRecapStepComponent } from './ad-step-recap/ad-step-recap.component';
+import { AdGeneralStepComponent } from './ad-step-general/ad-step-general.component';
 import { AdAddressStepComponent } from '../ad-step-address/ad-step-address.component';
 import { AdDetailsStepComponent } from '../ad-step-details/ad-step-details.component';
 
