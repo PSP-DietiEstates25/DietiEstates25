@@ -52,14 +52,14 @@ public class Detail {
 	@EqualsAndHashCode.Exclude
 	@NotNull
 	@OneToMany(mappedBy = "detail", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Ad> ads = new ArrayList<>();
+	private List<RealEstateAd> ads = new ArrayList<>();
 	
 	public void addSearch(Search search) {
 		searches.add(search);
 		search.setDetail(this);
 	}
 	
-	public void addAd(Ad ad) {
+	public void addAd(RealEstateAd ad) {
 		ads.add(ad);
 		ad.setDetail(null);
 	}
