@@ -35,9 +35,9 @@ public class EstateAgent extends Staffer {
 	
 	@NotNull
 	@OneToMany(mappedBy = "estateAgent", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Ad> publishedAd = new ArrayList<>();
+	private List<RealEstateAd> publishedAd = new ArrayList<>();
 	
-	public void addPublishedAd(Ad ad) {
+	public void addPublishedAd(RealEstateAd ad) {
 		publishedAd.add(ad);
 		ad.setEstateAgent(this);
 	}
