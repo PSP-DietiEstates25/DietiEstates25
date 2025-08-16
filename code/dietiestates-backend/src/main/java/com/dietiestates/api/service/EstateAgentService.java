@@ -1,7 +1,7 @@
 package com.dietiestates.api.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.model.EstateAgent;
@@ -13,8 +13,7 @@ public class EstateAgentService {
 	@Autowired
     private StafferRepository stafferRepository;
 	
-	@Autowired
-    private PasswordEncoder passwordEncoder;
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
     public void createAgent(String email, String rawPassword) {
