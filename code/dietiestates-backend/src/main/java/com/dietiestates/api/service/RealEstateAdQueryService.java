@@ -34,8 +34,8 @@ public class RealEstateAdQueryService {
             BigDecimal maxPrice,
             Integer minRooms,
             EnergyClass energy,
-            Integer page, // 0-based (page = 0  -> prima pagina (ad esempio annunci da 0 a 11))
-            Integer size  // es. 12
+            Integer page, // 0-based (page = 0 -> prima pagina (ad esempio annunci da 0 a 11))
+            Integer size // es. 12
     ) {
         List<RealEstateAd> all = adRepository.search(category,
                 emptyToNull(q),
@@ -46,9 +46,9 @@ public class RealEstateAdQueryService {
 
         // paging manuale
         /**
-        * page=0, size=12 -> mostra annunci [0..11]
-        * page=1, size=12 -> mostra annunci [12..23] 
-        */
+         * page=0, size=12 -> mostra annunci [0..11]
+         * page=1, size=12 -> mostra annunci [12..23]
+         */
         int p = page != null && page >= 0 ? page : 0;
         int s = size != null && size > 0 ? size : 12;
         int from = Math.min(p * s, all.size());
@@ -72,7 +72,7 @@ public class RealEstateAdQueryService {
                     saved.getEnergyClass().name(),
                     saved.getLatitude(),
                     saved.getLongitude(),
-                    saved.getEstateAgent().getEmail(),
+                    saved.getEstateAgent().getUser().getEmail(),
                     saved.getDetail().getId()));
         }
         return res;

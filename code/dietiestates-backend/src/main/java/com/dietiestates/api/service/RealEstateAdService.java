@@ -37,7 +37,7 @@ public class RealEstateAdService {
             MultipartFile photo,
             String agentEmail) throws IOException {
 
-        EstateAgent agent = estateAgentRepository.findByEmail(agentEmail)
+        EstateAgent agent = estateAgentRepository.findByUser_Email(agentEmail)
                 .orElseThrow(() -> new IllegalArgumentException("EstateAgent not found: " + agentEmail));
 
         Detail detail = detailRepository.findById(req.detailId())
@@ -75,7 +75,7 @@ public class RealEstateAdService {
                 saved.getEnergyClass().name(),
                 saved.getLatitude(),
                 saved.getLongitude(),
-                saved.getEstateAgent().getEmail(),
+                saved.getEstateAgent().getUser().getEmail(),
                 saved.getDetail().getId());
     }
 }
