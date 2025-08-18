@@ -15,7 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/ads")
+@RequestMapping("/ads")
 @RequiredArgsConstructor // genera il costruttore con i campi final per l'injection
 @Validated
 public class RealEstateAdController {
@@ -23,7 +23,7 @@ public class RealEstateAdController {
     private final RealEstateAdService adService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyRole('AGENT','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('AGENT','ADMIN')")
     public RealEstateAdResponse createAd(
             // "payload" è il nome della parte multipart che contiene il JSON
             @RequestPart("payload") @Valid CreateRealEstateAdRequest payload,

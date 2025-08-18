@@ -15,7 +15,7 @@ import com.dietiestates.api.service.RealEstateAdQueryService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/ads")
+@RequestMapping("/ads")
 @RequiredArgsConstructor
 public class RealEstateAdQueryController {
 
@@ -26,7 +26,7 @@ public class RealEstateAdQueryController {
      * richiede ruolo AGENT o ADMIN. usa l'email dal JWT
      */
     @GetMapping("/dashboard")
-    @PreAuthorize("hasAnyRole('AGENT','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('AGENT','ADMIN')")
     public List<RealEstateAdResponse> mine(Authentication authentication) {
         String agentEmail = authentication.getName();
         return queryService.listMine(agentEmail);

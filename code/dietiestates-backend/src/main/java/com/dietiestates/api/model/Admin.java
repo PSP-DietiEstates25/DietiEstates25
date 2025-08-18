@@ -3,19 +3,9 @@ package com.dietiestates.api.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Setter
@@ -23,31 +13,36 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Entity
-@DiscriminatorValue(value = "admin")
-public class Admin extends Staffer {
+@Table(name = "admin")
+public class Admin {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@OneToOne(optional = false)
+	@JoinColumn(name = "user_id", nullable = false, unique = true)
+	private User user;
+
+	@ManyToOne
+	@JoinColumn(name = "created_by_admin_id", foreignKey = @ForeignKey(name = "FK_ADMIN_CREATED_BY"))
+	private Admin createdBy;
 
 	@NotNull
-	@ManyToOne
-	@JoinColumn(
-			name = "eligedBy_admin_email",
-			foreignKey = @ForeignKey(name = "ELIGEDBY_ADMIN_EMAIL_FK"))
-	private Admin eligedByAdmin;
-	
-	@NotNull
-	@OneToMany(mappedBy = "eligedByAdmin", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Admin> eligedAdmins = new ArrayList<>();
-	
+	@OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Admin> createdAdmins = new ArrayList<>();
+
 	@NotNull
 	@OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<EstateAgent> estateAgents = new ArrayList<>();
-	
-	public void addEstataeAgent(EstateAgent estateAgent) {
+
+	public void addEstateAgent(EstateAgent estateAgent) {
 		estateAgents.add(estateAgent);
 		estateAgent.setAdmin(this);
 	}
-	
-	public void addAdmin(Admin eligedAdmin) {
-		eligedAdmins.add(eligedAdmin);
-		eligedAdmin.setEligedByAdmin(this);
+
+	public void addAdmin(Admin child) {
+		createdAdmins.add(child);
+		child.setCreatedBy(this);
 	}
 }
