@@ -23,7 +23,7 @@ public class RealEstateAdQueryService {
 
     @Transactional(readOnly = true)
     public List<RealEstateAdResponse> listMine(String agentEmail) {
-        return toResponses(adRepository.findByEstateAgent_Email(agentEmail));
+        return toResponses(adRepository.findByEstateAgent_User_Email(agentEmail));
     }
 
     @Transactional(readOnly = true)
