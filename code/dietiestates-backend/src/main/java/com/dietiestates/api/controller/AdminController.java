@@ -13,9 +13,10 @@ import com.dietiestates.api.service.EstateAgentService;
 
 
 @RestController
-@RequestMapping("/api/admin")
+//@RequestMapping("/api/admin")
 public class AdminController {
 	
+	/*
 	@Autowired
     private EstateAgentService estateAgentService;
 
@@ -25,5 +26,6 @@ public class AdminController {
         estateAgentService.createAgent(req.email(), req.password());
         return ResponseEntity.ok().build();
     }
+    */
     
 }

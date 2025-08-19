@@ -21,13 +21,13 @@ import { MatListModule } from '@angular/material/list';
 import { ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
  
-import { LocationService } from '../../_services/location.service';
+import { LocationService } from '../../vecchioService/location.service';
 
-import { MetadataService } from '../../_services/metadata.service';
+import { MetadataService } from '../../vecchioService/metadata.service';
 import { ServiceDTO } from '../../interfaces/service-dto';
 import { ServiceToggle } from '../../interfaces/service-toggle';
 
-import { AdService } from '../../_services/ad.service';
+import { AdService } from '../../vecchioService/ad.service';
 
 import { AdRecapStepComponent } from './ad-step-recap/ad-step-recap.component';
 import { AdGeneralStepComponent } from './ad-step-general/ad-step-general.component';

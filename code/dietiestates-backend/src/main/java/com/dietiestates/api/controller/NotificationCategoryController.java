@@ -12,9 +12,10 @@ import com.dietiestates.api.model.NotificationCategory;
 import com.dietiestates.api.service.NotificationCategoryService;
 
 @RestController
-@RequestMapping(value = "/notifications/categories", produces = MediaType.APPLICATION_JSON_VALUE)
+//@RequestMapping(value = "/notifications/categories", produces = MediaType.APPLICATION_JSON_VALUE)
 public class NotificationCategoryController {
 
+	/*
 	@Autowired
 	private NotificationCategoryService notificationCategoryService;
 	
@@ -22,5 +23,6 @@ public class NotificationCategoryController {
 	public NotificationCategory addNewNotificaitonCategory(@RequestBody String name){
 			return notificationCategoryService.createNotificationCategory(name);
 	}
+	*/
 	
 }

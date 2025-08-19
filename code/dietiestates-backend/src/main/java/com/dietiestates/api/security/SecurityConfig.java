@@ -39,7 +39,18 @@ public class SecurityConfig {
 				.cors(Customizer.withDefaults())
 				.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(req -> req.requestMatchers(
-						"/auth/**")
+						"/auth/**",
+						"/v2/api-docs",
+						"/v3/api-docs",
+						"/v3/api-docs/**",
+						"/swagger-resources",
+						"/swagger-resources/**",
+						"/configuration/ui",
+						"/configuration/security",
+						"/swagger-ui/**",
+						"/webjars/**",
+						"/swagger-ui.html"
+						)
 						.permitAll()
 						.anyRequest()
 						.authenticated())
@@ -50,6 +61,7 @@ public class SecurityConfig {
 		return http.build();
 	}
 
+	
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();

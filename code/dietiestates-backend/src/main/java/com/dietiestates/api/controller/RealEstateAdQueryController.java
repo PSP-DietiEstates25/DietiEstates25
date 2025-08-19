@@ -15,16 +15,17 @@ import com.dietiestates.api.service.RealEstateAdQueryService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/ads")
+//@RequestMapping("/ads")
 @RequiredArgsConstructor
 public class RealEstateAdQueryController {
 
+	/*
     private final RealEstateAdQueryService queryService;
 
-    /**
-     * dashboard dell'agente: i miei annunci
-     * richiede ruolo AGENT o ADMIN. usa l'email dal JWT
-     */
+    
+     //dashboard dell'agente: i miei annunci
+     //richiede ruolo AGENT o ADMIN. usa l'email dal JWT
+     
     @GetMapping("/dashboard")
     @PreAuthorize("hasAnyAuthority('AGENT','ADMIN')")
     public List<RealEstateAdResponse> mine(Authentication authentication) {
@@ -32,12 +33,11 @@ public class RealEstateAdQueryController {
         return queryService.listMine(agentEmail);
     }
 
-    /**
-     * ricerca generale: filtri opzionali + paging
-     * ssempio:
-     * GET
-     * /api/ads/search?q=roma&category=SALE&minPrice=100000&maxPrice=300000&minRooms=3&energy=B&page=0&size=12
-     */
+     //ricerca generale: filtri opzionali + paging
+     // ssempio:
+     // GET
+     // /api/ads/search?q=roma&category=SALE&minPrice=100000&maxPrice=300000&minRooms=3&energy=B&page=0&size=12
+     
     @GetMapping("/search")
     public List<RealEstateAdResponse> search(
             @RequestParam(required = false) AdCategory category,
@@ -50,4 +50,5 @@ public class RealEstateAdQueryController {
             @RequestParam(required = false, defaultValue = "12") Integer size) {
         return queryService.search(category, q, minPrice, maxPrice, minRooms, energy, page, size);
     }
+    */
 }

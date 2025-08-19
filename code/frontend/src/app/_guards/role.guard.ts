@@ -1,6 +1,6 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { AuthService } from '../_services/auth/auth.service';
+import { AuthService } from '../vecchioService/auth/auth.service';
 import { take, map } from 'rxjs/operators';
 
 export function roleGuard(

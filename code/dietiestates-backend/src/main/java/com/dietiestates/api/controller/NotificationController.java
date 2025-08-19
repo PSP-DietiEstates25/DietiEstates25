@@ -11,9 +11,10 @@ import com.dietiestates.api.model.Notification;
 import com.dietiestates.api.service.NotificationService;
 
 @RestController
-@RequestMapping(value = "/notifications", produces = MediaType.APPLICATION_JSON_VALUE)
+//@RequestMapping(value = "/notifications", produces = MediaType.APPLICATION_JSON_VALUE)
 public class NotificationController {
 
+	/*
 	@Autowired
 	private NotificationService notificationService;
 	
@@ -21,4 +22,5 @@ public class NotificationController {
 	public Notification addNewNotification(@RequestBody String message, @RequestBody String notificationCategory) {
 		return notificationService.createNotification(message, notificationCategory);
 	}
+	*/
 }
