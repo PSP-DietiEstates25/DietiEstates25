@@ -61,6 +61,6 @@ public class Detail {
 	
 	public void addAd(RealEstateAd ad) {
 		ads.add(ad);
-		ad.setDetail(null);
+		ad.setDetail(this);
 	}
 }

@@ -2,7 +2,6 @@ package com.dietiestates.api.service;
 
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,60 +21,70 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RealEstateAdService {
 
-    @Autowired
-    private final RealEstateAdRepository adRepository;
+        private final RealEstateAdRepository adRepository;
 
-    @Autowired
-    private final EstateAgentRepository estateAgentRepository;
+        private final EstateAgentRepository estateAgentRepository;
 
-    @Autowired
-    private final DetailRepository detailRepository;
+        private final DetailRepository detailRepository;
 
-    @Transactional // la creazione dell’annuncio avviene in una transazione DB: se qualcosa fallisce a metà, tutte le operazioni vengono annullate (rollback)
+        @Transactional // la creazione dell’annuncio avviene in una transazione DB: se qualcosa
+                       // fallisce a metà, tutte le operazioni vengono annullate (rollback)
 
-    public RealEstateAdResponse create(CreateRealEstateAdRequest req,
-            MultipartFile photo,
-            String agentEmail) throws IOException {
+        public RealEstateAdResponse create(CreateRealEstateAdRequest req,
+                        MultipartFile photo,
+                        String agentEmail) throws IOException {
 
-        EstateAgent agent = estateAgentRepository.findByUser_Email(agentEmail)
-                .orElseThrow(() -> new IllegalArgumentException("EstateAgent not found: " + agentEmail));
+                if (photo == null || photo.isEmpty()) {
+                        throw new IllegalArgumentException("Photo is required");
+                }
+                if (photo.getSize() > 5 * 1024 * 1024) { // 5MB esempio
+                        throw new IllegalArgumentException("Photo too large (max 5MB)");
+                }
+                String contentType = photo.getContentType();
+                if (contentType == null || !contentType.startsWith("image/")) {
+                        throw new IllegalArgumentException("Invalid photo type");
+                }
 
-        Detail detail = detailRepository.findById(req.detailId())
-                .orElseThrow(() -> new IllegalArgumentException("Detail not found: " + req.detailId()));
+                EstateAgent agent = estateAgentRepository.findByUser_Email(agentEmail)
+                                .orElseThrow(() -> new IllegalArgumentException(
+                                                "EstateAgent not found: " + agentEmail));
 
-        RealEstateAd ad = new RealEstateAd();
-        ad.setCategory(req.category());
-        ad.setPhoto(photo.getBytes()); 
-        ad.setDescription(req.description());
+                Detail detail = detailRepository.findById(req.detailId())
+                                .orElseThrow(() -> new IllegalArgumentException("Detail not found: " + req.detailId()));
 
-        ad.setPrice(req.price());
-        ad.setSize(req.size());
-        ad.setAddress(req.address());
-        ad.setRooms(req.rooms());
-        ad.setFloor(req.floor());
-        ad.setEnergyClass(req.energyClass());
-        ad.setLatitude(req.latitude());
-        ad.setLongitude(req.longitude());
+                RealEstateAd ad = new RealEstateAd();
+                ad.setCategory(req.category());
+                ad.setPhoto(photo.getBytes());
+                ad.setDescription(req.description());
 
-        ad.attachEstateAgent(agent);
-        ad.attachDetail(detail);
+                ad.setPrice(req.price());
+                ad.setSize(req.size());
+                ad.setAddress(req.address());
+                ad.setRooms(req.rooms());
+                ad.setFloor(req.floor());
+                ad.setEnergyClass(req.energyClass());
+                ad.setLatitude(req.latitude());
+                ad.setLongitude(req.longitude());
 
-        RealEstateAd saved = adRepository.save(ad);
+                ad.attachEstateAgent(agent);
+                ad.attachDetail(detail);
 
-        // response
-        return new RealEstateAdResponse(
-                saved.getId(),
-                saved.getCategory().name(),
-                saved.getDescription(),
-                saved.getPrice(),
-                saved.getSize(),
-                saved.getAddress(),
-                saved.getRooms(),
-                saved.getFloor(),
-                saved.getEnergyClass().name(),
-                saved.getLatitude(),
-                saved.getLongitude(),
-                saved.getEstateAgent().getUser().getEmail(),
-                saved.getDetail().getId());
-    }
+                RealEstateAd saved = adRepository.save(ad);
+
+                // response
+                return new RealEstateAdResponse(
+                                saved.getId(),
+                                saved.getCategory().name(),
+                                saved.getDescription(),
+                                saved.getPrice(),
+                                saved.getSize(),
+                                saved.getAddress(),
+                                saved.getRooms(),
+                                saved.getFloor(),
+                                saved.getEnergyClass().name(),
+                                saved.getLatitude(),
+                                saved.getLongitude(),
+                                saved.getEstateAgent().getUser().getEmail(),
+                                saved.getDetail().getId());
+        }
 }
