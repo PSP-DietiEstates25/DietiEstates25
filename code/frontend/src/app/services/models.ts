@@ -4,7 +4,11 @@
 
 export type { AuthenticationResponse } from './models/authentication-response';
 export type { CreateAgentRequest } from './models/create-agent-request';
+export type { CreateDetailRequest } from './models/create-detail-request';
 export type { CreateRealEstateAdRequest } from './models/create-real-estate-ad-request';
+export type { GeographicalPositionDto } from './models/geographical-position-dto';
+export type { IdResponse } from './models/id-response';
 export type { LoginRequest } from './models/login-request';
 export type { RealEstateAdResponse } from './models/real-estate-ad-response';
 export type { RegistrationRequest } from './models/registration-request';
+export type { ServicesDto } from './models/services-dto';

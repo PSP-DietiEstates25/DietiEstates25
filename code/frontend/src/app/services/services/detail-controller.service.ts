@@ -11,37 +11,38 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { createAgent } from '../fn/admin-controller/create-agent';
-import { CreateAgent$Params } from '../fn/admin-controller/create-agent';
+import { create } from '../fn/detail-controller/create';
+import { Create$Params } from '../fn/detail-controller/create';
+import { IdResponse } from '../models/id-response';
 
 @Injectable({ providedIn: 'root' })
-export class AdminControllerService extends BaseService {
+export class DetailControllerService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
   }
 
-  /** Path part for operation `createAgent()` */
-  static readonly CreateAgentPath = '/admin/agents';
+  /** Path part for operation `create()` */
+  static readonly CreatePath = '/details';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `createAgent()` instead.
+   * To access only the response body, use `create()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createAgent$Response(params: CreateAgent$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return createAgent(this.http, this.rootUrl, params, context);
+  create$Response(params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<IdResponse>> {
+    return create(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `createAgent$Response()` instead.
+   * To access the full response (for headers, for example), `create$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createAgent(params: CreateAgent$Params, context?: HttpContext): Observable<void> {
-    return this.createAgent$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+  create(params: Create$Params, context?: HttpContext): Observable<IdResponse> {
+    return this.create$Response(params, context).pipe(
+      map((r: StrictHttpResponse<IdResponse>): IdResponse => r.body)
     );
   }
 

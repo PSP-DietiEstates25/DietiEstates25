@@ -13,7 +13,7 @@ import com.dietiestates.api.service.EstateAgentService;
 
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/admin")
 public class AdminController {
 	
 	

@@ -1,9 +1,6 @@
 {
   "openapi": "3.1.0",
-  "info": {
-    "title": "OpenAPI definition",
-    "version": "v0"
-  },
+  "info": { "title": "OpenAPI definition", "version": "v0" },
   "servers": [
     {
       "url": "http://localhost:8080/api/v1",
@@ -11,18 +8,38 @@
     }
   ],
   "paths": {
+    "/details": {
+      "post": {
+        "tags": ["detail-controller"],
+        "operationId": "create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateDetailRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/IdResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/auth/register": {
       "post": {
-        "tags": [
-          "authentication-controller"
-        ],
+        "tags": ["authentication-controller"],
         "operationId": "register",
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
-              }
+              "schema": { "$ref": "#/components/schemas/RegistrationRequest" }
             }
           },
           "required": true
@@ -31,11 +48,7 @@
           "202": {
             "description": "Accepted",
             "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
+              "application/json": { "schema": { "type": "object" } }
             }
           }
         }
@@ -43,16 +56,12 @@
     },
     "/auth/login": {
       "post": {
-        "tags": [
-          "authentication-controller"
-        ],
+        "tags": ["authentication-controller"],
         "operationId": "login",
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LoginRequest"
-              }
+              "schema": { "$ref": "#/components/schemas/LoginRequest" }
             }
           },
           "required": true
@@ -71,34 +80,9 @@
         }
       }
     },
-    "/api/admin/agents": {
-      "post": {
-        "tags": [
-          "admin-controller"
-        ],
-        "operationId": "createAgent",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateAgentRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/ads": {
       "post": {
-        "tags": [
-          "real-estate-ad-controller"
-        ],
+        "tags": ["real-estate-ad-controller"],
         "operationId": "createAd",
         "requestBody": {
           "content": {
@@ -109,15 +93,9 @@
                   "payload": {
                     "$ref": "#/components/schemas/CreateRealEstateAdRequest"
                   },
-                  "photo": {
-                    "type": "string",
-                    "format": "binary"
-                  }
+                  "photo": { "type": "string", "format": "binary" }
                 },
-                "required": [
-                  "payload",
-                  "photo"
-                ]
+                "required": ["payload", "photo"]
               }
             }
           }
@@ -136,57 +114,55 @@
         }
       }
     },
+    "/admin/agents": {
+      "post": {
+        "tags": ["admin-controller"],
+        "operationId": "createAgent",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateAgentRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
     "/ads/search": {
       "get": {
-        "tags": [
-          "real-estate-ad-query-controller"
-        ],
+        "tags": ["real-estate-ad-query-controller"],
         "operationId": "search",
         "parameters": [
           {
             "name": "category",
             "in": "query",
             "required": false,
-            "schema": {
-              "type": "string",
-              "enum": [
-                "SALE",
-                "RENT"
-              ]
-            }
+            "schema": { "type": "string", "enum": ["SALE", "RENT"] }
           },
           {
             "name": "q",
             "in": "query",
             "required": false,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "minPrice",
             "in": "query",
             "required": false,
-            "schema": {
-              "type": "number"
-            }
+            "schema": { "type": "number" }
           },
           {
             "name": "maxPrice",
             "in": "query",
             "required": false,
-            "schema": {
-              "type": "number"
-            }
+            "schema": { "type": "number" }
           },
           {
             "name": "minRooms",
             "in": "query",
             "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           },
           {
             "name": "energy",
@@ -194,39 +170,20 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": [
-                "A4",
-                "A3",
-                "A2",
-                "A1",
-                "B",
-                "C",
-                "D",
-                "E",
-                "F",
-                "G"
-              ]
+              "enum": ["A4", "A3", "A2", "A1", "B", "C", "D", "E", "F", "G"]
             }
           },
           {
             "name": "page",
             "in": "query",
             "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 0 }
           },
           {
             "name": "size",
             "in": "query",
             "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 12
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 12 }
           }
         ],
         "responses": {
@@ -248,9 +205,7 @@
     },
     "/ads/dashboard": {
       "get": {
-        "tags": [
-          "real-estate-ad-query-controller"
-        ],
+        "tags": ["real-estate-ad-query-controller"],
         "operationId": "mine",
         "responses": {
           "200": {
@@ -272,128 +227,89 @@
   },
   "components": {
     "schemas": {
+      "CreateDetailRequest": {
+        "type": "object",
+        "properties": {
+          "services": { "$ref": "#/components/schemas/ServicesDTO" },
+          "geo": { "$ref": "#/components/schemas/GeographicalPositionDTO" }
+        },
+        "required": ["geo", "services"]
+      },
+      "GeographicalPositionDTO": {
+        "type": "object",
+        "properties": {
+          "city": { "type": "string", "minLength": 1 },
+          "municipality": { "type": "string", "minLength": 1 },
+          "zoneMarkerLatitude": { "type": "number", "format": "double" },
+          "zoneMarkerLongitude": { "type": "number", "format": "double" },
+          "zoneMarkerRadius": { "type": "number", "format": "float" }
+        },
+        "required": [
+          "city",
+          "municipality",
+          "zoneMarkerLatitude",
+          "zoneMarkerLongitude",
+          "zoneMarkerRadius"
+        ]
+      },
+      "ServicesDTO": {
+        "type": "object",
+        "properties": {
+          "hasAirConditioning": { "type": "boolean" },
+          "hasDoorman": { "type": "boolean" },
+          "hasElevator": { "type": "boolean" }
+        },
+        "required": ["hasAirConditioning", "hasDoorman", "hasElevator"]
+      },
+      "IdResponse": {
+        "type": "object",
+        "properties": { "id": { "type": "integer", "format": "int64" } }
+      },
       "RegistrationRequest": {
         "type": "object",
         "properties": {
-          "email": {
-            "type": "string",
-            "minLength": 1
-          },
+          "email": { "type": "string", "minLength": 1 },
           "password": {
             "type": "string",
             "maxLength": 2147483647,
             "minLength": 8
           }
         },
-        "required": [
-          "email",
-          "password"
-        ]
+        "required": ["email", "password"]
       },
       "LoginRequest": {
         "type": "object",
         "properties": {
-          "email": {
-            "type": "string",
-            "minLength": 1
-          },
+          "email": { "type": "string", "minLength": 1 },
           "password": {
             "type": "string",
             "maxLength": 2147483647,
             "minLength": 8
           }
         },
-        "required": [
-          "email",
-          "password"
-        ]
+        "required": ["email", "password"]
       },
       "AuthenticationResponse": {
         "type": "object",
-        "properties": {
-          "token": {
-            "type": "string"
-          }
-        }
-      },
-      "CreateAgentRequest": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "minLength": 1
-          },
-          "password": {
-            "type": "string",
-            "minLength": 1
-          }
-        },
-        "required": [
-          "email",
-          "password"
-        ]
+        "properties": { "token": { "type": "string" } }
       },
       "CreateRealEstateAdRequest": {
         "type": "object",
         "properties": {
-          "category": {
-            "type": "string",
-            "enum": [
-              "SALE",
-              "RENT"
-            ]
-          },
-          "description": {
-            "type": "string",
-            "minLength": 1
-          },
-          "price": {
-            "type": "number",
-            "minimum": 0
-          },
-          "size": {
-            "type": "number",
-            "format": "float"
-          },
-          "address": {
-            "type": "string",
-            "minLength": 1
-          },
-          "rooms": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "floor": {
-            "type": "integer",
-            "format": "int32"
-          },
+          "category": { "type": "string", "enum": ["SALE", "RENT"] },
+          "description": { "type": "string", "minLength": 1 },
+          "price": { "type": "number", "minimum": 0.0 },
+          "size": { "type": "number", "format": "float" },
+          "address": { "type": "string", "minLength": 1 },
+          "rooms": { "type": "integer", "format": "int32" },
+          "floor": { "type": "integer", "format": "int32" },
           "energyClass": {
             "type": "string",
-            "enum": [
-              "A4",
-              "A3",
-              "A2",
-              "A1",
-              "B",
-              "C",
-              "D",
-              "E",
-              "F",
-              "G"
-            ]
+            "enum": ["A4", "A3", "A2", "A1", "B", "C", "D", "E", "F", "G"]
           },
-          "latitude": {
-            "type": "number",
-            "format": "double"
-          },
-          "longitude": {
-            "type": "number",
-            "format": "double"
-          },
-          "detailId": {
-            "type": "integer",
-            "format": "int64"
-          }
+          "latitude": { "type": "number", "format": "double" },
+          "longitude": { "type": "number", "format": "double" },
+          "detailId": { "type": "integer", "format": "int64" }
         },
         "required": [
           "address",
@@ -412,53 +328,28 @@
       "RealEstateAdResponse": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "category": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "price": {
-            "type": "number"
-          },
-          "size": {
-            "type": "number",
-            "format": "float"
-          },
-          "address": {
-            "type": "string"
-          },
-          "rooms": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "floor": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "energyClass": {
-            "type": "string"
-          },
-          "latitude": {
-            "type": "number",
-            "format": "double"
-          },
-          "longitude": {
-            "type": "number",
-            "format": "double"
-          },
-          "estateAgentEmail": {
-            "type": "string"
-          },
-          "detailId": {
-            "type": "integer",
-            "format": "int64"
-          }
+          "id": { "type": "integer", "format": "int64" },
+          "category": { "type": "string" },
+          "description": { "type": "string" },
+          "price": { "type": "number" },
+          "size": { "type": "number", "format": "float" },
+          "address": { "type": "string" },
+          "rooms": { "type": "integer", "format": "int32" },
+          "floor": { "type": "integer", "format": "int32" },
+          "energyClass": { "type": "string" },
+          "latitude": { "type": "number", "format": "double" },
+          "longitude": { "type": "number", "format": "double" },
+          "estateAgentEmail": { "type": "string" },
+          "detailId": { "type": "integer", "format": "int64" }
         }
+      },
+      "CreateAgentRequest": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string", "minLength": 1 },
+          "password": { "type": "string", "minLength": 1 }
+        },
+        "required": ["email", "password"]
       }
     }
   }

@@ -6,9 +6,10 @@ import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
+import { DetailControllerService } from './services/detail-controller.service';
 import { AuthenticationControllerService } from './services/authentication-controller.service';
-import { AdminControllerService } from './services/admin-controller.service';
 import { RealEstateAdControllerService } from './services/real-estate-ad-controller.service';
+import { AdminControllerService } from './services/admin-controller.service';
 import { RealEstateAdQueryControllerService } from './services/real-estate-ad-query-controller.service';
 
 /**
@@ -19,9 +20,10 @@ import { RealEstateAdQueryControllerService } from './services/real-estate-ad-qu
   exports: [],
   declarations: [],
   providers: [
+    DetailControllerService,
     AuthenticationControllerService,
-    AdminControllerService,
     RealEstateAdControllerService,
+    AdminControllerService,
     RealEstateAdQueryControllerService,
     ApiConfiguration
   ],
