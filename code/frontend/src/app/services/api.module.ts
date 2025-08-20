@@ -7,6 +7,9 @@ import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
 import { AuthenticationControllerService } from './services/authentication-controller.service';
+import { AdminControllerService } from './services/admin-controller.service';
+import { RealEstateAdControllerService } from './services/real-estate-ad-controller.service';
+import { RealEstateAdQueryControllerService } from './services/real-estate-ad-query-controller.service';
 
 /**
  * Module that provides all services and configuration.
@@ -17,6 +20,9 @@ import { AuthenticationControllerService } from './services/authentication-contr
   declarations: [],
   providers: [
     AuthenticationControllerService,
+    AdminControllerService,
+    RealEstateAdControllerService,
+    RealEstateAdQueryControllerService,
     ApiConfiguration
   ],
 })

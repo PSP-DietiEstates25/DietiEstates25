@@ -15,12 +15,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-//@RequestMapping("/ads")
+@RequestMapping("/ads")
 @RequiredArgsConstructor // genera il costruttore con i campi final per l'injection
 @Validated
 public class RealEstateAdController {
 
-	/*
+	
     private final RealEstateAdService adService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -39,5 +39,5 @@ public class RealEstateAdController {
         // Entity, salva e ritorna DTO di risposta
         return adService.create(payload, photo, agentEmail);
     }
-    */
+    
 }

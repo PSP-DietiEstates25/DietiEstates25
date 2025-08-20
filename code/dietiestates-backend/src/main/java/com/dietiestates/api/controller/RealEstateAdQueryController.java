@@ -15,11 +15,11 @@ import com.dietiestates.api.service.RealEstateAdQueryService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-//@RequestMapping("/ads")
+@RequestMapping("/ads")
 @RequiredArgsConstructor
 public class RealEstateAdQueryController {
 
-	/*
+	
     private final RealEstateAdQueryService queryService;
 
     
@@ -50,5 +50,5 @@ public class RealEstateAdQueryController {
             @RequestParam(required = false, defaultValue = "12") Integer size) {
         return queryService.search(category, q, minPrice, maxPrice, minRooms, energy, page, size);
     }
-    */
+    
 }
