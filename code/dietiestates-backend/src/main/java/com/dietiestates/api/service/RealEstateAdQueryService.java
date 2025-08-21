@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dietiestates.api.dto.RealEstateAdResponse;
 import com.dietiestates.api.enums.AdCategory;
 import com.dietiestates.api.enums.EnergyClass;
-import com.dietiestates.api.model.RealEstateAd;
 import com.dietiestates.api.repository.RealEstateAdRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,19 +21,27 @@ public class RealEstateAdQueryService {
 
     private final RealEstateAdRepository adRepository;
 
-    /** Nuovo: lista annunci dell'agente con paginazione (consigliato) */
+    /** Lista annunci dell’utente corrente (AGENT/ADMIN) con paginazione */
     @Transactional(readOnly = true)
-    public List<RealEstateAdResponse> listMine(String agentEmail, Integer page, Integer size) {
+    public List<RealEstateAdResponse> myAds(String email, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(safePage(page), safeSize(size));
-        return toResponses(adRepository
-                .findByEstateAgent_User_Email(agentEmail, pageable)
-                .getContent());
-    }
-
-    /** Legacy (retro-compatibilità): prima pagina con size di default */
-    @Transactional(readOnly = true)
-    public List<RealEstateAdResponse> listMine(String agentEmail) {
-        return listMine(agentEmail, 0, 12);
+        return adRepository.findByPostedBy_Email(email, pageable)
+                .map(e -> RealEstateAdResponse.builder()
+                        .id(e.getId())
+                        .category(e.getCategory().name())
+                        .description(e.getDescription())
+                        .price(e.getPrice())
+                        .size(e.getSize())
+                        .address(e.getAddress())
+                        .rooms(e.getRooms())
+                        .floor(e.getFloor())
+                        .energyClass(e.getEnergyClass().name())
+                        .latitude(e.getLatitude())
+                        .longitude(e.getLongitude())
+                        .postedByEmail(e.getPostedBy().getEmail())
+                        .detailId(e.getDetail().getId())
+                        .build())
+                .getContent();
     }
 
     @Transactional(readOnly = true)
@@ -45,26 +52,34 @@ public class RealEstateAdQueryService {
             BigDecimal maxPrice,
             Integer minRooms,
             EnergyClass energy,
-            Integer page, // 0-based (page = 0 -> prima pagina (ad esempio annunci da 0 a 11))
-            Integer size // es. 12
-    ) {
-        Pageable pageable = PageRequest.of(safePage(page), safeSize(size));
-        return toResponses(
-                adRepository.search(
-                        category,
-                        emptyToNull(q),
-                        minPrice, maxPrice, minRooms, energy,
-                        pageable).getContent());
-    }
+            Integer page,
+            Integer size) {
 
-    private List<RealEstateAdResponse> toResponses(List<RealEstateAd> entities) {
-        return entities.stream()
-                .map(saved -> new RealEstateAdResponse(saved.getId(), saved.getCategory().name(),
-                        saved.getDescription(), saved.getPrice(), saved.getSize(), saved.getAddress(), saved.getRooms(),
-                        saved.getFloor(),
-                        saved.getEnergyClass().name(), saved.getLatitude(), saved.getLongitude(),
-                        saved.getEstateAgent().getUser().getEmail(), saved.getDetail().getId()))
-                .toList();
+        Pageable pageable = PageRequest.of(safePage(page), safeSize(size));
+        return adRepository.search(
+                category,
+                emptyToNull(q),
+                minPrice,
+                maxPrice,
+                minRooms,
+                energy,
+                pageable)
+                .map(e -> RealEstateAdResponse.builder()
+                        .id(e.getId())
+                        .category(e.getCategory().name())
+                        .description(e.getDescription())
+                        .price(e.getPrice())
+                        .size(e.getSize())
+                        .address(e.getAddress())
+                        .rooms(e.getRooms())
+                        .floor(e.getFloor())
+                        .energyClass(e.getEnergyClass().name())
+                        .latitude(e.getLatitude())
+                        .longitude(e.getLongitude())
+                        .postedByEmail(e.getPostedBy().getEmail())
+                        .detailId(e.getDetail().getId())
+                        .build())
+                .getContent();
     }
 
     private String emptyToNull(String s) {

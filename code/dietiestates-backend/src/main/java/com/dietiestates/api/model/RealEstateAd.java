@@ -85,8 +85,8 @@ public class RealEstateAd {
     @EqualsAndHashCode.Exclude
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "estate_agent_email", foreignKey = @ForeignKey(name = "ESTATE_AGENT_EMAIL_FK"))
-    private EstateAgent estateAgent;
+    @JoinColumn(name = "posted_by_id", foreignKey = @ForeignKey(name = "POSTED_BY_ID_FK"))
+    private User postedBy;
 
     @EqualsAndHashCode.Exclude
     @NotNull
@@ -94,9 +94,8 @@ public class RealEstateAd {
     @JoinColumn(name = "detail_id", foreignKey = @ForeignKey(name = "DETAIL_ID_FK"))
     private Detail detail;
 
-    public void attachEstateAgent(EstateAgent agent) {
-        this.setEstateAgent(agent);
-        agent.getPublishedAd().add(this);
+    public void attachPostedBy(User user) {
+        this.setPostedBy(user);
     }
 
     public void attachDetail(Detail d) {

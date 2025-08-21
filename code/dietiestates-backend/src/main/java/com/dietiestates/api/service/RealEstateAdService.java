@@ -9,11 +9,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.dietiestates.api.dto.CreateRealEstateAdRequest;
 import com.dietiestates.api.dto.RealEstateAdResponse;
 import com.dietiestates.api.model.Detail;
-import com.dietiestates.api.model.EstateAgent;
 import com.dietiestates.api.model.RealEstateAd;
+import com.dietiestates.api.model.User;
 import com.dietiestates.api.repository.DetailRepository;
-import com.dietiestates.api.repository.EstateAgentRepository;
 import com.dietiestates.api.repository.RealEstateAdRepository;
+import com.dietiestates.api.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,41 +22,42 @@ import lombok.RequiredArgsConstructor;
 public class RealEstateAdService {
 
         private final RealEstateAdRepository adRepository;
-
-        private final EstateAgentRepository estateAgentRepository;
-
+        private final UserRepository userRepository;
         private final DetailRepository detailRepository;
 
-        @Transactional // la creazione dell’annuncio avviene in una transazione DB: se qualcosa
-                       // fallisce a metà, tutte le operazioni vengono annullate (rollback)
-
-        public RealEstateAdResponse create(CreateRealEstateAdRequest req,
+        @Transactional
+        public RealEstateAdResponse create(
+                        CreateRealEstateAdRequest req,
                         MultipartFile photo,
-                        String agentEmail) throws IOException {
+                        String userEmail) throws IOException {
 
                 if (photo == null || photo.isEmpty()) {
                         throw new IllegalArgumentException("Photo is required");
                 }
-                if (photo.getSize() > 5 * 1024 * 1024) { // 5MB esempio
+                if (photo.getSize() > 5 * 1024 * 1024) { // 5MB
                         throw new IllegalArgumentException("Photo too large (max 5MB)");
                 }
-                String contentType = photo.getContentType();
-                if (contentType == null || !contentType.startsWith("image/")) {
-                        throw new IllegalArgumentException("Invalid photo type");
+
+                // chi pubblica (AGENT o ADMIN in base ai ruoli associati all'utente)
+                User user = userRepository.findByEmail(userEmail)
+                                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userEmail));
+
+                // verifica ruolo: AGENT o ADMIN
+                boolean canPost = user.getRoles().stream()
+                                .anyMatch(r -> "AGENT".equalsIgnoreCase(r.getName())
+                                                || "ADMIN".equalsIgnoreCase(r.getName()));
+                if (!canPost) {
+                        throw new SecurityException("User not allowed to publish ads");
                 }
 
-                EstateAgent agent = estateAgentRepository.findByUser_Email(agentEmail)
-                                .orElseThrow(() -> new IllegalArgumentException(
-                                                "EstateAgent not found: " + agentEmail));
-
+                // Detail
                 Detail detail = detailRepository.findById(req.detailId())
                                 .orElseThrow(() -> new IllegalArgumentException("Detail not found: " + req.detailId()));
 
+                // Entity
                 RealEstateAd ad = new RealEstateAd();
                 ad.setCategory(req.category());
-                ad.setPhoto(photo.getBytes());
                 ad.setDescription(req.description());
-
                 ad.setPrice(req.price());
                 ad.setSize(req.size());
                 ad.setAddress(req.address());
@@ -65,26 +66,26 @@ public class RealEstateAdService {
                 ad.setEnergyClass(req.energyClass());
                 ad.setLatitude(req.latitude());
                 ad.setLongitude(req.longitude());
-
-                ad.attachEstateAgent(agent);
+                ad.setPhoto(photo.getBytes());
+                ad.attachPostedBy(user);
                 ad.attachDetail(detail);
 
                 RealEstateAd saved = adRepository.save(ad);
 
-                // response
-                return new RealEstateAdResponse(
-                                saved.getId(),
-                                saved.getCategory().name(),
-                                saved.getDescription(),
-                                saved.getPrice(),
-                                saved.getSize(),
-                                saved.getAddress(),
-                                saved.getRooms(),
-                                saved.getFloor(),
-                                saved.getEnergyClass().name(),
-                                saved.getLatitude(),
-                                saved.getLongitude(),
-                                saved.getEstateAgent().getUser().getEmail(),
-                                saved.getDetail().getId());
+                return RealEstateAdResponse.builder()
+                                .id(saved.getId())
+                                .category(saved.getCategory().name())
+                                .description(saved.getDescription())
+                                .price(saved.getPrice())
+                                .size(saved.getSize())
+                                .address(saved.getAddress())
+                                .rooms(saved.getRooms())
+                                .floor(saved.getFloor())
+                                .energyClass(saved.getEnergyClass().name())
+                                .latitude(saved.getLatitude())
+                                .longitude(saved.getLongitude())
+                                .postedByEmail(saved.getPostedBy().getEmail())
+                                .detailId(saved.getDetail().getId())
+                                .build();
         }
 }

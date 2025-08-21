@@ -11,6 +11,7 @@ import com.dietiestates.api.repository.DetailRepository;
 import com.dietiestates.api.repository.GeographicalPositionRepository;
 import com.dietiestates.api.repository.ServicesRepository;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,28 +23,28 @@ public class DetailService {
     private final GeographicalPositionRepository geoRepository;
 
     @Transactional
-    public Long create(CreateDetailRequest req) {
-        // Services
-        Services s = new Services();
-        s.setHasAirConditioning(req.services().hasAirConditioning());
-        s.setHasDoorman(req.services().hasDoorman());
-        s.setHasElevator(req.services().hasElevator());
-        s = servicesRepository.save(s);
+    public Long create(@Valid CreateDetailRequest req) {
+        Services services = Services.builder()
+                .hasAirConditioning(req.services().hasAirConditioning())
+                .hasDoorman(req.services().hasDoorman())
+                .hasElevator(req.services().hasElevator())
+                .build();
+        services = servicesRepository.save(services);
 
-        // Geo
-        GeographicalPosition g = new GeographicalPosition();
-        g.setCity(req.geo().city());
-        g.setMunicipality(req.geo().municipality());
-        g.setZoneMarkerLatitude(req.geo().zoneMarkerLatitude());
-        g.setZoneMarkerLongitude(req.geo().zoneMarkerLongitude());
-        g.setZoneMarkerRadius(req.geo().zoneMarkerRadius());
-        g = geoRepository.save(g);
+        GeographicalPosition geo = GeographicalPosition.builder()
+                .city(req.geo().city())
+                .municipality(req.geo().municipality())
+                .zoneMarkerLatitude(req.geo().zoneMarkerLatitude())
+                .zoneMarkerLongitude(req.geo().zoneMarkerLongitude())
+                .zoneMarkerRadius(req.geo().zoneMarkerRadius())
+                .build();
+        geo = geoRepository.save(geo);
 
-        // Detail (ManyToOne verso Services e GeographicalPosition)
-        Detail d = new Detail();
-        d.setServices(s);
-        d.setGeographicalPosition(g);
+        Detail detail = Detail.builder()
+                .services(services)
+                .geographicalPosition(geo)
+                .build();
 
-        return detailRepository.save(d).getId();
+        return detailRepository.save(detail).getId();
     }
 }
