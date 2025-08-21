@@ -41,4 +41,5 @@ export class AdService {
   deleteAd(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
+  
 }

@@ -5,9 +5,9 @@
     <mat-label>Square Meters</mat-label>
     <input matInput formControlName="squareMeters" type="number" />
     <!-- ERRORE LEGATO A squareMeters, NON a rooms -->
-    @if (formGroup()?.get('squareMeters')!.hasError('required')) {
+    @if (formGroup().get('squareMeters')!.hasError('required')) {
     <mat-error> Required </mat-error>
-    } @if (formGroup()?.get('squareMeters')!.hasError('min')) {
+    } @if (formGroup().get('squareMeters')!.hasError('min')) {
     <mat-error> Must be ≥ 1 </mat-error>
     }
   </mat-form-field>
@@ -16,9 +16,9 @@
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Rooms</mat-label>
     <input matInput formControlName="rooms" type="number" />
-    @if (formGroup()?.get('rooms')!.hasError('required')) {
+    @if (formGroup().get('rooms')!.hasError('required')) {
     <mat-error> Required </mat-error>
-    } @if (formGroup()?.get('rooms')!.hasError('min')) {
+    } @if (formGroup().get('rooms')!.hasError('min')) {
     <mat-error> Must be ≥ 1 </mat-error>
     }
   </mat-form-field>
@@ -27,7 +27,7 @@
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Floor</mat-label>
     <input matInput formControlName="floor" type="number" />
-    @if (formGroup()?.get('floor')!.hasError('required')) {
+    @if (formGroup().get('floor')!.hasError('required')) {
     <mat-error> Required </mat-error>
     }
   </mat-form-field>
@@ -42,7 +42,7 @@
       <mat-option value="D">D</mat-option>
       <!-- … fino alle classi disponibili … -->
     </mat-select>
-    @if (formGroup()?.get('energyClass')!.hasError('required')) {
+    @if (formGroup().get('energyClass')!.hasError('required')) {
     <mat-error> Required </mat-error>
     }
   </mat-form-field>
@@ -53,7 +53,7 @@
     @for (service of servicesList(); track service.id) {
     <div class="service-checkbox">
       <mat-checkbox
-        [checked]="formGroup()?.get('services')!.value.includes(service.id)"
+        [checked]="formGroup().get('services')!.value.includes(service.id)"
         (change)="serviceToggle.emit([service.id, $event.checked])"
       >
         {{ service.id}} Prima c'era service.title

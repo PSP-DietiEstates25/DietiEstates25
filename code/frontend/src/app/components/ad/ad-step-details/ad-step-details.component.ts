@@ -6,14 +6,12 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 
-import { ServiceToggle } from '../../interfaces/service-toggle';
-
-import { KeyValuePipe } from '@angular/common';
+import { ServiceToggle } from '../../../interfaces/service-toggle';
 
 @Component({
   selector: 'ad-step-details',
   templateUrl: './ad-step-details.component.html',
-  styleUrls: ['../ad/add-ad.component.scss'],
+  styleUrls: ['../add-ad.component.scss'],
   imports: [
     MatFormFieldModule,
     MatSelectModule,

@@ -27,12 +27,12 @@ import { MetadataService } from '../../vecchioService/metadata.service';
 import { ServiceDTO } from '../../interfaces/service-dto';
 import { ServiceToggle } from '../../interfaces/service-toggle';
 
-import { AdService } from '../../vecchioService/ad.service';
+import { RealEstateAdControllerService } from '../../services/services/real-estate-ad-controller.service';
 
 import { AdRecapStepComponent } from './ad-step-recap/ad-step-recap.component';
 import { AdGeneralStepComponent } from './ad-step-general/ad-step-general.component';
-import { AdAddressStepComponent } from '../ad-step-address/ad-step-address.component';
-import { AdDetailsStepComponent } from '../ad-step-details/ad-step-details.component';
+import { AdAddressStepComponent } from './ad-step-address/ad-step-address.component';
+import { AdDetailsStepComponent } from './ad-step-details/ad-step-details.component';
 
 import { AdCategory } from '../../enums/ad-category.enum';
 
@@ -85,7 +85,7 @@ export class AddAdComponent implements OnInit {
     private formBuilder: FormBuilder,
     private locationService: LocationService,
     private metadataService: MetadataService,
-    private adService: AdService,
+    private RealEstateAdControllerService: RealEstateAdControllerService,
     private cd: ChangeDetectorRef,
     private router: Router
   ) {
@@ -185,11 +185,11 @@ export class AddAdComponent implements OnInit {
       return;
     }
     const payload = this.adForm.value;
-    this.adService.createAd(payload).subscribe({
-      next: (result) => {
+    this.RealEstateAdControllerService.createAd(payload).subscribe({
+      next: (result:any) => {
         console.log('Annuncio creato con successo:', result);
       },
-      error: (err) => {
+      error: (err:unknown) => {
         console.error('Errore nella creazione annuncio:', err);
       },
     });

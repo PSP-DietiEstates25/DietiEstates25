@@ -4,12 +4,12 @@ import { MatListModule } from '@angular/material/list';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
-import { MapComponent } from '../map/map.component';
+import { MapComponent } from '../../map/map.component';
 
 @Component({
   selector: 'ad-step-address',
   templateUrl: './ad-step-address.component.html',
-  styleUrls: ['../ad/add-ad.component.scss'],
+  styleUrls: ['../add-ad.component.scss'],
   standalone: true,
   imports: [
     MatListModule,

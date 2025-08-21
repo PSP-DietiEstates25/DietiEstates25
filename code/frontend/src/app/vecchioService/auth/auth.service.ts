@@ -2,7 +2,7 @@ import { Injectable, inject, signal, WritableSignal, computed, effect } from '@a
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { AuthState } from '../../interfaces/auth/auth-state';
 import { jwtDecode } from 'jwt-decode';
-
+import { toObservable } from '@angular/core/rxjs-interop';
 /*
 
 */
@@ -85,4 +85,22 @@ export class AuthService {
       isAuthenticated: false
     });
   }
+
+  role = computed<('CLIENT'|'AGENT'|'ADMIN') | null>(() => {
+  const t = this.authState().token;
+  if (!t) return null;
+  try {
+    const payload: any = jwtDecode(t);
+    // Adatta questi campi ai claim reali del tuo JWT
+    return payload.role ?? payload['authorities']?.[0] ?? null;
+  } catch { return null; }
+});
+
+// Observable richiesto dalla guard
+userRole$ = toObservable(this.role);
+
+// nome da mostrare in Navbar/Sidebar
+displayName$ = toObservable(computed(() =>
+  this.authState().email ? this.authState().email!.split('@')[0] : ''
+));
 }

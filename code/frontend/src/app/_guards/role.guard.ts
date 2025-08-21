@@ -13,8 +13,8 @@ export function roleGuard(
 
     return auth.userRole$.pipe(
       take(1),
-      map((role) => {
-        const ok = !!role && allowed.includes(role);
+      map((role: 'CLIENT' | 'AGENT' | 'ADMIN' | null) => {
+        const ok = role !== null && allowed.includes(role);
         if (ok) return true;
         router.navigate([redirectIfDenied]);
         return false;

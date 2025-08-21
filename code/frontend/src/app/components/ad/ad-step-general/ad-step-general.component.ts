@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 @Component({
   selector: 'ad-step-general',
   templateUrl: './ad-step-general.component.html',
-  styleUrls: ['../ad/add-ad.component.scss'],
+  styleUrls: ['../add-ad.component.scss'],
   standalone: true,
   imports: [
     MatIconModule,

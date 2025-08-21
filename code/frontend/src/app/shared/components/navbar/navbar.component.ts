@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { AuthService } from '../../../vecchioService/auth.service';
+import { AuthService } from '../../../vecchioService/auth/auth.service';
 import { Router } from '@angular/router';
 
 @Component({

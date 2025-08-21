@@ -24,7 +24,7 @@ export const routes: Routes = [
         (m) => m.HistoryComponent
       ),
   },
-
+/*
   {
     path: 'offer',
     loadComponent: () =>
@@ -32,7 +32,7 @@ export const routes: Routes = [
         (m) => m.OfferListComponent
       ),
   },
-
+*/
   {
     path: 'map',
     title: 'Mappa di prova',

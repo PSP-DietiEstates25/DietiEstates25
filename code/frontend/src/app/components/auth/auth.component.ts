@@ -1,4 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
 import { CommonModule } from '@angular/common';
 import {
   FormsModule,
@@ -18,7 +20,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDividerModule } from '@angular/material/divider';
 
-import { AuthService } from '../../vecchioService/auth.service';
+import { AuthenticationControllerService } from '../../services/services/authentication-controller.service';
 
 @Component({
   selector: 'app-auth',
@@ -54,7 +56,7 @@ export class AuthComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private router = inject(Router);
-  private authService = inject(AuthService);
+  private authService = inject(AuthenticationControllerService);
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -97,11 +99,22 @@ export class AuthComponent implements OnInit {
     this.errorMsg = '';
 
     try {
-      const res = await this.authService.login(email, password);
-      // redirect in base al ruolo restituito dal backend
-      if (res.role === 'estate_agent') {
+      const res = await firstValueFrom(this.authService.login(email, password));
+      const token = res.token ?? '';
+      if (!token) {
+        this.errorMsg = 'Token mancante nella risposta.';
+        this.loading = false;
+        return;
+      }
+      // Decodifica JWT: il backend mette "authorities" nel payload
+      const payload: any = jwtDecode(token);
+      const authorities: string[] = payload?.authorities ?? [];
+      const role = String(authorities[0] ?? '')
+        .replace(/^ROLE_/i, '')
+        .toLowerCase();
+      if (role === 'estate_agent' || role === 'agent') {
         this.router.navigate(['/agent']);
-      } else if (res.role === 'admin') {
+      } else if (role === 'admin') {
         this.router.navigate(['/admin']);
       } else {
         this.router.navigate(['/']);

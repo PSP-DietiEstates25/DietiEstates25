@@ -3,13 +3,12 @@ import { Form, FormGroup } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { TitleCasePipe } from '@angular/common';
 import { CurrencyPipe } from '@angular/common';
-import { KeyValuePipe } from '@angular/common';
 
 @Component({
   selector: 'ad-step-recap',
   templateUrl: './ad-step-recap.component.html',
-  styleUrls: ['../ad/add-ad.component.scss'],
-  imports: [MatIconModule, TitleCasePipe, CurrencyPipe, KeyValuePipe],
+  styleUrls: ['../add-ad.component.scss'],
+  imports: [MatIconModule, TitleCasePipe, CurrencyPipe,],
 })
 export class AdRecapStepComponent {
   
