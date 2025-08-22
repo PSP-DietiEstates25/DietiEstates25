@@ -9,7 +9,6 @@ import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 import { DetailControllerService } from './services/detail-controller.service';
 import { AuthenticationControllerService } from './services/authentication-controller.service';
 import { RealEstateAdControllerService } from './services/real-estate-ad-controller.service';
-import { AdminControllerService } from './services/admin-controller.service';
 import { RealEstateAdQueryControllerService } from './services/real-estate-ad-query-controller.service';
 
 /**
@@ -23,7 +22,6 @@ import { RealEstateAdQueryControllerService } from './services/real-estate-ad-qu
     DetailControllerService,
     AuthenticationControllerService,
     RealEstateAdControllerService,
-    AdminControllerService,
     RealEstateAdQueryControllerService,
     ApiConfiguration
   ],

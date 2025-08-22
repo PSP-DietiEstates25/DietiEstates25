@@ -5,5 +5,4 @@
 export { DetailControllerService } from './services/detail-controller.service';
 export { AuthenticationControllerService } from './services/authentication-controller.service';
 export { RealEstateAdControllerService } from './services/real-estate-ad-controller.service';
-export { AdminControllerService } from './services/admin-controller.service';
 export { RealEstateAdQueryControllerService } from './services/real-estate-ad-query-controller.service';

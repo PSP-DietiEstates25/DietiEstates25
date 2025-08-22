@@ -114,22 +114,7 @@
         }
       }
     },
-    "/admin/agents": {
-      "post": {
-        "tags": ["admin-controller"],
-        "operationId": "createAgent",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/CreateAgentRequest" }
-            }
-          },
-          "required": true
-        },
-        "responses": { "200": { "description": "OK" } }
-      }
-    },
-    "/ads/search": {
+    "/api/ads/search": {
       "get": {
         "tags": ["real-estate-ad-query-controller"],
         "operationId": "search",
@@ -203,10 +188,24 @@
         }
       }
     },
-    "/ads/dashboard": {
+    "/api/ads/dashboard": {
       "get": {
         "tags": ["real-estate-ad-query-controller"],
         "operationId": "mine",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int32", "default": 0 }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int32", "default": 12 }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -240,8 +239,18 @@
         "properties": {
           "city": { "type": "string", "minLength": 1 },
           "municipality": { "type": "string", "minLength": 1 },
-          "zoneMarkerLatitude": { "type": "number", "format": "double" },
-          "zoneMarkerLongitude": { "type": "number", "format": "double" },
+          "zoneMarkerLatitude": {
+            "type": "number",
+            "format": "double",
+            "maximum": 90.0,
+            "minimum": -90.0
+          },
+          "zoneMarkerLongitude": {
+            "type": "number",
+            "format": "double",
+            "maximum": 180.0,
+            "minimum": -180.0
+          },
           "zoneMarkerRadius": { "type": "number", "format": "float" }
         },
         "required": [
@@ -339,17 +348,9 @@
           "energyClass": { "type": "string" },
           "latitude": { "type": "number", "format": "double" },
           "longitude": { "type": "number", "format": "double" },
-          "estateAgentEmail": { "type": "string" },
+          "postedByEmail": { "type": "string" },
           "detailId": { "type": "integer", "format": "int64" }
         }
-      },
-      "CreateAgentRequest": {
-        "type": "object",
-        "properties": {
-          "email": { "type": "string", "minLength": 1 },
-          "password": { "type": "string", "minLength": 1 }
-        },
-        "required": ["email", "password"]
       }
     }
   }

@@ -44,4 +44,4 @@ export function search(http: HttpClient, rootUrl: string, params?: Search$Params
   );
 }
 
-search.PATH = '/ads/search';
+search.PATH = '/api/ads/search';

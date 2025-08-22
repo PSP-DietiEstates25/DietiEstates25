@@ -24,7 +24,7 @@ export class RealEstateAdQueryControllerService extends BaseService {
   }
 
   /** Path part for operation `search()` */
-  static readonly SearchPath = '/ads/search';
+  static readonly SearchPath = '/api/ads/search';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -49,7 +49,7 @@ export class RealEstateAdQueryControllerService extends BaseService {
   }
 
   /** Path part for operation `mine()` */
-  static readonly MinePath = '/ads/dashboard';
+  static readonly MinePath = '/api/ads/dashboard';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.

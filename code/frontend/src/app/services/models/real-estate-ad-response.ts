@@ -8,11 +8,11 @@ export interface RealEstateAdResponse {
   description?: string;
   detailId?: number;
   energyClass?: string;
-  estateAgentEmail?: string;
   floor?: number;
   id?: number;
   latitude?: number;
   longitude?: number;
+  postedByEmail?: string;
   price?: number;
   rooms?: number;
   size?: number;

@@ -11,11 +11,15 @@ import { RequestBuilder } from '../../request-builder';
 import { RealEstateAdResponse } from '../../models/real-estate-ad-response';
 
 export interface Mine$Params {
+  page?: number;
+  size?: number;
 }
 
 export function mine(http: HttpClient, rootUrl: string, params?: Mine$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<RealEstateAdResponse>>> {
   const rb = new RequestBuilder(rootUrl, mine.PATH, 'get');
   if (params) {
+    rb.query('page', params.page, {});
+    rb.query('size', params.size, {});
   }
 
   return http.request(
@@ -28,4 +32,4 @@ export function mine(http: HttpClient, rootUrl: string, params?: Mine$Params, co
   );
 }
 
-mine.PATH = '/ads/dashboard';
+mine.PATH = '/api/ads/dashboard';
