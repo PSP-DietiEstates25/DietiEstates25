@@ -1,15 +1,26 @@
 package com.dietiestates.api.model;
 
+import java.time.Instant;
+
+import com.dietiestates.api.enums.NotificationCategoryType;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.ForeignKey;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,35 +29,44 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@Builder(toBuilder = true)
 @Entity
+@Table(name = "notification")
 public class Notification {
 
-	@Id @GeneratedValue(strategy = GenerationType.AUTO)
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	
-	@EqualsAndHashCode.Exclude
+
 	@NotNull
+	@Enumerated(EnumType.STRING)
+	private NotificationCategoryType category;
+
+	@NotBlank
+	private String title;
+
+	@NotBlank
+	@Column(length = 2000)
 	private String message;
-	
-	@EqualsAndHashCode.Exclude
+
+	private Long adId;
+
 	@NotNull
-	@ManyToOne
-	@JoinColumn(
-			name = "notification_category_name",
-			foreignKey = @ForeignKey(name = "NOTIFICATION_CATEGORY_NAME_FK"))
-	private NotificationCategory notificationCategory;
-	
-	@EqualsAndHashCode.Exclude
-	@NotNull
-	@ManyToOne
-	@JoinColumn(
-			name = "user_email",
-			foreignKey = @ForeignKey(name = "USER_EMAIL_FK"))
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "NOTIF_USER_ID_FK"))
 	private User user;
-	
-	public Notification(String message, NotificationCategory notificationCategory) {
-		this.message = message;
-		this.notificationCategory = notificationCategory;
+
+	@NotNull
+	private Boolean readFlag;
+
+	@NotNull
+	private Instant createdAt;
+
+	@PrePersist
+	void prePersist() {
+		if (createdAt == null)
+			createdAt = Instant.now();
+		if (readFlag == null)
+			readFlag = Boolean.FALSE;
 	}
 }
