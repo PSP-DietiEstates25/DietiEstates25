@@ -1,0 +1,19 @@
+POST 	/realestates				-> per la creazione di un nuovo realestate (autenticato)
+	/realestates/{realestateid}/proposals	-> per la creazione di una nuova proposta, nel body "category": "visit" oppure "category": "offer" (autenticato)
+	/register				-> per la creazione di un utente, agente o amministratore (non autenticato)
+	/login					-> per la autenticazione di un utente, agente o amministratore (non autenticato)
+	/notifications				-> per la creazione di una nuova notifica per un utente (autenticato)
+	/searches				-> per salvare una nuova ricerca effettuata da un utente, nel body una geographical position e dei servizi (autenticato)
+	/searches/search			-> per recuperare una ricerca passando i filtri di ricerca direttamente nel request body, quindi non come parametri visto che sono lunghi e complessi (autenticato)
+
+vi sarà un meccanismo di autenticazione opzionale che permette, in base al rilevamento o meno dell autenticazione, di recuperare i propri real estates pubblicati
+(quindi nella dashboard nella sezione realestates) oppure di ricercare i realestate senza autenticazione. Questo principio di applica a: realestates, offers e visits
+GET	/realestates?size=10&page=1 						-> recupera in modo paginato tutti i realestates dell applicazione (non autenticato)
+	/realestates/{realestateid} 						-> seleziona un real estate dalla lista precedente (non autenticato)
+	/realestates/{realestateid}/proposals?category=offer&size=10&page=1	-> recupera tutti le proposte per un real estate, dove il tipo è specificato da category=visit o category=offer.
+											Se category è assente come query parameter, recupera tutte le proposte, quindi sia visite sia offerte (autenticato).
+	/realestates/{realestateid}/proposals/{proposalid}			-> recupera una proposta dalla lista delle proposte (offerte o visite) dalla pagina di un immobile (autenticato)
+	/notifications								-> recupera tutte le notifiche relative ad un utente (autenticato)
+
+DELETE	
+da rifletterci
