@@ -24,7 +24,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -40,8 +39,8 @@ import lombok.Setter;
 @Builder
 @Entity
 @Table(name = "visit", indexes = {
-		@Index(name = "IDX_visit_agent_start", columnList = "agent_id,start_at"),
-		@Index(name = "IDX_visit_requester", columnList = "requester_id")
+		@Index(name = "IDX_visit_agent_start", columnList = "estate_agent_id,start_at"),
+		@Index(name = "IDX_visit_requester", columnList = "user_id")
 })
 @EntityListeners(AuditingEntityListener.class)
 public class Visit {
@@ -52,7 +51,7 @@ public class Visit {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(nullable = false ,name = "ad_id", foreignKey = @ForeignKey(name = "VISIT_AD_ID_FK"))
+	@JoinColumn(nullable = false, name = "real_estate_id", foreignKey = @ForeignKey(name = "VISIT_REAL_ESTATE_ID_FK"))
 	private RealEstate realEstate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -62,7 +61,7 @@ public class Visit {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false, name = "estate_agent_id", foreignKey = @ForeignKey(name = "VISIT_ESTATE_AGENT_ID_FK"))
 	private User estateAgent;
-	
+
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private VisitStatus status;
@@ -73,17 +72,18 @@ public class Visit {
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
 	private LocalDateTime createdDate;
-	
+
 	@LastModifiedDate
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 
 	@PrePersist
 	void onCreate() {
-		Instant now = Instant.now();
-		if (createdDate == null)
-			createdDate = now;
-		if (status == null)
+		if (createdDate == null) {
+			createdDate = LocalDateTime.now();
+		}
+		if (status == null) {
 			status = VisitStatus.PENDING;
+		}
 	}
 }

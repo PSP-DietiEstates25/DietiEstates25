@@ -35,7 +35,6 @@ public class VisitService {
 
     private static final ZoneId DEFAULT_ZONE = ZoneId.of("Europe/Rome");
 
-    // CREATE (cliente)
     @Transactional
     public VisitResponse propose(String requesterEmail, CreateVisitRequest req) {
         User requester = userRepo.findByEmail(requesterEmail)
@@ -44,15 +43,19 @@ public class VisitService {
         RealEstate ad = adRepo.findById(req.adId())
                 .orElseThrow(() -> new IllegalArgumentException("Ad not found: " + req.adId()));
 
-        User agent = ad.getPostedBy();
+        User agent = ad.getEstateAgent();
 
-        // startAt UTC da data/ora locale
-        ZoneId zone = (req.timezone() != null && !req.timezone().isBlank()) ? ZoneId.of(req.timezone()) : DEFAULT_ZONE;
+        ZoneId zone = DEFAULT_ZONE;
+        if (req.timezone() != null && !req.timezone().isBlank()) {
+            try {
+                zone = ZoneId.of(req.timezone());
+            } catch (Exception ignored) {
+            }
+        }
         LocalDate date = LocalDate.parse(req.date());
         LocalTime time = LocalTime.of(req.hour(), req.minute());
         Instant start = ZonedDateTime.of(date, time, zone).toInstant();
 
-        // impedisci doppio booking sullo stesso slot (considera solo PENDING/CONFIRMED)
         boolean busy = visitRepo.existsAgentSlot(
                 agent.getEmail(),
                 start,
@@ -62,16 +65,15 @@ public class VisitService {
         }
 
         Visit entity = Visit.builder()
-                .ad(ad)
-                .requester(requester)
-                .agent(agent)
+                .realEstate(ad)
+                .user(requester)
+                .estateAgent(agent)
                 .startAt(start)
                 .status(VisitStatus.PENDING)
                 .build();
 
         var saved = visitRepo.save(entity);
 
-        // notifica all'agente
         notificationService.push(
                 agent.getEmail(),
                 NotificationCategoryType.VISIT,
@@ -82,12 +84,11 @@ public class VisitService {
         return toResponse(saved);
     }
 
-    // CONFIRM (agente)
     @Transactional
     public VisitResponse confirm(String agentEmail, Long visitId) {
         Visit v = visitRepo.findById(visitId)
                 .orElseThrow(() -> new IllegalArgumentException("Visit not found: " + visitId));
-        if (!v.getAgent().getEmail().equals(agentEmail)) {
+        if (!v.getEstateAgent().getEmail().equals(agentEmail)) {
             throw new AccessDeniedException("Not your visit request.");
         }
         if (v.getStatus() != VisitStatus.PENDING) {
@@ -96,23 +97,21 @@ public class VisitService {
         v.setStatus(VisitStatus.CONFIRMED);
         var saved = visitRepo.save(v);
 
-        // notifica al richiedente
         notificationService.push(
-                v.getRequester().getEmail(),
+                v.getUser().getEmail(),
                 NotificationCategoryType.VISIT,
                 "Visita confermata",
-                "La tua richiesta di visita per \"" + v.getAd().getAddress() + "\" è stata confermata.",
-                v.getAd().getId());
+                "La tua richiesta di visita per \"" + v.getRealEstate().getAddress() + "\" è stata confermata.",
+                v.getRealEstate().getId());
 
         return toResponse(saved);
     }
 
-    // DECLINE (agente)
     @Transactional
     public VisitResponse decline(String agentEmail, Long visitId) {
         Visit v = visitRepo.findById(visitId)
                 .orElseThrow(() -> new IllegalArgumentException("Visit not found: " + visitId));
-        if (!v.getAgent().getEmail().equals(agentEmail)) {
+        if (!v.getEstateAgent().getEmail().equals(agentEmail)) {
             throw new AccessDeniedException("Not your visit request.");
         }
         if (v.getStatus() != VisitStatus.PENDING) {
@@ -123,25 +122,33 @@ public class VisitService {
         var saved = visitRepo.save(v);
 
         notificationService.push(
-                v.getRequester().getEmail(),
+                v.getUser().getEmail(),
                 NotificationCategoryType.VISIT,
                 "Visita rifiutata",
-                "La tua richiesta di visita per \"" + v.getAd().getAddress() + "\" è stata rifiutata.",
-                v.getAd().getId());
+                "La tua richiesta di visita per \"" + v.getRealEstate().getAddress() + "\" è stata rifiutata.",
+                v.getRealEstate().getId());
 
         return toResponse(saved);
     }
 
     private VisitResponse toResponse(Visit v) {
+
+        Instant createdAtInstant = null;
+        if (v.getCreatedDate() != null) {
+            createdAtInstant = v.getCreatedDate()
+                    .atZone(DEFAULT_ZONE) // interpreta il LocalDateTime in Europe/Rome
+                    .toInstant();
+        }
+
         return VisitResponse.builder()
                 .id(v.getId())
-                .adId(v.getAd().getId())
-                .adAddress(v.getAd().getAddress())
-                .requesterEmail(v.getRequester().getEmail())
-                .agentEmail(v.getAgent().getEmail())
+                .adId(v.getRealEstate().getId())
+                .adAddress(v.getRealEstate().getAddress())
+                .requesterEmail(v.getUser().getEmail())
+                .agentEmail(v.getEstateAgent().getEmail())
                 .status(v.getStatus().name())
                 .startAt(v.getStartAt())
-                .createdAt(v.getCreatedAt())
+                .createdAt(createdAtInstant)
                 .build();
     }
 }

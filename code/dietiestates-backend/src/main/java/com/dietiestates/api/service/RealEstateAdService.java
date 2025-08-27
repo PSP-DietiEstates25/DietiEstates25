@@ -22,14 +22,12 @@ import lombok.RequiredArgsConstructor;
 public class RealEstateAdService {
 
         private final RealEstateAdRepository adRepository;
-        private final UserRepository userRepository;
         private final DetailRepository detailRepository;
+        private final UserRepository userRepository;
 
         @Transactional
-        public RealEstateAdResponse create(
-                        CreateRealEstateAdRequest req,
-                        MultipartFile photo,
-                        String userEmail) throws IOException {
+        public RealEstateAdResponse create(CreateRealEstateAdRequest req, MultipartFile photo, String userEmail)
+                        throws IOException {
 
                 if (photo == null || photo.isEmpty()) {
                         throw new IllegalArgumentException("Photo is required");
@@ -42,12 +40,11 @@ public class RealEstateAdService {
                 User user = userRepository.findByEmail(userEmail)
                                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + userEmail));
 
-                // verifica ruolo: AGENT o ADMIN
                 boolean canPost = user.getRoles().stream()
                                 .anyMatch(r -> "AGENT".equalsIgnoreCase(r.getName())
                                                 || "ADMIN".equalsIgnoreCase(r.getName()));
                 if (!canPost) {
-                        throw new SecurityException("User not allowed to publish ads");
+                        throw new IllegalArgumentException("User has no permission to post ads");
                 }
 
                 // Detail
@@ -67,8 +64,10 @@ public class RealEstateAdService {
                 ad.setLatitude(req.latitude());
                 ad.setLongitude(req.longitude());
                 ad.setPhoto(photo.getBytes());
-                ad.attachPostedBy(user);
-                ad.attachDetail(detail);
+
+                // relazioni coerenti con il model
+                ad.addEstateAgent(user);
+                ad.addDetail(detail);
 
                 RealEstate saved = adRepository.save(ad);
 
@@ -84,7 +83,7 @@ public class RealEstateAdService {
                                 .energyClass(saved.getEnergyClass().name())
                                 .latitude(saved.getLatitude())
                                 .longitude(saved.getLongitude())
-                                .postedByEmail(saved.getPostedBy().getEmail())
+                                .postedByEmail(saved.getEstateAgent().getEmail())
                                 .detailId(saved.getDetail().getId())
                                 .build();
         }

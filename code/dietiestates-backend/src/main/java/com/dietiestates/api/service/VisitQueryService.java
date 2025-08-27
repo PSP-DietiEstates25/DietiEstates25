@@ -1,5 +1,6 @@
 package com.dietiestates.api.service;
 
+import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
@@ -18,29 +19,37 @@ import lombok.RequiredArgsConstructor;
 public class VisitQueryService {
 
     private final VisitRepository visitRepo;
+    private static final ZoneId DEFAULT_ZONE = ZoneId.of("Europe/Rome");
 
     @Transactional(readOnly = true)
     public List<VisitResponse> myInbox(String agentEmail, VisitStatus status, Integer page, Integer size) {
-        Pageable p = PageRequest.of(s(page), s(size));
+        Pageable p = PageRequest.of(safePage(page), safeSize(size));
+
         var pageObj = (status == null)
-                ? visitRepo.findByAgent_EmailOrderByStartAtDesc(agentEmail, p)
-                : visitRepo.findByAgent_EmailAndStatusOrderByStartAtDesc(agentEmail, status, p);
+                ? visitRepo.findByEstateAgent_EmailOrderByStartAtDesc(agentEmail, p)
+                : visitRepo.findByEstateAgent_EmailAndStatusOrderByStartAtDesc(agentEmail, status, p);
 
         return pageObj
                 .map(v -> VisitResponse.builder()
                         .id(v.getId())
-                        .adId(v.getAd().getId())
-                        .adAddress(v.getAd().getAddress())
-                        .requesterEmail(v.getRequester().getEmail())
-                        .agentEmail(v.getAgent().getEmail())
-                        .status(v.getStatus().name())
+                        .adId(v.getRealEstate() != null ? v.getRealEstate().getId() : null)
+                        .adAddress(v.getRealEstate() != null ? v.getRealEstate().getAddress() : null)
+                        .requesterEmail(v.getUser() != null ? v.getUser().getEmail() : null)
+                        .agentEmail(v.getEstateAgent() != null ? v.getEstateAgent().getEmail() : null)
+                        .status(v.getStatus() != null ? v.getStatus().name() : null)
                         .startAt(v.getStartAt())
-                        .createdAt(v.getCreatedAt())
+                        .createdAt(v.getCreatedDate() != null
+                                ? v.getCreatedDate().atZone(DEFAULT_ZONE).toInstant()
+                                : null)
                         .build())
                 .getContent();
     }
 
-    private int s(Integer x) {
-        return (x != null && x > 0) ? x : 12;
+    private int safePage(Integer p) {
+        return (p != null && p >= 0) ? p : 0;
+    }
+
+    private int safeSize(Integer s) {
+        return (s != null && s > 0) ? s : 12;
     }
 }

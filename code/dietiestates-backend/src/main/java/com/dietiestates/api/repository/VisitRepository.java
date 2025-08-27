@@ -14,22 +14,21 @@ import com.dietiestates.api.model.Visit;
 
 public interface VisitRepository extends CrudRepository<Visit, Long> {
 
-        Page<Visit> findByRequester_EmailOrderByStartAtDesc(String email, Pageable pageable);
+  Page<Visit> findByUser_EmailOrderByStartAtDesc(String email, Pageable pageable);
 
-        Page<Visit> findByAgent_EmailOrderByStartAtDesc(String email, Pageable pageable);
+  Page<Visit> findByEstateAgent_EmailOrderByStartAtDesc(String email, Pageable pageable);
 
-        Page<Visit> findByAgent_EmailAndStatusOrderByStartAtDesc(String email, VisitStatus status,
-                        Pageable pageable);
+  Page<Visit> findByEstateAgent_EmailAndStatusOrderByStartAtDesc(String email, VisitStatus status, Pageable pageable);
 
-        @Query("""
-                            SELECT (COUNT(v) > 0)
-                            FROM VisitRequest v
-                            WHERE v.agent.email = :agentEmail
-                              AND v.status IN :statuses
-                              AND v.startAt = :start
-                        """)
-        boolean existsAgentSlot(
-                        @Param("agentEmail") String agentEmail,
-                        @Param("start") Instant start,
-                        @Param("statuses") List<VisitStatus> statuses);
+  @Query("""
+          SELECT (COUNT(v) > 0)
+          FROM Visit v
+          WHERE v.estateAgent.email = :agentEmail
+            AND v.status IN :statuses
+            AND v.startAt = :start
+      """)
+  boolean existsAgentSlot(
+      @Param("agentEmail") String agentEmail,
+      @Param("start") Instant start,
+      @Param("statuses") List<VisitStatus> statuses);
 }

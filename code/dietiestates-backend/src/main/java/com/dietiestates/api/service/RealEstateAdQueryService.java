@@ -19,13 +19,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RealEstateAdQueryService {
 
-    private final RealEstateAdRepository adRepository;
+    private final RealEstateAdRepository repository;
 
-    /** Lista annunci dell’utente corrente (AGENT/ADMIN) con paginazione */
     @Transactional(readOnly = true)
     public List<RealEstateAdResponse> myAds(String email, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(safePage(page), safeSize(size));
-        return adRepository.findByPostedBy_Email(email, pageable)
+        return repository
+                .findByEstateAgent_Email(email, pageable)
                 .map(e -> RealEstateAdResponse.builder()
                         .id(e.getId())
                         .category(e.getCategory().name())
@@ -38,7 +38,7 @@ public class RealEstateAdQueryService {
                         .energyClass(e.getEnergyClass().name())
                         .latitude(e.getLatitude())
                         .longitude(e.getLongitude())
-                        .postedByEmail(e.getPostedBy().getEmail())
+                        .postedByEmail(e.getEstateAgent().getEmail())
                         .detailId(e.getDetail().getId())
                         .build())
                 .getContent();
@@ -56,14 +56,9 @@ public class RealEstateAdQueryService {
             Integer size) {
 
         Pageable pageable = PageRequest.of(safePage(page), safeSize(size));
-        return adRepository.search(
-                category,
-                emptyToNull(q),
-                minPrice,
-                maxPrice,
-                minRooms,
-                energy,
-                pageable)
+
+        return repository
+                .search(category, emptyToNull(q), minPrice, maxPrice, minRooms, energy, pageable)
                 .map(e -> RealEstateAdResponse.builder()
                         .id(e.getId())
                         .category(e.getCategory().name())
@@ -76,7 +71,7 @@ public class RealEstateAdQueryService {
                         .energyClass(e.getEnergyClass().name())
                         .latitude(e.getLatitude())
                         .longitude(e.getLongitude())
-                        .postedByEmail(e.getPostedBy().getEmail())
+                        .postedByEmail(e.getEstateAgent().getEmail())
                         .detailId(e.getDetail().getId())
                         .build())
                 .getContent();
