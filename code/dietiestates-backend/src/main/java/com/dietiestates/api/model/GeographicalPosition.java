@@ -1,7 +1,11 @@
 package com.dietiestates.api.model;
 
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,26 +25,27 @@ import lombok.Setter;
 @EqualsAndHashCode
 @Builder
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class GeographicalPosition {
 
-	@Id @GeneratedValue(strategy = GenerationType.AUTO)
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@EqualsAndHashCode.Include
 	private Long id;
 	
-	@EqualsAndHashCode.Exclude
-	@NotNull
+	@Column(nullable = false)
 	private String city;
 	
-	@EqualsAndHashCode.Exclude
-	@NotNull
+	@Column(nullable = false)
 	private String municipality;
 	
-	@EqualsAndHashCode.Exclude
+	@Column(nullable = false)
 	private Double zoneMarkerLatitude;
 	
-	@EqualsAndHashCode.Exclude
+	@Column(nullable = false)
 	private Double zoneMarkerLongitude;
 	
-	@EqualsAndHashCode.Exclude
+	@Column(nullable = false)
 	private Float zoneMarkerRadius;
 	
 	@NotNull

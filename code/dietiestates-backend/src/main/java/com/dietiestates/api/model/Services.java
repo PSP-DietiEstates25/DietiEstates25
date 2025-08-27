@@ -1,7 +1,15 @@
 package com.dietiestates.api.model;
 
+import java.time.LocalDateTime;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,22 +29,30 @@ import lombok.Setter;
 @EqualsAndHashCode
 @Builder
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Services {
 
-	@Id @GeneratedValue(strategy = GenerationType.AUTO)
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@EqualsAndHashCode.Include
 	private Long id;
 	
-	@EqualsAndHashCode.Exclude
-	@NotNull
+	@Column(nullable = false)
 	private Boolean hasAirConditioning;
 	
-	@EqualsAndHashCode.Exclude
-	@NotNull
+	@Column(nullable = false)
 	private Boolean hasDoorman;
-	
-	@EqualsAndHashCode.Exclude
-	@NotNull
+
+	@Column(nullable = false)
 	private Boolean hasElevator;
+	
+	@CreatedDate
+	@Column(nullable = false, updatable = false)
+	private LocalDateTime createdDate;
+	
+	@LastModifiedDate
+	@Column(insertable = false)
+	private LocalDateTime lastModifiedDate;
 
 	@NotNull
 	@OneToOne(mappedBy = "services", cascade = CascadeType.ALL, orphanRemoval = true)

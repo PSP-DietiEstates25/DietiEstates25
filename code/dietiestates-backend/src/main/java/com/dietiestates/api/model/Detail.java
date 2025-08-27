@@ -3,8 +3,11 @@ package com.dietiestates.api.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,41 +30,40 @@ import lombok.Setter;
 @EqualsAndHashCode
 @Builder
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Detail {
 
-	@Id @GeneratedValue(strategy = GenerationType.AUTO)
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@EqualsAndHashCode.Include
 	private Long id;
 	
-	@NotNull
 	@ManyToOne
 	@JoinColumn(
+			nullable = false,
 			name = "services_id",
 			foreignKey = @ForeignKey(name = "SERVICES_ID_FK"))
 	private Services services;
 	
-	@NotNull
 	@ManyToOne
 	@JoinColumn(
+			nullable = false,
 			name = "geographical_position_id",
 			foreignKey = @ForeignKey(name = "GEOGRAPHICAL_POSITION_ID_FK"))
 	private GeographicalPosition geographicalPosition;
 	
-	@EqualsAndHashCode.Exclude
-	@NotNull
 	@OneToMany(mappedBy = "detail", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Search> searches = new ArrayList<>();
 	
-	@EqualsAndHashCode.Exclude
-	@NotNull
 	@OneToMany(mappedBy = "detail", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<RealEstateAd> ads = new ArrayList<>();
+	private List<RealEstate> ads = new ArrayList<>();
 	
 	public void addSearch(Search search) {
 		searches.add(search);
 		search.setDetail(this);
 	}
 	
-	public void addAd(RealEstateAd ad) {
+	public void addAd(RealEstate ad) {
 		ads.add(ad);
 		ad.setDetail(this);
 	}

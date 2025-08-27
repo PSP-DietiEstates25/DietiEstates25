@@ -1,5 +1,7 @@
 package com.dietiestates.api.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,8 @@ public class DetailService {
     private final ServicesRepository servicesRepository;
     private final GeographicalPositionRepository geoRepository;
 
+    @Autowired
+    private ApplicationContext context;
     @Transactional
     public Long create(@Valid CreateDetailRequest req) {
         Services services = Services.builder()

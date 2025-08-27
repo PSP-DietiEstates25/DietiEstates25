@@ -1,11 +1,15 @@
 package com.dietiestates.api.model;
 
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import com.dietiestates.api.enums.ProposalCategory;
 import com.dietiestates.api.enums.ProposalStatus;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.ForeignKey;
@@ -16,7 +20,6 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -33,26 +36,26 @@ import lombok.ToString;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(discriminatorType = DiscriminatorType.STRING, name = "category")
+@EntityListeners(AuditingEntityListener.class)
 public abstract class Proposal {
 
-	@Id @GeneratedValue(strategy = GenerationType.AUTO)
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@EqualsAndHashCode.Include
 	private Long proposalCode;
 	
-	@EqualsAndHashCode.Exclude
-	@NotNull
+	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private ProposalCategory proposalCategory;
 	
-	@EqualsAndHashCode.Exclude
-	@NotNull
+	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private ProposalStatus proposalStatus;
 	
-	@EqualsAndHashCode.Exclude
-	@NotNull
 	@ManyToOne
 	@JoinColumn(
-			name = "user_email",
-			foreignKey = @ForeignKey(name = "USER_EMAIL_FK"))
-	private User user;
+			nullable = false,
+			name = "estete_agent_id",
+			foreignKey = @ForeignKey(name = "ESTATE_AGENT_ID_FK"))
+	private User estateAgent;
 }

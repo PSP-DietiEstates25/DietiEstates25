@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.dietiestates.api.dto.CreateRealEstateAdRequest;
 import com.dietiestates.api.dto.RealEstateAdResponse;
 import com.dietiestates.api.model.Detail;
-import com.dietiestates.api.model.RealEstateAd;
+import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.model.User;
 import com.dietiestates.api.repository.DetailRepository;
 import com.dietiestates.api.repository.RealEstateAdRepository;
@@ -55,7 +55,7 @@ public class RealEstateAdService {
                                 .orElseThrow(() -> new IllegalArgumentException("Detail not found: " + req.detailId()));
 
                 // Entity
-                RealEstateAd ad = new RealEstateAd();
+                RealEstate ad = new RealEstate();
                 ad.setCategory(req.category());
                 ad.setDescription(req.description());
                 ad.setPrice(req.price());
@@ -70,7 +70,7 @@ public class RealEstateAdService {
                 ad.attachPostedBy(user);
                 ad.attachDetail(detail);
 
-                RealEstateAd saved = adRepository.save(ad);
+                RealEstate saved = adRepository.save(ad);
 
                 return RealEstateAdResponse.builder()
                                 .id(saved.getId())

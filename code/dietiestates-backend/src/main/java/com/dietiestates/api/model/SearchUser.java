@@ -1,6 +1,9 @@
 package com.dietiestates.api.model;
 
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -18,14 +21,15 @@ import lombok.Setter;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class SearchUser {
 	
 	@Id
 	@NotNull
 	@ManyToOne
 	@JoinColumn(
-			name = "user_email",
-			foreignKey = @ForeignKey(name = "USER_EMAIL_FK"))
+			name = "user_id",
+			foreignKey = @ForeignKey(name = "USER_ID_FK"))
 	private User user;
 
 	@Id

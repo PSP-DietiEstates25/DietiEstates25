@@ -15,7 +15,7 @@ import com.dietiestates.api.dto.CreateVisitRequest;
 import com.dietiestates.api.dto.VisitResponse;
 import com.dietiestates.api.enums.NotificationCategoryType;
 import com.dietiestates.api.enums.VisitStatus;
-import com.dietiestates.api.model.RealEstateAd;
+import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.model.User;
 import com.dietiestates.api.model.Visit;
 import com.dietiestates.api.repository.RealEstateAdRepository;
@@ -41,7 +41,7 @@ public class VisitService {
         User requester = userRepo.findByEmail(requesterEmail)
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + requesterEmail));
 
-        RealEstateAd ad = adRepo.findById(req.adId())
+        RealEstate ad = adRepo.findById(req.adId())
                 .orElseThrow(() -> new IllegalArgumentException("Ad not found: " + req.adId()));
 
         User agent = ad.getPostedBy();

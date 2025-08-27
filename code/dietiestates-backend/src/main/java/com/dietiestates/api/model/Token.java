@@ -2,7 +2,10 @@ package com.dietiestates.api.model;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,6 +25,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Token {
 
 	@Id
@@ -37,6 +41,6 @@ public class Token {
 	private LocalDateTime validatedAt;
 	
 	@ManyToOne
-	@JoinColumn(name = "userId", nullable = false)
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 }

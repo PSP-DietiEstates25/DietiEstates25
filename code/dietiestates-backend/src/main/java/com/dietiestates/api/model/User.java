@@ -50,6 +50,7 @@ public class User implements UserDetails, Principal {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@EqualsAndHashCode.Include
 	private Long id;
 	
 	@Column(unique = true)
@@ -86,18 +87,12 @@ public class User implements UserDetails, Principal {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 	
-	@EqualsAndHashCode.Exclude
-	@NotNull
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<Notification> notifications = new ArrayList<>();
 	
-	@EqualsAndHashCode.Exclude
-	@NotNull
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<SearchUser> searches = new ArrayList<>();
 	
-	@EqualsAndHashCode.Exclude
-	@NotNull
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<Proposal> proposals = new ArrayList<>();
 	
@@ -113,7 +108,7 @@ public class User implements UserDetails, Principal {
 	
 	public void addProposal(Proposal proposal) {
 		proposals.add(proposal);
-		proposal.setUser(this);
+		proposal.setEstateAgent(this);
 	}
 	
 	@Override

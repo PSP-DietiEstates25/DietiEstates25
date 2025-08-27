@@ -1,11 +1,18 @@
 package com.dietiestates.api.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.dietiestates.api.enums.AdCategory;
 import com.dietiestates.api.enums.EnergyClass;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,77 +35,76 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class RealEstateAd {
+@EntityListeners(AuditingEntityListener.class)
+public class RealEstate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
-    // DATI ANNUNCIO
-    @EqualsAndHashCode.Exclude
-    @NotNull
+    @Column(nullable = false)
     private AdCategory category; // SALE | RENT
 
-    @EqualsAndHashCode.Exclude
-    @NotNull
     @Lob
+    @Column(nullable = false)
     private byte[] photo;
 
-    @EqualsAndHashCode.Exclude
-    @NotNull
+    @Column(nullable = false)
     private String description;
 
-    // DATI IMMOBILE
-    @EqualsAndHashCode.Exclude
-    @NotNull
+    @Column(nullable = false)
     private BigDecimal price;
 
-    @EqualsAndHashCode.Exclude
-    @NotNull
+    @Column(nullable = false)
     private Float size;
 
-    @EqualsAndHashCode.Exclude
-    @NotNull
+    @Column(nullable = false)
     private String address;
 
-    @EqualsAndHashCode.Exclude
-    @NotNull
+    @Column(nullable = false)
     private Integer rooms;
 
-    @EqualsAndHashCode.Exclude
-    @NotNull
+    @Column(nullable = false)
     private Integer floor;
 
-    @EqualsAndHashCode.Exclude
-    @NotNull
+    @Column(nullable = false)
     private EnergyClass energyClass;
 
-    @EqualsAndHashCode.Exclude
-    @NotNull
+    @Column(nullable = false)
     private Double latitude;
 
-    @EqualsAndHashCode.Exclude
-    @NotNull
+    @Column(nullable = false)
     private Double longitude;
 
-    // RELAZIONI
-    @EqualsAndHashCode.Exclude
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "posted_by_id", foreignKey = @ForeignKey(name = "POSTED_BY_ID_FK"))
-    private User postedBy;
+    @CreatedDate
+	@Column(nullable = false, updatable = false)
+	private LocalDateTime createdDate;
+	
+	@LastModifiedDate
+	@Column(insertable = false)
+	private LocalDateTime lastModifiedDate;
 
-    @EqualsAndHashCode.Exclude
-    @NotNull
     @ManyToOne
-    @JoinColumn(name = "detail_id", foreignKey = @ForeignKey(name = "DETAIL_ID_FK"))
+    @JoinColumn(
+    		nullable = false,
+    		name = "estate_agent_id", 
+    		foreignKey = @ForeignKey(name = "ESTATE_AGENT_ID_FK"))
+    private User estateAgent;
+
+    @ManyToOne
+    @JoinColumn(
+    		nullable = false,
+    		name = "detail_id", 
+    		foreignKey = @ForeignKey(name = "DETAIL_ID_FK"))
     private Detail detail;
 
-    public void attachPostedBy(User user) {
-        this.setPostedBy(user);
+    public void addEstateAgent(User estateAgent) {
+        this.estateAgent = estateAgent;
+        //Settare anche il contrario
     }
 
-    public void attachDetail(Detail d) {
+    public void addDetail(Detail d) {
         this.setDetail(d);
         d.getAds().add(this);
     }

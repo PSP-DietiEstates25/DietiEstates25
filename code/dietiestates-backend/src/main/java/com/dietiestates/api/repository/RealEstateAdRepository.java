@@ -11,9 +11,9 @@ import org.springframework.data.repository.query.Param;
 
 import com.dietiestates.api.enums.AdCategory;
 import com.dietiestates.api.enums.EnergyClass;
-import com.dietiestates.api.model.RealEstateAd;
+import com.dietiestates.api.model.RealEstate;
 
-public interface RealEstateAdRepository extends CrudRepository<RealEstateAd, Long> {
+public interface RealEstateAdRepository extends CrudRepository<RealEstate, Long> {
 
   @Query("""
       SELECT a FROM RealEstateAd a
@@ -28,7 +28,7 @@ public interface RealEstateAdRepository extends CrudRepository<RealEstateAd, Lon
         AND (:minRooms IS NULL OR a.rooms >= :minRooms)
         AND (:energy IS NULL OR a.energyClass = :energy)
       """)
-  Page<RealEstateAd> search(
+  Page<RealEstate> search(
       @Param("category") AdCategory category,
       @Param("q") String q,
       @Param("minPrice") BigDecimal minPrice,
@@ -38,5 +38,5 @@ public interface RealEstateAdRepository extends CrudRepository<RealEstateAd, Lon
       Pageable pageable);
 
   @EntityGraph(attributePaths = { "detail" })
-  Page<RealEstateAd> findByPostedBy_Email(String email, Pageable pageable);
+  Page<RealEstate> findByPostedBy_Email(String email, Pageable pageable);
 }

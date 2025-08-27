@@ -2,10 +2,13 @@ package com.dietiestates.api.model;
 
 import java.time.Instant;
 
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import com.dietiestates.api.enums.NotificationCategoryType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -32,13 +35,13 @@ import lombok.Setter;
 @Builder(toBuilder = true)
 @Entity
 @Table(name = "notification")
+@EntityListeners(AuditingEntityListener.class)
 public class Notification {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@NotNull
 	@Enumerated(EnumType.STRING)
 	private NotificationCategoryType category;
 
@@ -49,17 +52,18 @@ public class Notification {
 	@Column(length = 2000)
 	private String message;
 
+	
 	private Long adId;
 
-	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "NOTIF_USER_ID_FK"))
+	@JoinColumn(
+			nullable = false,
+			name = "user_id", 
+			foreignKey = @ForeignKey(name = "NOTIF_USER_ID_FK"))
 	private User user;
 
-	@NotNull
 	private Boolean readFlag;
 
-	@NotNull
 	private Instant createdAt;
 
 	@PrePersist

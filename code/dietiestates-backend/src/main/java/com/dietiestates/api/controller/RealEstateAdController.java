@@ -15,7 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/ads")
+@RequestMapping("/realestates")
 @RequiredArgsConstructor // genera il costruttore con i campi final per l'injection
 @Validated
 public class RealEstateAdController {
@@ -40,4 +40,6 @@ public class RealEstateAdController {
         return adService.create(payload, photo, agentEmail);
     }
     
+    @GetMapping("/realestates/{realestateid}")
+    public RealEstateDTO
 }

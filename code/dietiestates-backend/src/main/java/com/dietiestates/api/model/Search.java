@@ -1,13 +1,20 @@
 package com.dietiestates.api.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.dietiestates.api.enums.AdCategory;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.ForeignKey;
@@ -30,34 +37,40 @@ import lombok.Setter;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Search {
 
-	@Id @GeneratedValue(strategy = GenerationType.AUTO)
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@EqualsAndHashCode.Include
 	private Long id;
 	
-	@EqualsAndHashCode.Exclude
-	@NotNull
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	private AdCategory adCategory;
 	
-	@EqualsAndHashCode.Exclude
-	@NotNull
+	@Column(nullable = false)
 	private BigDecimal minimumPrice;
 	
-	@EqualsAndHashCode.Exclude
-	@NotNull
+	@Column(nullable = false)
 	private BigDecimal maximumPrice;
 	
-	@EqualsAndHashCode.Exclude
-	@NotNull
+	@CreatedDate
+	@Column(nullable = false, updatable = false)
+	private LocalDateTime createdDate;
+	
+	@LastModifiedDate
+	@Column(insertable = false)
+	private LocalDateTime lastModifiedDate;
+	
 	@ManyToOne
 	@JoinColumn(
+			nullable = false,
 			name = "detail_id",
 			foreignKey = @ForeignKey(name = "DETAIL_ID_FK"))
 	private Detail detail;
 	
-	@EqualsAndHashCode.Exclude
-	@NotNull
+
 	@OneToMany(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<SearchUser> users = new ArrayList<>();
 	
