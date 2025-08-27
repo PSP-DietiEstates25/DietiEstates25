@@ -39,8 +39,13 @@ import lombok.Setter;
 @Builder
 @Entity
 @Table(name = "visit", indexes = {
-		@Index(name = "IDX_visit_agent_start", columnList = "estate_agent_id,start_at"),
-		@Index(name = "IDX_visit_requester", columnList = "user_id")
+		/*
+		 * indice composito (agent_id, start_at):
+		 * agent_id filtra subito le righe dell’agente
+		 * start_at copre ORDER BY e il match esatto dello slot
+		 * risultato: dashboard veloce e check "slot occupato" immediato
+		 */
+		@Index(name = "IDX_visit_agent_start", columnList = "agent_id,start_at"),
 })
 @EntityListeners(AuditingEntityListener.class)
 public class Visit {
@@ -66,6 +71,11 @@ public class Visit {
 	@Column(nullable = false)
 	private VisitStatus status;
 
+	/*
+	 * timestamp dell'APPUNTAMENTO (quando avviene la visita)
+	 * usare Instant è comodo per salvare in UTC e semplificare
+	 * confronti/ordinamenti lato DB
+	 */
 	@Column(nullable = false, name = "start_at")
 	private Instant startAt;
 

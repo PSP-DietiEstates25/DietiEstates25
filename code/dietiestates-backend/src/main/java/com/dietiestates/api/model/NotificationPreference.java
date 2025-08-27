@@ -32,6 +32,15 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @Entity
+
+/**
+ * serve a due cose, una "di nome" e una "di regola":
+ * - imposta il nome della tabella a livello DB
+ * 
+ * - può esistere al massimo una riga per coppia (utente,
+ * categoria). questo impedisce duplicati tipo "lo stesso utente con
+ * due preferenze per la stessa categoria"
+ */
 @Table(name = "notification_preference", uniqueConstraints = @UniqueConstraint(name = "UK_notif_pref_user_cat", columnNames = {
         "user_id", "category" }))
 @EntityListeners(AuditingEntityListener.class)
@@ -50,9 +59,6 @@ public class NotificationPreference {
     private Boolean enabled;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-    		nullable = false,
-    		name = "user_id", 
-    		foreignKey = @ForeignKey(name = "NOTIF_PREF_USER_ID_FK"))
+    @JoinColumn(nullable = false, name = "user_id", foreignKey = @ForeignKey(name = "NOTIF_PREF_USER_ID_FK"))
     private User user;
 }
