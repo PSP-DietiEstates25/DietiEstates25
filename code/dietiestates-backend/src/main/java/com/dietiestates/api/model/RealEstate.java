@@ -46,7 +46,7 @@ public class RealEstate {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private AdCategory category; // SALE | RENT
+    private AdCategory category;
 
     @Lob
     @Column(nullable = false)
@@ -105,9 +105,5 @@ public class RealEstate {
     public void addDetail(Detail d) {
         this.setDetail(d);
         d.getAds().add(this);
-    }
-
-    public User getPostedBy() {
-        return this.estateAgent;
     }
 }

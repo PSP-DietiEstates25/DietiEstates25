@@ -14,7 +14,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -54,7 +53,6 @@ public class Services {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 
-	@NotNull
 	@OneToOne(mappedBy = "services", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Detail detail;
 	

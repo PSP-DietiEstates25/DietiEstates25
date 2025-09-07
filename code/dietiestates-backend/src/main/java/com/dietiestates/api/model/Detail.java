@@ -1,11 +1,15 @@
 package com.dietiestates.api.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.ForeignKey;
@@ -15,7 +19,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -42,21 +45,29 @@ public class Detail {
 	@JoinColumn(
 			nullable = false,
 			name = "services_id",
-			foreignKey = @ForeignKey(name = "SERVICES_ID_FK"))
+			foreignKey = @ForeignKey(name = "DETAIL_SERVICES_ID_FK"))
 	private Services services;
+	
+	@CreatedDate
+	@Column(nullable = false, updatable = false)
+	private LocalDateTime createdDate;
+	
+	@LastModifiedDate
+	@Column(insertable = false)
+	private LocalDateTime lastModifiedDate;
 	
 	@ManyToOne
 	@JoinColumn(
 			nullable = false,
 			name = "geographical_position_id",
-			foreignKey = @ForeignKey(name = "GEOGRAPHICAL_POSITION_ID_FK"))
+			foreignKey = @ForeignKey(name = "DETAIL_GEOGRAPHICAL_POSITION_ID_FK"))
 	private GeographicalPosition geographicalPosition;
 	
 	@OneToMany(mappedBy = "detail", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Search> searches = new ArrayList<>();
+	private final List<Search> searches = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "detail", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<RealEstate> ads = new ArrayList<>();
+	private final List<RealEstate> ads = new ArrayList<>();
 	
 	public void addSearch(Search search) {
 		searches.add(search);

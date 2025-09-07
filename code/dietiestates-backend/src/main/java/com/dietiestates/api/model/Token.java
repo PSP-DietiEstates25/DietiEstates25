@@ -2,8 +2,10 @@ package com.dietiestates.api.model;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -34,10 +36,14 @@ public class Token {
 	
 	private String token;
 	
+	@CreatedDate
+	@Column(nullable = false, updatable = false)
 	private LocalDateTime createdAt;
 	
+	@Column(nullable = false, updatable = false)
 	private LocalDateTime expiresAt;
 	
+	@Column(nullable = false, updatable = false)
 	private LocalDateTime validatedAt;
 	
 	@ManyToOne

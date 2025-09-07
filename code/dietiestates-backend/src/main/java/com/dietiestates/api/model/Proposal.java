@@ -21,6 +21,7 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ import lombok.ToString;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -42,20 +44,27 @@ public abstract class Proposal {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@EqualsAndHashCode.Include
-	private Long proposalCode;
+	protected Long id;
 	
-	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	private ProposalCategory proposalCategory;
+	@Column(nullable = false)
+	protected ProposalCategory proposalCategory;
 	
-	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	private ProposalStatus proposalStatus;
+	@Column(nullable = false)
+	protected ProposalStatus proposalStatus;
 	
 	@ManyToOne
 	@JoinColumn(
 			nullable = false,
 			name = "estete_agent_id",
-			foreignKey = @ForeignKey(name = "ESTATE_AGENT_ID_FK"))
-	private User estateAgent;
+			foreignKey = @ForeignKey(name = "PROPOSAL_ESTATE_AGENT_ID_FK"))
+	protected EstateAgent estateAgent;
+	
+	@ManyToOne
+	@JoinColumn(
+			nullable = false,
+			name = "user_id",
+			foreignKey = @ForeignKey(name = "PROPOSAL_USER_ID_FK"))
+	protected User user;
 }

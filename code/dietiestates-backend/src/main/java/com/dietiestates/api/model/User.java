@@ -22,14 +22,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -51,26 +46,26 @@ public class User implements UserDetails, Principal {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@EqualsAndHashCode.Include
-	private Long id;
+	protected Long id;
 	
 	@Column(unique = true)
 	private String username;
 	
 	@Column(unique = true)
-	private String email;
+	protected String email;
 	
 	@Column(nullable = false, length = 255)
-	private String password;
+	protected String password;
 	
 	@Column(nullable = false)
-	private boolean accountLocked;
+	protected boolean accountLocked;
 	
 	@Column(nullable = false)
-	private boolean enabled;
+	protected boolean enabled;
 	
 	//trasformare il oneToMay, anche in role
 	@ManyToMany(fetch = FetchType.EAGER)
-	private List<Role> roles;
+	protected List<Role> roles;
 	
 	/*
 	 * createdDate e lastModifiedDate è in collegamento con @EntityListener, se abbiamo qui o da qualche altra parte questa annotazione, dobbiamo
@@ -81,11 +76,11 @@ public class User implements UserDetails, Principal {
 	 */
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
-	private LocalDateTime createdDate;
+	protected LocalDateTime createdDate;
 	
 	@LastModifiedDate
 	@Column(insertable = false)
-	private LocalDateTime lastModifiedDate;
+	protected LocalDateTime lastModifiedDate;
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<Notification> notifications = new ArrayList<>();

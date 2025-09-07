@@ -2,7 +2,6 @@ package com.dietiestates.api.dto;
 
 import java.math.BigDecimal;
 
-import com.dietiestates.api.enums.EnergyClass;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
