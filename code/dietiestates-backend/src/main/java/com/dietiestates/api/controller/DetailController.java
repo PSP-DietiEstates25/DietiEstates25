@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 @Validated
 public class DetailController {
 
+	/*
     private final DetailService service;
 
     @PostMapping
@@ -25,4 +26,5 @@ public class DetailController {
         Long id = service.create(request);
         return new IdResponse(id);
     }
+    */
 }

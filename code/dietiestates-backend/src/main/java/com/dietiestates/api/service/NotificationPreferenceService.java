@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dietiestates.api.dto.NotificationPreferenceResponse;
 import com.dietiestates.api.dto.UpdateNotificationPreferencesRequest;
 import com.dietiestates.api.enums.NotificationCategoryType;
-import com.dietiestates.api.model.NotificationPreference;
+//import com.dietiestates.api.model.NotificationPreference;
 import com.dietiestates.api.model.User;
 import com.dietiestates.api.repository.NotificationPreferenceRepository;
 import com.dietiestates.api.repository.UserRepository;
@@ -19,13 +19,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class NotificationPreferenceService {
 
+	
+	/*
 	private final NotificationPreferenceRepository prefRepo;
 	private final UserRepository userRepo;
 
-	/**
-	 * restituisce tutte le preferenze; se una categoria manca, default =
-	 * enabled(true).
-	 */
+	
+	 //restituisce tutte le preferenze; se una categoria manca, default =
+	 //enabled(true).
 	@Transactional(readOnly = true)
 	public List<NotificationPreferenceResponse> listMine(String email) {
 		return java.util.Arrays.stream(NotificationCategoryType.values())
@@ -79,4 +80,5 @@ public class NotificationPreferenceService {
 				.map(NotificationPreference::getEnabled)
 				.orElse(true);
 	}
+	*/
 }

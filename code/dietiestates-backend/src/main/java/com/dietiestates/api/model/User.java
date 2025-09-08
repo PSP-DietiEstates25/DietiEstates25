@@ -16,6 +16,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
@@ -40,6 +42,7 @@ import lombok.Setter;
 @EqualsAndHashCode
 @Entity
 @Table(name = "_user")
+@DiscriminatorColumn(name="role", discriminatorType=DiscriminatorType.STRING)
 @EntityListeners(AuditingEntityListener.class)
 public class User implements UserDetails, Principal {
 	
@@ -63,17 +66,9 @@ public class User implements UserDetails, Principal {
 	@Column(nullable = false)
 	protected boolean enabled;
 	
-	//trasformare il oneToMay, anche in role
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany
 	protected List<Role> roles;
 	
-	/*
-	 * createdDate e lastModifiedDate è in collegamento con @EntityListener, se abbiamo qui o da qualche altra parte questa annotazione, dobbiamo
-	 * andare nello springBootApplication e inserire @EnableJpaAuditing altrimenti il meccanismo di auditing non funziona
-	 * 
-	 * da google:
-	 * Data auditing refers to the ability to record and track changes to data in a database, often including information about when a record was created, last modified, and by whom
-	 */
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
 	protected LocalDateTime createdDate;
@@ -81,6 +76,26 @@ public class User implements UserDetails, Principal {
 	@LastModifiedDate
 	@Column(insertable = false)
 	protected LocalDateTime lastModifiedDate;
+	
+	public User(
+			Long id,
+			String email,
+			String password,
+			boolean accountLocked,
+			boolean enabled,
+			List<Role> roles,
+			LocalDateTime createdDate,
+			LocalDateTime lastModifiedDate
+			) {
+		this.id = id;
+		this.email = email;
+		this.password = password;
+		this.accountLocked = accountLocked;
+		this.enabled = enabled;
+		this.roles = roles;
+		this.createdDate = createdDate;
+		this.lastModifiedDate = lastModifiedDate;
+	}
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<Notification> notifications = new ArrayList<>();
@@ -103,7 +118,7 @@ public class User implements UserDetails, Principal {
 	
 	public void addProposal(Proposal proposal) {
 		proposals.add(proposal);
-		proposal.setEstateAgent(this);
+		proposal.setUser(this);
 	}
 	
 	@Override

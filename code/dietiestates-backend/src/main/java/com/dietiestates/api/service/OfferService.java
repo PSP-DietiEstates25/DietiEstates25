@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OfferService {
 
+	/*
     private final OfferRepository offerRepo;
     private final RealEstateAdRepository realEstateRepo;
     private final UserRepository userRepo;
@@ -72,7 +73,6 @@ public class OfferService {
         return saved;
     }
 
-    /* 
     @Transactional(readOnly = true)
     public List<Offer> listForEstate(String requesterEmail, Long adId, Integer page, Integer size) {
         User requester = userRepo.findByEmail(requesterEmail)

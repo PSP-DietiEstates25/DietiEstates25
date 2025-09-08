@@ -31,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 @Validated
 public class RealEstateController {
 
+	/*
 	private final RealEstateAdService adService;
 	private final RealEstateAdQueryService queryService;
 
@@ -75,4 +76,5 @@ public class RealEstateController {
 
 		return queryService.search(category, q, minPrice, maxPrice, minRooms, energy, page, size);
 	}
+	*/
 }

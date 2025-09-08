@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.CreateVisitRequest;
 import com.dietiestates.api.dto.VisitResponse;
-import com.dietiestates.api.enums.VisitStatus;
 import com.dietiestates.api.service.VisitQueryService;
 import com.dietiestates.api.service.VisitService;
 
@@ -27,9 +26,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VisitController {
 
+	/* 
     private final VisitService visitService;
     private final VisitQueryService visitQuery;
 
+    
+    
     // cliente: propone visita
     @PostMapping
     @PreAuthorize("isAuthenticated()")
@@ -61,4 +63,5 @@ public class VisitController {
     public VisitResponse decline(Authentication auth, @PathVariable Long id) {
         return visitService.decline(auth.getName(), id);
     }
+    */
 }

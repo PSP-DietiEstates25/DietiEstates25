@@ -1,16 +1,13 @@
 package com.dietiestates.api.repository;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.data.repository.CrudRepository;
 
-import com.dietiestates.api.enums.NotificationCategoryType;
-import com.dietiestates.api.model.NotificationPreference;
+import com.dietiestates.api.model.NotificationCategory;
+//import com.dietiestates.api.model.NotificationPreference;
 
-public interface NotificationPreferenceRepository extends CrudRepository<NotificationPreference, Long> {
+public interface NotificationPreferenceRepository extends CrudRepository</*NotificationPreference*/NotificationCategory, Long> {
 
-    Optional<NotificationPreference> findByUser_EmailAndCategory(String email, NotificationCategoryType category);
+    //Optional<NotificationPreference> findByUser_EmailAndCategory(String email, NotificationCategoryType category);
 
-    List<NotificationPreference> findAllByUser_Email(String email);
+    //List<NotificationPreference> findAllByUser_Email(String email);
 }

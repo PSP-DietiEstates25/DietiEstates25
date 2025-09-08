@@ -2,6 +2,8 @@ package com.dietiestates.api.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -10,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.dietiestates.api.enums.AdCategory;
 import com.dietiestates.api.enums.EnergyClass;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -22,6 +25,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -89,21 +93,24 @@ public class RealEstate {
     private LocalDateTime lastModifiedDate;
 
     @ManyToOne
-    @JoinColumn(nullable = false, name = "estate_agent_id", foreignKey = @ForeignKey(name = "ESTATE_AGENT_ID_FK"))
+    @JoinColumn(
+    		nullable = false,
+    		name = "estate_agent_id",
+    		foreignKey = @ForeignKey(name = "REAL_ESTATE_ESTATE_AGENT_ID_FK"))
     private User estateAgent;
 
     @ManyToOne
-    @JoinColumn(nullable = false, name = "detail_id", foreignKey = @ForeignKey(name = "DETAIL_ID_FK"))
+    @JoinColumn(
+    		nullable = false,
+    		name = "detail_id",
+    		foreignKey = @ForeignKey(name = "REAL_ESTATE_DETAIL_ID_FK"))
     private Detail detail;
-
-    public void addEstateAgent(User estateAgent) {
-        this.estateAgent = estateAgent;
-        // TODO: settare anche il contrario se nel model User esiste la collection es.
-        // user.getAds().add(this);
-    }
-
-    public void addDetail(Detail d) {
-        this.setDetail(d);
-        d.getAds().add(this);
+    
+    @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Proposal> proposals = new ArrayList<>();
+    
+    public void addProposal(Proposal proposal) {
+    	proposals.add(proposal);
+    	proposal.setRealEstate(this); 
     }
 }

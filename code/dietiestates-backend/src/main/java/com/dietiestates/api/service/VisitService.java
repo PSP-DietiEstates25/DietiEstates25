@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dietiestates.api.dto.CreateVisitRequest;
 import com.dietiestates.api.dto.VisitResponse;
 import com.dietiestates.api.enums.NotificationCategoryType;
-import com.dietiestates.api.enums.VisitStatus;
+//import com.dietiestates.api.enums.VisitStatus;
 import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.model.User;
 import com.dietiestates.api.model.Visit;
@@ -28,12 +28,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VisitService {
 
+	/*
     private final VisitRepository visitRepo;
     private final RealEstateAdRepository adRepo;
     private final UserRepository userRepo;
     private final NotificationService notificationService;
 
     private static final ZoneId DEFAULT_ZONE = ZoneId.of("Europe/Rome");
+    
 
     @Transactional
     public VisitResponse propose(String requesterEmail, CreateVisitRequest req) {
@@ -151,4 +153,6 @@ public class VisitService {
                 .createdAt(createdAtInstant)
                 .build();
     }
+    
+    */
 }

@@ -21,11 +21,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class NotificationService {
 
+	/*
 	private final NotificationRepository notifRepo;
 	private final UserRepository userRepo;
 	private final NotificationPreferenceService prefService;
 
-	/** crea e consegna una notifica se la categoria è abilitata per l'utente. */
+	//crea e consegna una notifica se la categoria è abilitata per l'utente.
 	@Transactional
 	public NotificationResponse push(String userEmail, NotificationCategoryType category, String title, String message,
 			Long adId) {
@@ -60,7 +61,7 @@ public class NotificationService {
 				.build();
 	}
 
-	/** lista notifiche dell'utente (tutte o solo non-letto) con paginazione. */
+	//lista notifiche dell'utente (tutte o solo non-letto) con paginazione.
 	@Transactional(readOnly = true)
 	public List<NotificationResponse> listMine(String email, boolean unreadOnly, Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(safePage(page), safeSize(size));
@@ -80,7 +81,7 @@ public class NotificationService {
 				.getContent();
 	}
 
-	/** segna una notifica come letta. */
+	//segna una notifica come letta.
 	@Transactional
 	public void markRead(String email, Long id) {
 		Notification n = notifRepo.findById(id)
@@ -90,7 +91,7 @@ public class NotificationService {
 		notifRepo.save(n);
 	}
 
-	/** segna tutte come lette (batch). */
+	//segna tutte come lette (batch).
 	@Transactional
 	public void markAllRead(String email) {
 		int page = 0;
@@ -114,7 +115,7 @@ public class NotificationService {
 		notifRepo.deleteByIdAndUser_Email(id, email);
 	}
 
-	/** contatore non letti. */
+	//contatore non letti.
 	@Transactional(readOnly = true)
 	public long unreadCount(String email) {
 		return notifRepo.countByUser_EmailAndReadFlagFalse(email);
@@ -127,4 +128,5 @@ public class NotificationService {
 	private int safeSize(Integer s) {
 		return (s != null && s > 0) ? s : 12;
 	}
+	*/
 }

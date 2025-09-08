@@ -48,6 +48,13 @@ public class Detail {
 			foreignKey = @ForeignKey(name = "DETAIL_SERVICES_ID_FK"))
 	private Services services;
 	
+	@ManyToOne
+	@JoinColumn(
+			nullable = false,
+			name = "geographical_position_id",
+			foreignKey = @ForeignKey(name = "DETAIL_GEOGRAPHICAL_POSITION_ID_FK"))
+	private GeographicalPosition geographicalPosition;
+	
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
 	private LocalDateTime createdDate;
@@ -56,26 +63,19 @@ public class Detail {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 	
-	@ManyToOne
-	@JoinColumn(
-			nullable = false,
-			name = "geographical_position_id",
-			foreignKey = @ForeignKey(name = "DETAIL_GEOGRAPHICAL_POSITION_ID_FK"))
-	private GeographicalPosition geographicalPosition;
-	
 	@OneToMany(mappedBy = "detail", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<Search> searches = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "detail", cascade = CascadeType.ALL, orphanRemoval = true)
-	private final List<RealEstate> ads = new ArrayList<>();
+	private final List<RealEstate> realEstates = new ArrayList<>();
 	
 	public void addSearch(Search search) {
 		searches.add(search);
 		search.setDetail(this);
 	}
 	
-	public void addAd(RealEstate ad) {
-		ads.add(ad);
-		ad.setDetail(this);
+	public void addAd(RealEstate realEstate) {
+		realEstates.add(realEstate);
+		realEstate.setDetail(this);
 	}
 }

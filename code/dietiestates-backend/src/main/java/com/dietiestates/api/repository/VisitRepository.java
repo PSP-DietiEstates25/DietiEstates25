@@ -9,10 +9,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.dietiestates.api.enums.VisitStatus;
+//import com.dietiestates.api.enums.VisitStatus;
 import com.dietiestates.api.model.Visit;
 
 public interface VisitRepository extends CrudRepository<Visit, Long> {
+	
+	/*
 
   Page<Visit> findByUser_EmailOrderByStartAtDesc(String email, Pageable pageable);
 
@@ -31,4 +33,5 @@ public interface VisitRepository extends CrudRepository<Visit, Long> {
       @Param("agentEmail") String agentEmail,
       @Param("start") Instant start,
       @Param("statuses") List<VisitStatus> statuses);
+	 */
 }

@@ -8,6 +8,7 @@ import com.dietiestates.api.model.Notification;
 
 public interface NotificationRepository extends CrudRepository<Notification, Long> {
 
+	/*
     Page<Notification> findByUser_EmailOrderByCreatedAtDesc(String email, Pageable pageable);
 
     Page<Notification> findByUser_EmailAndReadFlagFalseOrderByCreatedAtDesc(String email, Pageable pageable);
@@ -17,4 +18,5 @@ public interface NotificationRepository extends CrudRepository<Notification, Lon
     boolean existsByIdAndUser_Email(Long id, String email);
 
     void deleteByIdAndUser_Email(Long id, String email);
+    */
 }

@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RealEstateAdService {
 
+	/*
         private final RealEstateAdRepository adRepository;
         private final DetailRepository detailRepository;
         private final UserRepository userRepository;
@@ -87,4 +88,5 @@ public class RealEstateAdService {
                                 .detailId(saved.getDetail().getId())
                                 .build();
         }
+        */
 }

@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RealEstateAdQueryService {
 
+	/*
     private final RealEstateAdRepository repository;
 
     @Transactional(readOnly = true)
@@ -88,4 +89,5 @@ public class RealEstateAdQueryService {
     private int safeSize(Integer s) {
         return (s != null && s > 0) ? s : 12;
     }
+    */
 }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dietiestates.api.dto.VisitResponse;
-import com.dietiestates.api.enums.VisitStatus;
+//import com.dietiestates.api.enums.VisitStatus;
 import com.dietiestates.api.repository.VisitRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VisitQueryService {
 
+	/*
     private final VisitRepository visitRepo;
     private static final ZoneId DEFAULT_ZONE = ZoneId.of("Europe/Rome");
 
@@ -52,4 +53,5 @@ public class VisitQueryService {
     private int safeSize(Integer s) {
         return (s != null && s > 0) ? s : 12;
     }
+    */
 }

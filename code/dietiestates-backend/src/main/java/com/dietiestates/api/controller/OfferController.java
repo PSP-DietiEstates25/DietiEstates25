@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 @Validated
 public class OfferController {
 
+	/*
     private final OfferService offerService;
 
     @PostMapping
@@ -44,7 +45,6 @@ public class OfferController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(offer);
     }
 
-    /*
     @GetMapping
     @PreAuthorize("hasAnyAuthority('AGENT','ADMIN')")
     public ResponseEntity<List<Offer>> listForEstate(

@@ -28,16 +28,18 @@ public class SearchUser {
 	@NotNull
 	@ManyToOne
 	@JoinColumn(
+			nullable = false,
 			name = "user_id",
-			foreignKey = @ForeignKey(name = "USER_ID_FK"))
+			foreignKey = @ForeignKey(name = "SEARCH_USER_USER_ID_FK"))
 	private User user;
 
 	@Id
 	@NotNull
 	@ManyToOne
 	@JoinColumn(
+			nullable = false,
 			name = "search_id",
-			foreignKey = @ForeignKey(name = "SEARCH_ID_FK"))
+			foreignKey = @ForeignKey(name = "SEARCH_USER_SEARCH_ID_FK"))
 	private Search search;
 	
 }

@@ -21,9 +21,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class NotificationController {
 
-	private final NotificationService notifService;
-	private final NotificationPreferenceService prefService;
+	//private final NotificationService notifService;
+	//private final NotificationPreferenceService prefService;
 
+	/*
 	@GetMapping
 	@PreAuthorize("isAuthenticated()")
 	public List<NotificationResponse> listMine(
@@ -81,4 +82,5 @@ public class NotificationController {
 			@Valid @RequestBody UpdateNotificationPreferencesRequest req) {
 		return prefService.bulkUpdate(auth.getName(), req);
 	}
+	*/
 }

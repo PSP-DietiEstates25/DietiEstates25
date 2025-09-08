@@ -1,5 +1,9 @@
 package com.dietiestates.api.model;
 
+import java.time.LocalDateTime;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.dietiestates.api.enums.ProposalCategory;
@@ -9,7 +13,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.ForeignKey;
@@ -21,7 +24,6 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,7 +32,6 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -38,7 +39,6 @@ import lombok.ToString;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(discriminatorType = DiscriminatorType.STRING, name = "category")
-@EntityListeners(AuditingEntityListener.class)
 public abstract class Proposal {
 
 	@Id
@@ -54,6 +54,14 @@ public abstract class Proposal {
 	@Column(nullable = false)
 	protected ProposalStatus proposalStatus;
 	
+	@CreatedDate
+	@Column(nullable = false, updatable = false)
+	protected LocalDateTime createdDate;
+
+	@LastModifiedDate
+	@Column(insertable = false)
+	protected LocalDateTime lastModifiedDate;
+	
 	@ManyToOne
 	@JoinColumn(
 			nullable = false,
@@ -67,4 +75,11 @@ public abstract class Proposal {
 			name = "user_id",
 			foreignKey = @ForeignKey(name = "PROPOSAL_USER_ID_FK"))
 	protected User user;
+	
+	@ManyToOne
+	@JoinColumn(
+			nullable = false,
+			name = "real_estate_id",
+			foreignKey = @ForeignKey(name = "PROPOSAL_REAL_ESTATE_ID"))
+	protected RealEstate realEstate;
 }
