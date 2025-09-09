@@ -8,9 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dietiestates.api.dto.AuthenticationRequest;
 import com.dietiestates.api.dto.AuthenticationResponse;
-import com.dietiestates.api.dto.LoginRequest;
-import com.dietiestates.api.dto.RegistrationRequest;
 import com.dietiestates.api.service.AuthenticationService;
 
 import jakarta.validation.Valid;
@@ -26,15 +25,15 @@ public class AuthenticationController {
 	@PostMapping("/register")
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	public ResponseEntity<?> register(
-			@RequestBody @Valid RegistrationRequest request
+			@RequestBody @Valid AuthenticationRequest request
 	){
 		authenticationService.register(request);
-		return ResponseEntity.accepted().build();
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
 	@PostMapping("/login")
 	public ResponseEntity<AuthenticationResponse> login(
-			@RequestBody @Valid LoginRequest request
+			@RequestBody @Valid AuthenticationRequest request
 	){
 		return ResponseEntity.ok(authenticationService.login(request));
 	}

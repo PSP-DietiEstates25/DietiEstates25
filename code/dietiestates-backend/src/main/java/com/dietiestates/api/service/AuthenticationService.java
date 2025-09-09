@@ -7,9 +7,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.dietiestates.api.dto.AuthenticationRequest;
 import com.dietiestates.api.dto.AuthenticationResponse;
-import com.dietiestates.api.dto.LoginRequest;
-import com.dietiestates.api.dto.RegistrationRequest;
 import com.dietiestates.api.model.User;
 import com.dietiestates.api.repository.RoleRepository;
 import com.dietiestates.api.repository.UserRepository;
@@ -31,7 +30,7 @@ public class AuthenticationService {
 	
 	private final JwtService jwtService;
 	
-	public void register(RegistrationRequest request) {
+	public void register(AuthenticationRequest request) {
 		var userRole = roleRepository.findByName("USER")
 				.orElseThrow(() -> new IllegalStateException("ROLE USER was not initialized!"));
 		var user = User
@@ -46,7 +45,7 @@ public class AuthenticationService {
 		userRepository.save(user);
 	}
 	
-	public AuthenticationResponse login(LoginRequest request) {
+	public AuthenticationResponse login(AuthenticationRequest request) {
 		
 		var auth = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(
