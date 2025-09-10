@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.dietiestates.api.dto.RealEstateDto;
 import com.dietiestates.api.enums.AdCategory;
 import com.dietiestates.api.enums.EnergyClass;
 
@@ -27,6 +28,7 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,6 +37,7 @@ import lombok.ToString;
 
 @Getter
 @Setter
+@Builder
 @EqualsAndHashCode
 @ToString
 @AllArgsConstructor
@@ -54,7 +57,7 @@ public class RealEstate {
 
     @Lob
     @Column(nullable = false)
-    private byte[] photo;
+    private String[] images;
 
     @Column(nullable = false)
     private String description;
@@ -107,10 +110,27 @@ public class RealEstate {
     private Detail detail;
     
     @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Proposal> proposals = new ArrayList<>();
+    private final List<Proposal> proposals = new ArrayList<>();
     
     public void addProposal(Proposal proposal) {
     	proposals.add(proposal);
     	proposal.setRealEstate(this); 
+    }
+    
+    public static RealEstate of(RealEstateDto request) {
+    	//category images description price size address rooms floor energyClass latitude longitude
+    	return RealEstate.builder()
+    			.category(AdCategory.valueOf(request.getCategory()))
+    			.images(request.getImages())
+    			.description(request.getDescription())
+    			.price(request.getPrice())
+    			.size(request.getSize())
+    			.address(request.getAddress())
+    			.rooms(request.getRooms())
+    			.floor(request.getFloor())
+    			.energyClass(EnergyClass.valueOf(request.getEnergyClass()))
+    			.latitude(request.getLatitude())
+    			.longitude(request.getLongitude())
+    			.build();
     }
 }

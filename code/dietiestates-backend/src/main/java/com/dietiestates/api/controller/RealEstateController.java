@@ -1,36 +1,51 @@
 package com.dietiestates.api.controller;
 
-import java.math.BigDecimal;
 import java.util.List;
 
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.validation.annotation.Validated;
+import org.jboss.logging.Logger;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.dietiestates.api.dto.CreateRealEstateAdRequest;
-import com.dietiestates.api.dto.RealEstateAdResponse;
-import com.dietiestates.api.enums.AdCategory;
-import com.dietiestates.api.enums.EnergyClass;
-import com.dietiestates.api.service.RealEstateAdQueryService;
-import com.dietiestates.api.service.RealEstateAdService;
+import com.dietiestates.api.dto.RealEstateDto;
+import com.dietiestates.api.model.RealEstate;
+import com.dietiestates.api.service.RealEstateService;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping({ "/realestates" })
+@RequestMapping("/realestates")
 @RequiredArgsConstructor
-@Validated
 public class RealEstateController {
 
+	private final RealEstateService realEstateSerivce;
+	private static Logger logger = Logger.getLogger(RealEstateController.class.getName());
+	
+	@PostMapping
+	public ResponseEntity<?> createRealEstate(
+			@RequestBody RealEstateDto request
+	){
+		logger.info("Received realEstate: " + request.toString());
+		var realEstate = realEstateSerivce.createRealEstate(request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(realEstate);
+	}
+	
+	@GetMapping
+	public ResponseEntity<List<RealEstate>> getRealEstates(){
+		return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+	}
+	
+	@GetMapping("/:realestateid")
+	public ResponseEntity<RealEstate> getRealEstate(){
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+	
+	
+	
 	/*
 	private final RealEstateAdService adService;
 	private final RealEstateAdQueryService queryService;
