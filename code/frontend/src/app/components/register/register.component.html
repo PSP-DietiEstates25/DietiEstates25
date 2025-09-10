@@ -1,1 +1,74 @@
-<p>register works!</p>
+<section class="container mx-auto px-4 py-8 max-w-lg">
+  <h1 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+    Registrati
+  </h1>
+
+  @if (errorMsg()) {
+  <div class="mb-4 text-red-600">{{ errorMsg() }}</div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
+    <div>
+      <label class="block text-sm mb-1 dark:text-slate-200">Nome</label>
+      <input
+        type="text"
+        formControlName="name"
+        class="input_main"
+        placeholder="Mario"
+      />
+      @if (form.controls.name.touched && form.controls.name.invalid) {
+      <p class="text-sm text-red-600 mt-1">Minimo 2 caratteri</p>
+      }
+    </div>
+
+    <div>
+      <label class="block text-sm mb-1 dark:text-slate-200">Email</label>
+      <input
+        type="email"
+        formControlName="email"
+        class="input_main"
+        placeholder="you@example.com"
+      />
+      @if (form.controls.email.touched && form.controls.email.invalid) {
+      <p class="text-sm text-red-600 mt-1">Email non valida</p>
+      }
+    </div>
+
+    <div formGroupName="passwords">
+      <label class="block text-sm mb-1 dark:text-slate-200">Password</label>
+      <input
+        type="password"
+        formControlName="password"
+        class="input_main"
+        placeholder="••••••••"
+      />
+      @if (form.controls.passwords.controls.password.touched &&
+      form.controls.passwords.controls.password.invalid) {
+      <p class="text-sm text-red-600 mt-1">Minimo 6 caratteri</p>
+      }
+
+      <label class="block text-sm mb-1 dark:text-slate-200 mt-3"
+        >Conferma password</label
+      >
+      <input
+        type="password"
+        formControlName="confirm"
+        class="input_main"
+        placeholder="••••••••"
+      />
+      @if (form.controls.passwords.errors?.['mismatch'] &&
+      form.controls.passwords.touched) {
+      <p class="text-sm text-red-600 mt-1">Le password non coincidono</p>
+      }
+    </div>
+
+    <button class="btn_primary w-full" [disabled]="loading()">
+      @if (loading()) { Attendere… } @else { Crea account }
+    </button>
+  </form>
+
+  <p class="mt-4 text-sm dark:text-slate-300">
+    Hai già un account?
+    <a class="link_style" routerLink="/auth/login">Accedi</a>
+  </p>
+</section>

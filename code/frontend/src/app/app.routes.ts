@@ -4,17 +4,44 @@ import { HomeComponent } from './components/home/home.component';
 import { AgentDashboardComponent } from './components/agent-dashboard/agent-dashboard.component';
 import { roleGuard } from './_guards/role.guard';
 import { MapComponent } from './components/map/map.component';
+import { SearchPageComponent } from './components/search/search-page.component';
 
 export const routes: Routes = [
   {
     path: 'auth',
-    component: AuthComponent,
+    children: [
+      { path: '', redirectTo: 'login', pathMatch: 'full' },
+      {
+        path: 'login',
+        loadComponent: () =>
+          import('../app/components/login/login.component').then((m) => m.LoginComponent),
+      },
+      {
+        path: 'register',
+        loadComponent: () =>
+          import('../app/components/register/register.component').then(
+            (m) => m.RegisterComponent
+          ),
+      },
+    ],
   },
+
+  /*
+  {
+    path: 'agent',
+    loadComponent: () =>
+      import('./pages/agent/agent.component').then((m) => m.AgentComponent),
+    canMatch: [
+      () => import('./vecchioService/auth/auth.guard').then((m) => m.roleGuard),
+    ],
+    data: { requiredRole: 'AGENT' },
+  },
+  */
 
   {
     path: '',
     component: HomeComponent,
-    canActivate: [ roleGuard(['CLIENT']) ],
+    //canActivate: [ roleGuard(['CLIENT']) ],
   },
 
   {
@@ -24,7 +51,7 @@ export const routes: Routes = [
         (m) => m.HistoryComponent
       ),
   },
-/*
+  /*
   {
     path: 'offer',
     loadComponent: () =>
@@ -37,6 +64,11 @@ export const routes: Routes = [
     path: 'map',
     title: 'Mappa di prova',
     component: MapComponent,
+  },
+
+  {
+    path: 'search',
+    component: SearchPageComponent,
   },
 
   {
