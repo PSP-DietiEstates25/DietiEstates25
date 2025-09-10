@@ -1,8 +1,6 @@
 package com.dietiestates.api.model;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -17,8 +15,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -34,26 +31,12 @@ import lombok.Setter;
 @Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Detail {
+public class Details {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@EqualsAndHashCode.Include
 	private Long id;
-	
-	@ManyToOne
-	@JoinColumn(
-			nullable = false,
-			name = "services_id",
-			foreignKey = @ForeignKey(name = "DETAIL_SERVICES_ID_FK"))
-	private Services services;
-	
-	@ManyToOne
-	@JoinColumn(
-			nullable = false,
-			name = "geographical_position_id",
-			foreignKey = @ForeignKey(name = "DETAIL_GEOGRAPHICAL_POSITION_ID_FK"))
-	private GeographicalPosition geographicalPosition;
 	
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
@@ -63,19 +46,42 @@ public class Detail {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 	
-	@OneToMany(mappedBy = "detail", cascade = CascadeType.ALL, orphanRemoval = true)
-	private final List<Search> searches = new ArrayList<>();
+	@OneToOne(mappedBy="details", cascade = CascadeType.ALL, orphanRemoval = true)
+	private GeographicalPosition geographicalPosition;
 	
-	@OneToMany(mappedBy = "detail", cascade = CascadeType.ALL, orphanRemoval = true)
-	private final List<RealEstate> realEstates = new ArrayList<>();
+	@OneToOne(mappedBy="details", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Services services;
 	
-	public void addSearch(Search search) {
-		searches.add(search);
-		search.setDetail(this);
+	@OneToOne(mappedBy="details", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Data data;
+		
+	@OneToOne
+	@JoinColumn(
+			nullable = true,
+			name = "search_id",
+			foreignKey = @ForeignKey(name = "DETAILS_SEARCH_ID_FK"))
+	private Search search;
+	
+	@OneToOne
+	@JoinColumn(
+			nullable = true,
+			name = "real_estate_id",
+			foreignKey = @ForeignKey(name = "DETAILS_REAL_ESTATE_ID_FK"))
+	private RealEstate realEstate;
+	
+	public void addGeographicalPosition(GeographicalPosition geographicalPosition) {
+		this.geographicalPosition = geographicalPosition;
+		geographicalPosition.setDetails(this);
 	}
 	
-	public void addAd(RealEstate realEstate) {
-		realEstates.add(realEstate);
-		realEstate.setDetail(this);
+	public void addServices(Services services) {
+		this.services = services;
+		services.setDetails(this);
 	}
+	
+	public void addData(Data data) {
+		this.data = data;
+		data.setDetails(this);
+	}
+	
 }

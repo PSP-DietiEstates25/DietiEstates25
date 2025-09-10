@@ -1,9 +1,10 @@
 package com.dietiestates.api.dto;
 
+import java.math.BigDecimal;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,21 +14,21 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder
-public class RealEstateDto {
+public class SearchDto {
 	
 	@NotEmpty(message = "Category is mandatory")
 	@NotBlank(message = "Category is mandatory")
 	private String category;
 	
-	@NotEmpty(message = "Images are mandatory")
-	@NotBlank(message = "Images are mandatory")
-	private String[] images;
+	@NotEmpty(message = "Minimum price is mandatory")
+	@NotBlank(message = "Minimum price is mandatory")
+	@Positive(message = "Minimum price must be a positive number")
+	private BigDecimal minimumPrice;
 	
-	@NotEmpty(message = "Description is mandatory")
-	@NotBlank(message = "Description is mandatory")
-	@Size(min = 1, message = "Description must be a maximum of 200 characters long")
-	@Size(max = 200, message = "Description must be at least 1 character long")
-	private String description;
+	@NotEmpty(message = "Maximum price is mandatory")
+	@NotBlank(message = "Maximum price is mandatory")
+	@Positive(message = "Maximum price must be a positive number")
+	private BigDecimal maximumPrice;
 
 	@NotEmpty(message = "Details id is mandatory")
 	@NotBlank(message = "Details id is mandatory")
