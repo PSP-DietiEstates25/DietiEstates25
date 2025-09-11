@@ -1,9 +1,0 @@
-<div #mapContainer class="map-container">
-  <app-autocompleter
-    [map]="map()"
-    (mapChange)="map.set($event)"
-    (longitude)="onLongitude($event)"
-    (latitude)="onLatitude($event)"
-    (addressText)="onAddressText($event)">
-  </app-autocompleter>
-</div>

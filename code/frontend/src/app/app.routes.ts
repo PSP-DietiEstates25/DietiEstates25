@@ -3,7 +3,6 @@ import { AuthComponent } from './components/auth/auth.component';
 import { HomeComponent } from './components/home/home.component';
 import { AgentDashboardComponent } from './components/agent-dashboard/agent-dashboard.component';
 import { roleGuard } from './_guards/role.guard';
-import { MapComponent } from './components/map/map.component';
 import { SearchPageComponent } from './components/search/search-page.component';
 
 export const routes: Routes = [
@@ -14,7 +13,9 @@ export const routes: Routes = [
       {
         path: 'login',
         loadComponent: () =>
-          import('../app/components/login/login.component').then((m) => m.LoginComponent),
+          import('../app/components/login/login.component').then(
+            (m) => m.LoginComponent
+          ),
       },
       {
         path: 'register',
@@ -26,24 +27,12 @@ export const routes: Routes = [
     ],
   },
 
-  /*
-  {
-    path: 'agent',
-    loadComponent: () =>
-      import('./pages/agent/agent.component').then((m) => m.AgentComponent),
-    canMatch: [
-      () => import('./vecchioService/auth/auth.guard').then((m) => m.roleGuard),
-    ],
-    data: { requiredRole: 'AGENT' },
-  },
-  */
-
   {
     path: '',
     component: HomeComponent,
     //canActivate: [ roleGuard(['CLIENT']) ],
   },
-
+  /*
   {
     path: 'history',
     loadComponent: () =>
@@ -51,7 +40,6 @@ export const routes: Routes = [
         (m) => m.HistoryComponent
       ),
   },
-  /*
   {
     path: 'offer',
     loadComponent: () =>
@@ -59,13 +47,13 @@ export const routes: Routes = [
         (m) => m.OfferListComponent
       ),
   },
-*/
   {
     path: 'map',
     title: 'Mappa di prova',
     component: MapComponent,
   },
-
+  
+  */
   {
     path: 'search',
     component: SearchPageComponent,
@@ -73,15 +61,52 @@ export const routes: Routes = [
 
   {
     path: 'agent',
-    component: AgentDashboardComponent,
-    canActivate: [roleGuard(['AGENT'], '/')],
     children: [
       {
-        path: 'add',
+        path: '',
+        pathMatch: 'full',
         loadComponent: () =>
-          import('./components/ad/add-ad.component').then(
-            (m) => m.AddAdComponent
+          import('./components/agent-dashboard/agent-dashboard.component').then(
+            (m) => m.AgentDashboardComponent
           ),
+      },
+      {
+        path: 'ads/new',
+        loadComponent: () =>
+          import('./components/create-ad/create-layout.component').then(
+            (m) => m.AgentCreateLayoutComponent
+          ),
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: 'basics' },
+          {
+            path: 'basics',
+            loadComponent: () =>
+              import('./components/create-ad/step-basics.component').then(
+                (m) => m.StepBasicsComponent
+              ),
+          },
+          {
+            path: 'details',
+            loadComponent: () =>
+              import('./components/create-ad/step-details.component').then(
+                (m) => m.StepDetailsComponent
+              ),
+          },
+          {
+            path: 'photos',
+            loadComponent: () =>
+              import('./components/create-ad/step-photos.component').then(
+                (m) => m.StepPhotosComponent
+              ),
+          },
+          {
+            path: 'review',
+            loadComponent: () =>
+              import('./components/create-ad/step-review.component').then(
+                (m) => m.StepReviewComponent
+              ),
+          },
+        ],
       },
     ],
   },
