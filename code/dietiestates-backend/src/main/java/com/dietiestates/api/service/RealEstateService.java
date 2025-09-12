@@ -1,8 +1,9 @@
 package com.dietiestates.api.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
-import com.dietiestates.api.dto.RealEstateDto;
 import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.repository.RealEstateRepository;
 
@@ -14,9 +15,7 @@ public class RealEstateService {
 	
 	private final RealEstateRepository realEstateRepository;
 
-	public RealEstate createRealEstate(RealEstateDto request) {
-		var realEstate = RealEstate.of(request);
-		realEstateRepository.save(realEstate);
-		return realEstate;
+	public Optional<RealEstate> getRealEstateById(Long id) {
+		return realEstateRepository.findById(id);
 	}
 }

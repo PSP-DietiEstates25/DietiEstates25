@@ -20,18 +20,4 @@ public class DetailsDto {
 	@Positive(message = "Real estate id must be a positive number")
 	private Long realEstateId;
 	
-	@NotEmpty(message = "Geographical position id is mandatory")
-	@NotBlank(message = "Geographical position id is mandatory")
-	@Positive(message = "Geographical position id must be a positive number")
-	private Long geographicalPositionId;
-	
-	@NotEmpty(message = "Services id is mandatory")
-	@NotBlank(message = "Services id is mandatory")
-	@Positive(message = "Services id must be a positive number")
-	private Long servicesId;
-	
-	@NotEmpty(message = "Data id is mandatory")
-	@NotBlank(message = "Data id is mandatory")
-	@Positive(message = "Data id must be a positive number")
-	private Long dataId;
 }

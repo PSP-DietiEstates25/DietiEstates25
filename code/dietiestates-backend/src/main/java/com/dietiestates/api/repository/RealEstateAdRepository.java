@@ -15,6 +15,7 @@ import com.dietiestates.api.model.RealEstate;
 
 public interface RealEstateAdRepository extends CrudRepository<RealEstate, Long> {
 
+	/*
   @Query("""
       SELECT a FROM RealEstate a
       WHERE (:category IS NULL OR a.category = :category)
@@ -39,4 +40,5 @@ public interface RealEstateAdRepository extends CrudRepository<RealEstate, Long>
 
   @EntityGraph(attributePaths = { "detail" })
   Page<RealEstate> findByEstateAgent_Email(String email, Pageable pageable);
+  */
 }

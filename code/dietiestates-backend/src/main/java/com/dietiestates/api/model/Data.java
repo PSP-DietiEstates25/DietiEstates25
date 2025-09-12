@@ -7,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.dietiestates.api.dto.DataDto;
 import com.dietiestates.api.enums.EnergyClass;
 
 import jakarta.persistence.Column;
@@ -72,4 +73,16 @@ public class Data {
 			name = "details_id",
 			foreignKey = @ForeignKey(name = "DATA_DETAILS_ID_FK"))
 	private Details details;
+	
+	//price size energyclass rooms floor detailId
+	public Data of(DataDto dataDto) {
+		return Data.builder()
+				//.price(dataDto.getPrice())
+				//.size(dataDto.getSize())
+				//.energyClass(dataDto)
+				//.rooms()
+				//.floor()
+				//.details()
+				.build();
+	}
 }

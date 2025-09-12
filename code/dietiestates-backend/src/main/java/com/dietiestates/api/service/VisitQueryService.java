@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dietiestates.api.dto.VisitResponse;
 //import com.dietiestates.api.enums.VisitStatus;
 import com.dietiestates.api.repository.VisitRepository;
 
