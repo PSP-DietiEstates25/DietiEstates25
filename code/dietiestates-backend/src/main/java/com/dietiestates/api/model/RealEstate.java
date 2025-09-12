@@ -8,9 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.dietiestates.api.dto.RealEstateDto;
 import com.dietiestates.api.enums.AdCategory;
-import com.dietiestates.api.enums.EnergyClass;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -91,14 +89,5 @@ public class RealEstate {
     public void addDetails(Details details) {
     	this.details = details;
     	details.setRealEstate(this);
-    }
-    
-    public static RealEstate of(RealEstateDto request) {
-    	//category images description price size address rooms floor energyClass latitude longitude
-    	return RealEstate.builder()
-    			.category(AdCategory.valueOf(request.getCategory()))
-    			.images(request.getImages())
-    			.description(request.getDescription())
-    			.build();
     }
 }

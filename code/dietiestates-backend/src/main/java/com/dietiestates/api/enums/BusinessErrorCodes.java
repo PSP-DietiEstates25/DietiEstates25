@@ -26,7 +26,8 @@ public enum BusinessErrorCodes {
     DETAILS_NOT_FOUND(10004, HttpStatus.NOT_FOUND, "Details not found"),
     GEOGRAPHICAL_POSITION_NOT_FOUND(11004, HttpStatus.NOT_FOUND, "Geographical position not found"),
     DATA_NOT_FOUND(12004, HttpStatus.NOT_FOUND, "Data not found"),
-    SERVICES_NOT_FOUND(13004, HttpStatus.NOT_FOUND, "Services not found")
+    SERVICES_NOT_FOUND(13004, HttpStatus.NOT_FOUND, "Services not found"),
+    SEARCH_NOT_FOUND(14004, HttpStatus.NOT_FOUND, "Search not found")
     ;
 
     @Getter

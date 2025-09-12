@@ -26,12 +26,11 @@ public class RealEstateController {
 	private static Logger logger = Logger.getLogger(RealEstateController.class.getName());
 	
 	@PostMapping
-	public ResponseEntity<?> createRealEstate(
+	public ResponseEntity<RealEstate> createRealEstate(
 			@RequestBody RealEstateDto request
 	){
 		logger.info("Received realEstate: " + request.toString());
-		//var realEstate = realEstateSerivce.createRealEstate(request);
-		return ResponseEntity.status(HttpStatus.CREATED).body("");
+		return ResponseEntity.status(HttpStatus.CREATED).body(realEstateSerivce.createRealEstate(request));
 	}
 	
 	@GetMapping

@@ -23,6 +23,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -44,7 +46,7 @@ public class Search {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private AdCategory adCategory;
+	private AdCategory category;
 	
 	@Column(nullable = false)
 	private BigDecimal minimumPrice;
@@ -64,7 +66,7 @@ public class Search {
 	private Details details;
 	
 	@OneToMany(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<SearchUser> users = new ArrayList<>();
+	private final List<SearchUser> users = new ArrayList<>();
 	
 	public void addUser(SearchUser user) {
 		users.add(user);
