@@ -42,9 +42,4 @@ public class GeographicalPositionDto {
 	
 	@Positive(message = "Radius must be a positive number")
 	private Integer radius;
-	
-	@NotEmpty(message = "Detail id is mandatory")
-	@NotBlank(message = "Detail id is mandatory")
-	@Positive(message = "Detail id must be a positive number")
-	private Long detailsId;
 }
