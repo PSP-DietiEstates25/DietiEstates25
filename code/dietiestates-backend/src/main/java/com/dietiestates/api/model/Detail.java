@@ -28,7 +28,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Detail {
@@ -72,6 +71,22 @@ public class Detail {
 	
 	@OneToOne(mappedBy = "detail", cascade = CascadeType.ALL, orphanRemoval = true)
 	private RealEstate realEstate;
+	
+	@Builder(builderMethodName = "detailBuilder")
+	public Detail(
+			LocalDateTime createdDate,
+			GeographicalPosition geographicalPosition,
+			Utility utility,
+			CadastralData cadastralData
+			){
+		this.createdDate = createdDate;
+		this.geographicalPosition = geographicalPosition;
+		this.utility = utility;
+		this.cadastralData = cadastralData;
+		geographicalPosition.addDetail(this);
+		utility.addDetail(this);
+		cadastralData.addDetail(this);
+	}
 	
 	public void addRealEstate(RealEstate realEstate) {
 		this.realEstate = realEstate;

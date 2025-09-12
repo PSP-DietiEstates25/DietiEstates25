@@ -8,7 +8,10 @@ import com.dietiestates.api.dto.DetailsDto;
 import com.dietiestates.api.exception.notfound.CadastralDataNotFoundException;
 import com.dietiestates.api.exception.notfound.GeographicalPositionNotFoundException;
 import com.dietiestates.api.exception.notfound.UtilityNotFoundException;
+import com.dietiestates.api.model.CadastralData;
 import com.dietiestates.api.model.Detail;
+import com.dietiestates.api.model.GeographicalPosition;
+import com.dietiestates.api.model.Utility;
 import com.dietiestates.api.repository.CadastralDataRepository;
 import com.dietiestates.api.repository.DetailsRepository;
 import com.dietiestates.api.repository.GeographicalPositionRepository;
@@ -18,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class DetailsService {
+public class DetailService {
 
 	private final DetailsRepository detailsRepository;
 	private final GeographicalPositionRepository geographicalPositionRepository;
@@ -31,7 +34,7 @@ public class DetailsService {
 		return details;
 	}
 	
-	public Detail of(DetailsDto request) {
+	private Detail of(DetailsDto request) {
 		
 		var geographicalPosition = geographicalPositionRepository.findById(request.getGeographicalPositionId())
 				.orElseThrow(GeographicalPositionNotFoundException::new);
@@ -42,7 +45,7 @@ public class DetailsService {
 		var utility = utilityRepository.findById(request.getUtilityId())
 				.orElseThrow(UtilityNotFoundException::new);
 		
-		return Detail.builder()
+		return Detail.detailBuilder()
 				.createdDate(LocalDateTime.now())
 				.geographicalPosition(geographicalPosition)
 				.cadastralData(cadastralData)

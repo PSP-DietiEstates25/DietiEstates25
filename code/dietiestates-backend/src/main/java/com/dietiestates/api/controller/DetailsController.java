@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.DetailsDto;
 import com.dietiestates.api.model.Detail;
-import com.dietiestates.api.service.DetailsService;
+import com.dietiestates.api.service.DetailService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,12 +18,12 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/details")
 public class DetailsController {
 
-	private final DetailsService detailsService;
+	private final DetailService detailService;
 
 	@PostMapping
 	public ResponseEntity<Detail> createDetails(
 			@RequestBody DetailsDto request
 			) {
-		return ResponseEntity.status(HttpStatus.CREATED).body(detailsService.createDetails(request));
+		return ResponseEntity.status(HttpStatus.CREATED).body(detailService.createDetails(request));
 	}
 }
