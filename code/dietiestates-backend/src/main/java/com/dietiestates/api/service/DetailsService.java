@@ -50,7 +50,7 @@ public class DetailsService {
 	
 	/*
     private final DetailsRepository detailRepository;
-    private final ServicesRepository servicesRepository;
+    private final UtilityRepository servicesRepository;
     private final GeographicalPositionRepository geoRepository;
 
     @Autowired

@@ -2,7 +2,6 @@ package com.dietiestates.api.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +11,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder
-public class ServicesDto {
+public class UtilityDto {
 
 	@NotEmpty(message = "Air conditioning is mandatory")
 	@NotBlank(message = "Air conditioning is mandatory")
@@ -26,8 +25,4 @@ public class ServicesDto {
 	@NotBlank(message = "Elevator is mandatory")
 	private boolean hasElevator;
 	
-	@NotEmpty(message = "Detail id is mandatory")
-	@NotBlank(message = "Detail id is mandatory")
-	@Positive(message = "Detail id must be a positive number")
-	private Long detailsId;
 }
