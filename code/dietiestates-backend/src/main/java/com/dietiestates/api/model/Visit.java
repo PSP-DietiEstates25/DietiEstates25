@@ -44,13 +44,12 @@ public class Visit extends Proposal {
 			ProposalStatus status, 
 			LocalDateTime createdAt,
 			LocalDateTime lastModifiedDate,
-			EstateAgent estateAgent,
 			User user,
 			RealEstate realEstate,
 			LocalDate date,
 			LocalTime time
 	) {
-		super(id, category, status, createdAt, lastModifiedDate, estateAgent, user, realEstate);
+		super(id, category, status, createdAt, lastModifiedDate, user, realEstate);
 		this.date = date;
 		this.time = time;
 	}

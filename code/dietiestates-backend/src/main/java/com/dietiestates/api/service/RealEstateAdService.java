@@ -6,12 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.dietiestates.api.dto.CreateRealEstateAdRequest;
-import com.dietiestates.api.dto.RealEstateAdResponse;
-import com.dietiestates.api.model.Detail;
 import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.model.User;
-import com.dietiestates.api.repository.DetailRepository;
 import com.dietiestates.api.repository.RealEstateAdRepository;
 import com.dietiestates.api.repository.UserRepository;
 

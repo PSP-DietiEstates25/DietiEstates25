@@ -17,13 +17,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -62,19 +60,19 @@ public class Search {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 	
-	@ManyToOne
-	@JoinColumn(
-			nullable = false,
-			name = "detail_id",
-			foreignKey = @ForeignKey(name = "DETAIL_ID_FK"))
-	private Detail detail;
+	@OneToOne(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Details details;
 	
-
 	@OneToMany(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<SearchUser> users = new ArrayList<>();
 	
 	public void addUser(SearchUser user) {
 		users.add(user);
 		user.setSearch(this);
+	}
+	
+	public void addDetails(Details details) {
+		this.details = details;
+		details.setSearch(this);
 	}
 }

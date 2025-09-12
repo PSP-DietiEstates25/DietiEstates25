@@ -30,9 +30,6 @@ import lombok.Setter;
 @DiscriminatorValue("estate_agent")
 @EntityListeners(AuditingEntityListener.class)
 public class EstateAgent extends User {
-
-	@OneToMany(mappedBy = "estateAgent", cascade = CascadeType.ALL, orphanRemoval = true)
-	private final List<Proposal> proposals = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "estateAgent", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<RealEstate> realEstates = new ArrayList<>();
@@ -58,11 +55,6 @@ public class EstateAgent extends User {
 	) {
 		super(id, email, password, accountLocked, enabled, roles, createdDate, lastModifiedDate);
 		this.admin = admin;
-	}
-	
-	public void addProposal(Proposal proposal) {
-		proposals.add(proposal);
-		proposal.setEstateAgent(this);;
 	}
 	
 	public void addRealEstate(RealEstate realEstate) {

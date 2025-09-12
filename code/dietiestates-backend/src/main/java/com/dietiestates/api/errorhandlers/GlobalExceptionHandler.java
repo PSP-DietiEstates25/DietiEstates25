@@ -39,8 +39,7 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(
                         ExceptionResponse.builder()
-                                .businessErrorDescription("Internal server error")
-                                .error(exception.getMessage())
+                                .businessErrorMessage("Internal Server error")
                                 .build()
                 );
     }

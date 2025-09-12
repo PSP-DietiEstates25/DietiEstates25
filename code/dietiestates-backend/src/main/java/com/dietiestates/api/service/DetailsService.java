@@ -1,26 +1,32 @@
 package com.dietiestates.api.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.dietiestates.api.dto.CreateDetailRequest;
-import com.dietiestates.api.model.Detail;
-import com.dietiestates.api.model.GeographicalPosition;
-import com.dietiestates.api.model.Services;
-import com.dietiestates.api.repository.DetailRepository;
-import com.dietiestates.api.repository.GeographicalPositionRepository;
-import com.dietiestates.api.repository.ServicesRepository;
+import com.dietiestates.api.dto.DetailsDto;
+import com.dietiestates.api.model.Details;
+import com.dietiestates.api.model.RealEstate;
+import com.dietiestates.api.model.Search;
+import com.dietiestates.api.repository.DetailsRepository;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class DetailService {
+public class DetailsService {
 
-    private final DetailRepository detailRepository;
+	private final DetailsRepository detailsRepository;
+	
+	private final RealEstateService realEstateService;
+	private final SearchService searchService;
+	
+	public Details createDetails(DetailsDto request) {
+		
+		var details = Details.builder().build();
+		
+		return details;
+	}
+	/*
+    private final DetailsRepository detailRepository;
     private final ServicesRepository servicesRepository;
     private final GeographicalPositionRepository geoRepository;
 
@@ -51,4 +57,5 @@ public class DetailService {
 
         return detailRepository.save(detail).getId();
     }
+    */
 }

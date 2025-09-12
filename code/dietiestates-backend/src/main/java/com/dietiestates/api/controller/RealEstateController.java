@@ -30,8 +30,8 @@ public class RealEstateController {
 			@RequestBody RealEstateDto request
 	){
 		logger.info("Received realEstate: " + request.toString());
-		var realEstate = realEstateSerivce.createRealEstate(request);
-		return ResponseEntity.status(HttpStatus.CREATED).body(realEstate);
+		//var realEstate = realEstateSerivce.createRealEstate(request);
+		return ResponseEntity.status(HttpStatus.CREATED).body("");
 	}
 	
 	@GetMapping

@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dietiestates.api.dto.CreateVisitRequest;
-import com.dietiestates.api.dto.VisitResponse;
 import com.dietiestates.api.service.VisitQueryService;
 import com.dietiestates.api.service.VisitService;
 

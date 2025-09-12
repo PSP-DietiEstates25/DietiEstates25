@@ -21,8 +21,7 @@ public class UserExceptionHandler {
                 .body(
                         ExceptionResponse.builder()
                                 .businessErrorCode(BusinessErrorCodes.ACCOUNT_LOCKED.getCode())
-                                .businessErrorDescription(BusinessErrorCodes.ACCOUNT_LOCKED.getDescription())
-                                .error(exception.getMessage())
+                                .businessErrorMessage(BusinessErrorCodes.ACCOUNT_LOCKED.getMessage())
                                 .build()
                 );
     }
@@ -34,8 +33,7 @@ public class UserExceptionHandler {
                 .body(
                         ExceptionResponse.builder()
                                 .businessErrorCode(BusinessErrorCodes.ACCOUNT_DISABLED.getCode())
-                                .businessErrorDescription(BusinessErrorCodes.ACCOUNT_DISABLED.getDescription())
-                                .error(exception.getMessage())
+                                .businessErrorMessage(BusinessErrorCodes.ACCOUNT_DISABLED.getMessage())
                                 .build()
                 );
     }
@@ -48,8 +46,7 @@ public class UserExceptionHandler {
                 .body(
                         ExceptionResponse.builder()
                                 .businessErrorCode(BusinessErrorCodes.BAD_CREDENTIALS.getCode())
-                                .businessErrorDescription(BusinessErrorCodes.BAD_CREDENTIALS.getDescription())
-                                .error(BusinessErrorCodes.BAD_CREDENTIALS.getDescription())
+                                .businessErrorMessage(BusinessErrorCodes.BAD_CREDENTIALS.getMessage())
                                 .build()
                 );
     }
