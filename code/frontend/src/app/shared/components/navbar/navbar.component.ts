@@ -1,35 +1,69 @@
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, effect, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../vecchioService/auth/auth.service';
-import { Router } from '@angular/router';
+import { MenuToggleComponent } from '../../buttons/menu_toggle/menu-toggle.component';
+
+interface NavLink {
+  label: string;
+  path: string;
+}
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
-  imports: [RouterModule],
+  imports: [
+    CommonModule,
+    RouterLink,
+    RouterLinkActive,
+    MenuToggleComponent,
+  ],
 })
 export class NavbarComponent {
-  mobileMenuOpen: boolean = false;
+  isMenuOpen = false;
+  isAuthenticated = false;
+  role: 'ADMIN' | 'AGENT' | 'CLIENT' | null = null;
+  displayName = '';
 
-  navLinks = [
-    { path: '/', label: 'Home' },
-    { path: '/notification', label: 'Notification' },
-    { path: '/offer', label: 'Offer' },
-    { path: '/history', label: 'History' },
-    { path: '/pages', label: 'Visits' },
-    { path: '/notices', label: 'Notices' },
+  // link base
+  navLinks: NavLink[] = [
+    { label: 'Home', path: '/' },
+    { label: 'Ricerca', path: '/search' },
+    { label: 'Mappa', path: '/map' },
   ];
 
-  constructor(private authService: AuthService, private router: Router) {}
+  private auth = inject(AuthService);
+  private router = inject(Router);
 
-  toggleMenu(): void {
-    this.mobileMenuOpen = !this.mobileMenuOpen;
+  constructor() {
+    effect(() => {
+      const state = this.auth.authState();
+      this.isAuthenticated = !!state.isAuthenticated;
+      const email = state.email;
+      this.displayName = email ? email.split('@')[0] : '';
+    });
+
+    effect(() => {
+      try {
+        this.role = this.auth.role ? this.auth.role() : null;
+      } catch {
+        this.role = null;
+      }
+    });
   }
 
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/auth']);
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+  closeMenu() {
+    this.isMenuOpen = false;
+  }
+
+  logout() {
+    this.auth.logout();
+    this.closeMenu();
+    this.router.navigateByUrl('/auth');
   }
 }

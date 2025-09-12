@@ -1,0 +1,44 @@
+<form [formGroup]="form" class="grid sm:grid-cols-2 gap-4">
+  <div class="sm:col-span-2">
+    <label for="title" class="block text-sm mb-1 dark:text-slate-200"
+      >Titolo</label
+    >
+    <input
+      id="title"
+      class="input_main"
+      formControlName="title"
+      placeholder="Trilocale in centro"
+    />
+    @if (form.controls.title.touched && form.controls.title.invalid) {
+    <p class="text-sm text-red-600 mt-1">Minimo 3 caratteri</p>
+    }
+  </div>
+  <div>
+    <label for="price" class="block text-sm mb-1 dark:text-slate-200"
+      >Prezzo (€)</label
+    >
+    <input
+      id="price"
+      type="number"
+      class="input_main"
+      formControlName="price"
+    />
+    @if (form.controls.price.touched && form.controls.price.invalid) {
+    <p class="text-sm text-red-600 mt-1">Obbligatorio e ≥ 0</p>
+    }
+  </div>
+  <div>
+    <label for="city" class="block text-sm mb-1 dark:text-slate-200"
+      >Città</label
+    >
+    <input id="city" class="input_main" formControlName="city" />
+    @if (form.controls.city.touched && form.controls.city.invalid) {
+    <p class="text-sm text-red-600 mt-1">Campo obbligatorio</p>
+    }
+  </div>
+
+  <div class="sm:col-span-2 flex justify-end gap-2 mt-2">
+    <a class="btn_ghost" routerLink="/agent">Annulla</a>
+    <button type="button" class="btn_primary" (click)="next()">Avanti</button>
+  </div>
+</form>

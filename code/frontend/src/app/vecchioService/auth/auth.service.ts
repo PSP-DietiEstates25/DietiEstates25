@@ -1,106 +1,106 @@
-import { Injectable, inject, signal, WritableSignal, computed, effect } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { LocalStorageService } from '../local-storage/local-storage.service';
-import { AuthState } from '../../interfaces/auth/auth-state';
-import { jwtDecode } from 'jwt-decode';
-import { toObservable } from '@angular/core/rxjs-interop';
-/*
+import { tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
 
-*/
+export type Role = 'ADMIN' | 'AGENT' | 'CLIENT';
+
+export interface LoginResponse {
+  token: string;
+  role?: Role;
+  email?: string;
+  userId?: string;
+}
+
+export interface RegisterPayload {
+  name: string;
+  surname?: string;
+  email: string;
+  password: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  
-  localStorageService = inject(LocalStorageService);
+  private http = inject(HttpClient);
+  private ls = inject(LocalStorageService);
+  private router = inject(Router);
 
-  authState: WritableSignal<AuthState> = signal<AuthState>({
-    email: this.getEmail(),
-    token: this.getToken(),
-    isAuthenticated: this.isUserAuthenticated(),
+  private readonly TOKEN_KEY = 'auth.token';
+
+  // token in memoria
+  private _token = signal<string | null>(this.ls.getItem(this.TOKEN_KEY));
+
+  // payload decodificato (best-effort, NON validazione crittografica)
+  private _payload = computed(() => {
+    const t = this._token();
+    if (!t) return null;
+    try {
+      const payload = JSON.parse(atob(t.split('.')[1] || ''));
+      return payload ?? null;
+    } catch {
+      return null;
+    }
   });
 
-  username = computed(() => this.authState().email);
-  token = computed(() => this.authState().token);
-  isAuthenticated = computed(() => this.authState().isAuthenticated);
-
-  constructor(){
-    effect( () => {
-      const token = this.authState().token;
-      const email = this.authState().email;
-      if(token !== null){
-        this.localStorageService.setItem("token", token);
-      } else {
-        this.localStorageService.removeItem("token");
-      }
-      if(email !== null){
-        this.localStorageService.setItem("email", email);
-      } else {
-        this.localStorageService.removeItem("email");
-      }
-    });
+    private _userRole$ = new BehaviorSubject<'CLIENT' | 'AGENT' | 'ADMIN' | null>(null);
+  public get userRole$(): Observable<'CLIENT' | 'AGENT' | 'ADMIN' | null> {
+    return this._userRole$.asObservable();
   }
 
-  getEmail(){
-    return this.localStorageService.getItem('email');
+  authState = computed(() => {
+    const payload = this._payload();
+    return {
+      isAuthenticated: !!this._token(),
+      email: payload?.email ?? payload?.sub ?? null,
+      userId: payload?.userId ?? null,
+    } as const;
+  });
+
+  role = computed<Role | null>(() => {
+    const p = this._payload();
+    if (!p) return null;
+    // prova vari campi comuni
+    return (
+      (p.role as Role) ||
+      (Array.isArray(p.roles) ? (p.roles[0] as Role) : null) ||
+      null
+    );
+  });
+
+  get token(): string | null {
+    return this._token();
   }
 
-  getToken(){
-    return this.localStorageService.getItem('token');
+  setToken(t: string | null) {
+    this._token.set(t);
+    if (t) this.ls.setItem(this.TOKEN_KEY, t);
+    else this.ls.removeItem(this.TOKEN_KEY);
   }
 
-  isUserAuthenticated(): boolean {
-    return this.verifyToken(this.getToken());
+  login(email: string, password: string) {
+    return this.http
+      .post<LoginResponse>('/api/auth/login', { email, password })
+      .pipe(
+        tap((res) => {
+          if (res?.token) this.setToken(res.token);
+        })
+      );
   }
 
-  async updateToken(token: string) {
-    const decodedToken: any = jwtDecode(token);
-    const email = decodedToken.email;
-    this.authState.set({
-      email: email,
-      token: token,
-      isAuthenticated: this.verifyToken(token)
-    })
+  register(payload: RegisterPayload) {
+    return this.http
+      .post<Partial<LoginResponse>>('/api/auth/register', payload)
+      .pipe(
+        tap((res) => {
+          if (res?.token) this.setToken(res.token);
+        })
+      );
   }
 
-  verifyToken(token: string | null): boolean {
-    if(token !== null){
-      try{
-        const decodedToken = jwtDecode(token);
-        const expiration = decodedToken.exp;
-        if(expiration === undefined || Date.now() >= expiration * 1000){
-          return false;
-        } else {
-          return true;
-        }
-      } catch(error) {
-        return false;
-      }
-    }
-    return false;
+  logout() {
+    this.setToken(null);
+    this.router.navigateByUrl('/auth');
   }
-
-  logout(){
-    this.authState.set({
-      email: null,
-      token: null,
-      isAuthenticated: false
-    });
-  }
-
-  role = computed<('CLIENT'|'AGENT'|'ADMIN') | null>(() => {
-  const t = this.authState().token;
-  if (!t) return null;
-  try {
-    const payload: any = jwtDecode(t);
-    // Adatta questi campi ai claim reali del tuo JWT
-    return payload.role ?? payload['authorities']?.[0] ?? null;
-  } catch { return null; }
-});
-
-// Observable richiesto dalla guard
-userRole$ = toObservable(this.role);
-
-// nome da mostrare in Navbar/Sidebar
-displayName$ = toObservable(computed(() =>
-  this.authState().email ? this.authState().email!.split('@')[0] : ''
-));
 }

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dietiestates.api.dto.OfferProposalRequest;
 import com.dietiestates.api.model.Offer;
 import com.dietiestates.api.service.OfferService;
 

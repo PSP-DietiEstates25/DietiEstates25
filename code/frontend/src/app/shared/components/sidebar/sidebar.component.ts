@@ -20,9 +20,9 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit(): void {
     // niente getUser(), niente oggetto user
-    this.auth.displayName$.subscribe((name: string) => {
-      this.userName = name;
-    });
+    //this.auth.displayName$.subscribe((name: string) => {
+      //this.userName = name;
+    //});
   }
 
   toggleSidebar() {

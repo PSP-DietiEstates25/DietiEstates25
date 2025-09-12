@@ -1,0 +1,12 @@
+<form (ngSubmit)="onSubmit()" class="w-full flex gap-2">
+  <input
+    class="input_main"
+    [placeholder]="placeholder()"
+    [ngModel]="q"
+    (ngModelChange)="onInput($event)"
+    name="q"
+    (keydown.enter)="onSubmit()"
+    autocomplete="off"
+  />
+  <button type="submit" class="btn_primary whitespace-nowrap">Cerca</button>
+</form>

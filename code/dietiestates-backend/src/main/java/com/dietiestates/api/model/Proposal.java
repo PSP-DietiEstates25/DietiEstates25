@@ -65,13 +65,6 @@ public abstract class Proposal {
 	@ManyToOne
 	@JoinColumn(
 			nullable = false,
-			name = "estete_agent_id",
-			foreignKey = @ForeignKey(name = "PROPOSAL_ESTATE_AGENT_ID_FK"))
-	protected EstateAgent estateAgent;
-	
-	@ManyToOne
-	@JoinColumn(
-			nullable = false,
 			name = "user_id",
 			foreignKey = @ForeignKey(name = "PROPOSAL_USER_ID_FK"))
 	protected User user;

@@ -1,6 +1,5 @@
 package com.dietiestates.api.model;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,9 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.dietiestates.api.dto.RealEstateDto;
 import com.dietiestates.api.enums.AdCategory;
-import com.dietiestates.api.enums.EnergyClass;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -27,6 +24,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -62,31 +60,6 @@ public class RealEstate {
     @Column(nullable = false)
     private String description;
 
-    @Column(nullable = false)
-    private BigDecimal price;
-
-    @Column(nullable = false)
-    private Float size;
-
-    @Column(nullable = false)
-    private String address;
-
-    @Column(nullable = false)
-    private Integer rooms;
-
-    @Column(nullable = false)
-    private Integer floor;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private EnergyClass energyClass;
-
-    @Column(nullable = false)
-    private Double latitude;
-
-    @Column(nullable = false)
-    private Double longitude;
-
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdDate;
@@ -102,12 +75,8 @@ public class RealEstate {
     		foreignKey = @ForeignKey(name = "REAL_ESTATE_ESTATE_AGENT_ID_FK"))
     private User estateAgent;
 
-    @ManyToOne
-    @JoinColumn(
-    		nullable = false,
-    		name = "detail_id",
-    		foreignKey = @ForeignKey(name = "REAL_ESTATE_DETAIL_ID_FK"))
-    private Detail detail;
+    @OneToOne(mappedBy="realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Details details;
     
     @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Proposal> proposals = new ArrayList<>();
@@ -116,21 +85,9 @@ public class RealEstate {
     	proposals.add(proposal);
     	proposal.setRealEstate(this); 
     }
-    
-    public static RealEstate of(RealEstateDto request) {
-    	//category images description price size address rooms floor energyClass latitude longitude
-    	return RealEstate.builder()
-    			.category(AdCategory.valueOf(request.getCategory()))
-    			.images(request.getImages())
-    			.description(request.getDescription())
-    			.price(request.getPrice())
-    			.size(request.getSize())
-    			.address(request.getAddress())
-    			.rooms(request.getRooms())
-    			.floor(request.getFloor())
-    			.energyClass(EnergyClass.valueOf(request.getEnergyClass()))
-    			.latitude(request.getLatitude())
-    			.longitude(request.getLongitude())
-    			.build();
+
+    public void addDetails(Details details) {
+    	this.details = details;
+    	details.setRealEstate(this);
     }
 }

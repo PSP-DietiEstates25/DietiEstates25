@@ -8,7 +8,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dietiestates.api.dto.RealEstateAdResponse;
 import com.dietiestates.api.enums.AdCategory;
 import com.dietiestates.api.enums.EnergyClass;
 import com.dietiestates.api.repository.RealEstateAdRepository;

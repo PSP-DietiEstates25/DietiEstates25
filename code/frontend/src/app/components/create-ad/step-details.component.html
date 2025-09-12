@@ -1,0 +1,40 @@
+<form [formGroup]="form" class="grid sm:grid-cols-2 gap-4">
+  <div class="sm:col-span-2">
+    <label for="address" class="block text-sm mb-1 dark:text-slate-200"
+      >Indirizzo</label
+    >
+    <input id="address" class="input_main" formControlName="address" />
+  </div>
+  <div>
+    <label for="type" class="block text-sm mb-1 dark:text-slate-200"
+      >Tipologia</label
+    >
+    <select id="type" class="input_main" formControlName="type">
+      <option>Appartamento</option>
+      <option>Casa indipendente</option>
+      <option>Stanza</option>
+      <option>Attico</option>
+    </select>
+  </div>
+  <div>
+    <label for="size" class="block text-sm mb-1 dark:text-slate-200">Mq</label>
+    <input id="size" type="number" class="input_main" formControlName="size" />
+  </div>
+  <div class="sm:col-span-2">
+    <label for="description" class="block text-sm mb-1 dark:text-slate-200"
+      >Descrizione</label
+    >
+    <textarea
+      id="description"
+      rows="4"
+      class="input_main"
+      formControlName="description"
+      placeholder="Dettagli dell'immobile"
+    ></textarea>
+  </div>
+
+  <div class="sm:col-span-2 flex justify-between gap-2 mt-2">
+    <button type="button" class="btn_ghost" (click)="back()">Indietro</button>
+    <button type="button" class="btn_primary" (click)="next()">Avanti</button>
+  </div>
+</form>

@@ -6,9 +6,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import com.dietiestates.api.dto.NotificationPreferenceResponse;
-import com.dietiestates.api.dto.NotificationResponse;
-import com.dietiestates.api.dto.UpdateNotificationPreferencesRequest;
 import com.dietiestates.api.enums.NotificationCategoryType;
 import com.dietiestates.api.service.NotificationPreferenceService;
 import com.dietiestates.api.service.NotificationService;

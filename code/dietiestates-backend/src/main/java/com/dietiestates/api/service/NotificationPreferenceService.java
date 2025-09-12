@@ -5,8 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dietiestates.api.dto.NotificationPreferenceResponse;
-import com.dietiestates.api.dto.UpdateNotificationPreferencesRequest;
 import com.dietiestates.api.enums.NotificationCategoryType;
 //import com.dietiestates.api.model.NotificationPreference;
 import com.dietiestates.api.model.User;

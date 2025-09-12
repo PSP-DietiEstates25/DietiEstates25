@@ -36,15 +36,14 @@ public class Offer extends Proposal {
 	public Offer(
 			Long id, 
 			ProposalCategory category, 
-			ProposalStatus status, 
+			ProposalStatus status,
 			LocalDateTime createdAt,
 			LocalDateTime lastModifiedDate,
-			EstateAgent estateAgent,
 			User user,
 			RealEstate realEstate,
 			BigDecimal amount
 	) {
-		super(id, category, status, createdAt, lastModifiedDate, estateAgent, user, realEstate);
+		super(id, category, status, createdAt, lastModifiedDate, user, realEstate);
 		this.amount = amount;
 	}
 }

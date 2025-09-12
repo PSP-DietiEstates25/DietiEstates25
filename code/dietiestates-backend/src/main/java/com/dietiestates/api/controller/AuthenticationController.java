@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.AuthenticationRequest;
 import com.dietiestates.api.dto.AuthenticationResponse;
+import com.dietiestates.api.model.User;
 import com.dietiestates.api.service.AuthenticationService;
 
 import jakarta.validation.Valid;
@@ -24,7 +25,7 @@ public class AuthenticationController {
 	
 	@PostMapping("/register")
 	@ResponseStatus(HttpStatus.ACCEPTED)
-	public ResponseEntity<?> register(
+	public ResponseEntity<User> register(
 			@RequestBody @Valid AuthenticationRequest request
 	){
 		authenticationService.register(request);

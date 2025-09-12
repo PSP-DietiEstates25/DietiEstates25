@@ -11,8 +11,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dietiestates.api.dto.CreateVisitRequest;
-import com.dietiestates.api.dto.VisitResponse;
 import com.dietiestates.api.enums.NotificationCategoryType;
 //import com.dietiestates.api.enums.VisitStatus;
 import com.dietiestates.api.model.RealEstate;

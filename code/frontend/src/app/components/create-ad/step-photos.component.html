@@ -1,0 +1,29 @@
+<div class="grid gap-4">
+  <div>
+    <label for="photos" class="block text-sm mb-1 dark:text-slate-200"
+      >Carica foto</label
+    >
+    <input
+      id="photos"
+      type="file"
+      class="input_main"
+      accept="image/*"
+      multiple
+      (change)="onFiles($event)"
+    />
+  </div>
+
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+    @for (src of previews(); track src) {
+    <img
+      [src]="src"
+      class="rounded-xl border dark:border-slate-700 aspect-video object-cover"
+    />
+    }
+  </div>
+
+  <div class="flex justify-between gap-2 mt-2">
+    <button type="button" class="btn_ghost" (click)="back()">Indietro</button>
+    <button type="button" class="btn_primary" (click)="next()">Avanti</button>
+  </div>
+</div>
