@@ -31,12 +31,21 @@ import lombok.Setter;
 @Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Details {
+public class Utility {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@EqualsAndHashCode.Include
 	private Long id;
+	
+	@Column(nullable = false)
+	private Boolean hasAirConditioning;
+	
+	@Column(nullable = false)
+	private Boolean hasDoorman;
+
+	@Column(nullable = false)
+	private Boolean hasElevator;
 	
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
@@ -45,43 +54,12 @@ public class Details {
 	@LastModifiedDate
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
+
+	@OneToOne(mappedBy = "utility", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Detail detail;
 	
-	@OneToOne(mappedBy="details", cascade = CascadeType.ALL, orphanRemoval = true)
-	private GeographicalPosition geographicalPosition;
-	
-	@OneToOne(mappedBy="details", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Services services;
-	
-	@OneToOne(mappedBy="details", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Data data;
-		
-	@OneToOne
-	@JoinColumn(
-			nullable = true,
-			name = "search_id",
-			foreignKey = @ForeignKey(name = "DETAILS_SEARCH_ID_FK"))
-	private Search search;
-	
-	@OneToOne
-	@JoinColumn(
-			nullable = true,
-			name = "real_estate_id",
-			foreignKey = @ForeignKey(name = "DETAILS_REAL_ESTATE_ID_FK"))
-	private RealEstate realEstate;
-	
-	public void addGeographicalPosition(GeographicalPosition geographicalPosition) {
-		this.geographicalPosition = geographicalPosition;
-		geographicalPosition.setDetails(this);
+	public void addDetail(Detail detail) {
+		this.detail = detail;
+		detail.setUtility(this);
 	}
-	
-	public void addServices(Services services) {
-		this.services = services;
-		services.setDetails(this);
-	}
-	
-	public void addData(Data data) {
-		this.data = data;
-		data.setDetails(this);
-	}
-	
 }

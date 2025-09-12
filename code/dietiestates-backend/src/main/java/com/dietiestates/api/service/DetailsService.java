@@ -1,11 +1,14 @@
 package com.dietiestates.api.service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.DetailsDto;
-import com.dietiestates.api.model.Details;
+import com.dietiestates.api.model.Detail;
+import com.dietiestates.api.model.RealEstate;
+import com.dietiestates.api.model.Search;
 import com.dietiestates.api.repository.DetailsRepository;
 import com.dietiestates.api.repository.RealEstateRepository;
 import com.dietiestates.api.repository.SearchRepository;
@@ -20,20 +23,29 @@ public class DetailsService {
 	private final RealEstateRepository realEstateRepository;
 	private final SearchRepository searchRepository;
 	
-	public Details createDetails(DetailsDto request) {
+	public Detail createDetails(DetailsDto request) {
 		var details = of(request);
 		detailsRepository.save(details);
 		return details;
 	}
 	
-	public Details of(DetailsDto request) {
-		var realEstate = realEstateRepository.findById(request.getRealEstateId());
-		var search = searchRepository.findById(request.getSearchId());
-		return Details.builder()
-				.createdDate(LocalDateTime.now())
-				.realEstate(realEstate.orElse(null))
-				.search(search.orElse(null))
-				.build();
+	public Detail of(DetailsDto request) {
+		
+		Optional<RealEstate> realEstate = null;
+		Optional<Search> search = null;
+		Detail detail = Detail.builder().createdDate(LocalDateTime.now()).build();
+		
+		if(request.getRealEstateId() != null) {
+			realEstate = realEstateRepository.findById(request.getRealEstateId());
+			detail.setRealEstate(realEstate.orElse(null));
+		}
+		
+		if(request.getSearchId() != null) {
+			search = searchRepository.findById(request.getSearchId());
+			detail.setSearch(search.orElse(null));
+		}
+		
+		return detail;
 	}
 	
 	/*
@@ -45,7 +57,7 @@ public class DetailsService {
     private ApplicationContext context;
     @Transactional
     public Long create(@Valid CreateDetailRequest req) {
-        Services services = Services.builder()
+        Utility services = Utility.builder()
                 .hasAirConditioning(req.services().hasAirConditioning())
                 .hasDoorman(req.services().hasDoorman())
                 .hasElevator(req.services().hasElevator())

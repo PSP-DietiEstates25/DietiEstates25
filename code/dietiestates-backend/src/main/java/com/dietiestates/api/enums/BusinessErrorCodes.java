@@ -23,10 +23,10 @@ public enum BusinessErrorCodes {
     VISIT_NOT_FOUND(7004, HttpStatus.NOT_FOUND, "Visit not found"),
     PROPOSAL_NOT_FOUND(8004, HttpStatus.NOT_FOUND, "Proposal not found"),
     REAL_ESTATE_NOT_FOUND(9004, HttpStatus.NOT_FOUND, "Real estate not found"),
-    DETAILS_NOT_FOUND(10004, HttpStatus.NOT_FOUND, "Details not found"),
+    DETAILS_NOT_FOUND(10004, HttpStatus.NOT_FOUND, "Detail not found"),
     GEOGRAPHICAL_POSITION_NOT_FOUND(11004, HttpStatus.NOT_FOUND, "Geographical position not found"),
-    DATA_NOT_FOUND(12004, HttpStatus.NOT_FOUND, "Data not found"),
-    SERVICES_NOT_FOUND(13004, HttpStatus.NOT_FOUND, "Services not found"),
+    DATA_NOT_FOUND(12004, HttpStatus.NOT_FOUND, "CadastralData not found"),
+    SERVICES_NOT_FOUND(13004, HttpStatus.NOT_FOUND, "Utility not found"),
     SEARCH_NOT_FOUND(14004, HttpStatus.NOT_FOUND, "Search not found")
     ;
 

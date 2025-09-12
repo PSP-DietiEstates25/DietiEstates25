@@ -72,11 +72,15 @@ public class RealEstate {
     @JoinColumn(
     		nullable = false,
     		name = "estate_agent_id",
-    		foreignKey = @ForeignKey(name = "REAL_ESTATE_ESTATE_AGENT_ID_FK"))
+    		foreignKey = @ForeignKey(name = "REAL_ESTATE_AGENT_ID_FK"))
     private User estateAgent;
 
-    @OneToOne(mappedBy="realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Details details;
+    @OneToOne
+    @JoinColumn(
+			nullable = false,
+			name = "detail_id",
+			foreignKey = @ForeignKey(name = "REAL_ESTATE_DETAIL_ID_FK"))
+    private Detail detail;
     
     @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Proposal> proposals = new ArrayList<>();
@@ -86,8 +90,8 @@ public class RealEstate {
     	proposal.setRealEstate(this); 
     }
 
-    public void addDetails(Details details) {
-    	this.details = details;
-    	details.setRealEstate(this);
+    public void addDetails(Detail detail) {
+    	this.detail = detail;
+    	detail.setRealEstate(this);
     }
 }

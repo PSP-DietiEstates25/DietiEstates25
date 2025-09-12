@@ -29,8 +29,8 @@ public class RealEstateDto {
 	@Size(max = 200, message = "Description must be at least 1 character long")
 	private String description;
 
-	@NotEmpty(message = "Details id is mandatory")
-	@NotBlank(message = "Details id is mandatory")
-	@Positive(message = "Details id must be a positive number")
+	@NotEmpty(message = "Detail id is mandatory")
+	@NotBlank(message = "Detail id is mandatory")
+	@Positive(message = "Detail id must be a positive number")
 	private Long detailsId;
 }

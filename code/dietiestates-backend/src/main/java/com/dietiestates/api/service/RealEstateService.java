@@ -30,7 +30,7 @@ public class RealEstateService {
 				.category(AdCategory.valueOf(request.getCategory()))
 				.images(request.getImages())
 				.description(request.getDescription())
-				.details(details)
+				.detail(details)
 				.build();
 	}
 }

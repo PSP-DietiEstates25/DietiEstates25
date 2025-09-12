@@ -1,20 +1,15 @@
 package com.dietiestates.api.model;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.dietiestates.api.dto.DataDto;
-import com.dietiestates.api.enums.EnergyClass;
-
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,36 +25,20 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
+@Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Data {
+public class Detail {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@EqualsAndHashCode.Include
-	private Long id;
+	private long id;
 	
-	@Column(nullable = false)
-    private BigDecimal price;
-
-    @Column(nullable = false)
-    private Float size;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private EnergyClass energyClass;
-
-    @Column(nullable = false)
-    private Integer rooms;
-
-    @Column(nullable = false)
-    private Integer floor;
-    
-    @CreatedDate
+	@CreatedDate
 	@Column(nullable = false, updatable = false)
 	private LocalDateTime createdDate;
 	
@@ -70,19 +49,38 @@ public class Data {
 	@OneToOne
 	@JoinColumn(
 			nullable = false,
-			name = "details_id",
-			foreignKey = @ForeignKey(name = "DATA_DETAILS_ID_FK"))
-	private Details details;
+			name = "geographical_position_id",
+			foreignKey = @ForeignKey(name = "DETAIL_GEOGRAPHICAL_POSITION_ID_FK"))
+	private GeographicalPosition geographicalPosition;
 	
-	//price size energyclass rooms floor detailId
-	public Data of(DataDto dataDto) {
-		return Data.builder()
-				//.price(dataDto.getPrice())
-				//.size(dataDto.getSize())
-				//.energyClass(dataDto)
-				//.rooms()
-				//.floor()
-				//.details()
-				.build();
+	@OneToOne
+	@JoinColumn(
+			nullable = false,
+			name = "utility_id",
+			foreignKey = @ForeignKey(name = "DETAIL_UTILITY_ID_FK"))
+	private Utility utility;
+	
+	@OneToOne
+	@JoinColumn(
+			nullable = false,
+			name = "cadastral_data_id",
+			foreignKey = @ForeignKey(name = "DETAIL_CADASTRAL_DATA_ID_FK"))
+	private CadastralData cadastralData;
+		
+	@OneToOne(mappedBy = "detail", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Search search;
+	
+	@OneToOne(mappedBy = "detail", cascade = CascadeType.ALL, orphanRemoval = true)
+	private RealEstate realEstate;
+	
+	public void addRealEstate(RealEstate realEstate) {
+		this.realEstate = realEstate;
+		realEstate.setDetail(this);
 	}
+	
+	public void addSearch(Search search) {
+		this.search = search;
+		search.setDetail(this);;
+	}
+	
 }

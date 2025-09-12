@@ -33,7 +33,7 @@ public class SearchService {
 				.minimumPrice(request.getMinimumPrice())
 				.maximumPrice(request.getMaximumPrice())
 				.createdDate(LocalDateTime.now())
-				.details(details)
+				.detail(details)
 				.build();
 		
 	}

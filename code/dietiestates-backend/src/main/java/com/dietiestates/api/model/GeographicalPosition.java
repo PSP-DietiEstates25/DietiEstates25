@@ -64,10 +64,11 @@ public class GeographicalPosition {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 	
-	@OneToOne
-	@JoinColumn(
-			nullable = false,
-			name = "details_id",
-			foreignKey = @ForeignKey(name = "GEOGRAPHICAL_POSITION_DETAILS_ID_FK"))
-	private Details details;
+	@OneToOne(mappedBy = "geographicalPosition", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Detail detail;
+	
+	public void addDetail(Detail detail) {
+		this.detail = detail;
+		detail.setGeographicalPosition(this);
+	}
 }
