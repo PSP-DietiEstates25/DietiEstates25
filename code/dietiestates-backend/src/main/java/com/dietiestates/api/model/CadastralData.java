@@ -7,7 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.dietiestates.api.dto.DataDto;
+import com.dietiestates.api.dto.CadastralDataDto;
 import com.dietiestates.api.enums.EnergyClass;
 
 import jakarta.persistence.CascadeType;

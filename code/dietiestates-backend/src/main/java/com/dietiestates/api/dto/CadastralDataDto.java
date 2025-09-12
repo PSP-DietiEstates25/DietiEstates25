@@ -15,7 +15,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder
-public class DataDto {
+public class CadastralDataDto {
 	
 	@NotEmpty(message = "Price is mandatory")
 	@NotBlank(message = "Price is mandatory")
@@ -41,9 +41,4 @@ public class DataDto {
 	@NotBlank(message = "Floor is mandatory")
 	@Positive(message = "Floor must be a positive number")
 	private Integer floor;
-	
-	@NotEmpty(message = "Detail id is mandatory")
-	@NotBlank(message = "Detail id is mandatory")
-	@Positive(message = "Detail id must be a positive number")
-	private Long detailsId;
 }

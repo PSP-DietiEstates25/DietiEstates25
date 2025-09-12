@@ -4,6 +4,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.dietiestates.api.model.CadastralData;
 
-public interface DataRepository extends CrudRepository<CadastralData, Long> {
+public interface CadastralDataRepository extends CrudRepository<CadastralData, Long> {
 
 }
