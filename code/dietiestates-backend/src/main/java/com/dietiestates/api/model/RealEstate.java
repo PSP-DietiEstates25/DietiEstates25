@@ -35,7 +35,6 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@Builder
 @EqualsAndHashCode
 @ToString
 @AllArgsConstructor
@@ -84,6 +83,26 @@ public class RealEstate {
     
     @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Proposal> proposals = new ArrayList<>();
+    
+    @Builder(builderMethodName = "realEstateBuilder")
+    public RealEstate(
+    		LocalDateTime createdDate,
+    		AdCategory category,
+    		String[] images,
+    		String description,
+    		EstateAgent estateAgent,
+    		Detail detail
+    		) {
+    	this.createdDate = createdDate;
+    	this.category = category;
+    	this.images = images;
+    	this.description = description;
+    	this.estateAgent = estateAgent;
+    	this.detail = detail;
+    	
+    	detail.setRealEstate(this);
+    	estateAgent.addRealEstate(this);
+    }
     
     public void addProposal(Proposal proposal) {
     	proposals.add(proposal);

@@ -1,5 +1,6 @@
 package com.dietiestates.api.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
@@ -33,4 +34,9 @@ public class RealEstateDto {
 	@NotBlank(message = "Detail id is mandatory")
 	@Positive(message = "Detail id must be a positive number")
 	private Long detailsId;
+	
+	@NotEmpty(message = "Detail id is mandatory")
+	@NotBlank(message = "Detail id is mandatory")
+	@Email
+	private String estateAgentEmail;
 }
