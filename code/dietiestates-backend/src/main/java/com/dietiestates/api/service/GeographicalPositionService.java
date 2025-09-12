@@ -1,5 +1,7 @@
 package com.dietiestates.api.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.GeographicalPositionDto;
@@ -27,6 +29,7 @@ public class GeographicalPositionService {
 				.address(request.getAddress())
 				.latitude(request.getLatitude())
 				.longitude(request.getLongitude())
+				.createdDate(LocalDateTime.now())
 				.radius(request.getRadius())
 				.build();
 	}
