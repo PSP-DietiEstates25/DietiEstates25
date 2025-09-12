@@ -1,17 +1,18 @@
 package com.dietiestates.api.service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.DetailsDto;
+import com.dietiestates.api.exception.notfound.CadastralDataNotFoundException;
+import com.dietiestates.api.exception.notfound.GeographicalPositionNotFoundException;
+import com.dietiestates.api.exception.notfound.UtilityNotFoundException;
 import com.dietiestates.api.model.Detail;
-import com.dietiestates.api.model.RealEstate;
-import com.dietiestates.api.model.Search;
+import com.dietiestates.api.repository.CadastralDataRepository;
 import com.dietiestates.api.repository.DetailsRepository;
-import com.dietiestates.api.repository.RealEstateRepository;
-import com.dietiestates.api.repository.SearchRepository;
+import com.dietiestates.api.repository.GeographicalPositionRepository;
+import com.dietiestates.api.repository.UtilityRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,8 +21,9 @@ import lombok.RequiredArgsConstructor;
 public class DetailsService {
 
 	private final DetailsRepository detailsRepository;
-	private final RealEstateRepository realEstateRepository;
-	private final SearchRepository searchRepository;
+	private final GeographicalPositionRepository geographicalPositionRepository;
+	private final CadastralDataRepository cadastralDataRepository;
+	private final UtilityRepository utilityRepository;
 	
 	public Detail createDetails(DetailsDto request) {
 		var details = of(request);
@@ -31,21 +33,21 @@ public class DetailsService {
 	
 	public Detail of(DetailsDto request) {
 		
-		Optional<RealEstate> realEstate = null;
-		Optional<Search> search = null;
-		Detail detail = Detail.builder().createdDate(LocalDateTime.now()).build();
+		var geographicalPosition = geographicalPositionRepository.findById(request.getGeographicalPositionId())
+				.orElseThrow(GeographicalPositionNotFoundException::new);
 		
-		if(request.getRealEstateId() != null) {
-			realEstate = realEstateRepository.findById(request.getRealEstateId());
-			detail.setRealEstate(realEstate.orElse(null));
-		}
+		var cadastralData = cadastralDataRepository.findById(request.getCadastralDataId())
+				.orElseThrow(CadastralDataNotFoundException::new);
 		
-		if(request.getSearchId() != null) {
-			search = searchRepository.findById(request.getSearchId());
-			detail.setSearch(search.orElse(null));
-		}
+		var utility = utilityRepository.findById(request.getUtilityId())
+				.orElseThrow(UtilityNotFoundException::new);
 		
-		return detail;
+		return Detail.builder()
+				.createdDate(LocalDateTime.now())
+				.geographicalPosition(geographicalPosition)
+				.cadastralData(cadastralData)
+				.utility(utility)
+				.build();
 	}
 	
 	/*

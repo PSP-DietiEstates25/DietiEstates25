@@ -12,10 +12,12 @@ import lombok.ToString;
 @Builder
 public class DetailsDto {
 	
-	//@Positive(message = "Search id must be a positive number")
-	private Long searchId;
+	@Positive(message = "Geographical position id must be a positive number")
+	private Long geographicalPositionId;
 	
-	//@Positive(message = "Real estate id must be a positive number")
-	private Long realEstateId;
+	@Positive(message = "Utility id must be a positive number")
+	private Long utilityId;
 	
+	@Positive(message = "Cadastral data id must be a positive number")
+	private Long cadastralDataId;
 }

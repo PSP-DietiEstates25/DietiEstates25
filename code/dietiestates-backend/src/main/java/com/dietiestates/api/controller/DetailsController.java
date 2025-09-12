@@ -22,7 +22,7 @@ public class DetailsController {
 
 	@PostMapping
 	public ResponseEntity<Detail> createDetails(
-			DetailsDto request
+			@RequestBody DetailsDto request
 			) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(detailsService.createDetails(request));
 	}
