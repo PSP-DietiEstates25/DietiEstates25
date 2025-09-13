@@ -9,15 +9,15 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class EstateAgentDto extends AuthenticationRequest {
+public class StafferDto extends AuthenticationRequest {
 
 	@Email
 	@NotEmpty(message = "Email is mandatory")
 	@NotBlank(message = "Email is mandatory")
 	private String adminEmail;
 	
-	@Builder(builderMethodName = "estateAgentDtoBuilder")
-	public EstateAgentDto(
+	@Builder(builderMethodName = "stafferDtoBuilder")
+	public StafferDto(
 			String email,
 			String password,
 			String role,

@@ -53,10 +53,10 @@ public class Admin extends User {
 	}
 	
 	@OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<EstateAgent> estateAgents = new ArrayList<>();
+	private final List<EstateAgent> estateAgents = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Admin> admins = new ArrayList<>();
+	private final List<Admin> admins = new ArrayList<>();
 	
 	public void addEstateAgent(EstateAgent estateAgent) {
 		estateAgents.add(estateAgent);
