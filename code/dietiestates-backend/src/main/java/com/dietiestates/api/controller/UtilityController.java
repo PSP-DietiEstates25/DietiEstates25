@@ -24,6 +24,7 @@ public class UtilityController {
 	public ResponseEntity<Utility> createUtility(
 			@RequestBody UtilityDto request
 			){
-		return ResponseEntity.status(HttpStatus.CREATED).body(utilityService.createUtility(request));
+		utilityService.createUtility(request);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }

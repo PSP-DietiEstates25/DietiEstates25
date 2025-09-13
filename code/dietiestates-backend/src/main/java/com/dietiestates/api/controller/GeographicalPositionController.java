@@ -24,6 +24,7 @@ public class GeographicalPositionController {
 	public ResponseEntity<GeographicalPosition> createGeographicalPosition(
 			@RequestBody GeographicalPositionDto request
 			){
-		return ResponseEntity.status(HttpStatus.CREATED).body(geographicalPositionService.createGeographicalPosition(request));
+		geographicalPositionService.createGeographicalPosition(request);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }

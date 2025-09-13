@@ -24,6 +24,7 @@ public class CadastralDataController {
 	public ResponseEntity<CadastralData> createCadastralData(
 			@RequestBody CadastralDataDto request
 			){
-		return ResponseEntity.status(HttpStatus.CREATED).body(cadastralDataService.createCadastralData(request));
+		cadastralDataService.createCadastralData(request);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }

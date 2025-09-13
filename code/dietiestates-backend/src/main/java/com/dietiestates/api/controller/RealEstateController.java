@@ -30,6 +30,7 @@ public class RealEstateController {
 			@RequestBody RealEstateDto request
 	){
 		logger.info("Received realEstate: " + request.toString());
+		realEstateSerivce.createRealEstate(request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
