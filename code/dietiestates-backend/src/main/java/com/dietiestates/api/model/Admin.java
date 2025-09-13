@@ -31,6 +31,7 @@ public class Admin extends User {
 	
 	@ManyToOne
 	@JoinColumn(
+			nullable = false,
 			name = "admin_id",
 			foreignKey = @ForeignKey(name = "ADMIN_ADMIN_ID_FK")
 			)
