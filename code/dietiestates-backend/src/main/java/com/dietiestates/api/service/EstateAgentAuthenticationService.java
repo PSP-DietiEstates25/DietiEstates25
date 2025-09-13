@@ -49,7 +49,7 @@ public class EstateAgentAuthenticationService extends AuthenticationService {
 		var estateAgentRole = roleRepository.findByName("ESTATE_AGENT")
 				.orElseThrow(() -> new IllegalStateException("ROLE ESTATE_AGENT was not initialized!"));
 		
-		var admin = adminRepository.findByEmail(request.getEmail())
+		var admin = adminRepository.findByEmail(request.getAdminEmail())
 				.orElseThrow(AdminNotFoundException::new);
 		
 		return EstateAgent.estateAgentBuilder()
