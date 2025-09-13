@@ -4,11 +4,13 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class AuthenticationRequest {
 
 	@Email(message = "Email is not valid")
@@ -21,4 +23,8 @@ public class AuthenticationRequest {
 	@NotEmpty(message = "Password is mandatory")
 	@NotBlank(message = "Password is mandatory")
 	private String password;
+	
+	@NotEmpty(message = "Role is mandatory")
+	@NotBlank(message = "Role is mandatory")
+	private String role;
 }
