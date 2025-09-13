@@ -7,7 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.dietiestates.api.dto.EstateAgentDto;
+import com.dietiestates.api.dto.StafferDto;
 import com.dietiestates.api.exception.notfound.AdminNotFoundException;
 import com.dietiestates.api.model.EstateAgent;
 import com.dietiestates.api.repository.AdminRepository;
@@ -40,13 +40,12 @@ public class EstateAgentAuthenticationService extends AuthenticationService {
 		this.adminRepository = adminRepository;
 	}
 
-	public void register(EstateAgentDto request) {
+	public void register(StafferDto request) {
 		var estateAgent = of(request);
 		estateAgentRepository.save(estateAgent);
 	}
 	
-	private EstateAgent of(EstateAgentDto request) {
-		
+	private EstateAgent of(StafferDto request) {
 		var estateAgentRole = roleRepository.findByName("ESTATE_AGENT")
 				.orElseThrow(() -> new IllegalStateException("ROLE ESTATE_AGENT was not initialized!"));
 		
