@@ -14,7 +14,7 @@ import com.dietiestates.api.service.OfferService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/realestate/{realestateId}/offers")
+@RequestMapping("/offers")
 @RequiredArgsConstructor
 @Validated
 public class OfferController {

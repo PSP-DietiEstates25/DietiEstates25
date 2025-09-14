@@ -42,15 +42,18 @@ public class Visit extends Proposal {
 			Long id, 
 			ProposalCategory category, 
 			ProposalStatus status, 
-			LocalDateTime createdAt,
+			LocalDateTime createdDate,
 			LocalDateTime lastModifiedDate,
 			User user,
 			RealEstate realEstate,
 			LocalDate date,
 			LocalTime time
 	) {
-		super(id, category, status, createdAt, lastModifiedDate, user, realEstate);
+		super(id, category, status, createdDate, lastModifiedDate, user, realEstate);
 		this.date = date;
 		this.time = time;
+		
+		realEstate.addProposal(this);
+		user.addProposal(this);
 	}
 }

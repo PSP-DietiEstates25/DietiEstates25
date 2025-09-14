@@ -1,22 +1,16 @@
 package com.dietiestates.api.service;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.List;
+import java.time.LocalDateTime;
 
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.dietiestates.api.enums.NotificationCategoryType;
-//import com.dietiestates.api.enums.VisitStatus;
-import com.dietiestates.api.model.RealEstate;
-import com.dietiestates.api.model.User;
+import com.dietiestates.api.dto.VisitDto;
+import com.dietiestates.api.enums.ProposalCategory;
+import com.dietiestates.api.enums.ProposalStatus;
+import com.dietiestates.api.exception.notfound.RealEstateNotFoundException;
+import com.dietiestates.api.exception.notfound.UserNotFoundException;
 import com.dietiestates.api.model.Visit;
-import com.dietiestates.api.repository.RealEstateAdRepository;
+import com.dietiestates.api.repository.RealEstateRepository;
 import com.dietiestates.api.repository.UserRepository;
 import com.dietiestates.api.repository.VisitRepository;
 
@@ -25,6 +19,33 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class VisitService {
+	
+	private final VisitRepository visitRepository;
+	private final RealEstateRepository realEstateRepository;
+	private final UserRepository userRepository;
+	
+	public void createVisit(VisitDto request) {
+		var visit = of(request);
+		visitRepository.save(visit);
+	}
+	
+	private Visit of(VisitDto request) {
+		var user = userRepository.findByEmail(request.getUserEmail())
+				.orElseThrow(UserNotFoundException::new);
+		
+		var realEstate = realEstateRepository.findById(request.getRealEstateId())
+				.orElseThrow(RealEstateNotFoundException::new);
+		
+		return Visit.visitBuilder()
+				.createdDate(LocalDateTime.now())
+				.category(ProposalCategory.VISIT)
+				.status(ProposalStatus.PENDING)
+				.user(user)
+				.realEstate(realEstate)
+				.date(request.getDate())
+				.time(request.getTime())
+				.build();
+	}
 
 	/*
     private final VisitRepository visitRepo;

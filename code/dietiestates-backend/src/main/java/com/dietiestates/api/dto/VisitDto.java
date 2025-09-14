@@ -14,7 +14,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class VisitDto extends ProposalDto{
+public class VisitDto extends ProposalDto {
 
 	@NotEmpty(message = "Date is mandatory")
 	@NotBlank(message = "Date is mandatory")
