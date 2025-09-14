@@ -37,13 +37,16 @@ public class Offer extends Proposal {
 			Long id, 
 			ProposalCategory category, 
 			ProposalStatus status,
-			LocalDateTime createdAt,
+			LocalDateTime createdDate,
 			LocalDateTime lastModifiedDate,
 			User user,
 			RealEstate realEstate,
 			BigDecimal amount
 	) {
-		super(id, category, status, createdAt, lastModifiedDate, user, realEstate);
+		super(id, category, status, createdDate, lastModifiedDate, user, realEstate);
 		this.amount = amount;
+		
+		realEstate.addProposal(this);
+		user.addProposal(this);
 	}
 }

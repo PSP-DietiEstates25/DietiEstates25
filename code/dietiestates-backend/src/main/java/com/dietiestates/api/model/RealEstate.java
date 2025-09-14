@@ -100,17 +100,12 @@ public class RealEstate {
     	this.estateAgent = estateAgent;
     	this.detail = detail;
     	
-    	detail.setRealEstate(this);
+    	detail.addRealEstate(this);
     	estateAgent.addRealEstate(this);
     }
     
     public void addProposal(Proposal proposal) {
     	proposals.add(proposal);
     	proposal.setRealEstate(this); 
-    }
-
-    public void addDetails(Detail detail) {
-    	this.detail = detail;
-    	detail.setRealEstate(this);
     }
 }

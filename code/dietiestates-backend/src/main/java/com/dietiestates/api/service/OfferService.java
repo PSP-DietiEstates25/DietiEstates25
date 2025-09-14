@@ -1,19 +1,17 @@
 package com.dietiestates.api.service;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.dietiestates.api.enums.NotificationCategoryType;
+import com.dietiestates.api.dto.OfferDto;
+import com.dietiestates.api.enums.ProposalCategory;
+import com.dietiestates.api.enums.ProposalStatus;
+import com.dietiestates.api.exception.notfound.RealEstateNotFoundException;
+import com.dietiestates.api.exception.notfound.UserNotFoundException;
 import com.dietiestates.api.model.Offer;
-import com.dietiestates.api.model.RealEstate;
-import com.dietiestates.api.model.User;
 import com.dietiestates.api.repository.OfferRepository;
-import com.dietiestates.api.repository.RealEstateAdRepository;
+import com.dietiestates.api.repository.RealEstateRepository;
 import com.dietiestates.api.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +20,32 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OfferService {
 
+	private final OfferRepository offerRepository;
+	private final UserRepository userRepository;
+	private final RealEstateRepository realEstateRepository;
+	
+	public Offer createOffer(OfferDto request) {
+		var offer = of(request);
+		offerRepository.save(offer);
+		return offer;
+	}
+	
+	private Offer of(OfferDto request) {
+		var user = userRepository.findByEmail(request.getUserEmail())
+				.orElseThrow(UserNotFoundException::new);
+		
+		var realEstate = realEstateRepository.findById(request.getRealEstateId())
+				.orElseThrow(RealEstateNotFoundException::new);
+		
+		return Offer.offerBuilder()
+				.createdDate(LocalDateTime.now())
+				.category(ProposalCategory.valueOf(request.getCategory()))
+				.status(ProposalStatus.valueOf(request.getStatus()))
+				.user(user)
+				.realEstate(realEstate)
+				.amount(request.getAmount())
+				.build();
+	}
 	/*
     private final OfferRepository offerRepo;
     private final RealEstateAdRepository realEstateRepo;

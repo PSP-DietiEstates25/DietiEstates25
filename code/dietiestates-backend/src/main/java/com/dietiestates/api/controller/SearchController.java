@@ -21,6 +21,7 @@ public class SearchController {
 	
 	@PostMapping
 	public ResponseEntity<Search> createSearch(SearchDto request){
-		return ResponseEntity.status(HttpStatus.CREATED).body(searchService.createSearch(request));
+		searchService.createSearch(request);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }

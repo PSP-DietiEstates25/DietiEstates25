@@ -1,24 +1,16 @@
 package com.dietiestates.api.controller;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dietiestates.api.dto.OfferDto;
 import com.dietiestates.api.model.Offer;
 import com.dietiestates.api.service.OfferService;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -27,6 +19,13 @@ import lombok.RequiredArgsConstructor;
 @Validated
 public class OfferController {
 
+	private final OfferService offerService;
+	
+	@PostMapping
+	public ResponseEntity<Offer> createOffer(OfferDto request){
+		offerService.createOffer(request);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
 	/*
     private final OfferService offerService;
 

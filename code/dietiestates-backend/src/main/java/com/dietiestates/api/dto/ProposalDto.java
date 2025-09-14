@@ -32,5 +32,4 @@ public class ProposalDto {
 	@NotBlank(message = "Real estate id is mandatory")
 	@Positive(message = "Real estate id must be a positive number")
 	private Long realEstateId;
-
 }
