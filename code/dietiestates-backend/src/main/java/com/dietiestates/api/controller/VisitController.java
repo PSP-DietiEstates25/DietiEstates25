@@ -2,7 +2,9 @@ package com.dietiestates.api.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,15 +15,18 @@ import com.dietiestates.api.service.VisitService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/visits")
+@RequestMapping("/realEstates/{realestateid}/visits")
 @RequiredArgsConstructor
 public class VisitController {
 
 	private final VisitService visitService;
 	
 	@PostMapping
-	public ResponseEntity<Visit> createVisit(VisitDto request){
-		visitService.createVisit(request);
+	public ResponseEntity<Visit> createVisit(
+			@RequestBody VisitDto request,
+			@PathVariable Long realestateid
+			){
+		visitService.createVisit(request, realestateid);
 		return ResponseEntity.status(HttpStatus.ACCEPTED).build(); 
 	}
 	/* 

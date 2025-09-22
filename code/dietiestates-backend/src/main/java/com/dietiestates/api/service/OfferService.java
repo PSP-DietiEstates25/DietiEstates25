@@ -24,17 +24,16 @@ public class OfferService {
 	private final UserRepository userRepository;
 	private final RealEstateRepository realEstateRepository;
 	
-	public Offer createOffer(OfferDto request) {
-		var offer = of(request);
+	public void createOffer(OfferDto request, Long realEstateId) {
+		var offer = of(request, realEstateId);
 		offerRepository.save(offer);
-		return offer;
 	}
 	
-	private Offer of(OfferDto request) {
+	private Offer of(OfferDto request, Long realEstateId) {
 		var user = userRepository.findByEmail(request.getUserEmail())
 				.orElseThrow(UserNotFoundException::new);
 		
-		var realEstate = realEstateRepository.findById(request.getRealEstateId())
+		var realEstate = realEstateRepository.findById(realEstateId)
 				.orElseThrow(RealEstateNotFoundException::new);
 		
 		return Offer.offerBuilder()

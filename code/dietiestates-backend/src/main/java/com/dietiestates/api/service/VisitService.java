@@ -24,16 +24,16 @@ public class VisitService {
 	private final RealEstateRepository realEstateRepository;
 	private final UserRepository userRepository;
 	
-	public void createVisit(VisitDto request) {
-		var visit = of(request);
+	public void createVisit(VisitDto request, Long realEstateId) {
+		var visit = of(request, realEstateId);
 		visitRepository.save(visit);
 	}
 	
-	private Visit of(VisitDto request) {
+	private Visit of(VisitDto request, Long realEstateId) {
 		var user = userRepository.findByEmail(request.getUserEmail())
 				.orElseThrow(UserNotFoundException::new);
 		
-		var realEstate = realEstateRepository.findById(request.getRealEstateId())
+		var realEstate = realEstateRepository.findById(realEstateId)
 				.orElseThrow(RealEstateNotFoundException::new);
 		
 		return Visit.visitBuilder()

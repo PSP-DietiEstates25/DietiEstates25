@@ -3,7 +3,9 @@ package com.dietiestates.api.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,7 +16,7 @@ import com.dietiestates.api.service.OfferService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/offers")
+@RequestMapping("/realestates/{realestateid}/offers")
 @RequiredArgsConstructor
 @Validated
 public class OfferController {
@@ -22,8 +24,11 @@ public class OfferController {
 	private final OfferService offerService;
 	
 	@PostMapping
-	public ResponseEntity<Offer> createOffer(OfferDto request){
-		offerService.createOffer(request);
+	public ResponseEntity<Offer> createOffer(
+			@RequestBody OfferDto request,
+			@PathVariable Long realestateid
+		){
+		offerService.createOffer(request, realestateid);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	/*
