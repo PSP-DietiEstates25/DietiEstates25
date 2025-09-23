@@ -1,8 +1,5 @@
 import { Routes } from '@angular/router';
-<<<<<<< HEAD
 
-=======
->>>>>>> eadfaf90dc7606931ddde2d5a1b1a5cbe7754541
 import { HomeComponent } from './components/home/home.component';
 import { AgentDashboardComponent } from './components/agent-dashboard/agent-dashboard.component';
 import { roleGuard } from './_guards/role.guard';
