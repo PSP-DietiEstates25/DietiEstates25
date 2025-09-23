@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.NotificationDto;
+import com.dietiestates.api.enums.NotificationCategoryType;
 import com.dietiestates.api.exception.notfound.NotificationCategoryNotFoundException;
 import com.dietiestates.api.exception.notfound.UserNotFoundException;
 import com.dietiestates.api.model.Notification;
@@ -29,7 +30,7 @@ public class NotificationService {
 	
 	private Notification of(NotificationDto request) {
 		
-		var notificationCategory = notificationCategoryRepository.findByName(request.getNotificationCategoryName())
+		var notificationCategory = notificationCategoryRepository.findByName(NotificationCategoryType.valueOf(request.getNotificationCategoryName()))
 					.orElseThrow(NotificationCategoryNotFoundException::new);
 		
 		var user = userRepository.findByEmail(request.getUserEmail())
