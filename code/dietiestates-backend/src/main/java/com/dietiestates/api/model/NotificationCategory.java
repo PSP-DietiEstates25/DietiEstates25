@@ -1,8 +1,11 @@
 package com.dietiestates.api.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.dietiestates.api.enums.NotificationCategoryType;
@@ -45,6 +48,14 @@ public class NotificationCategory {
 	
 	@Column(nullable = false)
 	private boolean isActive;
+	
+	@CreatedDate
+	@Column(nullable = false, updatable = false)
+	private LocalDateTime createdDate;
+	
+	@LastModifiedDate
+	@Column(insertable = false)
+	private LocalDateTime lastModifiedDate;
 	
 	@OneToMany(mappedBy = "notificationCategory", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<Notification> notifications = new ArrayList<>();
