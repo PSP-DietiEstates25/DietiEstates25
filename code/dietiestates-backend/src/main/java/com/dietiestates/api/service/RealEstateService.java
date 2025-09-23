@@ -23,15 +23,19 @@ public class RealEstateService {
 	private final DetailsRepository detailsRepository;
 	private final EstateAgentRepository estateAgentRepository;
 	
-	public RealEstate createRealEstate(RealEstateDto request) {
+	public void createRealEstate(RealEstateDto request) {
 		var realEstate = of(request);
 		realEstateRepository.save(realEstate);
-		return realEstate;
 	}
 	
 	public RealEstate of(RealEstateDto request) {
-		var details = detailsRepository.findById(request.getDetailsId()).orElseThrow(DetailsNotFoundException::new);
-		var estateAgent = estateAgentRepository.findByEmail(request.getEstateAgentEmail()).orElseThrow(EstateAgentNotFoundException::new);
+		
+		var details = detailsRepository.findById(request.getDetailsId())
+				.orElseThrow(DetailsNotFoundException::new);
+		
+		var estateAgent = estateAgentRepository.findByEmail(request.getEstateAgentEmail())
+				.orElseThrow(EstateAgentNotFoundException::new);
+		
 		return RealEstate.realEstateBuilder()
 				.createdDate(LocalDateTime.now())
 				.category(AdCategory.valueOf(request.getCategory()))

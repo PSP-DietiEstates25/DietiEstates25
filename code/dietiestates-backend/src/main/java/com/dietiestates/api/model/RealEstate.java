@@ -52,7 +52,7 @@ public class RealEstate {
     @Column(nullable = false)
     private AdCategory category;
 
-    @Lob
+    //@Lob
     @Column(nullable = false)
     private String[] images;
 
@@ -72,7 +72,7 @@ public class RealEstate {
     		nullable = false,
     		name = "estate_agent_id",
     		foreignKey = @ForeignKey(name = "REAL_ESTATE_AGENT_ID_FK"))
-    private User estateAgent;
+    private EstateAgent estateAgent;
 
     @OneToOne
     @JoinColumn(

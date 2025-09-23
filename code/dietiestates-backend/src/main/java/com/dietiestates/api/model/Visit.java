@@ -31,10 +31,10 @@ import lombok.Setter;
 @EntityListeners(AuditingEntityListener.class)
 public class Visit extends Proposal {
 
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private LocalDate date;
 	
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private LocalTime time;
 	
 	@Builder(builderMethodName = "visitBuilder")

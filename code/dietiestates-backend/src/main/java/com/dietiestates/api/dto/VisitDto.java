@@ -31,11 +31,10 @@ public class VisitDto extends ProposalDto {
 			String category,
 			String status,
 			String userEmail,
-			Long realEstateId,
 			LocalDate date,
 			LocalTime time
 			) {
-		super(category, status, userEmail, realEstateId);
+		super(category, status, userEmail);
 		this.date = date;
 		this.time = time;
 	}

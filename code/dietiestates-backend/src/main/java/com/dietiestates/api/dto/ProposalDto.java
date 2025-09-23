@@ -27,9 +27,4 @@ public class ProposalDto {
 	@NotBlank(message = "User email is mandatory")
 	@Email(message = "User email is not valid")
 	private String userEmail;
-	
-	@NotEmpty(message = "Real estate id is mandatory")
-	@NotBlank(message = "Real estate id is mandatory")
-	@Positive(message = "Real estate id must be a positive number")
-	private Long realEstateId;
 }

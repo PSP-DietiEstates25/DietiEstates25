@@ -1,0 +1,195 @@
+@startuml Model
+class User {
+  - id
+  - username
+  - email
+  - password
+  - accountLocked
+  - enabled
+  - createdDate
+  - lastModifiedDate
+}
+
+abstract Proposal {
+  - id
+  - category: ProposalCategory
+  - status: ProposalStatus
+  - createdDate
+  - lastModifiedDate
+}
+
+abstract Staffer {
+}
+
+class Admin {
+}
+
+class CadastralData {
+  - id
+  - price
+  - size
+  - energyClass
+  - rooms
+  - floor
+  - createdDate
+  - lastModifiedDate
+}
+
+class Detail {
+  - id
+  - createdDate
+  - lastModifiedDate
+}
+
+class EstateAgent {
+}
+
+class GeographicalPosition {
+  - id
+  - city
+  - municipality
+  - address
+  - latitude
+  - longitude
+  - radius
+  - createdDate
+  - lastModifiedDate
+}
+
+class Notification {
+  - id
+  - message
+  - createdDate
+  - lastModifiedDate
+}
+
+class NotificationCategory {
+  - id
+  - name
+  - isActive
+  - createdDate
+  - lastModifiedDate
+}
+
+class Offer {
+  - amount
+}
+
+class RealEstate {
+  - id
+  - category: AdCategory
+  - images
+  - description
+  - createdDate
+  - lastModifiedDate
+}
+
+class Role {
+  - id
+  - name
+  - createdDate
+  - lastModifiedDate
+}
+
+class Search {
+  - id
+  - category: AdCategory
+  - maximumPrice
+  - minimumPrice
+  - createdDate
+  - lastModifiedDate
+}
+
+class Token {
+  - id
+  - token
+  - createdDate
+  - lastModifiedDate
+  - validatedAt
+}
+
+class Utility {
+  - id
+  - hasAirConditioning
+  - hasElevator
+  - hasDoorman
+  - createdDate
+  - lastModifiedDate
+}
+
+class Visit {
+  - date
+  - time
+}
+
+enum AdCategory {
+  SALE
+  RENT
+}
+
+enum EnergyClass {
+  A4
+	A3
+	A2
+  A1
+	B
+	C
+	D
+  E
+	F
+  G
+}
+
+enum NotificationCategoryTyepe {
+  NEW_PROPERTIES 
+	PROMOTIONAL
+	VISIT
+	OFFER
+}
+
+enum ProposalCategory {
+  VISIT
+  OFFER
+}
+
+enum ProposalStatus {
+  ACCEPTED
+  REJECTED
+  PENDING
+}
+
+Proposal <|-left- Visit
+Proposal <|-left- Offer
+User <|-left- Staffer
+Staffer <|-- EstateAgent
+Staffer <|-- Admin
+
+'Admin associations'
+Admin "1" -- "0..*" Admin : elige
+Admin "1" -- "0..*" EstateAgent : nominate
+
+'Detail associations'
+Detail --> "1" GeographicalPosition
+Detail --> "1" Utility
+Detail --> "1" CadastralData
+
+'Real Estate association'
+RealEstate -down-> "1" Detail
+RealEstate "0..*" -right- "0..1" Search : selects?
+RealEstate "0..*" -left- "1" EstateAgent : publish
+RealEstate "1" -up- "0..*" Proposal : contains
+
+'User association'
+User "  1 " -left- "0..*" Proposal : presents
+User "1..*" -up- "1..*" Role
+User "1" <-up- Token
+User " 1  " -right- "0..*" Notification : owns
+User "1" -- "0..*" Search : execute
+
+'Notification association'
+Notification "1..*" -down- "1" NotificationCategory : individuate
+
+'Search assocation'
+Search --> "1" Detail
+
+@enduml

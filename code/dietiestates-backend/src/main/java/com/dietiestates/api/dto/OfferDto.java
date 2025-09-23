@@ -25,10 +25,9 @@ public class OfferDto extends ProposalDto{
 			String category,
 			String status,
 			String userEmail,
-			Long realEstateId,
 			BigDecimal amount
 			) {
-		super(category, status, userEmail, realEstateId);
+		super(category, status, userEmail);
 		this.amount = amount;
 	}
 }

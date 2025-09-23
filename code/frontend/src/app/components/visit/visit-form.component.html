@@ -1,0 +1,32 @@
+<h2 class="font-semibold mb-2">Prenota una visita</h2>
+<form [formGroup]="form" (ngSubmit)="submit()" class="grid gap-2">
+  <div class="grid grid-cols-2 gap-2">
+    <div>
+      <label for="visit-date" class="text-sm">Data</label>
+      <input
+        id="visit-date"
+        type="date"
+        class="input_main"
+        formControlName="date"
+      />
+    </div>
+    <div>
+      <label for="visit-time" class="text-sm">Orario</label>
+      <input
+        id="visit-time"
+        type="time"
+        class="input_main"
+        formControlName="time"
+      />
+    </div>
+  </div>
+  <button class="btn_primary" [disabled]="loading">
+    {{ loading ? "Invio…" : "Richiedi visita" }}
+  </button>
+</form>
+<p *ngIf="form.touched && form.invalid" class="text-sm text-red-600 mt-1">
+  Seleziona una data.
+</p>
+<p *ngIf="!isLoggedIn" class="text-xs mt-2">Per prenotare devi accedere.</p>
+<p *ngIf="ok" class="text-green-600 mt-2">{{ ok }}</p>
+<p *ngIf="err" class="text-red-600 mt-2">{{ err }}</p>

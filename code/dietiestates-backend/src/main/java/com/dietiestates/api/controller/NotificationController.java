@@ -1,23 +1,33 @@
 package com.dietiestates.api.controller;
 
-import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
-
-import com.dietiestates.api.enums.NotificationCategoryType;
-import com.dietiestates.api.service.NotificationPreferenceService;
+import com.dietiestates.api.dto.NotificationDto;
+import com.dietiestates.api.model.Notification;
 import com.dietiestates.api.service.NotificationService;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/notifications")
+@RequestMapping("/notifications")
 @RequiredArgsConstructor
 public class NotificationController {
 
+	private final NotificationService notificationService;
+	
+	@PostMapping
+	public ResponseEntity<Notification> createNotification(
+			@RequestBody NotificationDto request
+			){
+		notificationService.createNotification(request);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+	
 	//private final NotificationService notifService;
 	//private final NotificationPreferenceService prefService;
 

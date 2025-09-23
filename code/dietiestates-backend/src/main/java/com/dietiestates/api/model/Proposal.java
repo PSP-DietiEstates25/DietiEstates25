@@ -62,6 +62,20 @@ public abstract class Proposal {
 	@Column(insertable = false)
 	protected LocalDateTime lastModifiedDate;
 	
+	public Proposal(
+			Long id,
+			String proposalCategory,
+			String proposalStatus,
+			LocalDateTime createdDate,
+			LocalDateTime lastModifiedDate
+			) {
+		this.id = id;
+		this.proposalCategory = ProposalCategory.valueOf(proposalStatus);
+		this.proposalStatus = ProposalStatus.valueOf(proposalStatus);
+		this.createdDate = createdDate;
+		this.lastModifiedDate = lastModifiedDate;
+	}
+	
 	@ManyToOne
 	@JoinColumn(
 			nullable = false,

@@ -1,0 +1,121 @@
+<section class="container mx-auto px-4 py-6">
+  @if (loading()) {
+  <div class="py-20 text-center">Caricamento…</div>
+  } @else if (error()) {
+  <div class="py-20 text-center text-red-600">{{ error() }}</div>
+  } @else if (ad()) {
+  <div class="grid lg:grid-cols-3 gap-6">
+    <!-- GALLERY -->
+    <div class="lg:col-span-2">
+      <div
+        class="rounded-2xl overflow-hidden border dark:border-slate-700 bg-black/5 dark:bg-white/5"
+      >
+        <img
+          [src]="
+            mainImage() || ad()!.coverUrl || '/assets/placeholder-house.jpg'
+          "
+          alt="Foto principale"
+          class="w-full aspect-video object-cover"
+        />
+      </div>
+      @if (ad()!.images?.length) {
+      <div class="mt-3 grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
+        @for (img of ad()!.images!; track img) {
+        <button
+          type="button"
+          class="rounded-xl overflow-hidden border dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-600 dark:focus:ring-blue-500"
+          (click)="setMain(img)"
+        >
+          <img
+            [src]="img"
+            class="w-full aspect-video object-cover"
+            alt="Anteprima"
+          />
+        </button>
+        }
+      </div>
+      }
+
+      <!-- DETTAGLI -->
+      <article class="mt-6 rounded-2xl border dark:border-slate-700 p-4">
+        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+          {{ ad()!.title }}
+        </h1>
+        <p class="text-slate-600 dark:text-slate-300 mt-1">
+          {{ ad()!.address }} • {{ ad()!.city }}
+        </p>
+
+        <div class="mt-4 text-sm grid sm:grid-cols-2 gap-2">
+          @if (ad()!.type) {
+          <div>
+            <span class="font-semibold">Tipologia:</span> {{ ad()!.type }}
+          </div>
+          } @if (ad()!.size != null) {
+          <div><span class="font-semibold">Mq:</span> {{ ad()!.size }}</div>
+          } @if (ad()!.rooms != null) {
+          <div>
+            <span class="font-semibold">Stanze:</span> {{ ad()!.rooms }}
+          </div>
+          } @if (ad()!.floor != null) {
+          <div><span class="font-semibold">Piano:</span> {{ ad()!.floor }}</div>
+          } @if (ad()!.energyClass) {
+          <div>
+            <span class="font-semibold">Classe energetica:</span>
+            {{ ad()!.energyClass }}
+          </div>
+          }
+        </div>
+
+        @if (ad()!.description) {
+        <p class="mt-4 whitespace-pre-line">{{ ad()!.description }}</p>
+        }
+      </article>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="space-y-4">
+      <div class="rounded-2xl border dark:border-slate-700 p-4">
+        <div class="text-2xl font-extrabold">
+          @if (ad()!.price != null) { € {{ ad()!.price | number : "1.0-0" }} }
+          @else { Prezzo su richiesta }
+        </div>
+        @if (ad()!.agent) {
+        <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">
+          Agente: {{ ad()!.agent!.name }}
+        </p>
+        }
+      </div>
+
+      <!-- OFFERTA -->
+      <div class="rounded-2xl border dark:border-slate-700 p-4">
+        <app-offer-form
+          [adId]="ad()!.id"
+          [isLoggedIn]="isLogged()"
+          (loginRequired)="goToLogin()"
+        >
+        </app-offer-form>
+      </div>
+
+      <!-- VISITA -->
+      <div class="rounded-2xl border dark:border-slate-700 p-4">
+        <app-visit-form
+          [adId]="ad()!.id"
+          [isLoggedIn]="isLogged()"
+          (loginRequired)="goToLogin()"
+        >
+        </app-visit-form>
+      </div>
+
+      <!-- CONTATTI AGENTE -->
+      @if (ad()!.agent) {
+      <div class="rounded-2xl border dark:border-slate-700 p-4 text-sm">
+        <h3 class="font-semibold mb-1">Contatta l'agente</h3>
+        @if (ad()!.agent!.email) {
+        <p>Email: {{ ad()!.agent!.email }}</p>
+        }
+      </div>
+      }
+    </aside>
+  </div>
+  }
+</section>
