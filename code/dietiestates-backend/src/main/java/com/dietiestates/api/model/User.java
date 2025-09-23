@@ -101,7 +101,7 @@ public class User implements UserDetails, Principal {
 	private final List<Notification> notifications = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private final List<SearchUser> searches = new ArrayList<>();
+	private final List<Search> searches = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<Proposal> proposals = new ArrayList<>();
@@ -111,7 +111,7 @@ public class User implements UserDetails, Principal {
 		notification.setUser(this);
 	}
 	
-	public void addSearch(SearchUser search) {
+	public void addSearch(Search search) {
 		searches.add(search);
 		search.setUser(this);
 	}

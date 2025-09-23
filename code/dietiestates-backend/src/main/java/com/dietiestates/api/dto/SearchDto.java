@@ -2,6 +2,7 @@ package com.dietiestates.api.dto;
 
 import java.math.BigDecimal;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
@@ -34,4 +35,9 @@ public class SearchDto {
 	@NotBlank(message = "Detail id is mandatory")
 	@Positive(message = "Detail id must be a positive number")
 	private Long detailsId;
+	
+	@NotEmpty(message = "User email is mandatory")
+	@NotBlank(message = "User email is mandatory")
+	@Email
+	private String userEmail;
 }

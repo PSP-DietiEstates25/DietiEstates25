@@ -2,8 +2,6 @@ package com.dietiestates.api.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -11,7 +9,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.dietiestates.api.enums.AdCategory;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -22,7 +19,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -71,13 +68,12 @@ public class Search {
 			foreignKey = @ForeignKey(name = "SEARCH_DETAIL_ID_FK"))
 	private Detail detail;
 	
-	@OneToMany(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
-	private final List<SearchUser> users = new ArrayList<>();
-	
-	public void addUser(SearchUser user) {
-		users.add(user);
-		user.setSearch(this);
-	}
+	@ManyToOne
+	@JoinColumn(
+			nullable = false,
+			name = "user_email",
+			foreignKey = @ForeignKey(name = "SEARCH_USER_EMAIL_FK"))
+	private User user;
 	
 	public void addDetails(Detail detail) {
 		this.detail = detail;

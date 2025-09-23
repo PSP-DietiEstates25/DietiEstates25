@@ -28,16 +28,6 @@ public class NotificationController {
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	//private final NotificationService notifService;
 	//private final NotificationPreferenceService prefService;
 
