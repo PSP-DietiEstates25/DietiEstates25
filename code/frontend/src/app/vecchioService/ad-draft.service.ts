@@ -4,7 +4,10 @@ export interface AdDraft {
   title: string;
   price: number | null;
   city: string;
-  address: string;
+  //aggiunte da gio
+  latitude: number | null;
+  longitude: number | null;
+//  address: string;
   type: string;
   size: number | null;
   description: string;
@@ -15,7 +18,10 @@ const EMPTY: AdDraft = {
   title: '',
   price: null,
   city: '',
-  address: '',
+//aggiunte da gio
+  latitude: null,
+  longitude: null,
+//  address: '',
   type: 'Appartamento',
   size: null,
   description: '',
@@ -55,7 +61,10 @@ export class AdDraftService {
     fd.set('title', d.title);
     if (d.price != null) fd.set('price', String(d.price));
     fd.set('city', d.city);
-    fd.set('address', d.address);
+//aggiuinte da gio
+    if (d.latitude != null) fd.set('latitude', String(d.latitude));
+    if (d.longitude != null) fd.set('longitude', String(d.longitude));
+ //   fd.set('address', d.address);
     fd.set('type', d.type);
     if (d.size != null) fd.set('size', String(d.size));
     fd.set('description', d.description);

@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @use "tailwindcss";
-@use "@angular/material/prebuilt-themes/indigo-pink.css";
+
 
 html,
 body {
@@ -58,3 +58,5 @@ font-semibold;
     @apply min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100;
   }
 }
+
+@import "leaflet/dist/leaflet.css";

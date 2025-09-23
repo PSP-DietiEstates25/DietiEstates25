@@ -11,9 +11,16 @@
         <p><span class="font-semibold">Città:</span> {{ d.city || "—" }}</p>
         <p><span class="font-semibold">Tipologia:</span> {{ d.type || "—" }}</p>
         <p><span class="font-semibold">Mq:</span> {{ d.size ?? "—" }}</p>
+        
         <p class="sm:col-span-2">
-          <span class="font-semibold">Indirizzo:</span> {{ d.address || "—" }}
+          <span class="font-semibold">Latitudine:</span> {{ d.latitude || "—" }}
         </p>
+        <p class="sm:col-span-2">
+          <span class="font-semibold">Longitudine:</span> {{ d.longitude || "—" }}
+        </p>
+
+
+
         <p class="sm:col-span-2">
           <span class="font-semibold">Descrizione:</span>
           {{ d.description || "—" }}
