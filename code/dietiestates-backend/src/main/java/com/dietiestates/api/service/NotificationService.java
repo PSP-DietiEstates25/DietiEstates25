@@ -1,16 +1,14 @@
 package com.dietiestates.api.service;
 
-import java.time.Instant;
-import java.util.List;
+import java.time.LocalDateTime;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.dietiestates.api.enums.NotificationCategoryType;
+import com.dietiestates.api.dto.NotificationDto;
+import com.dietiestates.api.exception.notfound.NotificationCategoryNotFoundException;
+import com.dietiestates.api.exception.notfound.UserNotFoundException;
 import com.dietiestates.api.model.Notification;
-import com.dietiestates.api.model.User;
+import com.dietiestates.api.repository.NotificationCategoryRepository;
 import com.dietiestates.api.repository.NotificationRepository;
 import com.dietiestates.api.repository.UserRepository;
 
@@ -20,6 +18,30 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class NotificationService {
 
+	private final NotificationRepository notificationRepository;
+	private final NotificationCategoryRepository notificationCategoryRepository;
+	private final UserRepository userRepository;
+	
+	public void createNotification(NotificationDto request) {
+		var notification = of(request);
+		notificationRepository.save(notification);
+	}
+	
+	private Notification of(NotificationDto request) {
+		
+		var notificationCategory = notificationCategoryRepository.findByName(request.getNotificationCategoryName())
+					.orElseThrow(NotificationCategoryNotFoundException::new);
+		
+		var user = userRepository.findByEmail(request.getUserEmail())
+				.orElseThrow(UserNotFoundException::new);
+		
+		return Notification.builder()
+				.createdDate(LocalDateTime.now())
+				.message(request.getMessage())
+				.notificationCategory(notificationCategory)
+				.user(user)
+				.build();
+	}
 	/*
 	private final NotificationRepository notifRepo;
 	private final UserRepository userRepo;

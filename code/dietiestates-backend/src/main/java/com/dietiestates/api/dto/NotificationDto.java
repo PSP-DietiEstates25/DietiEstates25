@@ -1,5 +1,6 @@
 package com.dietiestates.api.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
@@ -21,8 +22,13 @@ public class NotificationDto {
 	@Size(max = 50, message = "Message must be maximum 50 characters long")
 	private String message;
 	
-	@NotEmpty(message = "Notification category id is mandatory")
-	@NotBlank(message = "Notification category id is mandatory")
-	@Positive(message = "Notification category id must be a positive number")
-	private Long notificationCategoryId;
+	@NotEmpty(message = "Notification category name is mandatory")
+	@NotBlank(message = "Notification category name is mandatory")
+	@Positive(message = "Notification category name must be a positive number")
+	private String notificationCategoryName;
+	
+	@NotEmpty(message = "User email is mandatory")
+	@NotBlank(message = "User email id is mandatory")
+	@Email
+	private String userEmail;
 }
