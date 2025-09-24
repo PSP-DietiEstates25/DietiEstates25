@@ -1,21 +1,21 @@
 @startuml Model
 class User {
-  - id
+  # id
   - username
-  - email
-  - password
-  - accountLocked
-  - enabled
-  - createdDate
-  - lastModifiedDate
+  # email
+  # password
+  # accountLocked
+  # enabled
+  # createdDate
+  # lastModifiedDate
 }
 
 abstract Proposal {
-  - id
-  - category: ProposalCategory
-  - status: ProposalStatus
-  - createdDate
-  - lastModifiedDate
+  # id
+  # category: ProposalCategory
+  # status: ProposalStatus
+  # createdDate
+  # lastModifiedDate
 }
 
 abstract Staffer {
@@ -94,8 +94,6 @@ class Role {
 class Search {
   - id
   - category: AdCategory
-  - maximumPrice
-  - minimumPrice
   - createdDate
   - lastModifiedDate
 }
@@ -129,6 +127,28 @@ class SearchRealEstate {
   - lastModifiedDate
 }
 
+class CadastralFilter {
+  - id
+  - priceRange: BigDecimalRange
+  - squareMetersRange: IntegerRange
+  - energyClassRange: IntegerRange
+  - roomsRange: IntegerRange
+  - floorRange: IntegerRange
+  - createdDate
+  - lastModifiedDate
+}
+
+abstract Range<T> {
+  # min: T
+  # max: T
+}
+
+class IntegerRange {
+}
+
+class BigDecimalRange {
+}
+
 enum AdCategory {
   SALE
   RENT
@@ -147,7 +167,7 @@ enum EnergyClass {
   G
 }
 
-enum NotificationCategoryTyepe {
+enum NotificationCategoryType {
   NEW_PROPERTIES 
 	PROMOTIONAL
 	VISIT
@@ -167,9 +187,14 @@ enum ProposalStatus {
 
 Proposal <|-left- Visit
 Proposal <|-left- Offer
+
 User <|-left- Staffer
+
 Staffer <|-- EstateAgent
 Staffer <|-- Admin
+
+Range <|-- IntegerRange : <<bind>> <T::Integer>
+Range <|-- BigDecimalRange : <<bind>> <T::BigDecimal>
 
 'Admin associations'
 Admin "1" -- "0..*" Admin : elige
@@ -178,13 +203,13 @@ Admin "1" -- "0..*" EstateAgent : nominate
 'Detail associations'
 Detail --> "1" GeographicalPosition
 Detail --> "1" Utility
-Detail --> "1" CadastralData
 
 'Real Estate association'
 RealEstate -down-> "1" Detail
 RealEstate " 1  " -right- "0..*" SearchRealEstate : selects
 RealEstate "0..*" -left- "1" EstateAgent : publish
 RealEstate "1" -up- "0..*" Proposal : contains
+RealEstate -down- CadastralData
 
 'User association'
 User "  1 " -left- "0..*" Proposal : presents
@@ -199,5 +224,6 @@ Notification "1..*" -down- "1" NotificationCategory : individuate
 'Search assocation'
 Search --> "1" Detail
 Search "  1 " -left- "0..*" SearchRealEstate : selects
+Search -down- CadastralFilter
 
 @enduml
