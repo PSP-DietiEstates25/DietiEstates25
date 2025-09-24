@@ -1,18 +1,19 @@
 package com.dietiestates.api.repository;
 
-import java.time.Instant;
 import java.util.List;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-//import com.dietiestates.api.enums.VisitStatus;
 import com.dietiestates.api.model.Visit;
 
-public interface VisitRepository extends CrudRepository<Visit, Long> {
+public interface VisitRepository extends
+	CrudRepository<Visit, Long>,
+	PagingAndSortingRepository<Visit, Long> {
+
+	List<Visit> findByUser(String userEmail, Pageable pageable);
+	List<Visit> findByRealEstate(Long realEstateId, Pageable pageable);
 	
 	/*
 

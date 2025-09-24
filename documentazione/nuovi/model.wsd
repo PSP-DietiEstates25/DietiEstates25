@@ -122,6 +122,13 @@ class Visit {
   - time
 }
 
+class SearchRealEstate {
+  - realEstateId
+  - searchId
+  - createdDate
+  - lastModifiedDate
+}
+
 enum AdCategory {
   SALE
   RENT
@@ -175,7 +182,7 @@ Detail --> "1" CadastralData
 
 'Real Estate association'
 RealEstate -down-> "1" Detail
-RealEstate "0..*" -right- "0..1" Search : selects?
+RealEstate " 1  " -right- "0..*" SearchRealEstate : selects
 RealEstate "0..*" -left- "1" EstateAgent : publish
 RealEstate "1" -up- "0..*" Proposal : contains
 
@@ -191,5 +198,6 @@ Notification "1..*" -down- "1" NotificationCategory : individuate
 
 'Search assocation'
 Search --> "1" Detail
+Search "  1 " -left- "0..*" SearchRealEstate : selects
 
 @enduml

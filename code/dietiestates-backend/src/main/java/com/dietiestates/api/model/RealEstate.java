@@ -21,7 +21,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -83,6 +82,9 @@ public class RealEstate {
     
     @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Proposal> proposals = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<SearchRealEstate> searchRealEstates = new ArrayList<>();
     
     @Builder(builderMethodName = "realEstateBuilder")
     public RealEstate(
