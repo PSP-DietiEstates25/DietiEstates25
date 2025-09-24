@@ -69,10 +69,10 @@ public class CadastralData {
 	private LocalDateTime lastModifiedDate;
 	
 	@OneToOne(mappedBy = "cadastralData", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Detail detail;
+	private RealEstate realEstate;
 	
-	public void addDetail(Detail detail) {
-		this.detail = detail;
-		detail.setCadastralData(this);
+	public void addRealEstate(RealEstate realEstate) {
+		this.realEstate = realEstate;
+		realEstate.setCadastralData(this);
 	}
 }

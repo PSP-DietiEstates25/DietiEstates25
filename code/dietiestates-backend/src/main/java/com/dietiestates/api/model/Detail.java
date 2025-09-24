@@ -58,13 +58,6 @@ public class Detail {
 			name = "utility_id",
 			foreignKey = @ForeignKey(name = "DETAIL_UTILITY_ID_FK"))
 	private Utility utility;
-	
-	@OneToOne
-	@JoinColumn(
-			nullable = false,
-			name = "cadastral_data_id",
-			foreignKey = @ForeignKey(name = "DETAIL_CADASTRAL_DATA_ID_FK"))
-	private CadastralData cadastralData;
 		
 	@OneToOne(mappedBy = "detail", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Search search;
@@ -82,10 +75,8 @@ public class Detail {
 		this.createdDate = createdDate;
 		this.geographicalPosition = geographicalPosition;
 		this.utility = utility;
-		this.cadastralData = cadastralData;
 		geographicalPosition.addDetail(this);
 		utility.addDetail(this);
-		cadastralData.addDetail(this);
 	}
 	
 	public void addRealEstate(RealEstate realEstate) {

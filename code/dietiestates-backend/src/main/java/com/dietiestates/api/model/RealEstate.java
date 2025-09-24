@@ -47,7 +47,7 @@ public class RealEstate {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     @Column(nullable = false)
     private AdCategory category;
 
@@ -79,6 +79,13 @@ public class RealEstate {
 			name = "detail_id",
 			foreignKey = @ForeignKey(name = "REAL_ESTATE_DETAIL_ID_FK"))
     private Detail detail;
+    
+    @OneToOne
+	@JoinColumn(
+			nullable = false,
+			name = "cadastral_data_id",
+			foreignKey = @ForeignKey(name = "REAL_ESTATE_CADASTRAL_DATA_ID_FK"))
+	private CadastralData cadastralData;
     
     @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Proposal> proposals = new ArrayList<>();

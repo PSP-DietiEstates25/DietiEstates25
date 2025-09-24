@@ -52,12 +52,6 @@ public class Search {
 	private AdCategory category;
 	
 	@Column(nullable = false)
-	private BigDecimal minimumPrice;
-	
-	@Column(nullable = false)
-	private BigDecimal maximumPrice;
-	
-	@Column(nullable = false)
 	private Integer size;
 	
 	@Column(nullable = false)
@@ -77,6 +71,13 @@ public class Search {
 			name = "detail_id",
 			foreignKey = @ForeignKey(name = "SEARCH_DETAIL_ID_FK"))
 	private Detail detail;
+	
+	@OneToOne
+	@JoinColumn(
+			nullable = false,
+			name = "cadastral_filter_id",
+			foreignKey = @ForeignKey(name = "SEARCH_CADASTRAL_FILTER_ID_FK"))
+	private CadastralFilter cadastralFilter;
 	
 	@ManyToOne
 	@JoinColumn(

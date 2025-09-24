@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.SearchDto;
-import com.dietiestates.api.model.Search;
+import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.service.SearchService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,10 +21,11 @@ public class SearchController {
 	private final SearchService searchService;
 	
 	@PostMapping
-	public ResponseEntity<Search> createSearch(
+	public ResponseEntity<RealEstate> createSearch(
 			@RequestBody SearchDto request
 			){
-		searchService.createSearch(request);
+		//var realEstates = searchService.createSearch(request);
+		//return ResponseEntity.status(HttpStatus.CREATED).body(realEstates);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }

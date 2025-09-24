@@ -30,6 +30,16 @@ public class SearchDto {
 	@NotBlank(message = "Maximum price is mandatory")
 	@Positive(message = "Maximum price must be a positive number")
 	private BigDecimal maximumPrice;
+	
+	@NotEmpty(message = "Size is mandatory")
+	@NotBlank(message = "Size is mandatory")
+	@Positive(message = "Size must be a positive number")
+	private Integer size;
+	
+	@NotEmpty(message = "Page is mandatory")
+	@NotBlank(message = "Page is mandatory")
+	@Positive(message = "Page must be a positive number")
+	private Integer page;
 
 	@NotEmpty(message = "Detail id is mandatory")
 	@NotBlank(message = "Detail id is mandatory")

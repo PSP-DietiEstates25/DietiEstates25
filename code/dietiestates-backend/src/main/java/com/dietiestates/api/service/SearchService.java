@@ -10,6 +10,8 @@ import com.dietiestates.api.exception.notfound.DetailsNotFoundException;
 import com.dietiestates.api.exception.notfound.UserNotFoundException;
 import com.dietiestates.api.model.Search;
 import com.dietiestates.api.repository.DetailsRepository;
+import com.dietiestates.api.repository.RealEstateRepository;
+import com.dietiestates.api.repository.SearchRealEstateRepository;
 import com.dietiestates.api.repository.SearchRepository;
 import com.dietiestates.api.repository.UserRepository;
 
@@ -20,11 +22,16 @@ import lombok.RequiredArgsConstructor;
 public class SearchService {
 	
 	private final SearchRepository searchRepository;
-	private final DetailsRepository detailsRepository;
+	private final RealEstateRepository realEstateRepository;
+	private final SearchRealEstateRepository searchRealEstateRepository;
 	private final UserRepository userRepository;
+	
+	private final DetailsRepository detailsRepository;
+	//private final GeographicalPositionRepository geographicalPositionRepository;
 	
 	public void createSearch(SearchDto request) {
 		var search = of(request);
+		
 		searchRepository.save(search);
 	}
 	
@@ -37,10 +44,10 @@ public class SearchService {
 				.orElseThrow(DetailsNotFoundException::new);
 		
 		return Search.builder()
-				.category(AdCategory.valueOf(request.getCategory()))
-				.minimumPrice(request.getMinimumPrice())
-				.maximumPrice(request.getMaximumPrice())
 				.createdDate(LocalDateTime.now())
+				.category(AdCategory.valueOf(request.getCategory()))
+				.size(request.getSize())
+				.page(request.getPage() - 1)
 				.detail(details)
 				.user(user)
 				.build();
