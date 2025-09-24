@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
-import { AuthComponent } from './components/auth/auth.component';
+
 import { HomeComponent } from './components/home/home.component';
 import { AgentDashboardComponent } from './components/agent-dashboard/agent-dashboard.component';
 import { roleGuard } from './_guards/role.guard';
 import { SearchPageComponent } from './components/search/search-page.component';
+import { MapComponent } from './components/map/map.component';
 
 export const routes: Routes = [
   {
@@ -25,6 +26,12 @@ export const routes: Routes = [
           ),
       },
     ],
+  },
+
+  {
+    path: 'map',
+    title: 'Mappa di prova',
+    component: MapComponent, // 👈 nuova route attiva
   },
 
   {
@@ -58,6 +65,8 @@ export const routes: Routes = [
     path: 'search',
     component: SearchPageComponent,
   },
+
+  
 
   {
     path: 'agent',

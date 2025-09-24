@@ -1,10 +1,5 @@
 <form [formGroup]="form" class="grid sm:grid-cols-2 gap-4">
-  <div class="sm:col-span-2">
-    <label for="address" class="block text-sm mb-1 dark:text-slate-200"
-      >Indirizzo</label
-    >
-    <input id="address" class="input_main" formControlName="address" />
-  </div>
+  
   <div>
     <label for="type" class="block text-sm mb-1 dark:text-slate-200"
       >Tipologia</label
@@ -32,6 +27,20 @@
       placeholder="Dettagli dell'immobile"
     ></textarea>
   </div>
+
+ <div class="sm:col-span-2 h-100 relative">
+    <label for="map" class="label_style">Posizione immobile</label>
+
+    <app-map
+      [isEditable]="false"
+      [initialLatitude]="form.get('latitude')?.value || 40.85631"
+      [initialLongitude]="form.get('longitude')?.value || 14.24641"
+      (latitudeChange)="updateLatitude($event)"
+      (longitudeChange)="updateLongitude($event)"
+    ></app-map>
+  </div>
+
+
 
   <div class="sm:col-span-2 flex justify-between gap-2 mt-2">
     <button type="button" class="btn_ghost" (click)="back()">Indietro</button>

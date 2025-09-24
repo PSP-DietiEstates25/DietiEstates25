@@ -9,8 +9,27 @@ export interface Ad {
   // altri campi
 }
 
+export interface AdDetail {
+  id: number;
+  title: string;
+  price?: number | null;
+  city?: string;
+  address?: string;
+  description?: string;
+  type?: string;
+  size?: number | null;
+  rooms?: number | null;
+  floor?: number | null;
+  energyClass?: string | null;
+  images?: string[];
+  coverUrl?: string;
+  createdAt?: string;
+  lat?: number | null;
+  lng?: number | null;
+}
+
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AdService {
   private baseUrl = 'http://localhost:8080/api/ads';
@@ -41,5 +60,17 @@ export class AdService {
   deleteAd(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
-  
+
+  getById(id: number) {
+    return this.http.get<AdDetail>(`${this.baseUrl}/${id}`);
+  }
+  makeOffer(id: number, body: { amount: number }) {
+    return this.http.post(`${this.baseUrl}/${id}/offers`, body);
+  }
+  requestVisit(
+    id: number,
+    body: { date: string; time?: string }
+  ) {
+    return this.http.post(`${this.baseUrl}/${id}/visits`, body);
+  }
 }
