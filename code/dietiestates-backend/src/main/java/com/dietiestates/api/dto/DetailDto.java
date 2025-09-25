@@ -1,5 +1,7 @@
 package com.dietiestates.api.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,14 +12,15 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder
-public class DetailsDto {
+public class DetailDto {
+
+	@NotEmpty(message = "Real estate id is mandatory")
+	@NotBlank(message = "Real estate id is mandatory")
+	@Positive(message = "Real estate id must be a positive number")
+	private Long realEstateId;
 	
-	@Positive(message = "Geographical position id must be a positive number")
-	private Long geographicalPositionId;
-	
-	@Positive(message = "Utility id must be a positive number")
-	private Long utilityId;
-	
-	@Positive(message = "Cadastral data id must be a positive number")
-	private Long cadastralDataId;
+	@NotEmpty(message = "Search id is mandatory")
+	@NotBlank(message = "Search id is mandatory")
+	@Positive(message = "Search id must be a positive number")
+	private Long searchId;
 }

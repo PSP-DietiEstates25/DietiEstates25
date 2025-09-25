@@ -2,6 +2,7 @@ package com.dietiestates.api.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,5 +25,4 @@ public class UtilityDto {
 	@NotEmpty(message = "Elevator is mandatory")
 	@NotBlank(message = "Elevator is mandatory")
 	private boolean hasElevator;
-	
 }

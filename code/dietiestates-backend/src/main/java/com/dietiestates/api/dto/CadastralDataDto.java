@@ -26,11 +26,11 @@ public class CadastralDataDto {
 	@NotBlank(message = "Size is mandatory")
 	@Digits(fraction = 2, integer = 3)
 	@Positive(message = "Size must be a positive number")
-	private Float size;
+	private Integer squareMeters;
 
 	@NotEmpty(message = "Energy class is mandatory")
 	@NotBlank(message = "Energy class is mandatory")
-	private String energyClass;
+	private Integer energyClass;
 	
 	@NotEmpty(message = "Rooms number is mandatory")
 	@NotBlank(message = "Rooms number is mandatory")

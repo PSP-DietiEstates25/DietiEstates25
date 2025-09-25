@@ -21,16 +21,6 @@ public class SearchDto {
 	@NotBlank(message = "Category is mandatory")
 	private String category;
 	
-	@NotEmpty(message = "Minimum price is mandatory")
-	@NotBlank(message = "Minimum price is mandatory")
-	@Positive(message = "Minimum price must be a positive number")
-	private BigDecimal minimumPrice;
-	
-	@NotEmpty(message = "Maximum price is mandatory")
-	@NotBlank(message = "Maximum price is mandatory")
-	@Positive(message = "Maximum price must be a positive number")
-	private BigDecimal maximumPrice;
-	
 	@NotEmpty(message = "Size is mandatory")
 	@NotBlank(message = "Size is mandatory")
 	@Positive(message = "Size must be a positive number")
@@ -40,11 +30,6 @@ public class SearchDto {
 	@NotBlank(message = "Page is mandatory")
 	@Positive(message = "Page must be a positive number")
 	private Integer page;
-
-	@NotEmpty(message = "Detail id is mandatory")
-	@NotBlank(message = "Detail id is mandatory")
-	@Positive(message = "Detail id must be a positive number")
-	private Long detailsId;
 	
 	@NotEmpty(message = "User email is mandatory")
 	@NotBlank(message = "User email is mandatory")
