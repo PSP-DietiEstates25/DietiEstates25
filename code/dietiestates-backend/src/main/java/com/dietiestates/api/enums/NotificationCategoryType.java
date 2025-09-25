@@ -1,5 +1,7 @@
 package com.dietiestates.api.enums;
 
+import java.util.Optional;
+
 import lombok.Getter;
 
 public enum NotificationCategoryType {
@@ -14,4 +16,12 @@ public enum NotificationCategoryType {
 	NotificationCategoryType(int order){
 		this.order = order;
 	}
+	
+	public static Optional<NotificationCategoryType> fromOrder(Integer orderCode) {
+        if (orderCode == null) return Optional.empty();
+        for (NotificationCategoryType notificationCategoryType: values()) {
+            if (notificationCategoryType.getOrder() == orderCode) return Optional.of(notificationCategoryType);
+        }
+        throw new IllegalArgumentException("Invalid notification category type code: " + orderCode);
+    }
 }

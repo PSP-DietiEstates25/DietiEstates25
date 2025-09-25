@@ -1,5 +1,7 @@
 package com.dietiestates.api.enums;
 
+import java.util.Optional;
+
 import lombok.Getter;
 
 public enum EnergyClass {
@@ -20,4 +22,12 @@ public enum EnergyClass {
 	EnergyClass(int order){
 		this.order = order;
 	}
+	
+	public static Optional<EnergyClass> fromOrder(Integer orderCode) {
+        if (orderCode == null) return Optional.empty();
+        for (EnergyClass energyClass: values()) {
+            if (energyClass.getOrder() == orderCode) return Optional.of(energyClass);
+        }
+        throw new IllegalArgumentException("Invalid energy class code: " + orderCode);
+    }
 }

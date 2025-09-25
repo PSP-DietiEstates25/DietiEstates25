@@ -53,14 +53,14 @@ public class Detail {
 		
 	@OneToOne
 	@JoinColumn(
-			nullable = false,
+			nullable = true,
 			name = "search_id",
 			foreignKey = @ForeignKey(name = "DETAIL_SEARCH_ID_FK"))
 	private Search search;
 	
 	@OneToOne
     @JoinColumn(
-			nullable = false,
+			nullable = true,
 			name = "real_estate_id",
 			foreignKey = @ForeignKey(name = "DETAIL_REAL_ESTATE_ID_FK"))
 	private RealEstate realEstate;
