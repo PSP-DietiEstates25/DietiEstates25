@@ -11,9 +11,11 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -52,6 +54,15 @@ public class CadastralFilter {
 	@Embedded
 	private FloorRange floorRange;
 	
-	@OneToOne(mappedBy = "cadastralFilter", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne
+	@JoinColumn(
+			nullable = false,
+			name = "search_id",
+			foreignKey = @ForeignKey(name = "CADASTRAL_FILTER_SEARCH_ID_FK"))
 	private Search search;
+	
+	public void setSearch(Search search) {
+		this.search = search;
+		search.setCadastralFilter(this);;
+	}
 }

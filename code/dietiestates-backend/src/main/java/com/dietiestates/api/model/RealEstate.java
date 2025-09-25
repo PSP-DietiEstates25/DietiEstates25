@@ -73,18 +73,10 @@ public class RealEstate {
     		foreignKey = @ForeignKey(name = "REAL_ESTATE_AGENT_ID_FK"))
     private EstateAgent estateAgent;
 
-    @OneToOne
-    @JoinColumn(
-			nullable = false,
-			name = "detail_id",
-			foreignKey = @ForeignKey(name = "REAL_ESTATE_DETAIL_ID_FK"))
+    @OneToOne(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
     private Detail detail;
     
-    @OneToOne
-	@JoinColumn(
-			nullable = false,
-			name = "cadastral_data_id",
-			foreignKey = @ForeignKey(name = "REAL_ESTATE_CADASTRAL_DATA_ID_FK"))
+    @OneToOne(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
 	private CadastralData cadastralData;
     
     @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -93,28 +85,26 @@ public class RealEstate {
     @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<SearchRealEstate> searchRealEstates = new ArrayList<>();
     
+    /*
     @Builder(builderMethodName = "realEstateBuilder")
     public RealEstate(
     		LocalDateTime createdDate,
     		AdCategory category,
     		String[] images,
     		String description,
-    		EstateAgent estateAgent,
-    		Detail detail
+    		EstateAgent estateAgent
     		) {
-    	this.createdDate = createdDate;
-    	this.category = category;
-    	this.images = images;
-    	this.description = description;
-    	this.estateAgent = estateAgent;
-    	this.detail = detail;
+	    	this.createdDate = createdDate;
+	    	this.category = category;
+	    	this.images = images;
+	    	this.description = description;
+	    	this.estateAgent = estateAgent;
     	
-    	detail.addRealEstate(this);
-    	estateAgent.addRealEstate(this);
     }
+    */
     
     public void addProposal(Proposal proposal) {
-    	proposals.add(proposal);
-    	proposal.setRealEstate(this); 
+	    	proposals.add(proposal);
+	    	proposal.setRealEstate(this);
     }
 }

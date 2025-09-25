@@ -28,7 +28,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Utility {
@@ -55,10 +54,29 @@ public class Utility {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 
-	@OneToOne(mappedBy = "utility", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne
+	@JoinColumn(
+			nullable = false,
+			name = "detail_id",
+			foreignKey = @ForeignKey(name = "UTILITY_DETAIL_ID_FK"))
 	private Detail detail;
 	
-	public void addDetail(Detail detail) {
+	@Builder(builderMethodName = "utilityBuilder")
+	public Utility(
+			LocalDateTime createdDate,
+			Boolean hasElevator,
+			Boolean hasDoorman,
+			Boolean hasAirConditioning,
+			Detail detail
+			) {
+		this.createdDate = createdDate;
+		this.hasElevator = hasElevator;
+		this.hasDoorman = hasDoorman;
+		this.hasAirConditioning = hasAirConditioning;
+		this.setDetail(detail);
+	}
+	
+	public void setDetail(Detail detail) {
 		this.detail = detail;
 		detail.setUtility(this);
 	}

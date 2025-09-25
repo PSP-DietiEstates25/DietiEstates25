@@ -31,7 +31,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -48,7 +47,7 @@ public class CadastralData {
     private BigDecimal price;
 
     @Column(nullable = false)
-    private Float size;
+    private Integer squareMeters;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -68,10 +67,33 @@ public class CadastralData {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 	
-	@OneToOne(mappedBy = "cadastralData", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne
+	@JoinColumn(
+			nullable = false,
+			name = "real_estate_id",
+			foreignKey = @ForeignKey(name = "CADASTRAL_DATA_REAL_ESTATE_ID_FK"))
 	private RealEstate realEstate;
 	
-	public void addRealEstate(RealEstate realEstate) {
+	@Builder(builderMethodName = "cadastralDataBuilder")
+	public CadastralData(
+		LocalDateTime createdDate,
+		BigDecimal price,
+		Integer squareMeters,
+		String energyClass,
+		Integer rooms,
+		Integer floor,
+		RealEstate realEstate
+		) {
+		this.createdDate = createdDate;
+		this.price = price;
+		this.squareMeters = squareMeters;
+		this.energyClass = EnergyClass.valueOf(energyClass);
+		this.rooms = rooms;
+		this.floor = floor;
+		this.setRealEstate(realEstate);
+	}
+	
+	public void setRealEstate(RealEstate realEstate) {
 		this.realEstate = realEstate;
 		realEstate.setCadastralData(this);
 	}

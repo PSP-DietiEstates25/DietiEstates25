@@ -65,18 +65,10 @@ public class Search {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 	
-	@OneToOne
-	@JoinColumn(
-			nullable = false,
-			name = "detail_id",
-			foreignKey = @ForeignKey(name = "SEARCH_DETAIL_ID_FK"))
+	@OneToOne(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Detail detail;
 	
-	@OneToOne
-	@JoinColumn(
-			nullable = false,
-			name = "cadastral_filter_id",
-			foreignKey = @ForeignKey(name = "SEARCH_CADASTRAL_FILTER_ID_FK"))
+	@OneToOne(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
 	private CadastralFilter cadastralFilter;
 	
 	@ManyToOne
@@ -88,9 +80,4 @@ public class Search {
 	
 	@OneToMany(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<SearchRealEstate> searchRealEstates = new ArrayList<>();
-	
-	public void addDetails(Detail detail) {
-		this.detail = detail;
-		detail.setSearch(this);
-	}
 }

@@ -45,46 +45,43 @@ public class Detail {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 	
-	@OneToOne
-	@JoinColumn(
-			nullable = false,
-			name = "geographical_position_id",
-			foreignKey = @ForeignKey(name = "DETAIL_GEOGRAPHICAL_POSITION_ID_FK"))
+	@OneToOne(mappedBy = "detail", cascade = CascadeType.ALL, orphanRemoval = true)
 	private GeographicalPosition geographicalPosition;
 	
+	@OneToOne(mappedBy = "detail", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Utility utility;
+		
 	@OneToOne
 	@JoinColumn(
 			nullable = false,
-			name = "utility_id",
-			foreignKey = @ForeignKey(name = "DETAIL_UTILITY_ID_FK"))
-	private Utility utility;
-		
-	@OneToOne(mappedBy = "detail", cascade = CascadeType.ALL, orphanRemoval = true)
+			name = "search_id",
+			foreignKey = @ForeignKey(name = "DETAIL_SEARCH_ID_FK"))
 	private Search search;
 	
-	@OneToOne(mappedBy = "detail", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne
+    @JoinColumn(
+			nullable = false,
+			name = "real_estate_id",
+			foreignKey = @ForeignKey(name = "DETAIL_REAL_ESTATE_ID_FK"))
 	private RealEstate realEstate;
 	
 	@Builder(builderMethodName = "detailBuilder")
 	public Detail(
 			LocalDateTime createdDate,
-			GeographicalPosition geographicalPosition,
-			Utility utility,
-			CadastralData cadastralData
+			RealEstate realEstate,
+			Search search
 			){
 		this.createdDate = createdDate;
-		this.geographicalPosition = geographicalPosition;
-		this.utility = utility;
-		geographicalPosition.addDetail(this);
-		utility.addDetail(this);
+		this.setRealEstate(realEstate);
+		this.setSearch(search);
 	}
 	
-	public void addRealEstate(RealEstate realEstate) {
+	public void setRealEstate(RealEstate realEstate) {
 		this.realEstate = realEstate;
 		realEstate.setDetail(this);
 	}
 	
-	public void addSearch(Search search) {
+	public void setSearch(Search search) {
 		this.search = search;
 		search.setDetail(this);;
 	}

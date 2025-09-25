@@ -28,7 +28,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class GeographicalPosition {
@@ -63,11 +62,36 @@ public class GeographicalPosition {
 	@LastModifiedDate
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
-	
-	@OneToOne(mappedBy = "geographicalPosition", cascade = CascadeType.ALL, orphanRemoval = true)
+
+	@OneToOne
+	@JoinColumn(
+			nullable = false,
+			name = "detail_id",
+			foreignKey = @ForeignKey(name = "GEOGRAPHICAL_POSITION_DETAIL_ID_FK"))
 	private Detail detail;
+
+	@Builder(builderMethodName = "geographicalPositionBuilder")
+	public GeographicalPosition(
+			String city,
+			String municipality,
+			String address,
+			Double latitude,
+			Double longitude,
+			Integer radius,
+			LocalDateTime createdDate,
+			Detail detail
+			){
+		this.city = city;
+		this.municipality = municipality;
+		this.address = address;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.radius = radius;
+		this.createdDate = createdDate;
+		this.setDetail(detail);
+	}
 	
-	public void addDetail(Detail detail) {
+	public void setDetail(Detail detail) {
 		this.detail = detail;
 		detail.setGeographicalPosition(this);
 	}
