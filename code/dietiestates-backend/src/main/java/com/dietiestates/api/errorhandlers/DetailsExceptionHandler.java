@@ -5,13 +5,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.dietiestates.api.dto.ExceptionResponse;
-import com.dietiestates.api.exception.notfound.DetailsNotFoundException;
+import com.dietiestates.api.exception.notfound.DetailNotFoundException;
 
 @RestControllerAdvice
 public class DetailsExceptionHandler {
 
-	@ExceptionHandler(DetailsNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> handleNotFound(DetailsNotFoundException exception) {
+	@ExceptionHandler(DetailNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleNotFound(DetailNotFoundException exception) {
         return ResponseEntity
                 .status(exception.getHttpErrorStatusCode())
                 .body(
