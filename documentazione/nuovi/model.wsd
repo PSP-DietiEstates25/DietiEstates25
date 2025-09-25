@@ -94,6 +94,8 @@ class Role {
 class Search {
   - id
   - category: AdCategory
+  - size
+  - page
   - createdDate
   - lastModifiedDate
 }
@@ -201,11 +203,11 @@ Admin "1" -- "0..*" Admin : elige
 Admin "1" -- "0..*" EstateAgent : nominate
 
 'Detail associations'
-Detail --> "1" GeographicalPosition
-Detail --> "1" Utility
+Detail <-- "1" GeographicalPosition
+Detail <-- "1" Utility
 
 'Real Estate association'
-RealEstate -down-> "1" Detail
+RealEstate <-down- "1" Detail
 RealEstate " 1  " -right- "0..*" SearchRealEstate : selects
 RealEstate "0..*" -left- "1" EstateAgent : publish
 RealEstate "1" -up- "0..*" Proposal : contains
@@ -222,7 +224,7 @@ User "1" -- "0..*" Search : execute
 Notification "1..*" -down- "1" NotificationCategory : individuate
 
 'Search assocation'
-Search --> "1" Detail
+Search <-- "1" Detail
 Search "  1 " -left- "0..*" SearchRealEstate : selects
 Search -down- CadastralFilter
 
