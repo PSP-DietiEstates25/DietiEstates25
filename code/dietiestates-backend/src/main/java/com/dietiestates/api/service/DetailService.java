@@ -4,18 +4,13 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 
-import com.dietiestates.api.dto.DetailsDto;
-import com.dietiestates.api.exception.notfound.CadastralDataNotFoundException;
-import com.dietiestates.api.exception.notfound.GeographicalPositionNotFoundException;
-import com.dietiestates.api.exception.notfound.UtilityNotFoundException;
-import com.dietiestates.api.model.CadastralData;
+import com.dietiestates.api.dto.DetailDto;
+import com.dietiestates.api.exception.notfound.RealEstateNotFoundException;
+import com.dietiestates.api.exception.notfound.SearchNotFoundException;
 import com.dietiestates.api.model.Detail;
-import com.dietiestates.api.model.GeographicalPosition;
-import com.dietiestates.api.model.Utility;
-import com.dietiestates.api.repository.CadastralDataRepository;
-import com.dietiestates.api.repository.DetailsRepository;
-import com.dietiestates.api.repository.GeographicalPositionRepository;
-import com.dietiestates.api.repository.UtilityRepository;
+import com.dietiestates.api.repository.DetailRepository;
+import com.dietiestates.api.repository.RealEstateRepository;
+import com.dietiestates.api.repository.SearchRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,38 +18,33 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DetailService {
 
-	private final DetailsRepository detailsRepository;
-	private final GeographicalPositionRepository geographicalPositionRepository;
-	private final CadastralDataRepository cadastralDataRepository;
-	private final UtilityRepository utilityRepository;
+	private final DetailRepository detailRepository;
+	private final RealEstateRepository realEstateRepository;
+	private final SearchRepository searchRepository;
 	
-	public Detail createDetails(DetailsDto request) {
+	public Detail createDetails(DetailDto request) {
 		var details = of(request);
-		detailsRepository.save(details);
+		detailRepository.save(details);
 		return details;
 	}
 	
-	private Detail of(DetailsDto request) {
+	private Detail of(DetailDto request) {
 		
-		var geographicalPosition = geographicalPositionRepository.findById(request.getGeographicalPositionId())
-				.orElseThrow(GeographicalPositionNotFoundException::new);
-		
-		var cadastralData = cadastralDataRepository.findById(request.getCadastralDataId())
-				.orElseThrow(CadastralDataNotFoundException::new);
-		
-		var utility = utilityRepository.findById(request.getUtilityId())
-				.orElseThrow(UtilityNotFoundException::new);
+		var realEstate = realEstateRepository.findById(request.getRealEstateId())
+				.orElseThrow(RealEstateNotFoundException::new);
+
+		var search = searchRepository.findById(request.getSearchId())
+				.orElseThrow(SearchNotFoundException::new);
 		
 		return Detail.detailBuilder()
 				.createdDate(LocalDateTime.now())
-				.geographicalPosition(geographicalPosition)
-				.cadastralData(cadastralData)
-				.utility(utility)
+				.search(search)
+				.realEstate(realEstate)
 				.build();
 	}
 	
 	/*
-    private final DetailsRepository detailRepository;
+    private final DetailRepository detailRepository;
     private final UtilityRepository servicesRepository;
     private final GeographicalPositionRepository geoRepository;
 

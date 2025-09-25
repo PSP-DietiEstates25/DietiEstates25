@@ -6,10 +6,10 @@ import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.SearchDto;
 import com.dietiestates.api.enums.AdCategory;
-import com.dietiestates.api.exception.notfound.DetailsNotFoundException;
+import com.dietiestates.api.exception.notfound.DetailNotFoundException;
 import com.dietiestates.api.exception.notfound.UserNotFoundException;
 import com.dietiestates.api.model.Search;
-import com.dietiestates.api.repository.DetailsRepository;
+import com.dietiestates.api.repository.DetailRepository;
 import com.dietiestates.api.repository.RealEstateRepository;
 import com.dietiestates.api.repository.SearchRealEstateRepository;
 import com.dietiestates.api.repository.SearchRepository;
@@ -26,7 +26,7 @@ public class SearchService {
 	private final SearchRealEstateRepository searchRealEstateRepository;
 	private final UserRepository userRepository;
 	
-	private final DetailsRepository detailsRepository;
+	private final DetailRepository detailRepository;
 	//private final GeographicalPositionRepository geographicalPositionRepository;
 	
 	public void createSearch(SearchDto request) {
@@ -40,8 +40,8 @@ public class SearchService {
 		var user = userRepository.findByEmail(request.getUserEmail())
 				.orElseThrow(UserNotFoundException::new);
 		
-		var details = detailsRepository.findById(request.getDetailsId())
-				.orElseThrow(DetailsNotFoundException::new);
+		var details = detailRepository.findById(request.getDetailsId())
+				.orElseThrow(DetailNotFoundException::new);
 		
 		return Search.builder()
 				.createdDate(LocalDateTime.now())
