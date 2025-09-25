@@ -7,10 +7,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.dietiestates.api.dto.CadastralDataDto;
 import com.dietiestates.api.enums.EnergyClass;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -79,7 +77,7 @@ public class CadastralData {
 		LocalDateTime createdDate,
 		BigDecimal price,
 		Integer squareMeters,
-		String energyClass,
+		Integer energyClass,
 		Integer rooms,
 		Integer floor,
 		RealEstate realEstate
@@ -87,7 +85,7 @@ public class CadastralData {
 		this.createdDate = createdDate;
 		this.price = price;
 		this.squareMeters = squareMeters;
-		this.energyClass = EnergyClass.valueOf(energyClass);
+		this.energyClass = EnergyClass.fromOrder(energyClass).get();
 		this.rooms = rooms;
 		this.floor = floor;
 		this.setRealEstate(realEstate);
