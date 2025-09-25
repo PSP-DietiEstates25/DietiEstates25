@@ -1,13 +1,19 @@
 package com.dietiestates.api.model;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.dietiestates.api.model.range.EnergyClassRange;
 import com.dietiestates.api.model.range.FloorRange;
 import com.dietiestates.api.model.range.PriceRange;
 import com.dietiestates.api.model.range.RoomsRange;
 import com.dietiestates.api.model.range.SquareMetersRange;
 
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -45,8 +51,8 @@ public class CadastralFilter {
 	@Embedded
 	private SquareMetersRange squareMetersRange;
 	
-	//@Embedded
-	//private IntegerRange energyClassRange;
+	@Embedded
+	private EnergyClassRange energyClassRange;
 	
 	@Embedded
 	private RoomsRange roomsRange;
@@ -54,12 +60,65 @@ public class CadastralFilter {
 	@Embedded
 	private FloorRange floorRange;
 	
+	@CreatedDate
+	@Column(nullable = false, updatable = false)
+	private LocalDateTime createdDate;
+	
+	@LastModifiedDate
+	@Column(insertable = false)
+	private LocalDateTime lastModifiedDate;
+	
 	@OneToOne
 	@JoinColumn(
 			nullable = false,
 			name = "search_id",
 			foreignKey = @ForeignKey(name = "CADASTRAL_FILTER_SEARCH_ID_FK"))
 	private Search search;
+	
+	
+	@Builder(builderMethodName = "cadastralFilterBuilder")
+	public CadastralFilter(
+		LocalDateTime createdDate,
+		BigDecimal minPrice,
+		BigDecimal maxPrice,
+		Integer minSquareMeters,
+		Integer maxSquareMeters,
+		Integer minEnergyClass,
+		Integer maxEnergyClass,
+		Integer minRooms,
+		Integer maxRooms,
+		Integer minFloor,
+		Integer maxFloor,
+		Search search
+		) {
+		this.createdDate = createdDate;
+		this.priceRange = new PriceRange(minPrice, maxPrice);
+		this.squareMetersRange = new SquareMetersRange(minSquareMeters, maxSquareMeters);
+		this.energyClassRange = new EnergyClassRange(minEnergyClass, maxEnergyClass);
+		this.roomsRange = new RoomsRange(minRooms, maxRooms);
+		this.floorRange = new FloorRange(minFloor, maxFloor);
+		this.setSearch(search);
+	}
+	
+	/*
+	@Builder(builderMethodName = "cadastralFilterBuilder")
+	public CadastralFilter(
+		LocalDateTime createdDate,
+		PriceRange priceRange,
+		SquareMetersRange squareMetersRange,
+		EnergyClassRange energyClassRange,
+		RoomsRange roomsRange,
+		FloorRange floorRange,
+		Search search
+		) {
+		this.createdDate = createdDate;
+		this.priceRange = priceRange;
+		this.squareMetersRange = squareMetersRange;
+		this.energyClassRange = energyClassRange;
+		this.roomsRange = roomsRange;
+		this.floorRange = floorRange;
+		this.setSearch(search);
+	}*/
 	
 	public void setSearch(Search search) {
 		this.search = search;
