@@ -1,0 +1,233 @@
+<section class="container mx-auto px-4 py-6">
+  <header class="mb-6 flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+      Area Admin
+    </h1>
+    <nav class="flex gap-2">
+      @for (t of tabs; track t.key) {
+      <button
+        class="btn_ghost cursor-pointer"
+        [class.btn_primary]="active() === t.key"
+        (click)="setTab(t.key)"
+      >
+        {{ t.label }}
+      </button>
+      }
+    </nav>
+  </header>
+
+  <!-- ADS TAB -->
+  @if (active() === 'ads') {
+  <section>
+    <div class="mb-4 flex flex-wrap items-end gap-3">
+      <div>
+        <label for="q" class="block text-sm mb-1">Cerca</label>
+        <input
+          id="q"
+          class="input_main w-72"
+          [ngModel]="q()"
+          (ngModelChange)="q.set($event); loadAds()"
+          placeholder="Titolo o città"
+        />
+      </div>
+      <div>
+        <label for="active" class="block text-sm mb-1">Stato</label>
+        <select
+          id="active"
+          class="input_main w-44"
+          [ngModel]="activeFilter()"
+          (ngModelChange)="activeFilter.set($event); loadAds()"
+        >
+          <option [ngValue]="''">Tutti</option>
+          <option [ngValue]="true">Solo attivi</option>
+          <option [ngValue]="false">Solo inattivi</option>
+        </select>
+    </div>
+
+    @if (adsLoading()) {
+    <div class="py-12 text-center">Caricamento…</div>
+    } @else {
+    <div class="grid lg:grid-cols-2 gap-4">
+      @for (a of ads(); track a.id) {
+      <article class="rounded-2xl border dark:border-slate-700 p-4">
+        @if (editId() !== a.id) {
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h3 class="font-semibold text-slate-900 dark:text-white">
+              {{ a.title }}
+            </h3>
+            <p class="text-sm text-slate-600 dark:text-slate-300">
+              {{ a.city || "—" }} • Creato {{ a.createdAt | date : "short" }}
+            </p>
+            <div class="mt-1 text-sm">
+              @if (a.price != null) { € {{ a.price | number : "1.0-0" }} } @else
+              { Prezzo su richiesta }
+            </div>
+            <div class="mt-1 text-xs">
+              <span class="chip">{{ a.active ? "Attivo" : "Inattivo" }}</span>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button class="btn_ghost cursor-pointer" (click)="startEdit(a)">
+              Modifica
+            </button>
+            <button class="btn_ghost cursor-pointer" (click)="deleteAd(a)">
+              Elimina
+            </button>
+          </div>
+        </div>
+        } @else {
+        <div class="grid sm:grid-cols-2 gap-3">
+          <div>
+            <label for="t-{{ a.id }}" class="block text-sm mb-1">Titolo</label>
+            <input
+              id="t-{{ a.id }}"
+              class="input_main"
+              [ngModel]="editTitle()"
+              (ngModelChange)="editTitle.set($event)"
+            />
+          </div>
+          <div>
+            <label for="p-{{ a.id }}" class="block text-sm mb-1"
+              >Prezzo (€)</label
+            >
+            <input
+              id="p-{{ a.id }}"
+              type="number"
+              class="input_main"
+              [ngModel]="editPrice() ?? ''"
+              (ngModelChange)="editPrice.set($event === '' ? null : +$event)"
+            />
+          </div>
+          <div class="sm:col-span-2 flex items-center gap-3">
+            <label class="inline-flex items-center gap-2"
+              ><input
+                type="checkbox"
+                [ngModel]="editActive()"
+                (ngModelChange)="editActive.set($event)"
+              />
+              <span>Attivo</span></label
+            >
+            <div class="ml-auto flex gap-2">
+              <button class="btn_ghost cursor-pointer" (click)="cancelEdit()">
+                Annulla
+              </button>
+              <button class="btn_primary cursor-pointer" (click)="saveEdit()">
+                Salva
+              </button>
+            </div>
+          </div>
+        </div>
+        }
+      </article>
+      } @empty {
+      <div class="py-12 text-center text-slate-600 dark:text-slate-300">
+        Nessun annuncio
+      </div>
+      }
+    </div>
+    }
+  </section>
+  }
+
+  <!-- USERS TAB -->
+  @if (active() === 'users') {
+  <section>
+    <div class="mb-4 flex flex-wrap items-end gap-3">
+      <div>
+        <label for="role" class="block text-sm mb-1">Ruolo</label>
+        <select
+          id="role"
+          class="input_main w-44"
+          [ngModel]="roleFilter()"
+          (ngModelChange)="roleFilter.set($event); loadUsers()"
+        >
+          <option value="">Tutti</option>
+          <option value="AGENT">Agenti</option>
+          <option value="ADMIN">Admin</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-4">
+      <article class="rounded-2xl border dark:border-slate-700 p-4">
+        <h3 class="font-semibold mb-3">Crea utente</h3>
+        <form [formGroup]="createForm" class="grid sm:grid-cols-2 gap-3">
+          <div class="sm:col-span-2">
+            <label for="name" class="block text-sm mb-1">Nome</label>
+            <input id="name" class="input_main" formControlName="name" />
+          </div>
+          <div class="sm:col-span-2">
+            <label for="email" class="block text-sm mb-1">Email</label>
+            <input
+              id="email"
+              type="email"
+              class="input_main"
+              formControlName="email"
+            />
+          </div>
+          <div>
+            <label for="role2" class="block text-sm mb-1">Ruolo</label>
+            <select id="role2" class="input_main" formControlName="role">
+              <option value="AGENT">Agente</option>
+              <option value="ADMIN">Admin</option>
+            </select>
+          </div>
+          <div>
+            <label for="pwd" class="block text-sm mb-1">Password</label>
+            <input
+              id="pwd"
+              type="text"
+              class="input_main"
+              formControlName="password"
+            />
+          </div>
+          <div class="sm:col-span-2 flex justify-end gap-2 mt-2">
+            <button type="button" class="btn_primary" (click)="createUser()">
+              Crea
+            </button>
+          </div>
+        </form>
+      </article>
+
+      <article class="rounded-2xl border dark:border-slate-700 p-4">
+        <h3 class="font-semibold mb-3">Utenti</h3>
+        @if (usersLoading()) {
+        <div class="py-6 text-center">Caricamento…</div>
+        } @else {
+        <div class="divide-y dark:divide-slate-700">
+          @for (u of users(); track u.id) {
+          <div class="py-3 flex items-center gap-3">
+            <div class="flex-1">
+              <div class="font-medium">
+                {{ u.name }}
+                <span class="text-xs text-slate-500">({{ u.email }})</span>
+              </div>
+              <div class="text-xs text-slate-500">
+                Creato {{ u.createdAt | date : "short" }}
+              </div>
+            </div>
+            <select
+              class="input_main w-36"
+              [ngModel]="u.role"
+              (ngModelChange)="changeRole(u, $event)"
+            >
+              <option value="AGENT">Agente</option>
+              <option value="ADMIN">Admin</option>
+            </select>
+            <button class="btn_ghost cursor-pointer" (click)="toggleUser(u)">
+              {{ u.active ? "Disabilita" : "Abilita" }}
+            </button>
+          </div>
+          } @empty {
+          <div class="py-6 text-center text-slate-600 dark:text-slate-300">
+            Nessun utente
+          </div>
+          }
+        </div>
+        }
+      </article>
+    </div>
+  </section>
+  }
+</section>

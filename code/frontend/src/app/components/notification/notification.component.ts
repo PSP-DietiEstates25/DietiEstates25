@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../vecchioService/notification.service';
 
 @Component({
@@ -7,7 +6,7 @@ import { NotificationService } from '../../vecchioService/notification.service';
   standalone:true,
   templateUrl: './notification.component.html',
   styleUrls: ['./notification.component.scss'],
-  imports: [CommonModule]
+  imports: []
 })
 export class NotificationComponent implements OnInit {
   visible = false;

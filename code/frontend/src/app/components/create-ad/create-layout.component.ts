@@ -1,5 +1,4 @@
 import { Component, computed, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import {
   Router,
   RouterLink,
@@ -12,7 +11,7 @@ import { AdDraftService } from '../../vecchioService/ad-draft.service';
 @Component({
   selector: 'app-agent-create-layout',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, RouterModule],
+  imports: [RouterLink, RouterLinkActive, RouterModule],
   templateUrl: './create-layout.component.html',
 })
 export class AgentCreateLayoutComponent {

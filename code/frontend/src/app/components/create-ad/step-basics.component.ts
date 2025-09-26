@@ -1,5 +1,4 @@
 import { Component, inject, signal, effect } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AdDraftService } from '../../vecchioService/ad-draft.service';
@@ -7,7 +6,7 @@ import { AdDraftService } from '../../vecchioService/ad-draft.service';
 @Component({
   selector: 'app-step-basics',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './step-basics.component.html',
 })
 export class StepBasicsComponent {

@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SearchService } from '../../services/search.service';
+import { SearchService } from '../../../vecchioService/search.service';
 
 @Component({
   selector: 'app-filter-panel',

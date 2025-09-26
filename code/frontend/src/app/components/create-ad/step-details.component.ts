@@ -1,5 +1,4 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AdDraftService } from '../../vecchioService/ad-draft.service';
@@ -9,7 +8,7 @@ import { MapComponent } from "../map/map.component";
 @Component({
   selector: 'app-step-details',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MapComponent],
+  imports: [ReactiveFormsModule, MapComponent],
   templateUrl: './step-details.component.html',
 })
 export class StepDetailsComponent {

@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../vecchioService/auth/auth.service';
@@ -10,7 +9,7 @@ import { OnInit } from '@angular/core';
   standalone: true,
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
-  imports: [CommonModule, RouterModule, MatIconModule],
+  imports: [RouterModule, MatIconModule],
 })
 export class SidebarComponent implements OnInit {
   isOpen = false;

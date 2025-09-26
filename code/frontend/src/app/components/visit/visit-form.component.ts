@@ -1,12 +1,11 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AdService } from '../../vecchioService/rest-backend/ad/ad.service';
 
 @Component({
   selector: 'app-visit-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: `./visit-form.component.html`,
 })
 export class VisitFormComponent {

@@ -66,8 +66,6 @@ export const routes: Routes = [
     component: SearchPageComponent,
   },
 
-  
-
   {
     path: 'agent',
     children: [
@@ -116,6 +114,20 @@ export const routes: Routes = [
               ),
           },
         ],
+      },
+    ],
+  },
+
+  {
+    path: 'admin',
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        loadComponent: () =>
+          import('./components/admin-dashboard/admin-dashboard.component').then(
+            (m) => m.AdminDashboardComponent
+          ),
       },
     ],
   },

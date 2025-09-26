@@ -1,0 +1,138 @@
+import { RouterLink } from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  Validators,
+} from '@angular/forms';
+import {
+  AdminService,
+  AdminAd,
+  AdminUser,
+  Role,
+} from '../../vecchioService/admin.service';
+
+@Component({
+  selector: 'app-admin-dashboard',
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
+  templateUrl: './admin-dashboard.component.html',
+})
+export class AdminDashboardComponent {
+  private api = inject(AdminService);
+  private fb = inject(FormBuilder);
+
+  tabs = [
+    { key: 'ads' as const, label: 'Annunci' },
+    { key: 'users' as const, label: 'Utenti' },
+  ];
+  active = signal<'ads' | 'users'>('ads');
+
+  ads = signal<AdminAd[]>([]);
+  adsLoading = signal(false);
+  q = signal('');
+  activeFilter = signal<boolean | ''>('');
+  editId = signal<number | null>(null);
+  editTitle = signal('');
+  editPrice = signal<number | null>(null);
+  editActive = signal<boolean>(true);
+
+  users = signal<AdminUser[]>([]);
+  usersLoading = signal(false);
+  roleFilter = signal<Role | ''>('');
+  createForm = this.fb.nonNullable.group({
+    name: ['', [Validators.required, Validators.minLength(2)]],
+    email: ['', [Validators.required, Validators.email]],
+    role: ['AGENT' as Role, [Validators.required]],
+    password: [''],
+  });
+
+  constructor() {
+    this.loadAds();
+  }
+
+  setTab(t: 'ads' | 'users') {
+    this.active.set(t);
+    if (t === 'ads') this.loadAds();
+    else this.loadUsers();
+  }
+
+  loadAds() {
+    this.adsLoading.set(true);
+    this.api
+      .listAds({ q: this.q().trim() || undefined, active: this.activeFilter() })
+      .subscribe({
+        next: (list) => this.ads.set(list || []),
+        error: (_) => this.ads.set([]),
+        complete: () => this.adsLoading.set(false),
+      });
+  }
+  startEdit(a: AdminAd) {
+    this.editId.set(a.id);
+    this.editTitle.set(a.title || '');
+    this.editPrice.set(a.price ?? null);
+    this.editActive.set(!!a.active);
+  }
+  cancelEdit() {
+    this.editId.set(null);
+  }
+  saveEdit() {
+    const id = this.editId();
+    if (!id) return;
+    this.api
+      .updateAd(id, {
+        title: this.editTitle(),
+        price: this.editPrice(),
+        active: this.editActive(),
+      })
+      .subscribe({
+        next: (_) => {
+          this.cancelEdit();
+          this.loadAds();
+        },
+      });
+  }
+  deleteAd(a: AdminAd) {
+    if (!confirm(`Eliminare l'annuncio "${a.title}"?`)) return;
+    this.api.deleteAd(a.id).subscribe({ next: (_) => this.loadAds() });
+  }
+
+  loadUsers() {
+    this.usersLoading.set(true);
+    this.api.listUsers(this.roleFilter() || undefined).subscribe({
+      next: (list) => this.users.set(list || []),
+      error: (_) => this.users.set([]),
+      complete: () => this.usersLoading.set(false),
+    });
+  }
+  createUser() {
+    if (this.createForm.invalid) {
+      this.createForm.markAllAsTouched();
+      return;
+    }
+    this.api.createUser(this.createForm.getRawValue()).subscribe({
+      next: (_) => {
+        this.createForm.reset({
+          name: '',
+          email: '',
+          role: 'AGENT',
+          password: '',
+        });
+        this.loadUsers();
+      },
+    });
+  }
+  toggleUser(u: AdminUser) {
+    this.api
+      .updateUser(u.id, { active: !u.active })
+      .subscribe({ next: (_) => this.loadUsers() });
+  }
+  changeRole(u: AdminUser, role: Role) {
+    if (u.role === role) return;
+    this.api
+      .updateUser(u.id, { role })
+      .subscribe({ next: (_) => this.loadUsers() });
+  }
+}

@@ -1,12 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AdDraftService } from '../../vecchioService/ad-draft.service';
 
 @Component({
   selector: 'app-step-photos',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './step-photos.component.html',
 })
 export class StepPhotosComponent {

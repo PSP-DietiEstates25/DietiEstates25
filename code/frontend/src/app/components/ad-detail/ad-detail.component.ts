@@ -1,5 +1,4 @@
 import { Component, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   AdService,
@@ -13,7 +12,7 @@ import { VisitFormComponent } from '../visit/visit-form.component';
 @Component({
   selector: 'app-ad-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, OfferFormComponent, VisitFormComponent],
+  imports: [RouterLink, OfferFormComponent, VisitFormComponent],
   templateUrl: './ad-detail.component.html',
 })
 export class AdDetailComponent {
