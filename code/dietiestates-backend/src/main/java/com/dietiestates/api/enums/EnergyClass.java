@@ -17,9 +17,9 @@ public enum EnergyClass {
 	G(9);
 	
 	@Getter
-	private final int order;
+	private final Integer order;
 	
-	EnergyClass(int order){
+	EnergyClass(Integer order){
 		this.order = order;
 	}
 	

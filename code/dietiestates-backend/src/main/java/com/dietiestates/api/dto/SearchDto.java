@@ -1,10 +1,9 @@
 package com.dietiestates.api.dto;
 
-import java.math.BigDecimal;
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,9 +12,9 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
 @Builder
-public class SearchDto {
+@ToString
+public class SearchDto {//extends CadastralFilterDto{
 	
 	@NotEmpty(message = "Category is mandatory")
 	@NotBlank(message = "Category is mandatory")
@@ -35,4 +34,13 @@ public class SearchDto {
 	@NotBlank(message = "User email is mandatory")
 	@Email
 	private String userEmail;
+	
+	@NotNull(message = "Cadastral filter is mandatory")
+	private CadastralFilterDto cadastralFilterDto;
+	
+	@NotNull(message = "Geographical position is mandatory")
+	private GeographicalPositionDto geographicalPositionDto;
+	
+	@NotNull(message = "Utility is mandatory")
+	private UtilityDto utilityDto;
 }
