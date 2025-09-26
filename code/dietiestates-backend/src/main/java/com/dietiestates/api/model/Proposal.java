@@ -43,7 +43,6 @@ public abstract class Proposal {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@EqualsAndHashCode.Include
 	protected Long id;
 	
 	@Enumerated(EnumType.STRING)
@@ -70,7 +69,7 @@ public abstract class Proposal {
 			LocalDateTime lastModifiedDate
 			) {
 		this.id = id;
-		this.proposalCategory = ProposalCategory.valueOf(proposalStatus);
+		this.proposalCategory = ProposalCategory.valueOf(proposalCategory);
 		this.proposalStatus = ProposalStatus.valueOf(proposalStatus);
 		this.createdDate = createdDate;
 		this.lastModifiedDate = lastModifiedDate;

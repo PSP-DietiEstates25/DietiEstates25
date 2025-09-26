@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,4 +49,15 @@ public class SearchRealEstate {
 	@LastModifiedDate
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
+	
+	@Builder(builderMethodName = "searchRealEstateBuilder")
+	public SearchRealEstate(
+			LocalDateTime createdDate,
+			RealEstate realEstate,
+			Search search
+			) {
+		this.createdDate = createdDate;
+		realEstate.addSearchRealEstate(this);
+		search.addSearchRealEstate(this);
+		}
 }

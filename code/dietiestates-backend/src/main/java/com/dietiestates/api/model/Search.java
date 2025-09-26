@@ -1,6 +1,5 @@
 package com.dietiestates.api.model;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,4 +79,9 @@ public class Search {
 	
 	@OneToMany(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<SearchRealEstate> searchRealEstates = new ArrayList<>();
+	
+	public void addSearchRealEstate(SearchRealEstate searchRealEstate) {
+		this.searchRealEstates.add(searchRealEstate);
+		searchRealEstate.setSearch(this);
+	}
 }

@@ -34,6 +34,7 @@ import lombok.ToString;
 
 @Getter
 @Setter
+@Builder
 @EqualsAndHashCode
 @ToString
 @AllArgsConstructor
@@ -85,26 +86,13 @@ public class RealEstate {
     @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<SearchRealEstate> searchRealEstates = new ArrayList<>();
     
-    /*
-    @Builder(builderMethodName = "realEstateBuilder")
-    public RealEstate(
-    		LocalDateTime createdDate,
-    		AdCategory category,
-    		String[] images,
-    		String description,
-    		EstateAgent estateAgent
-    		) {
-	    	this.createdDate = createdDate;
-	    	this.category = category;
-	    	this.images = images;
-	    	this.description = description;
-	    	this.estateAgent = estateAgent;
-    	
-    }
-    */
-    
     public void addProposal(Proposal proposal) {
-	    	proposals.add(proposal);
+	    	this.proposals.add(proposal);
 	    	proposal.setRealEstate(this);
     }
+    
+    public void addSearchRealEstate(SearchRealEstate searchRealEstate) {
+    		this.searchRealEstates.add(searchRealEstate);
+    		searchRealEstate.setRealEstate(this);
+    	}
 }
