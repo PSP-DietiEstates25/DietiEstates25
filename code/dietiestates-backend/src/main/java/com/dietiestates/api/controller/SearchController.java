@@ -1,5 +1,7 @@
 package com.dietiestates.api.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,11 +23,10 @@ public class SearchController {
 	private final SearchService searchService;
 	
 	@PostMapping
-	public ResponseEntity<RealEstate> createSearch(
+	public ResponseEntity<List<RealEstate>> createSearch(
 			@RequestBody SearchDto request
 			){
-		//var realEstates = searchService.createSearch(request);
-		//return ResponseEntity.status(HttpStatus.CREATED).body(realEstates);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		var realEstates = searchService.createSearch(request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(realEstates);
 	}
 }

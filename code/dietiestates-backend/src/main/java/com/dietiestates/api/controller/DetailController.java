@@ -24,7 +24,7 @@ public class DetailController {
 	public ResponseEntity<Detail> createDetails(
 			@RequestBody DetailDto request
 			) {
-		detailService.createDetails(request);
+		detailService.createDetail(request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }
