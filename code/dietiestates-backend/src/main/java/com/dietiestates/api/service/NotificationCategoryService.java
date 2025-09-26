@@ -22,7 +22,7 @@ public class NotificationCategoryService {
 		notificationCategoryRepository.save(notificationCategory);
 	}
 	
-	private NotificationCategory of(NotificationCategoryDto request) {
+	public NotificationCategory of(NotificationCategoryDto request) {
 		return NotificationCategory.builder()
 				.createdDate(LocalDateTime.now())
 				.name(NotificationCategoryType.valueOf(request.getName()))

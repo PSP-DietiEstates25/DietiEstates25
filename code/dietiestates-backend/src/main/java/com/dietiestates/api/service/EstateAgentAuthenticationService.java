@@ -45,7 +45,7 @@ public class EstateAgentAuthenticationService extends AuthenticationService {
 		estateAgentRepository.save(estateAgent);
 	}
 	
-	private EstateAgent of(StafferDto request) {
+	public EstateAgent of(StafferDto request) {
 		var estateAgentRole = roleRepository.findByName("ESTATE_AGENT")
 				.orElseThrow(() -> new IllegalStateException("ROLE ESTATE_AGENT was not initialized!"));
 		

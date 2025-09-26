@@ -23,7 +23,7 @@ public class UtilityService {
 		return utility;
 	}
 	
-	private Utility of(UtilityDto request, Long detailId) {
+	public Utility of(UtilityDto request, Long detailId) {
 		
 		var detail = detailRepository.findById(detailId)
 				.orElseThrow(DetailNotFoundException::new);

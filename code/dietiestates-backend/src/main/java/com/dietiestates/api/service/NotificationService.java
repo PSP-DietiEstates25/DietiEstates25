@@ -28,7 +28,7 @@ public class NotificationService {
 		notificationRepository.save(notification);
 	}
 	
-	private Notification of(NotificationDto request) {
+	public Notification of(NotificationDto request) {
 		
 		var notificationCategory = notificationCategoryRepository.findByName(NotificationCategoryType.valueOf(request.getNotificationCategoryName()))
 					.orElseThrow(NotificationCategoryNotFoundException::new);

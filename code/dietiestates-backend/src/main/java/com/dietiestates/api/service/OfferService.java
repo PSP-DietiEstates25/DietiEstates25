@@ -29,7 +29,7 @@ public class OfferService {
 		offerRepository.save(offer);
 	}
 	
-	private Offer of(OfferDto request, Long realEstateId) {
+	public Offer of(OfferDto request, Long realEstateId) {
 		var user = userRepository.findByEmail(request.getUserEmail())
 				.orElseThrow(UserNotFoundException::new);
 		

@@ -19,12 +19,13 @@ public class CadastralFilterService {
 	private final CadastralFilterRepository cadastralFilterRepository;
 	private final SearchRepository searchRepository;
 	
-	public void createCadastralFilter(CadastralFilterDto request, Long searchId) {
+	public CadastralFilter createCadastralFilter(CadastralFilterDto request, Long searchId) {
 		var cadastralFilter = of(request, searchId);
 		cadastralFilterRepository.save(cadastralFilter);
+		return cadastralFilter;
 	}
 	
-	private CadastralFilter of(CadastralFilterDto request, Long searchId) {
+	public CadastralFilter of(CadastralFilterDto request, Long searchId) {
 		
 		var search = searchRepository.findById(searchId)
 				.orElseThrow(SearchNotFoundException::new);

@@ -25,7 +25,7 @@ public class CadastralDataService {
 		return cadastralData;
 	}
 	
-	private CadastralData of(CadastralDataDto request, Long realEstateId) {
+	public CadastralData of(CadastralDataDto request, Long realEstateId) {
 		
 		var realEstate = realEstateRepository.findById(realEstateId)
 				.orElseThrow(RealEstateNotFoundException::new);

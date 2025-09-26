@@ -8,6 +8,8 @@ import com.dietiestates.api.dto.DetailDto;
 import com.dietiestates.api.exception.notfound.RealEstateNotFoundException;
 import com.dietiestates.api.exception.notfound.SearchNotFoundException;
 import com.dietiestates.api.model.Detail;
+import com.dietiestates.api.model.RealEstate;
+import com.dietiestates.api.model.Search;
 import com.dietiestates.api.repository.DetailRepository;
 import com.dietiestates.api.repository.RealEstateRepository;
 import com.dietiestates.api.repository.SearchRepository;
@@ -22,19 +24,26 @@ public class DetailService {
 	private final RealEstateRepository realEstateRepository;
 	private final SearchRepository searchRepository;
 	
-	public Detail createDetails(DetailDto request) {
-		var details = of(request);
-		detailRepository.save(details);
-		return details;
+	public Detail createDetail(DetailDto request) {
+		var detail = of(request);
+		detailRepository.save(detail);
+		return detail;
 	}
 	
-	private Detail of(DetailDto request) {
+	public Detail of(DetailDto request) {
 		
-		var realEstate = realEstateRepository.findById(request.getRealEstateId())
-				.orElseThrow(RealEstateNotFoundException::new);
-
-		var search = searchRepository.findById(request.getSearchId())
-				.orElseThrow(SearchNotFoundException::new);
+		RealEstate realEstate = null;
+		Search search = null;
+		
+		if(request.getRealEstateId() != null) {
+			realEstate = realEstateRepository.findById(request.getRealEstateId())
+					.orElseThrow(RealEstateNotFoundException::new);
+		}
+		
+		if(request.getSearchId() != null) {
+			search = searchRepository.findById(request.getSearchId())
+					.orElseThrow(SearchNotFoundException::new);
+		}
 		
 		return Detail.detailBuilder()
 				.createdDate(LocalDateTime.now())

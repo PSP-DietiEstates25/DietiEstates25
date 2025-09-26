@@ -25,7 +25,7 @@ public class GeographicalPositionService {
 		return geographicalPosition;
 	}
 	
-	private GeographicalPosition of(GeographicalPositionDto request, Long detailId) {
+	public GeographicalPosition of(GeographicalPositionDto request, Long detailId) {
 		
 		var detail = detailRepository.findById(detailId)
 				.orElseThrow(DetailNotFoundException::new);

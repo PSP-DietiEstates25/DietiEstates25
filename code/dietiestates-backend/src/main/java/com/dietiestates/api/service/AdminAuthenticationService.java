@@ -43,7 +43,7 @@ public class AdminAuthenticationService extends AuthenticationService {
 		adminRepository.save(admin);
 	}
 	
-	private Admin of(StafferDto request) {
+	public Admin of(StafferDto request) {
 		var adminRole = roleRepository.findByName("ADMIN")
 				.orElseThrow(() -> new IllegalStateException("ROLE ADMIN was not initialized!"));
 		

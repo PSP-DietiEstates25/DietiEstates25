@@ -29,7 +29,7 @@ public class VisitService {
 		visitRepository.save(visit);
 	}
 	
-	private Visit of(VisitDto request, Long realEstateId) {
+	public Visit of(VisitDto request, Long realEstateId) {
 		var user = userRepository.findByEmail(request.getUserEmail())
 				.orElseThrow(UserNotFoundException::new);
 		
