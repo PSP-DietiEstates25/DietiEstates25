@@ -11,38 +11,38 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { create } from '../fn/detail-controller/create';
-import { Create$Params } from '../fn/detail-controller/create';
-import { IdResponse } from '../models/id-response';
+import { createVisit } from '../fn/visit-controller/create-visit';
+import { CreateVisit$Params } from '../fn/visit-controller/create-visit';
+import { Visit } from '../models/visit';
 
 @Injectable({ providedIn: 'root' })
-export class DetailControllerService extends BaseService {
+export class VisitControllerService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
   }
 
-  /** Path part for operation `create()` */
-  static readonly CreatePath = '/details';
+  /** Path part for operation `createVisit()` */
+  static readonly CreateVisitPath = '/realEstates/{realestateid}/visits';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `create()` instead.
+   * To access only the response body, use `createVisit()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create$Response(params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<IdResponse>> {
-    return create(this.http, this.rootUrl, params, context);
+  createVisit$Response(params: CreateVisit$Params, context?: HttpContext): Observable<StrictHttpResponse<Visit>> {
+    return createVisit(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `create$Response()` instead.
+   * To access the full response (for headers, for example), `createVisit$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create(params: Create$Params, context?: HttpContext): Observable<IdResponse> {
-    return this.create$Response(params, context).pipe(
-      map((r: StrictHttpResponse<IdResponse>): IdResponse => r.body)
+  createVisit(params: CreateVisit$Params, context?: HttpContext): Observable<Visit> {
+    return this.createVisit$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Visit>): Visit => r.body)
     );
   }
 

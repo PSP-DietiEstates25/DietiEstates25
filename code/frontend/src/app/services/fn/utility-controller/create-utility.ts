@@ -8,15 +8,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { AuthenticationRequest } from '../../models/authentication-request';
-import { AuthenticationResponse } from '../../models/authentication-response';
+import { Utility } from '../../models/utility';
+import { UtilityDto } from '../../models/utility-dto';
 
-export interface Login$Params {
-      body: AuthenticationRequest
+export interface CreateUtility$Params {
+      body: UtilityDto
 }
 
-export function login(http: HttpClient, rootUrl: string, params: Login$Params, context?: HttpContext): Observable<StrictHttpResponse<AuthenticationResponse>> {
-  const rb = new RequestBuilder(rootUrl, login.PATH, 'post');
+export function createUtility(http: HttpClient, rootUrl: string, params: CreateUtility$Params, context?: HttpContext): Observable<StrictHttpResponse<Utility>> {
+  const rb = new RequestBuilder(rootUrl, createUtility.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -26,9 +26,9 @@ export function login(http: HttpClient, rootUrl: string, params: Login$Params, c
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<AuthenticationResponse>;
+      return r as StrictHttpResponse<Utility>;
     })
   );
 }
 
-login.PATH = '/auth/login';
+createUtility.PATH = '/utilities';

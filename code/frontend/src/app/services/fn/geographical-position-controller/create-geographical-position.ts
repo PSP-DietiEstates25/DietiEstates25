@@ -8,15 +8,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { AuthenticationRequest } from '../../models/authentication-request';
-import { AuthenticationResponse } from '../../models/authentication-response';
+import { GeographicalPosition } from '../../models/geographical-position';
+import { GeographicalPositionDto } from '../../models/geographical-position-dto';
 
-export interface Login$Params {
-      body: AuthenticationRequest
+export interface CreateGeographicalPosition$Params {
+      body: GeographicalPositionDto
 }
 
-export function login(http: HttpClient, rootUrl: string, params: Login$Params, context?: HttpContext): Observable<StrictHttpResponse<AuthenticationResponse>> {
-  const rb = new RequestBuilder(rootUrl, login.PATH, 'post');
+export function createGeographicalPosition(http: HttpClient, rootUrl: string, params: CreateGeographicalPosition$Params, context?: HttpContext): Observable<StrictHttpResponse<GeographicalPosition>> {
+  const rb = new RequestBuilder(rootUrl, createGeographicalPosition.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -26,9 +26,9 @@ export function login(http: HttpClient, rootUrl: string, params: Login$Params, c
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<AuthenticationResponse>;
+      return r as StrictHttpResponse<GeographicalPosition>;
     })
   );
 }
 
-login.PATH = '/auth/login';
+createGeographicalPosition.PATH = '/geographicals';

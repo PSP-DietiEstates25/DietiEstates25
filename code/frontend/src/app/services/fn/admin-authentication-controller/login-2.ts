@@ -11,12 +11,12 @@ import { RequestBuilder } from '../../request-builder';
 import { AuthenticationRequest } from '../../models/authentication-request';
 import { AuthenticationResponse } from '../../models/authentication-response';
 
-export interface Login$Params {
+export interface Login2$Params {
       body: AuthenticationRequest
 }
 
-export function login(http: HttpClient, rootUrl: string, params: Login$Params, context?: HttpContext): Observable<StrictHttpResponse<AuthenticationResponse>> {
-  const rb = new RequestBuilder(rootUrl, login.PATH, 'post');
+export function login2(http: HttpClient, rootUrl: string, params: Login2$Params, context?: HttpContext): Observable<StrictHttpResponse<AuthenticationResponse>> {
+  const rb = new RequestBuilder(rootUrl, login2.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -31,4 +31,4 @@ export function login(http: HttpClient, rootUrl: string, params: Login$Params, c
   );
 }
 
-login.PATH = '/auth/login';
+login2.PATH = '/auth/admins/login';
