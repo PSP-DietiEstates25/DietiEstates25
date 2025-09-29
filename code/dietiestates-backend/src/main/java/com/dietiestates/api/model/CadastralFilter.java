@@ -29,9 +29,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @Builder
 @EqualsAndHashCode
 @NoArgsConstructor
@@ -92,11 +94,40 @@ public class CadastralFilter {
 		Search search
 		) {
 		this.createdDate = createdDate;
+		
+		/*
 		this.priceRange = new PriceRange(minPrice, maxPrice);
 		this.squareMetersRange = new SquareMetersRange(minSquareMeters, maxSquareMeters);
 		this.energyClassRange = new EnergyClassRange(minEnergyClass, maxEnergyClass);
 		this.roomsRange = new RoomsRange(minRooms, maxRooms);
 		this.floorRange = new FloorRange(minFloor, maxFloor);
+		this.setSearch(search); 
+		*/
+		this.priceRange = PriceRange.builder()
+				.minPrice(minPrice)
+				.maxPrice(maxPrice)
+				.build();
+		
+		this.squareMetersRange = SquareMetersRange.builder()
+				.minSquareMeters(minSquareMeters)
+				.maxSquareMeters(maxSquareMeters)
+				.build();
+		
+		this.energyClassRange = EnergyClassRange.builder()
+				.minEnergyClass(minEnergyClass)
+				.maxEnergyClass(maxEnergyClass)
+				.build();
+		
+		this.roomsRange = RoomsRange.builder()
+				.minRooms(minRooms)
+				.maxRooms(maxRooms)
+				.build();
+		
+		this.floorRange = FloorRange.builder()
+				.minFloor(minFloor)
+				.maxFloor(maxFloor)
+				.build();
+		
 		this.setSearch(search);
 	}
 	

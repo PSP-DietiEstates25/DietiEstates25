@@ -26,9 +26,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -77,7 +79,7 @@ public class CadastralData {
 		LocalDateTime createdDate,
 		BigDecimal price,
 		Integer squareMeters,
-		Integer energyClass,
+		String energyClass,
 		Integer rooms,
 		Integer floor,
 		RealEstate realEstate
@@ -85,7 +87,7 @@ public class CadastralData {
 		this.createdDate = createdDate;
 		this.price = price;
 		this.squareMeters = squareMeters;
-		this.energyClass = EnergyClass.fromOrder(energyClass).get();
+		this.energyClass = EnergyClass.valueOf(energyClass);
 		this.rooms = rooms;
 		this.floor = floor;
 		this.setRealEstate(realEstate);

@@ -18,23 +18,22 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Detail {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@EqualsAndHashCode.Include
 	private long id;
 	
 	@CreatedDate
@@ -72,8 +71,12 @@ public class Detail {
 			Search search
 			){
 		this.createdDate = createdDate;
-		this.setRealEstate(realEstate);
-		this.setSearch(search);
+		
+		if(realEstate != null)
+			this.setRealEstate(realEstate);
+		
+		if(search != null)
+			this.setSearch(search);
 	}
 	
 	public void setRealEstate(RealEstate realEstate) {

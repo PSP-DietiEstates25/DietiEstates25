@@ -10,6 +10,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
@@ -19,9 +20,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
@@ -56,8 +59,9 @@ public class SearchRealEstate {
 			RealEstate realEstate,
 			Search search
 			) {
+		this.id = new SearchRealEstateKey(realEstate.getId(), search.getId());
 		this.createdDate = createdDate;
-		realEstate.addSearchRealEstate(this);
-		search.addSearchRealEstate(this);
-		}
+		this.realEstate = realEstate;
+		this.search = search;
+	}
 }
