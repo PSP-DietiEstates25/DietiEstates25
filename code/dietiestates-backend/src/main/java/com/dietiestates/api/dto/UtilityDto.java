@@ -1,28 +1,27 @@
 package com.dietiestates.api.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
 @Builder
 public class UtilityDto {
 
-	@NotEmpty(message = "Air conditioning is mandatory")
-	@NotBlank(message = "Air conditioning is mandatory")
-	private boolean hasAirConditioning;
+	@NotNull(message = "Air conditioning is mandatory")
+	private Boolean hasAirConditioning;
 	
-	@NotEmpty(message = "Doorman is mandatory")
-	@NotBlank(message = "Doorman is mandatory")
-	private boolean hasDoorman;
+	@NotNull(message = "Doorman is mandatory")
+	private Boolean hasDoorman;
 	
-	@NotEmpty(message = "Elevator is mandatory")
-	@NotBlank(message = "Elevator is mandatory")
-	private boolean hasElevator;
+	@NotNull(message = "Elevator is mandatory")
+	private Boolean hasElevator;
 }

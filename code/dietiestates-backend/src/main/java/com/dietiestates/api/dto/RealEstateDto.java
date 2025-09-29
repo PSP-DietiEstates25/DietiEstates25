@@ -15,6 +15,8 @@ import lombok.ToString;
 @Builder
 public class RealEstateDto {
 	
+	private Long id;
+	
 	@NotEmpty(message = "Category is mandatory")
 	@NotBlank(message = "Category is mandatory")
 	private String category;
