@@ -26,8 +26,7 @@ public class DetailService {
 	
 	public Detail createDetail(DetailDto request) {
 		var detail = of(request);
-		detailRepository.save(detail);
-		return detail;
+		return detailRepository.save(detail);
 	}
 	
 	public Detail of(DetailDto request) {

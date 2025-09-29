@@ -1,11 +1,13 @@
 package com.dietiestates.api.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.DetailDto;
+import com.dietiestates.api.dto.RealEstateDto;
 import com.dietiestates.api.dto.SearchDto;
 import com.dietiestates.api.enums.AdCategory;
 import com.dietiestates.api.exception.notfound.UserNotFoundException;
@@ -30,21 +32,37 @@ public class SearchService {
 	private final DetailService detailService;
 	private final CadastralFilterService cadastralFilterService;
 	
-	public List<RealEstate> createSearch(SearchDto request) {
+	public List<RealEstateDto> createSearch(SearchDto request) {
 		var search = of(request);
+	    search = searchRepository.save(search);
 		var detailDto = DetailDto.builder()
 				.searchId(search.getId())
-				.build();	
+				.build();
 		var detail = detailService.createDetail(detailDto);
-		var geographicalPosition = geographicalPositionService.createGeographicalPosition(request.getGeographicalPositionDto(), detail.getId());
-		var utility = utilityService.createUtility(request.getUtilityDto(), detail.getId());
-		var cadastralFilter = cadastralFilterService.createCadastralFilter(request.getCadastralFilterDto(), search.getId());
-		searchRepository.save(search);
+		var geographicalPosition = geographicalPositionService.createGeographicalPosition(request.getGeographicalPosition(), detail.getId());
+		var utility = utilityService.createUtility(request.getUtility(), detail.getId());
+		var cadastralFilter = cadastralFilterService.createCadastralFilter(request.getCadastralFilter(), search.getId());
 		
-		var searchRealEstates = realEstateService.getSearchRealEstates(search);
-		searchRealEstateService.createSearchRealEstate(search, searchRealEstates);
+		var searchRealEstates = this.getSearchRealEstates(search);
 		
-		return searchRealEstates;
+		if(!searchRealEstates.isEmpty())
+			searchRealEstateService.createSearchRealEstate(search, searchRealEstates);
+		
+		var response = new ArrayList<RealEstateDto>();
+		
+		searchRealEstates.forEach(realEstate -> {
+			var dto = RealEstateDto.builder()
+					.id(realEstate.getId())
+					.category(realEstate.getCategory().toString())
+					.images(realEstate.getImages())
+					.description(realEstate.getDescription())
+					.estateAgentEmail(realEstate.getEstateAgent().getEmail())
+					.build();
+			
+			response.add(dto);
+		});
+		
+		return response;
 	}
 	
 	public Search of(SearchDto request) {
@@ -60,5 +78,16 @@ public class SearchService {
 				.user(user)
 				.build();
 		
+	}
+	
+	public List<RealEstate> getSearchRealEstates(Search search){
+		
+		var allRealEstates = realEstateService.getAllRealEstates();
+		
+		var geographicalPositionRealEstates = geographicalPositionService.getGeographicalPositionRealEstates(search.getDetail().getGeographicalPosition(), allRealEstates);
+		var utilityRealEstates = utilityService.getUtilityRealEstates(search.getDetail().getUtility(), geographicalPositionRealEstates);
+		var cadastralFilterRealEstates = cadastralFilterService.getCadastralFilterRealEstates(search.getCadastralFilter(), utilityRealEstates);
+		
+		return cadastralFilterRealEstates;
 	}
 }

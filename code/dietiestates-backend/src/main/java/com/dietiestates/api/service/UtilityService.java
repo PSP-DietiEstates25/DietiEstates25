@@ -1,9 +1,14 @@
 package com.dietiestates.api.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.UtilityDto;
 import com.dietiestates.api.exception.notfound.DetailNotFoundException;
+import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.model.Utility;
 import com.dietiestates.api.repository.DetailRepository;
 import com.dietiestates.api.repository.UtilityRepository;
@@ -19,8 +24,7 @@ public class UtilityService {
 	
 	public Utility createUtility(UtilityDto request, Long detailId) {
 		var utility = of(request, detailId);
-		utilityRepository.save(utility);
-		return utility;
+		return utilityRepository.save(utility);
 	}
 	
 	public Utility of(UtilityDto request, Long detailId) {
@@ -29,10 +33,25 @@ public class UtilityService {
 				.orElseThrow(DetailNotFoundException::new);
 				
 		return Utility.utilityBuilder()
-				.hasAirConditioning(request.isHasAirConditioning())
-				.hasDoorman(request.isHasDoorman())
-				.hasElevator(request.isHasElevator())
+				.hasAirConditioning(request.getHasAirConditioning())
+				.hasDoorman(request.getHasDoorman())
+				.hasElevator(request.getHasElevator())
 				.detail(detail)
 				.build();
+	}
+	
+	public List<RealEstate> getUtilityRealEstates(Utility searchUtility, List<RealEstate> realEstates){
+		var utilityRealEstates = new ArrayList<RealEstate>();
+		realEstates.forEach(realEstate -> {
+			var realEstateUtility = realEstate.getDetail().getUtility();
+			if(
+					realEstateUtility.getHasAirConditioning().equals(searchUtility.getHasAirConditioning()) &&
+					realEstateUtility.getHasDoorman().equals(searchUtility.getHasDoorman()) &&
+					realEstateUtility.getHasElevator().equals(searchUtility.getHasElevator())
+				)
+				utilityRealEstates.add(realEstate);
+		});
+		
+		return utilityRealEstates;
 	}
 }
