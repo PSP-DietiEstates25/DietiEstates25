@@ -48,7 +48,7 @@ public class NotificationCategory {
 	private NotificationCategoryType name;
 	
 	@Column(nullable = false)
-	private boolean isActive;
+	private Boolean isActive;
 	
 	@CreatedDate
 	@Column(nullable = false, updatable = false)

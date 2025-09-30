@@ -36,15 +36,15 @@ public class Offer extends Proposal {
 	
 	@Builder(builderMethodName = "offerBuilder")
 	public Offer(
-			Long id, 
-			ProposalCategory category, 
-			ProposalStatus status,
-			LocalDateTime createdDate,
-			LocalDateTime lastModifiedDate,
-			User user,
-			RealEstate realEstate,
-			BigDecimal amount
-	) {
+		Long id, 
+		ProposalCategory category, 
+		ProposalStatus status,
+		LocalDateTime createdDate,
+		LocalDateTime lastModifiedDate,
+		User user,
+		RealEstate realEstate,
+		BigDecimal amount
+			) {
 		super(id, category, status, createdDate, lastModifiedDate, user, realEstate);
 		this.amount = amount;
 		

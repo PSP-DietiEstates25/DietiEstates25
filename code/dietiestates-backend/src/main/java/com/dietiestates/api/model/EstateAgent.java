@@ -34,15 +34,15 @@ import lombok.ToString;
 @EntityListeners(AuditingEntityListener.class)
 public class EstateAgent extends User {
 	
-	@OneToMany(mappedBy = "estateAgent", cascade = CascadeType.ALL, orphanRemoval = true)
-	private final List<RealEstate> realEstates = new ArrayList<>();
-	
 	@ManyToOne
 	@JoinColumn(
 			nullable = false,
 			name = "admin_id",
 			foreignKey = @ForeignKey(name = "ESTATE_AGENT_ADMIN_ID_FK"))
 	private Admin admin;
+	
+	@OneToMany(mappedBy = "estateAgent", cascade = CascadeType.ALL, orphanRemoval = true)
+	private final List<RealEstate> realEstates = new ArrayList<>();
 	
 	@Builder(builderMethodName = "estateAgentBuilder")
 	public EstateAgent(
