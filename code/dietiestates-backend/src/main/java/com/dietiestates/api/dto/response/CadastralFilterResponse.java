@@ -1,5 +1,6 @@
 package com.dietiestates.api.dto.response;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import lombok.Builder;
@@ -14,8 +15,8 @@ import lombok.ToString;
 public class CadastralFilterResponse {
 
 	private Long id;
-	private Integer minPrice;
-	private Integer maxPrice;
+	private BigDecimal minPrice;
+	private BigDecimal maxPrice;
 	private Integer minSquareMeters;
 	private Integer maxSquareMeters;
 	private Integer minEnergyClass;
@@ -26,5 +27,5 @@ public class CadastralFilterResponse {
 	private Integer maxFloor;
 	private LocalDateTime createdDate;
 	private LocalDateTime lastModifiedDate;
-	private Integer searchId;
+	private Long searchId;
 }

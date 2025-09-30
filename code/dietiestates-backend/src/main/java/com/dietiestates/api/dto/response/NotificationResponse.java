@@ -17,6 +17,6 @@ public class NotificationResponse {
 	private LocalDateTime createdDate;
 	private LocalDateTime lastModifiedDate;
 	private String message;
-	private Integer notificationCategoryId;
+	private Long notificationCategoryId;
 	private String userEmail;
 }

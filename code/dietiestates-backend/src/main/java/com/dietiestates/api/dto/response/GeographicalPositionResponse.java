@@ -22,5 +22,5 @@ public class GeographicalPositionResponse {
 	private Double longitude;
 	private Double latitude;
 	private Integer radius;
-	private Integer detailId;
+	private Long detailId;
 }
