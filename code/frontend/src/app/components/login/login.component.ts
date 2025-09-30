@@ -1,7 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../vecchioService/auth/auth.service';
+import { AuthenticationControllerService } from '../../services/services/authentication-controller.service';
+import { AuthenticationRequest } from '../../services/models/authentication-request';
 
 @Component({
   selector: 'app-login',
@@ -11,7 +12,7 @@ import { AuthService } from '../../vecchioService/auth/auth.service';
 })
 export class LoginComponent {
   private fb = inject(FormBuilder);
-  private auth = inject(AuthService);
+  private api = inject(AuthenticationControllerService);
   private router = inject(Router);
 
   loading = signal(false);
@@ -19,7 +20,7 @@ export class LoginComponent {
 
   form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    password: ['', Validators.required],
   });
 
   submit() {
@@ -28,11 +29,19 @@ export class LoginComponent {
       return;
     }
     const { email, password } = this.form.getRawValue();
+
     this.loading.set(true);
     this.errorMsg.set(null);
 
-    this.auth.login(email, password).subscribe({
-      next: () => this.router.navigateByUrl('/'),
+    const body: AuthenticationRequest = { email, password, role: 'CLIENT' };
+    this.api.login({ body }).subscribe({
+      next: (res) => {
+        // salva token per l’interceptor
+        localStorage.setItem('auth.token', res?.token ?? '');
+        // salva ruolo
+        localStorage.setItem('auth.role', 'CLIENT');
+        this.router.navigateByUrl('/');
+      },
       error: (err) => {
         this.errorMsg.set(err?.error?.message || 'Credenziali non valide');
         this.loading.set(false);

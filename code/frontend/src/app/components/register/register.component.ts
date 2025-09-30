@@ -7,7 +7,8 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../vecchioService/auth/auth.service';
+import { AuthenticationControllerService } from '../../services/services/authentication-controller.service';
+import { AuthenticationRequest } from '../../services/models/authentication-request';
 
 function matchPassword(group: AbstractControl): ValidationErrors | null {
   const p = group.get('password')?.value;
@@ -23,19 +24,19 @@ function matchPassword(group: AbstractControl): ValidationErrors | null {
 })
 export class RegisterComponent {
   private fb = inject(FormBuilder);
-  private auth = inject(AuthService);
+  private api = inject(AuthenticationControllerService);
   private router = inject(Router);
 
   loading = signal(false);
   errorMsg = signal<string | null>(null);
 
   form = this.fb.nonNullable.group({
-    name: ['', [Validators.required, Validators.minLength(2)]],
+    name: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
     passwords: this.fb.nonNullable.group(
       {
-        password: ['', [Validators.required, Validators.minLength(6)]],
-        confirm: ['', [Validators.required]],
+        password: ['', Validators.required],
+        confirm: ['', Validators.required],
       },
       { validators: matchPassword }
     ),
@@ -50,15 +51,14 @@ export class RegisterComponent {
     this.errorMsg.set(null);
 
     const { name, email, passwords } = this.form.getRawValue();
-    const payload = { name, email, password: passwords.password };
+    const body: AuthenticationRequest = {
+      email,
+      password: passwords.password,
+      role: 'CLIENT',
+    };
 
-    this.auth.register(payload).subscribe({
-      next: () => {
-        // se il backend ha fornito token → sei già loggato; altrimenti vai al login
-        if (this.auth.authState().isAuthenticated)
-          this.router.navigateByUrl('/');
-        else this.router.navigateByUrl('/auth/login');
-      },
+    this.api.register({ body }).subscribe({
+      next: () => this.router.navigateByUrl('/auth/login'),
       error: (err) => {
         this.errorMsg.set(err?.error?.message || 'Registrazione non riuscita');
         this.loading.set(false);
