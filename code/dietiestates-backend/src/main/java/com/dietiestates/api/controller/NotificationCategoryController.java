@@ -21,7 +21,7 @@ public class NotificationCategoryController {
 	private final NotificationCategoryService notificationCategoryService;
 	
 	@PostMapping
-	public ResponseEntity<NotificationCategory> createNotificationCategory(
+	public ResponseEntity<?> createNotificationCategory(
 			@RequestBody NotificationCategoryRequest request
 			){
 		notificationCategoryService.createNotificationCategory(request);

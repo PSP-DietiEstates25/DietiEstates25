@@ -22,7 +22,7 @@ public class UtilityController {
 	private final UtilityService utilityService;
 	
 	@PostMapping
-	public ResponseEntity<Utility> createUtility(
+	public ResponseEntity<?> createUtility(
 			@PathVariable Long detailid,
 			@RequestBody UtilityRequest request
 			){

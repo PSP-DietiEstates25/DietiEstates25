@@ -22,7 +22,7 @@ public class VisitController {
 	private final VisitService visitService;
 	
 	@PostMapping
-	public ResponseEntity<Visit> createVisit(
+	public ResponseEntity<?> createVisit(
 			@RequestBody VisitRequest request,
 			@PathVariable Long realestateid
 			){

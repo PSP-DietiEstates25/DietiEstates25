@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dietiestates.api.dto.CadastralFilterDto;
-import com.dietiestates.api.model.CadastralFilter;
+import com.dietiestates.api.dto.request.CadastralFilterRequest;
 import com.dietiestates.api.service.CadastralFilterService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,9 +21,10 @@ public class CadastralFilterController {
 	private final CadastralFilterService cadastralFilterService;
 	
 	@PostMapping
-	public ResponseEntity<CadastralFilter> createCadastralFilter(
+	public ResponseEntity<?> createCadastralFilter(
 			@PathVariable Long searchid,
-			@RequestBody CadastralFilterRequest request){
+			@RequestBody CadastralFilterRequest request
+				){
 		cadastralFilterService.createCadastralFilter(request, searchid);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}

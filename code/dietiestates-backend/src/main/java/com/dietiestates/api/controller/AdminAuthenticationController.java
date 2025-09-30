@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.StafferRequest;
-import com.dietiestates.api.model.Admin;
+import com.dietiestates.api.dto.response.AuthenticationResponse;
 import com.dietiestates.api.service.AdminAuthenticationService;
 import com.dietiestates.api.service.AuthenticationService;
 
@@ -27,7 +27,7 @@ public class AdminAuthenticationController extends AuthenticationController {
 	}
 
 	@PostMapping
-	public ResponseEntity<AdminResponse> registerAdmin(
+	public ResponseEntity<AuthenticationResponse> registerAdmin(
 			@RequestBody StafferRequest request
 			){
 		adminAuthenticationService.register(request);

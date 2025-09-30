@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.CadastralDataRequest;
-import com.dietiestates.api.model.CadastralData;
 import com.dietiestates.api.service.CadastralDataService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,10 +21,10 @@ public class CadastralDataController {
 	private final CadastralDataService cadastralDataService;
 	
 	@PostMapping
-	public ResponseEntity<CadastralDataResponse> createCadastralData(
+	public ResponseEntity<?> createCadastralData(
 			@PathVariable Long realestateid,
 			@RequestBody CadastralDataRequest request
-			){
+				){
 		cadastralDataService.createCadastralData(request, realestateid);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}

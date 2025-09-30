@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.GeographicalPositionRequest;
-import com.dietiestates.api.model.GeographicalPosition;
 import com.dietiestates.api.service.GeographicalPositionService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,7 @@ public class GeographicalPositionController {
 	private final GeographicalPositionService geographicalPositionService;
 	
 	@PostMapping
-	public ResponseEntity<GeographicalPosition> createGeographicalPosition(
+	public ResponseEntity<?> createGeographicalPosition(
 			@PathVariable Long detailid,
 			@RequestBody GeographicalPositionRequest request
 			){

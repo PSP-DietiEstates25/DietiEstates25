@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.RealEstateRequest;
-import com.dietiestates.api.dto.response.RealEstateResponse;
 import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.service.RealEstateService;
 
@@ -27,10 +26,9 @@ public class RealEstateController {
 	private static Logger logger = Logger.getLogger(RealEstateController.class.getName());
 	
 	@PostMapping
-	public ResponseEntity<RealEstateResponse> createRealEstate(
+	public ResponseEntity<?> createRealEstate(
 			@RequestBody RealEstateRequest request
 	){
-		logger.info("Received realEstate: " + request.toString());
 		realEstateSerivce.createRealEstate(request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}

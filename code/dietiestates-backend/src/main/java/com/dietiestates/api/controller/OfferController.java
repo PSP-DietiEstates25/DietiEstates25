@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.OfferRequest;
-import com.dietiestates.api.model.Offer;
 import com.dietiestates.api.service.OfferService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,7 @@ public class OfferController {
 	private final OfferService offerService;
 	
 	@PostMapping
-	public ResponseEntity<Offer> createOffer(
+	public ResponseEntity<?> createOffer(
 			@RequestBody OfferRequest request,
 			@PathVariable Long realestateid
 		){
