@@ -47,11 +47,11 @@ public abstract class Proposal {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	protected ProposalCategory proposalCategory;
+	protected ProposalCategory category;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	protected ProposalStatus proposalStatus;
+	protected ProposalStatus status;
 	
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
@@ -63,14 +63,14 @@ public abstract class Proposal {
 	
 	public Proposal(
 			Long id,
-			String proposalCategory,
-			String proposalStatus,
+			String category,
+			String status,
 			LocalDateTime createdDate,
 			LocalDateTime lastModifiedDate
 			) {
 		this.id = id;
-		this.proposalCategory = ProposalCategory.valueOf(proposalCategory);
-		this.proposalStatus = ProposalStatus.valueOf(proposalStatus);
+		this.category = ProposalCategory.valueOf(category);
+		this.status = ProposalStatus.valueOf(status);
 		this.createdDate = createdDate;
 		this.lastModifiedDate = lastModifiedDate;
 	}

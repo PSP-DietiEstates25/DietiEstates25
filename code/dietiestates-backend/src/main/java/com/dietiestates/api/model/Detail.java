@@ -36,7 +36,7 @@ public class Detail {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+	private Long id;
 	
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
