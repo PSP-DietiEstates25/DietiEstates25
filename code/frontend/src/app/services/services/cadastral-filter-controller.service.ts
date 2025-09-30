@@ -11,38 +11,38 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { createVisit } from '../fn/visit-controller/create-visit';
-import { CreateVisit$Params } from '../fn/visit-controller/create-visit';
+import { createCadastralFilter } from '../fn/cadastral-filter-controller/create-cadastral-filter';
+import { CreateCadastralFilter$Params } from '../fn/cadastral-filter-controller/create-cadastral-filter';
 
 @Injectable({ providedIn: 'root' })
-export class VisitControllerService extends BaseService {
+export class CadastralFilterControllerService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
   }
 
-  /** Path part for operation `createVisit()` */
-  static readonly CreateVisitPath = '/realEstates/{realestateid}/visits';
+  /** Path part for operation `createCadastralFilter()` */
+  static readonly CreateCadastralFilterPath = '/searches/{searchid}/cadastral-filters';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `createVisit()` instead.
+   * To access only the response body, use `createCadastralFilter()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createVisit$Response(params: CreateVisit$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+  createCadastralFilter$Response(params: CreateCadastralFilter$Params, context?: HttpContext): Observable<StrictHttpResponse<{
 }>> {
-    return createVisit(this.http, this.rootUrl, params, context);
+    return createCadastralFilter(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `createVisit$Response()` instead.
+   * To access the full response (for headers, for example), `createCadastralFilter$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createVisit(params: CreateVisit$Params, context?: HttpContext): Observable<{
+  createCadastralFilter(params: CreateCadastralFilter$Params, context?: HttpContext): Observable<{
 }> {
-    return this.createVisit$Response(params, context).pipe(
+    return this.createCadastralFilter$Response(params, context).pipe(
       map((r: StrictHttpResponse<{
 }>): {
 } => r.body)

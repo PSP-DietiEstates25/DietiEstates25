@@ -8,14 +8,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { RealEstate } from '../../models/real-estate';
-import { SearchDto } from '../../models/search-dto';
+import { RealEstateResponse } from '../../models/real-estate-response';
+import { SearchRequest } from '../../models/search-request';
 
 export interface CreateSearch$Params {
-      body: SearchDto
+      body: SearchRequest
 }
 
-export function createSearch(http: HttpClient, rootUrl: string, params: CreateSearch$Params, context?: HttpContext): Observable<StrictHttpResponse<RealEstate>> {
+export function createSearch(http: HttpClient, rootUrl: string, params: CreateSearch$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<RealEstateResponse>>> {
   const rb = new RequestBuilder(rootUrl, createSearch.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
@@ -26,7 +26,7 @@ export function createSearch(http: HttpClient, rootUrl: string, params: CreateSe
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<RealEstate>;
+      return r as StrictHttpResponse<Array<RealEstateResponse>>;
     })
   );
 }

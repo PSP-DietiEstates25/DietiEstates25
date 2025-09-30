@@ -8,16 +8,18 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { CadastralData } from '../../models/cadastral-data';
-import { CadastralDataDto } from '../../models/cadastral-data-dto';
+import { CadastralDataRequest } from '../../models/cadastral-data-request';
 
 export interface CreateCadastralData$Params {
-      body: CadastralDataDto
+  realestateid: number;
+      body: CadastralDataRequest
 }
 
-export function createCadastralData(http: HttpClient, rootUrl: string, params: CreateCadastralData$Params, context?: HttpContext): Observable<StrictHttpResponse<CadastralData>> {
+export function createCadastralData(http: HttpClient, rootUrl: string, params: CreateCadastralData$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+}>> {
   const rb = new RequestBuilder(rootUrl, createCadastralData.PATH, 'post');
   if (params) {
+    rb.path('realestateid', params.realestateid, {});
     rb.body(params.body, 'application/json');
   }
 
@@ -26,9 +28,10 @@ export function createCadastralData(http: HttpClient, rootUrl: string, params: C
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<CadastralData>;
+      return r as StrictHttpResponse<{
+      }>;
     })
   );
 }
 
-createCadastralData.PATH = '/cadastrals';
+createCadastralData.PATH = '/realestates/{realestateid}/cadastraldata';

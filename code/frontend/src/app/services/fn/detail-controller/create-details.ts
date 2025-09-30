@@ -8,15 +8,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { CreateDetailRequest } from '../../models/create-detail-request';
-import { IdResponse } from '../../models/id-response';
+import { DetailRequest } from '../../models/detail-request';
 
-export interface Create$Params {
-      body: CreateDetailRequest
+export interface CreateDetails$Params {
+      body: DetailRequest
 }
 
-export function create(http: HttpClient, rootUrl: string, params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<IdResponse>> {
-  const rb = new RequestBuilder(rootUrl, create.PATH, 'post');
+export function createDetails(http: HttpClient, rootUrl: string, params: CreateDetails$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+}>> {
+  const rb = new RequestBuilder(rootUrl, createDetails.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -26,9 +26,10 @@ export function create(http: HttpClient, rootUrl: string, params: Create$Params,
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<IdResponse>;
+      return r as StrictHttpResponse<{
+      }>;
     })
   );
 }
 
-create.PATH = '/details';
+createDetails.PATH = '/details';

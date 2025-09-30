@@ -4,9 +4,9 @@
 
 import { Notification } from '../models/notification';
 export interface NotificationCategory {
-  active?: boolean;
   createdDate?: string;
   id?: number;
+  isActive?: boolean;
   lastModifiedDate?: string;
   name?: 'NEW_PROPERTIES' | 'PROMOTIONAL' | 'VISIT' | 'OFFER';
   notifications?: Array<Notification>;

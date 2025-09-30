@@ -11,7 +11,6 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { CadastralData } from '../models/cadastral-data';
 import { createCadastralData } from '../fn/cadastral-data-controller/create-cadastral-data';
 import { CreateCadastralData$Params } from '../fn/cadastral-data-controller/create-cadastral-data';
 
@@ -22,7 +21,7 @@ export class CadastralDataControllerService extends BaseService {
   }
 
   /** Path part for operation `createCadastralData()` */
-  static readonly CreateCadastralDataPath = '/cadastrals';
+  static readonly CreateCadastralDataPath = '/realestates/{realestateid}/cadastraldata';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -30,7 +29,8 @@ export class CadastralDataControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createCadastralData$Response(params: CreateCadastralData$Params, context?: HttpContext): Observable<StrictHttpResponse<CadastralData>> {
+  createCadastralData$Response(params: CreateCadastralData$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+}>> {
     return createCadastralData(this.http, this.rootUrl, params, context);
   }
 
@@ -40,9 +40,12 @@ export class CadastralDataControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createCadastralData(params: CreateCadastralData$Params, context?: HttpContext): Observable<CadastralData> {
+  createCadastralData(params: CreateCadastralData$Params, context?: HttpContext): Observable<{
+}> {
     return this.createCadastralData$Response(params, context).pipe(
-      map((r: StrictHttpResponse<CadastralData>): CadastralData => r.body)
+      map((r: StrictHttpResponse<{
+}>): {
+} => r.body)
     );
   }
 

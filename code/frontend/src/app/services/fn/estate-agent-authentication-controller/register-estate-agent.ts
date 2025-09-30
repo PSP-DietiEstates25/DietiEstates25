@@ -9,10 +9,10 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 import { EstateAgent } from '../../models/estate-agent';
-import { StafferDto } from '../../models/staffer-dto';
+import { StafferRequest } from '../../models/staffer-request';
 
 export interface RegisterEstateAgent$Params {
-      body: StafferDto
+      body: StafferRequest
 }
 
 export function registerEstateAgent(http: HttpClient, rootUrl: string, params: RegisterEstateAgent$Params, context?: HttpContext): Observable<StrictHttpResponse<EstateAgent>> {

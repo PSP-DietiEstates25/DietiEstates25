@@ -8,14 +8,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { RealEstate } from '../../models/real-estate';
-import { RealEstateDto } from '../../models/real-estate-dto';
+import { RealEstateRequest } from '../../models/real-estate-request';
 
 export interface CreateRealEstate$Params {
-      body: RealEstateDto
+      body: RealEstateRequest
 }
 
-export function createRealEstate(http: HttpClient, rootUrl: string, params: CreateRealEstate$Params, context?: HttpContext): Observable<StrictHttpResponse<RealEstate>> {
+export function createRealEstate(http: HttpClient, rootUrl: string, params: CreateRealEstate$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+}>> {
   const rb = new RequestBuilder(rootUrl, createRealEstate.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
@@ -26,7 +26,8 @@ export function createRealEstate(http: HttpClient, rootUrl: string, params: Crea
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<RealEstate>;
+      return r as StrictHttpResponse<{
+      }>;
     })
   );
 }

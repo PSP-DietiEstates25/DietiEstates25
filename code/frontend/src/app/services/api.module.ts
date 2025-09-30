@@ -6,16 +6,17 @@ import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
-import { UtilityControllerService } from './services/utility-controller.service';
 import { SearchControllerService } from './services/search-controller.service';
+import { CadastralFilterControllerService } from './services/cadastral-filter-controller.service';
 import { RealEstateControllerService } from './services/real-estate-controller.service';
 import { OfferControllerService } from './services/offer-controller.service';
+import { CadastralDataControllerService } from './services/cadastral-data-controller.service';
 import { VisitControllerService } from './services/visit-controller.service';
 import { NotificationControllerService } from './services/notification-controller.service';
 import { NotificationCategoryControllerService } from './services/notification-category-controller.service';
+import { DetailControllerService } from './services/detail-controller.service';
+import { UtilityControllerService } from './services/utility-controller.service';
 import { GeographicalPositionControllerService } from './services/geographical-position-controller.service';
-import { DetailsControllerService } from './services/details-controller.service';
-import { CadastralDataControllerService } from './services/cadastral-data-controller.service';
 import { AuthenticationControllerService } from './services/authentication-controller.service';
 import { EstateAgentAuthenticationControllerService } from './services/estate-agent-authentication-controller.service';
 import { AdminAuthenticationControllerService } from './services/admin-authentication-controller.service';
@@ -28,16 +29,17 @@ import { AdminAuthenticationControllerService } from './services/admin-authentic
   exports: [],
   declarations: [],
   providers: [
-    UtilityControllerService,
     SearchControllerService,
+    CadastralFilterControllerService,
     RealEstateControllerService,
     OfferControllerService,
+    CadastralDataControllerService,
     VisitControllerService,
     NotificationControllerService,
     NotificationCategoryControllerService,
+    DetailControllerService,
+    UtilityControllerService,
     GeographicalPositionControllerService,
-    DetailsControllerService,
-    CadastralDataControllerService,
     AuthenticationControllerService,
     EstateAgentAuthenticationControllerService,
     AdminAuthenticationControllerService,

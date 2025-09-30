@@ -13,7 +13,6 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { createNotification } from '../fn/notification-controller/create-notification';
 import { CreateNotification$Params } from '../fn/notification-controller/create-notification';
-import { Notification } from '../models/notification';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationControllerService extends BaseService {
@@ -30,7 +29,8 @@ export class NotificationControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createNotification$Response(params: CreateNotification$Params, context?: HttpContext): Observable<StrictHttpResponse<Notification>> {
+  createNotification$Response(params: CreateNotification$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+}>> {
     return createNotification(this.http, this.rootUrl, params, context);
   }
 
@@ -40,9 +40,12 @@ export class NotificationControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createNotification(params: CreateNotification$Params, context?: HttpContext): Observable<Notification> {
+  createNotification(params: CreateNotification$Params, context?: HttpContext): Observable<{
+}> {
     return this.createNotification$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Notification>): Notification => r.body)
+      map((r: StrictHttpResponse<{
+}>): {
+} => r.body)
     );
   }
 

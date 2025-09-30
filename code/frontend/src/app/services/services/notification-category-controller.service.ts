@@ -13,7 +13,6 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { createNotificationCategory } from '../fn/notification-category-controller/create-notification-category';
 import { CreateNotificationCategory$Params } from '../fn/notification-category-controller/create-notification-category';
-import { NotificationCategory } from '../models/notification-category';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationCategoryControllerService extends BaseService {
@@ -30,7 +29,8 @@ export class NotificationCategoryControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createNotificationCategory$Response(params: CreateNotificationCategory$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationCategory>> {
+  createNotificationCategory$Response(params: CreateNotificationCategory$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+}>> {
     return createNotificationCategory(this.http, this.rootUrl, params, context);
   }
 
@@ -40,9 +40,12 @@ export class NotificationCategoryControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createNotificationCategory(params: CreateNotificationCategory$Params, context?: HttpContext): Observable<NotificationCategory> {
+  createNotificationCategory(params: CreateNotificationCategory$Params, context?: HttpContext): Observable<{
+}> {
     return this.createNotificationCategory$Response(params, context).pipe(
-      map((r: StrictHttpResponse<NotificationCategory>): NotificationCategory => r.body)
+      map((r: StrictHttpResponse<{
+}>): {
+} => r.body)
     );
   }
 

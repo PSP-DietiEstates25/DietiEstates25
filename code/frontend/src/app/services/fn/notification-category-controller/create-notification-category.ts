@@ -8,14 +8,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { NotificationCategory } from '../../models/notification-category';
-import { NotificationCategoryDto } from '../../models/notification-category-dto';
+import { NotificationCategoryRequest } from '../../models/notification-category-request';
 
 export interface CreateNotificationCategory$Params {
-      body: NotificationCategoryDto
+      body: NotificationCategoryRequest
 }
 
-export function createNotificationCategory(http: HttpClient, rootUrl: string, params: CreateNotificationCategory$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationCategory>> {
+export function createNotificationCategory(http: HttpClient, rootUrl: string, params: CreateNotificationCategory$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+}>> {
   const rb = new RequestBuilder(rootUrl, createNotificationCategory.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
@@ -26,7 +26,8 @@ export function createNotificationCategory(http: HttpClient, rootUrl: string, pa
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<NotificationCategory>;
+      return r as StrictHttpResponse<{
+      }>;
     })
   );
 }

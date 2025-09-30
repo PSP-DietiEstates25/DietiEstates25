@@ -8,16 +8,18 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Utility } from '../../models/utility';
-import { UtilityDto } from '../../models/utility-dto';
+import { UtilityRequest } from '../../models/utility-request';
 
 export interface CreateUtility$Params {
-      body: UtilityDto
+  detailid: number;
+      body: UtilityRequest
 }
 
-export function createUtility(http: HttpClient, rootUrl: string, params: CreateUtility$Params, context?: HttpContext): Observable<StrictHttpResponse<Utility>> {
+export function createUtility(http: HttpClient, rootUrl: string, params: CreateUtility$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+}>> {
   const rb = new RequestBuilder(rootUrl, createUtility.PATH, 'post');
   if (params) {
+    rb.path('detailid', params.detailid, {});
     rb.body(params.body, 'application/json');
   }
 
@@ -26,9 +28,10 @@ export function createUtility(http: HttpClient, rootUrl: string, params: CreateU
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Utility>;
+      return r as StrictHttpResponse<{
+      }>;
     })
   );
 }
 
-createUtility.PATH = '/utilities';
+createUtility.PATH = '/details/{detailid}/utilities';

@@ -4,10 +4,7 @@
 
 import { EstateAgent } from '../models/estate-agent';
 import { GrantedAuthority } from '../models/granted-authority';
-import { Notification } from '../models/notification';
-import { Proposal } from '../models/proposal';
 import { Role } from '../models/role';
-import { Search } from '../models/search';
 export interface Admin {
   accountLocked?: boolean;
   accountNonExpired?: boolean;
@@ -23,10 +20,7 @@ export interface Admin {
   id?: number;
   lastModifiedDate?: string;
   name?: string;
-  notifications?: Array<Notification>;
   password?: string;
-  proposals?: Array<Proposal>;
   roles?: Array<Role>;
-  searches?: Array<Search>;
   username?: string;
 }

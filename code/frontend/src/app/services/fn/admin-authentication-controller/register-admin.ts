@@ -8,14 +8,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Admin } from '../../models/admin';
-import { StafferDto } from '../../models/staffer-dto';
+import { AuthenticationResponse } from '../../models/authentication-response';
+import { StafferRequest } from '../../models/staffer-request';
 
 export interface RegisterAdmin$Params {
-      body: StafferDto
+      body: StafferRequest
 }
 
-export function registerAdmin(http: HttpClient, rootUrl: string, params: RegisterAdmin$Params, context?: HttpContext): Observable<StrictHttpResponse<Admin>> {
+export function registerAdmin(http: HttpClient, rootUrl: string, params: RegisterAdmin$Params, context?: HttpContext): Observable<StrictHttpResponse<AuthenticationResponse>> {
   const rb = new RequestBuilder(rootUrl, registerAdmin.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
@@ -26,7 +26,7 @@ export function registerAdmin(http: HttpClient, rootUrl: string, params: Registe
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Admin>;
+      return r as StrictHttpResponse<AuthenticationResponse>;
     })
   );
 }

@@ -11,7 +11,6 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { Admin } from '../models/admin';
 import { AuthenticationResponse } from '../models/authentication-response';
 import { login2 } from '../fn/admin-authentication-controller/login-2';
 import { Login2$Params } from '../fn/admin-authentication-controller/login-2';
@@ -36,7 +35,7 @@ export class AdminAuthenticationControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  registerAdmin$Response(params: RegisterAdmin$Params, context?: HttpContext): Observable<StrictHttpResponse<Admin>> {
+  registerAdmin$Response(params: RegisterAdmin$Params, context?: HttpContext): Observable<StrictHttpResponse<AuthenticationResponse>> {
     return registerAdmin(this.http, this.rootUrl, params, context);
   }
 
@@ -46,9 +45,9 @@ export class AdminAuthenticationControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  registerAdmin(params: RegisterAdmin$Params, context?: HttpContext): Observable<Admin> {
+  registerAdmin(params: RegisterAdmin$Params, context?: HttpContext): Observable<AuthenticationResponse> {
     return this.registerAdmin$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Admin>): Admin => r.body)
+      map((r: StrictHttpResponse<AuthenticationResponse>): AuthenticationResponse => r.body)
     );
   }
 

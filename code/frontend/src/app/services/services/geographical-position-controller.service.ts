@@ -13,7 +13,6 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { createGeographicalPosition } from '../fn/geographical-position-controller/create-geographical-position';
 import { CreateGeographicalPosition$Params } from '../fn/geographical-position-controller/create-geographical-position';
-import { GeographicalPosition } from '../models/geographical-position';
 
 @Injectable({ providedIn: 'root' })
 export class GeographicalPositionControllerService extends BaseService {
@@ -22,7 +21,7 @@ export class GeographicalPositionControllerService extends BaseService {
   }
 
   /** Path part for operation `createGeographicalPosition()` */
-  static readonly CreateGeographicalPositionPath = '/geographicals';
+  static readonly CreateGeographicalPositionPath = '/details/{detailid}/geographical-positions';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -30,7 +29,8 @@ export class GeographicalPositionControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createGeographicalPosition$Response(params: CreateGeographicalPosition$Params, context?: HttpContext): Observable<StrictHttpResponse<GeographicalPosition>> {
+  createGeographicalPosition$Response(params: CreateGeographicalPosition$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+}>> {
     return createGeographicalPosition(this.http, this.rootUrl, params, context);
   }
 
@@ -40,9 +40,12 @@ export class GeographicalPositionControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createGeographicalPosition(params: CreateGeographicalPosition$Params, context?: HttpContext): Observable<GeographicalPosition> {
+  createGeographicalPosition(params: CreateGeographicalPosition$Params, context?: HttpContext): Observable<{
+}> {
     return this.createGeographicalPosition$Response(params, context).pipe(
-      map((r: StrictHttpResponse<GeographicalPosition>): GeographicalPosition => r.body)
+      map((r: StrictHttpResponse<{
+}>): {
+} => r.body)
     );
   }
 

@@ -11,12 +11,11 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { createDetails } from '../fn/details-controller/create-details';
-import { CreateDetails$Params } from '../fn/details-controller/create-details';
-import { Detail } from '../models/detail';
+import { createDetails } from '../fn/detail-controller/create-details';
+import { CreateDetails$Params } from '../fn/detail-controller/create-details';
 
 @Injectable({ providedIn: 'root' })
-export class DetailsControllerService extends BaseService {
+export class DetailControllerService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
   }
@@ -30,7 +29,8 @@ export class DetailsControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createDetails$Response(params: CreateDetails$Params, context?: HttpContext): Observable<StrictHttpResponse<Detail>> {
+  createDetails$Response(params: CreateDetails$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+}>> {
     return createDetails(this.http, this.rootUrl, params, context);
   }
 
@@ -40,9 +40,12 @@ export class DetailsControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createDetails(params: CreateDetails$Params, context?: HttpContext): Observable<Detail> {
+  createDetails(params: CreateDetails$Params, context?: HttpContext): Observable<{
+}> {
     return this.createDetails$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Detail>): Detail => r.body)
+      map((r: StrictHttpResponse<{
+}>): {
+} => r.body)
     );
   }
 

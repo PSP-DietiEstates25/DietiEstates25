@@ -8,16 +8,18 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { NotificationRequest } from '../../models/notification-request';
+import { CadastralFilterRequest } from '../../models/cadastral-filter-request';
 
-export interface CreateNotification$Params {
-      body: NotificationRequest
+export interface CreateCadastralFilter$Params {
+  searchid: number;
+      body: CadastralFilterRequest
 }
 
-export function createNotification(http: HttpClient, rootUrl: string, params: CreateNotification$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+export function createCadastralFilter(http: HttpClient, rootUrl: string, params: CreateCadastralFilter$Params, context?: HttpContext): Observable<StrictHttpResponse<{
 }>> {
-  const rb = new RequestBuilder(rootUrl, createNotification.PATH, 'post');
+  const rb = new RequestBuilder(rootUrl, createCadastralFilter.PATH, 'post');
   if (params) {
+    rb.path('searchid', params.searchid, {});
     rb.body(params.body, 'application/json');
   }
 
@@ -32,4 +34,4 @@ export function createNotification(http: HttpClient, rootUrl: string, params: Cr
   );
 }
 
-createNotification.PATH = '/notifications';
+createCadastralFilter.PATH = '/searches/{searchid}/cadastral-filters';

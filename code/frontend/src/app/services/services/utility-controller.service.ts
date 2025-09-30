@@ -13,7 +13,6 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { createUtility } from '../fn/utility-controller/create-utility';
 import { CreateUtility$Params } from '../fn/utility-controller/create-utility';
-import { Utility } from '../models/utility';
 
 @Injectable({ providedIn: 'root' })
 export class UtilityControllerService extends BaseService {
@@ -22,7 +21,7 @@ export class UtilityControllerService extends BaseService {
   }
 
   /** Path part for operation `createUtility()` */
-  static readonly CreateUtilityPath = '/utilities';
+  static readonly CreateUtilityPath = '/details/{detailid}/utilities';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -30,7 +29,8 @@ export class UtilityControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createUtility$Response(params: CreateUtility$Params, context?: HttpContext): Observable<StrictHttpResponse<Utility>> {
+  createUtility$Response(params: CreateUtility$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+}>> {
     return createUtility(this.http, this.rootUrl, params, context);
   }
 
@@ -40,9 +40,12 @@ export class UtilityControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createUtility(params: CreateUtility$Params, context?: HttpContext): Observable<Utility> {
+  createUtility(params: CreateUtility$Params, context?: HttpContext): Observable<{
+}> {
     return this.createUtility$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Utility>): Utility => r.body)
+      map((r: StrictHttpResponse<{
+}>): {
+} => r.body)
     );
   }
 

@@ -12,5 +12,5 @@ export interface CadastralData {
   price?: number;
   realEstate?: RealEstate;
   rooms?: number;
-  size?: number;
+  squareMeters?: number;
 }

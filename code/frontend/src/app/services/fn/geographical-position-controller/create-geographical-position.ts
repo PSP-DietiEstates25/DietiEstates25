@@ -8,16 +8,18 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { GeographicalPosition } from '../../models/geographical-position';
-import { GeographicalPositionDto } from '../../models/geographical-position-dto';
+import { GeographicalPositionRequest } from '../../models/geographical-position-request';
 
 export interface CreateGeographicalPosition$Params {
-      body: GeographicalPositionDto
+  detailid: number;
+      body: GeographicalPositionRequest
 }
 
-export function createGeographicalPosition(http: HttpClient, rootUrl: string, params: CreateGeographicalPosition$Params, context?: HttpContext): Observable<StrictHttpResponse<GeographicalPosition>> {
+export function createGeographicalPosition(http: HttpClient, rootUrl: string, params: CreateGeographicalPosition$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+}>> {
   const rb = new RequestBuilder(rootUrl, createGeographicalPosition.PATH, 'post');
   if (params) {
+    rb.path('detailid', params.detailid, {});
     rb.body(params.body, 'application/json');
   }
 
@@ -26,9 +28,10 @@ export function createGeographicalPosition(http: HttpClient, rootUrl: string, pa
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<GeographicalPosition>;
+      return r as StrictHttpResponse<{
+      }>;
     })
   );
 }
 
-createGeographicalPosition.PATH = '/geographicals';
+createGeographicalPosition.PATH = '/details/{detailid}/geographical-positions';

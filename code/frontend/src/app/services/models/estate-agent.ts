@@ -4,11 +4,8 @@
 
 import { Admin } from '../models/admin';
 import { GrantedAuthority } from '../models/granted-authority';
-import { Notification } from '../models/notification';
-import { Proposal } from '../models/proposal';
 import { RealEstate } from '../models/real-estate';
 import { Role } from '../models/role';
-import { Search } from '../models/search';
 export interface EstateAgent {
   accountLocked?: boolean;
   accountNonExpired?: boolean;
@@ -22,11 +19,8 @@ export interface EstateAgent {
   id?: number;
   lastModifiedDate?: string;
   name?: string;
-  notifications?: Array<Notification>;
   password?: string;
-  proposals?: Array<Proposal>;
   realEstates?: Array<RealEstate>;
   roles?: Array<Role>;
-  searches?: Array<Search>;
   username?: string;
 }

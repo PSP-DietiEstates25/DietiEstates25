@@ -8,15 +8,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Visit } from '../../models/visit';
-import { VisitDto } from '../../models/visit-dto';
+import { VisitRequest } from '../../models/visit-request';
 
 export interface CreateVisit$Params {
   realestateid: number;
-      body: VisitDto
+      body: VisitRequest
 }
 
-export function createVisit(http: HttpClient, rootUrl: string, params: CreateVisit$Params, context?: HttpContext): Observable<StrictHttpResponse<Visit>> {
+export function createVisit(http: HttpClient, rootUrl: string, params: CreateVisit$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+}>> {
   const rb = new RequestBuilder(rootUrl, createVisit.PATH, 'post');
   if (params) {
     rb.path('realestateid', params.realestateid, {});
@@ -28,7 +28,8 @@ export function createVisit(http: HttpClient, rootUrl: string, params: CreateVis
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Visit>;
+      return r as StrictHttpResponse<{
+      }>;
     })
   );
 }

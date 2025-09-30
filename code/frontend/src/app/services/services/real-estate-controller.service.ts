@@ -59,7 +59,8 @@ export class RealEstateControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createRealEstate$Response(params: CreateRealEstate$Params, context?: HttpContext): Observable<StrictHttpResponse<RealEstate>> {
+  createRealEstate$Response(params: CreateRealEstate$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+}>> {
     return createRealEstate(this.http, this.rootUrl, params, context);
   }
 
@@ -69,9 +70,12 @@ export class RealEstateControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createRealEstate(params: CreateRealEstate$Params, context?: HttpContext): Observable<RealEstate> {
+  createRealEstate(params: CreateRealEstate$Params, context?: HttpContext): Observable<{
+}> {
     return this.createRealEstate$Response(params, context).pipe(
-      map((r: StrictHttpResponse<RealEstate>): RealEstate => r.body)
+      map((r: StrictHttpResponse<{
+}>): {
+} => r.body)
     );
   }
 

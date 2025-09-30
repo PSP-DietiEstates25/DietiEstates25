@@ -13,7 +13,7 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { createSearch } from '../fn/search-controller/create-search';
 import { CreateSearch$Params } from '../fn/search-controller/create-search';
-import { RealEstate } from '../models/real-estate';
+import { RealEstateResponse } from '../models/real-estate-response';
 
 @Injectable({ providedIn: 'root' })
 export class SearchControllerService extends BaseService {
@@ -30,7 +30,7 @@ export class SearchControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createSearch$Response(params: CreateSearch$Params, context?: HttpContext): Observable<StrictHttpResponse<RealEstate>> {
+  createSearch$Response(params: CreateSearch$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<RealEstateResponse>>> {
     return createSearch(this.http, this.rootUrl, params, context);
   }
 
@@ -40,9 +40,9 @@ export class SearchControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createSearch(params: CreateSearch$Params, context?: HttpContext): Observable<RealEstate> {
+  createSearch(params: CreateSearch$Params, context?: HttpContext): Observable<Array<RealEstateResponse>> {
     return this.createSearch$Response(params, context).pipe(
-      map((r: StrictHttpResponse<RealEstate>): RealEstate => r.body)
+      map((r: StrictHttpResponse<Array<RealEstateResponse>>): Array<RealEstateResponse> => r.body)
     );
   }
 
