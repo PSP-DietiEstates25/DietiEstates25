@@ -39,9 +39,10 @@ public class SearchService {
 				.searchId(search.getId())
 				.build();
 		var detail = detailService.createDetail(detailDto);
-		var geographicalPosition = geographicalPositionService.createGeographicalPosition(request.getGeographicalPosition(), detail.getId());
-		var utility = utilityService.createUtility(request.getUtility(), detail.getId());
-		var cadastralFilter = cadastralFilterService.createCadastralFilter(request.getCadastralFilter(), search.getId());
+		
+		geographicalPositionService.createGeographicalPosition(request.getGeographicalPosition(), detail.getId());
+		utilityService.createUtility(request.getUtility(), detail.getId());
+		cadastralFilterService.createCadastralFilter(request.getCadastralFilter(), search.getId());
 		
 		var searchRealEstates = this.getSearchRealEstates(search);
 		

@@ -1,17 +1,12 @@
 package com.dietiestates.api.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.CadastralDataDto;
 import com.dietiestates.api.exception.notfound.RealEstateNotFoundException;
 import com.dietiestates.api.model.CadastralData;
-import com.dietiestates.api.model.CadastralFilter;
-import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.repository.CadastralDataRepository;
 import com.dietiestates.api.repository.RealEstateRepository;
 

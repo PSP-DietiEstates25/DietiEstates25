@@ -3,18 +3,13 @@ package com.dietiestates.api.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.RealEstateDto;
 import com.dietiestates.api.enums.AdCategory;
 import com.dietiestates.api.exception.notfound.EstateAgentNotFoundException;
-import com.dietiestates.api.model.CadastralFilter;
-import com.dietiestates.api.model.GeographicalPosition;
 import com.dietiestates.api.model.RealEstate;
-import com.dietiestates.api.model.Search;
-import com.dietiestates.api.model.Utility;
 import com.dietiestates.api.repository.EstateAgentRepository;
 import com.dietiestates.api.repository.RealEstateRepository;
 
