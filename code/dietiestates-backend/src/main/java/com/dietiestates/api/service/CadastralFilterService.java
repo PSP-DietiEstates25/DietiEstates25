@@ -53,66 +53,12 @@ public class CadastralFilterService {
 		realEstates.forEach(realEstate -> {
 			var realEstateCadastralData = realEstate.getCadastralData();
 			if(
-					(
-						(
-							searchCadastralFilter.getPriceRange().getMinPrice().compareTo(realEstateCadastralData.getPrice()) == -1 ||
-							searchCadastralFilter.getPriceRange().getMinPrice().compareTo(realEstateCadastralData.getPrice()) == 0
-						)
-						&&
-						(
-							realEstateCadastralData.getPrice().compareTo(searchCadastralFilter.getPriceRange().getMaxPrice()) == -1 ||
-							realEstateCadastralData.getPrice().compareTo(searchCadastralFilter.getPriceRange().getMaxPrice()) == 0
-						)
-					)
-					&&
-					(
-						(
-							searchCadastralFilter.getSquareMetersRange().getMinSquareMeters().compareTo(realEstateCadastralData.getSquareMeters()) == -1 ||
-							searchCadastralFilter.getSquareMetersRange().getMinSquareMeters().compareTo(realEstateCadastralData.getSquareMeters()) == 0
-						)
-						&&
-						(
-							realEstateCadastralData.getSquareMeters().compareTo(searchCadastralFilter.getSquareMetersRange().getMaxSquareMeters()) == -1 ||
-							realEstateCadastralData.getSquareMeters().compareTo(searchCadastralFilter.getSquareMetersRange().getMaxSquareMeters()) == 0
-						)
-					)
-					&&
-					(
-						(
-							searchCadastralFilter.getEnergyClassRange().getMinEnergyClass().compareTo(realEstateCadastralData.getEnergyClass().getOrder()) == -1 ||
-							searchCadastralFilter.getEnergyClassRange().getMinEnergyClass().compareTo(realEstateCadastralData.getEnergyClass().getOrder()) == 0
-						)
-						&&
-						(
-							realEstateCadastralData.getEnergyClass().getOrder().compareTo(searchCadastralFilter.getEnergyClassRange().getMaxEnergyClass()) == -1 ||
-							realEstateCadastralData.getEnergyClass().getOrder().compareTo(searchCadastralFilter.getEnergyClassRange().getMaxEnergyClass()) == 0
-						)
-					)
-					&&
-					(
-						(
-							searchCadastralFilter.getRoomsRange().getMinRooms().compareTo(realEstateCadastralData.getRooms()) == -1 ||
-							searchCadastralFilter.getRoomsRange().getMinRooms().compareTo(realEstateCadastralData.getRooms()) == 0
-						)
-						&&
-						(
-							realEstateCadastralData.getRooms().compareTo(searchCadastralFilter.getRoomsRange().getMaxRooms()) == -1 ||
-							realEstateCadastralData.getRooms().compareTo(searchCadastralFilter.getRoomsRange().getMaxRooms()) == 0
-						)
-					)
-					&&
-					(
-						(
-							searchCadastralFilter.getFloorRange().getMinFloor().compareTo(realEstateCadastralData.getFloor()) == -1 ||
-							searchCadastralFilter.getFloorRange().getMinFloor().compareTo(realEstateCadastralData.getFloor()) == 0
-						)
-						&&
-						(
-							realEstateCadastralData.getFloor().compareTo(searchCadastralFilter.getFloorRange().getMaxFloor()) == -1 ||
-							realEstateCadastralData.getFloor().compareTo(searchCadastralFilter.getFloorRange().getMaxFloor()) == 0
-						)
-					)
-			)
+					searchCadastralFilter.getPriceRange().contains(realEstateCadastralData.getPrice()) &&
+					searchCadastralFilter.getSquareMetersRange().contains(realEstateCadastralData.getSquareMeters()) &&
+					searchCadastralFilter.getEnergyClassRange().contains(realEstateCadastralData.getEnergyClass().getOrder()) &&
+					searchCadastralFilter.getRoomsRange().contains(realEstateCadastralData.getRooms()) &&
+					searchCadastralFilter.getFloorRange().contains(realEstateCadastralData.getFloor())
+				)
 				cadastralFilterRealEstates.add(realEstate);
 		});
 		

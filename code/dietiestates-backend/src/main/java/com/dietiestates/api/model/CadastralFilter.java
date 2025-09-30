@@ -33,7 +33,6 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@EqualsAndHashCode 
 @ToString
 @Builder
 @NoArgsConstructor
