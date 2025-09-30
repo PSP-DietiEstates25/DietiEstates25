@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dietiestates.api.dto.GeographicalPositionDto;
+import com.dietiestates.api.dto.request.GeographicalPositionRequest;
 import com.dietiestates.api.model.GeographicalPosition;
 import com.dietiestates.api.service.GeographicalPositionService;
 
@@ -24,7 +24,7 @@ public class GeographicalPositionController {
 	@PostMapping
 	public ResponseEntity<GeographicalPosition> createGeographicalPosition(
 			@PathVariable Long detailid,
-			@RequestBody GeographicalPositionDto request
+			@RequestBody GeographicalPositionRequest request
 			){
 		geographicalPositionService.createGeographicalPosition(request, detailid);
 		return ResponseEntity.status(HttpStatus.CREATED).build();

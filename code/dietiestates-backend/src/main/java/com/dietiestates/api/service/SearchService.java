@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.dietiestates.api.dto.DetailDto;
-import com.dietiestates.api.dto.RealEstateDto;
-import com.dietiestates.api.dto.SearchDto;
+import com.dietiestates.api.dto.request.DetailRequest;
+import com.dietiestates.api.dto.request.SearchRequest;
+import com.dietiestates.api.dto.response.RealEstateResponse;
 import com.dietiestates.api.enums.AdCategory;
 import com.dietiestates.api.exception.notfound.UserNotFoundException;
 import com.dietiestates.api.model.RealEstate;
@@ -32,10 +32,10 @@ public class SearchService {
 	private final DetailService detailService;
 	private final CadastralFilterService cadastralFilterService;
 	
-	public List<RealEstateDto> createSearch(SearchDto request) {
+	public List<RealEstateResponse> createSearch(SearchRequest request) {
 		var search = of(request);
 	    search = searchRepository.save(search);
-		var detailDto = DetailDto.builder()
+		var detailDto = DetailRequest.builder()
 				.searchId(search.getId())
 				.build();
 		var detail = detailService.createDetail(detailDto);
@@ -49,15 +49,19 @@ public class SearchService {
 		if(!searchRealEstates.isEmpty())
 			searchRealEstateService.createSearchRealEstate(search, searchRealEstates);
 		
-		var response = new ArrayList<RealEstateDto>();
+		var response = new ArrayList<RealEstateResponse>();
 		
 		searchRealEstates.forEach(realEstate -> {
-			var dto = RealEstateDto.builder()
+			var dto = RealEstateResponse.builder()
+					.createdDate(realEstate.getCreatedDate())
+					.lastModifiedDate(realEstate.getLastModifiedDate())
 					.id(realEstate.getId())
 					.category(realEstate.getCategory().toString())
 					.images(realEstate.getImages())
 					.description(realEstate.getDescription())
 					.estateAgentEmail(realEstate.getEstateAgent().getEmail())
+					.detailId(realEstate.getDetail().getId())
+					.cadastralDataId(realEstate.getCadastralData().getId())
 					.build();
 			
 			response.add(dto);
@@ -66,7 +70,7 @@ public class SearchService {
 		return response;
 	}
 	
-	public Search of(SearchDto request) {
+	public Search of(SearchRequest request) {
 		
 		var user = userRepository.findByEmail(request.getUserEmail())
 				.orElseThrow(UserNotFoundException::new);

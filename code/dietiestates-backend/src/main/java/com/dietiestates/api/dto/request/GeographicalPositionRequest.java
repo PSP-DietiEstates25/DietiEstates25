@@ -1,4 +1,4 @@
-package com.dietiestates.api.dto;
+package com.dietiestates.api.dto.request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -19,7 +19,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Builder
-public class GeographicalPositionDto {
+public class GeographicalPositionRequest {
 	
 	@NotEmpty(message = "City is mandatory")
 	@NotBlank(message = "City is mandatory")

@@ -7,8 +7,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.dietiestates.api.dto.AuthenticationRequest;
-import com.dietiestates.api.dto.AuthenticationResponse;
+import com.dietiestates.api.dto.request.AuthenticationRequest;
+import com.dietiestates.api.dto.response.AuthenticationResponse;
 import com.dietiestates.api.model.User;
 import com.dietiestates.api.repository.RoleRepository;
 import com.dietiestates.api.repository.UserRepository;

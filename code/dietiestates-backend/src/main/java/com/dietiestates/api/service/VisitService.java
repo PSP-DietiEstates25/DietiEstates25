@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 
-import com.dietiestates.api.dto.VisitDto;
+import com.dietiestates.api.dto.request.VisitRequest;
 import com.dietiestates.api.enums.ProposalCategory;
 import com.dietiestates.api.enums.ProposalStatus;
 import com.dietiestates.api.exception.notfound.RealEstateNotFoundException;
@@ -24,12 +24,12 @@ public class VisitService {
 	private final RealEstateRepository realEstateRepository;
 	private final UserRepository userRepository;
 	
-	public void createVisit(VisitDto request, Long realEstateId) {
+	public void createVisit(VisitRequest request, Long realEstateId) {
 		var visit = of(request, realEstateId);
 		visitRepository.save(visit);
 	}
 	
-	public Visit of(VisitDto request, Long realEstateId) {
+	public Visit of(VisitRequest request, Long realEstateId) {
 		var user = userRepository.findByEmail(request.getUserEmail())
 				.orElseThrow(UserNotFoundException::new);
 		

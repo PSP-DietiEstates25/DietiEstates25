@@ -7,7 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.dietiestates.api.dto.StafferDto;
+import com.dietiestates.api.dto.request.StafferRequest;
 import com.dietiestates.api.exception.notfound.AdminNotFoundException;
 import com.dietiestates.api.model.Admin;
 import com.dietiestates.api.repository.AdminRepository;
@@ -38,12 +38,12 @@ public class AdminAuthenticationService extends AuthenticationService {
 		this.adminRepository = adminRepository;
 	}
 	
-	public void register(StafferDto request) {
+	public void register(StafferRequest request) {
 		var admin = of(request);
 		adminRepository.save(admin);
 	}
 	
-	public Admin of(StafferDto request) {
+	public Admin of(StafferRequest request) {
 		var adminRole = roleRepository.findByName("ADMIN")
 				.orElseThrow(() -> new IllegalStateException("ROLE ADMIN was not initialized!"));
 		

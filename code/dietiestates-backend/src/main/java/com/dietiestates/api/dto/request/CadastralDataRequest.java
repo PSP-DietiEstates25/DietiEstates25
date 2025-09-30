@@ -1,4 +1,4 @@
-package com.dietiestates.api.dto;
+package com.dietiestates.api.dto.request;
 
 import java.math.BigDecimal;
 
@@ -15,7 +15,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder
-public class CadastralDataDto {
+public class CadastralDataRequest {
 	
 	@NotEmpty(message = "Price is mandatory")
 	@NotBlank(message = "Price is mandatory")

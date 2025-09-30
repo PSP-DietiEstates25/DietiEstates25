@@ -1,4 +1,4 @@
-package com.dietiestates.api.dto;
+package com.dietiestates.api.dto.request;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -14,7 +14,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class VisitDto extends ProposalDto {
+public class VisitRequest extends ProposalRequest {
 
 	@NotEmpty(message = "Date is mandatory")
 	@NotBlank(message = "Date is mandatory")
@@ -27,7 +27,7 @@ public class VisitDto extends ProposalDto {
 	private LocalTime time;
 	
 	@Builder(builderMethodName = "visitDtoBuilder")
-	public VisitDto(
+	public VisitRequest(
 			String category,
 			String status,
 			String userEmail,

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dietiestates.api.dto.NotificationDto;
+import com.dietiestates.api.dto.request.NotificationRequest;
 import com.dietiestates.api.model.Notification;
 import com.dietiestates.api.service.NotificationService;
 
@@ -22,7 +22,7 @@ public class NotificationController {
 	
 	@PostMapping
 	public ResponseEntity<Notification> createNotification(
-			@RequestBody NotificationDto request
+			@RequestBody NotificationRequest request
 			){
 		notificationService.createNotification(request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();

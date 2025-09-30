@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.dietiestates.api.dto.RealEstateDto;
+import com.dietiestates.api.dto.request.RealEstateRequest;
 import com.dietiestates.api.enums.AdCategory;
 import com.dietiestates.api.exception.notfound.EstateAgentNotFoundException;
 import com.dietiestates.api.model.RealEstate;
@@ -22,12 +22,12 @@ public class RealEstateService {
 	private final RealEstateRepository realEstateRepository;
 	private final EstateAgentRepository estateAgentRepository;
 	
-	public void createRealEstate(RealEstateDto request) {
+	public void createRealEstate(RealEstateRequest request) {
 		var realEstate = of(request);
 		realEstateRepository.save(realEstate);
 	}
 	
-	public RealEstate of(RealEstateDto request) {
+	public RealEstate of(RealEstateRequest request) {
 		
 		var estateAgent = estateAgentRepository.findByEmail(request.getEstateAgentEmail())
 				.orElseThrow(EstateAgentNotFoundException::new);

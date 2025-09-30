@@ -8,7 +8,7 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.dietiestates.api.dto.ExceptionResponse;
+import com.dietiestates.api.dto.response.ExceptionResponse;
 import com.dietiestates.api.enums.BusinessErrorCodes;
 
 @RestControllerAdvice

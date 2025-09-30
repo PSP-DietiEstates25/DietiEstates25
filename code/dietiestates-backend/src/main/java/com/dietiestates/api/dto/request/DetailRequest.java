@@ -1,4 +1,4 @@
-package com.dietiestates.api.dto;
+package com.dietiestates.api.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Builder
-public class DetailDto {
+public class DetailRequest {
 
 	private Long realEstateId;
 	

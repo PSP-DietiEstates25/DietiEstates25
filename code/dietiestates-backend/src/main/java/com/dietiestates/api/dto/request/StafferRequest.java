@@ -1,4 +1,4 @@
-package com.dietiestates.api.dto;
+package com.dietiestates.api.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class StafferDto extends AuthenticationRequest {
+public class StafferRequest extends AuthenticationRequest {
 
 	@Email
 	@NotEmpty(message = "Email is mandatory")
@@ -17,7 +17,7 @@ public class StafferDto extends AuthenticationRequest {
 	private String adminEmail;
 	
 	@Builder(builderMethodName = "stafferDtoBuilder")
-	public StafferDto(
+	public StafferRequest(
 			String email,
 			String password,
 			String role,

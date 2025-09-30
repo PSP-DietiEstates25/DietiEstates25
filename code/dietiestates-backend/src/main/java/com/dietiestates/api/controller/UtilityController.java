@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dietiestates.api.dto.UtilityDto;
+import com.dietiestates.api.dto.request.UtilityRequest;
 import com.dietiestates.api.model.Utility;
 import com.dietiestates.api.service.UtilityService;
 
@@ -24,7 +24,7 @@ public class UtilityController {
 	@PostMapping
 	public ResponseEntity<Utility> createUtility(
 			@PathVariable Long detailid,
-			@RequestBody UtilityDto request
+			@RequestBody UtilityRequest request
 			){
 		utilityService.createUtility(request, detailid);
 		return ResponseEntity.status(HttpStatus.CREATED).build();

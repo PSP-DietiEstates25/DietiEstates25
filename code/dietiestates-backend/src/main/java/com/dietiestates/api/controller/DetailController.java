@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dietiestates.api.dto.DetailDto;
+import com.dietiestates.api.dto.request.DetailRequest;
 import com.dietiestates.api.model.Detail;
 import com.dietiestates.api.service.DetailService;
 
@@ -22,7 +22,7 @@ public class DetailController {
 
 	@PostMapping
 	public ResponseEntity<Detail> createDetails(
-			@RequestBody DetailDto request
+			@RequestBody DetailRequest request
 			) {
 		detailService.createDetail(request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();

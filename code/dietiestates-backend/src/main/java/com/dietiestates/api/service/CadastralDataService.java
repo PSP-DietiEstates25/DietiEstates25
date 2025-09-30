@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 
-import com.dietiestates.api.dto.CadastralDataDto;
+import com.dietiestates.api.dto.request.CadastralDataRequest;
 import com.dietiestates.api.exception.notfound.RealEstateNotFoundException;
 import com.dietiestates.api.model.CadastralData;
 import com.dietiestates.api.repository.CadastralDataRepository;
@@ -19,12 +19,12 @@ public class CadastralDataService {
 	private final CadastralDataRepository cadastralDataRepository;
 	private final RealEstateRepository realEstateRepository;
 	
-	public CadastralData createCadastralData(CadastralDataDto request, Long realEstateId) {
+	public CadastralData createCadastralData(CadastralDataRequest request, Long realEstateId) {
 		var cadastralData = of(request, realEstateId);
 		return cadastralDataRepository.save(cadastralData);
 	}
 	
-	public CadastralData of(CadastralDataDto request, Long realEstateId) {
+	public CadastralData of(CadastralDataRequest request, Long realEstateId) {
 		
 		var realEstate = realEstateRepository.findById(realEstateId)
 				.orElseThrow(RealEstateNotFoundException::new);

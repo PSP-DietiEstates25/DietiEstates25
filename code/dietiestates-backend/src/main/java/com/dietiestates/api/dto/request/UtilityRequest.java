@@ -1,4 +1,4 @@
-package com.dietiestates.api.dto;
+package com.dietiestates.api.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Builder
-public class UtilityDto {
+public class UtilityRequest {
 
 	@NotNull(message = "Air conditioning is mandatory")
 	private Boolean hasAirConditioning;

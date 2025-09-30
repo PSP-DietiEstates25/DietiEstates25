@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dietiestates.api.dto.VisitDto;
+import com.dietiestates.api.dto.request.VisitRequest;
 import com.dietiestates.api.model.Visit;
 import com.dietiestates.api.service.VisitService;
 
@@ -23,7 +23,7 @@ public class VisitController {
 	
 	@PostMapping
 	public ResponseEntity<Visit> createVisit(
-			@RequestBody VisitDto request,
+			@RequestBody VisitRequest request,
 			@PathVariable Long realestateid
 			){
 		visitService.createVisit(request, realestateid);

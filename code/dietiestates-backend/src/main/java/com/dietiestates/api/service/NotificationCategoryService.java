@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 
-import com.dietiestates.api.dto.NotificationCategoryDto;
+import com.dietiestates.api.dto.request.NotificationCategoryRequest;
 import com.dietiestates.api.enums.NotificationCategoryType;
 import com.dietiestates.api.model.NotificationCategory;
 import com.dietiestates.api.repository.NotificationCategoryRepository;
@@ -17,12 +17,12 @@ public class NotificationCategoryService {
 
 	private final NotificationCategoryRepository notificationCategoryRepository;
 	
-	public void createNotificationCategory(NotificationCategoryDto request) {
+	public void createNotificationCategory(NotificationCategoryRequest request) {
 		var notificationCategory = of(request);
 		notificationCategoryRepository.save(notificationCategory);
 	}
 	
-	public NotificationCategory of(NotificationCategoryDto request) {
+	public NotificationCategory of(NotificationCategoryRequest request) {
 		return NotificationCategory.builder()
 				.createdDate(LocalDateTime.now())
 				.name(NotificationCategoryType.valueOf(request.getName()))

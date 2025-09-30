@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.dietiestates.api.dto.GeographicalPositionDto;
+import com.dietiestates.api.dto.request.GeographicalPositionRequest;
 import com.dietiestates.api.exception.notfound.DetailNotFoundException;
 import com.dietiestates.api.model.GeographicalPosition;
 import com.dietiestates.api.model.RealEstate;
@@ -22,12 +22,12 @@ public class GeographicalPositionService {
 	private final GeographicalPositionRepository geographicalPositionRepository;
 	private final DetailRepository detailRepository;
 	
-	public GeographicalPosition createGeographicalPosition(GeographicalPositionDto request, Long detailId) {
+	public GeographicalPosition createGeographicalPosition(GeographicalPositionRequest request, Long detailId) {
 		var geographicalPosition = of(request, detailId);
 		return geographicalPositionRepository.save(geographicalPosition);
 	}
 	
-	public GeographicalPosition of(GeographicalPositionDto request, Long detailId) {
+	public GeographicalPosition of(GeographicalPositionRequest request, Long detailId) {
 		
 		var detail = detailRepository.findById(detailId)
 				.orElseThrow(DetailNotFoundException::new);

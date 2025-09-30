@@ -1,4 +1,4 @@
-package com.dietiestates.api.dto;
+package com.dietiestates.api.dto.request;
 
 import java.math.BigDecimal;
 
@@ -18,7 +18,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Builder
-public class CadastralFilterDto {
+public class CadastralFilterRequest {
 
 	@NotNull(message = "Minimum price is mandatory")
 	@Positive(message = "Minimum price must be a positive number")

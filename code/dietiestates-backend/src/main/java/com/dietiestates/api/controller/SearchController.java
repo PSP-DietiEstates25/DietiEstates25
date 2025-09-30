@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dietiestates.api.dto.RealEstateDto;
-import com.dietiestates.api.dto.SearchDto;
+import com.dietiestates.api.dto.request.SearchRequest;
+import com.dietiestates.api.dto.response.RealEstateResponse;
 import com.dietiestates.api.service.SearchService;
 
 import jakarta.validation.Valid;
@@ -24,10 +24,9 @@ public class SearchController {
 	private final SearchService searchService;
 	
 	@PostMapping
-	public ResponseEntity<List<RealEstateDto>> createSearch(
-			@RequestBody @Valid SearchDto request
+	public ResponseEntity<List<RealEstateResponse>> createSearch(
+			@RequestBody @Valid SearchRequest request
 			){
-		System.out.println("Received SearchDto:" + request.toString());
 		var realEstates = searchService.createSearch(request);
 		return ResponseEntity.status(HttpStatus.CREATED).body(realEstates);
 	}

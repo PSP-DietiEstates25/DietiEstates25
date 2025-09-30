@@ -1,4 +1,4 @@
-package com.dietiestates.api.dto;
+package com.dietiestates.api.dto.request;
 
 import java.math.BigDecimal;
 
@@ -13,7 +13,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class OfferDto extends ProposalDto{
+public class OfferRequest extends ProposalRequest {
 
 	@NotEmpty(message = "Amount is mandatory")
 	@NotBlank(message = "Amount is mandatory")
@@ -21,7 +21,7 @@ public class OfferDto extends ProposalDto{
 	private BigDecimal amount;
 	
 	@Builder(builderMethodName = "offerDtoBuilder")
-	public OfferDto(
+	public OfferRequest(
 			String category,
 			String status,
 			String userEmail,

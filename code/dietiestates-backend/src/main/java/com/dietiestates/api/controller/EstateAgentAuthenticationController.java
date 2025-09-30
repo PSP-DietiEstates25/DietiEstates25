@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dietiestates.api.dto.StafferDto;
+import com.dietiestates.api.dto.request.StafferRequest;
 import com.dietiestates.api.model.EstateAgent;
 import com.dietiestates.api.service.AuthenticationService;
 import com.dietiestates.api.service.EstateAgentAuthenticationService;
@@ -28,7 +28,7 @@ public class EstateAgentAuthenticationController extends AuthenticationControlle
 	
 	@PostMapping
 	public ResponseEntity<EstateAgent> registerEstateAgent(
-			@RequestBody StafferDto request
+			@RequestBody StafferRequest request
 			){
 		estateAgentAuthenticationService.register(request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();

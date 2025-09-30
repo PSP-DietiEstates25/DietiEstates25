@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 
-import com.dietiestates.api.dto.OfferDto;
+import com.dietiestates.api.dto.request.OfferRequest;
 import com.dietiestates.api.enums.ProposalCategory;
 import com.dietiestates.api.enums.ProposalStatus;
 import com.dietiestates.api.exception.notfound.RealEstateNotFoundException;
@@ -24,12 +24,12 @@ public class OfferService {
 	private final UserRepository userRepository;
 	private final RealEstateRepository realEstateRepository;
 	
-	public void createOffer(OfferDto request, Long realEstateId) {
+	public void createOffer(OfferRequest request, Long realEstateId) {
 		var offer = of(request, realEstateId);
 		offerRepository.save(offer);
 	}
 	
-	public Offer of(OfferDto request, Long realEstateId) {
+	public Offer of(OfferRequest request, Long realEstateId) {
 		var user = userRepository.findByEmail(request.getUserEmail())
 				.orElseThrow(UserNotFoundException::new);
 		

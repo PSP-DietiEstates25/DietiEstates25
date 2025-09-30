@@ -1,4 +1,4 @@
-package com.dietiestates.api.dto;
+package com.dietiestates.api.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;

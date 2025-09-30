@@ -1,4 +1,4 @@
-package com.dietiestates.api.dto;
+package com.dietiestates.api.dto.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -19,7 +19,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Builder
 @ToString
-public class SearchDto {//extends CadastralFilterDto{
+public class SearchRequest {
 	
 	@NotEmpty(message = "Category is mandatory")
 	@NotBlank(message = "Category is mandatory")
@@ -40,13 +40,13 @@ public class SearchDto {//extends CadastralFilterDto{
 	
 	@NotNull(message = "Cadastral filter is mandatory")
 	@Valid
-	private CadastralFilterDto cadastralFilter;
+	private CadastralFilterRequest cadastralFilter;
 	
 	@NotNull(message = "Geographical position is mandatory")
 	@Valid
-	private GeographicalPositionDto geographicalPosition;
+	private GeographicalPositionRequest geographicalPosition;
 	
 	@NotNull(message = "Utility is mandatory")
 	@Valid
-	private UtilityDto utility;
+	private UtilityRequest utility;
 }

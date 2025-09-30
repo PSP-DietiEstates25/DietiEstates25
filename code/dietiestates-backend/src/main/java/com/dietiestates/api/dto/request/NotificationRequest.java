@@ -1,4 +1,4 @@
-package com.dietiestates.api.dto;
+package com.dietiestates.api.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -14,7 +14,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder
-public class NotificationDto {
+public class NotificationRequest {
 
 	@NotEmpty(message = "Message is mandatory")
 	@NotBlank(message = "Message is mandatory")

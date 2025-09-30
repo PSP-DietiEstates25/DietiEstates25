@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dietiestates.api.dto.CadastralDataDto;
+import com.dietiestates.api.dto.request.CadastralDataRequest;
 import com.dietiestates.api.model.CadastralData;
 import com.dietiestates.api.service.CadastralDataService;
 
@@ -22,9 +22,9 @@ public class CadastralDataController {
 	private final CadastralDataService cadastralDataService;
 	
 	@PostMapping
-	public ResponseEntity<CadastralData> createCadastralData(
+	public ResponseEntity<CadastralDataResponse> createCadastralData(
 			@PathVariable Long realestateid,
-			@RequestBody CadastralDataDto request
+			@RequestBody CadastralDataRequest request
 			){
 		cadastralDataService.createCadastralData(request, realestateid);
 		return ResponseEntity.status(HttpStatus.CREATED).build();

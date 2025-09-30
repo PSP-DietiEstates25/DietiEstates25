@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 
-import com.dietiestates.api.dto.DetailDto;
+import com.dietiestates.api.dto.request.DetailRequest;
 import com.dietiestates.api.exception.notfound.RealEstateNotFoundException;
 import com.dietiestates.api.exception.notfound.SearchNotFoundException;
 import com.dietiestates.api.model.Detail;
@@ -24,12 +24,12 @@ public class DetailService {
 	private final RealEstateRepository realEstateRepository;
 	private final SearchRepository searchRepository;
 	
-	public Detail createDetail(DetailDto request) {
+	public Detail createDetail(DetailRequest request) {
 		var detail = of(request);
 		return detailRepository.save(detail);
 	}
 	
-	public Detail of(DetailDto request) {
+	public Detail of(DetailRequest request) {
 		
 		RealEstate realEstate = null;
 		Search search = null;

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dietiestates.api.dto.NotificationCategoryDto;
+import com.dietiestates.api.dto.request.NotificationCategoryRequest;
 import com.dietiestates.api.model.NotificationCategory;
 import com.dietiestates.api.service.NotificationCategoryService;
 
@@ -22,7 +22,7 @@ public class NotificationCategoryController {
 	
 	@PostMapping
 	public ResponseEntity<NotificationCategory> createNotificationCategory(
-			@RequestBody NotificationCategoryDto request
+			@RequestBody NotificationCategoryRequest request
 			){
 		notificationCategoryService.createNotificationCategory(request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();

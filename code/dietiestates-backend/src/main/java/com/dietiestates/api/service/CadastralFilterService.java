@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.dietiestates.api.dto.CadastralFilterDto;
+import com.dietiestates.api.dto.request.CadastralFilterRequest;
 import com.dietiestates.api.exception.notfound.SearchNotFoundException;
 import com.dietiestates.api.model.CadastralFilter;
 import com.dietiestates.api.model.RealEstate;
@@ -22,12 +22,12 @@ public class CadastralFilterService {
 	private final CadastralFilterRepository cadastralFilterRepository;
 	private final SearchRepository searchRepository;
 	
-	public CadastralFilter createCadastralFilter(CadastralFilterDto request, Long searchId) {
+	public CadastralFilter createCadastralFilter(CadastralFilterRequest request, Long searchId) {
 		var cadastralFilter = of(request, searchId);
 		return cadastralFilterRepository.save(cadastralFilter);
 	}
 	
-	public CadastralFilter of(CadastralFilterDto request, Long searchId) {
+	public CadastralFilter of(CadastralFilterRequest request, Long searchId) {
 		
 		var search = searchRepository.findById(searchId)
 				.orElseThrow(SearchNotFoundException::new);

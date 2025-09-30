@@ -1,4 +1,4 @@
-package com.dietiestates.api.dto;
+package com.dietiestates.api.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -13,7 +13,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder
-public class ProposalDto {
+public class ProposalRequest {
 	
 	@NotEmpty(message = "Category is mandatory")
 	@NotBlank(message = "Category is mandatory")

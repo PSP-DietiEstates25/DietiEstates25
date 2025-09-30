@@ -1,4 +1,4 @@
-package com.dietiestates.api.dto;
+package com.dietiestates.api.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -11,7 +11,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder
-public class NotificationCategoryDto {
+public class NotificationCategoryRequest {
 
 	@NotEmpty(message = "Name is mandatory")
 	@NotBlank(message = "Name is mandatory")

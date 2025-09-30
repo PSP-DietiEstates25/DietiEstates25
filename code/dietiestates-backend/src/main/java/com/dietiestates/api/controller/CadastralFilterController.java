@@ -24,7 +24,7 @@ public class CadastralFilterController {
 	@PostMapping
 	public ResponseEntity<CadastralFilter> createCadastralFilter(
 			@PathVariable Long searchid,
-			@RequestBody CadastralFilterDto request){
+			@RequestBody CadastralFilterRequest request){
 		cadastralFilterService.createCadastralFilter(request, searchid);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}

@@ -4,7 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.dietiestates.api.dto.ExceptionResponse;
+import com.dietiestates.api.dto.response.ExceptionResponse;
 import com.dietiestates.api.exception.notfound.GeographicalPositionNotFoundException;
 
 @RestControllerAdvice
