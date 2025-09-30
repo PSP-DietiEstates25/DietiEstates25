@@ -37,7 +37,7 @@ public class EstateAgent extends User {
 	@OneToMany(mappedBy = "estateAgent", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<RealEstate> realEstates = new ArrayList<>();
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(
 			nullable = false,
 			name = "admin_id",

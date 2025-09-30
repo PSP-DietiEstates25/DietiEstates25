@@ -35,12 +35,12 @@ public class SearchRealEstate {
 	@EmbeddedId
 	private SearchRealEstateKey id;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@MapsId("realEstateId")
 	@JoinColumn(name = "real_estate_id")
 	private RealEstate realEstate;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@MapsId("searchId")
 	@JoinColumn(name = "search_id")
 	private Search search;

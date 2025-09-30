@@ -67,7 +67,7 @@ public class RealEstate {
     @Column(insertable = false)
     private LocalDateTime lastModifiedDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(
     		nullable = false,
     		name = "estate_agent_id",

@@ -50,14 +50,14 @@ public class Notification {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(
 			nullable = false,
 			name = "notification_category_id",
 			foreignKey = @ForeignKey(name = "NOTIFICATION_NOTIFICATION_CATEGORY_ID"))
 	private NotificationCategory notificationCategory;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(
 			nullable = false,
 			name = "user_id", 

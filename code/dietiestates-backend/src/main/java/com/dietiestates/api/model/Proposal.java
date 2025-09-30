@@ -75,14 +75,14 @@ public abstract class Proposal {
 		this.lastModifiedDate = lastModifiedDate;
 	}
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(
 			nullable = false,
 			name = "user_id",
 			foreignKey = @ForeignKey(name = "PROPOSAL_USER_ID_FK"))
 	protected User user;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(
 			nullable = false,
 			name = "real_estate_id",

@@ -72,7 +72,7 @@ public class Search {
 	@OneToOne(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
 	private CadastralFilter cadastralFilter;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(
 			nullable = false,
 			name = "user_email",

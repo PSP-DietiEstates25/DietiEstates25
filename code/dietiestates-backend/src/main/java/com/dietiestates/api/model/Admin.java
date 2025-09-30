@@ -30,7 +30,7 @@ import lombok.Setter;
 @EntityListeners(AuditingEntityListener.class)
 public class Admin extends User {
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(
 			nullable = true,
 			name = "admin_id",
