@@ -8,15 +8,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { AuthenticationRequest } from '../../models/authentication-request';
-import { AuthenticationResponse } from '../../models/authentication-response';
+import { NotificationCategory } from '../../models/notification-category';
+import { NotificationCategoryDto } from '../../models/notification-category-dto';
 
-export interface Login$Params {
-      body: AuthenticationRequest
+export interface CreateNotificationCategory$Params {
+      body: NotificationCategoryDto
 }
 
-export function login(http: HttpClient, rootUrl: string, params: Login$Params, context?: HttpContext): Observable<StrictHttpResponse<AuthenticationResponse>> {
-  const rb = new RequestBuilder(rootUrl, login.PATH, 'post');
+export function createNotificationCategory(http: HttpClient, rootUrl: string, params: CreateNotificationCategory$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationCategory>> {
+  const rb = new RequestBuilder(rootUrl, createNotificationCategory.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
@@ -26,9 +26,9 @@ export function login(http: HttpClient, rootUrl: string, params: Login$Params, c
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<AuthenticationResponse>;
+      return r as StrictHttpResponse<NotificationCategory>;
     })
   );
 }
 
-login.PATH = '/auth/login';
+createNotificationCategory.PATH = '/notification-categories';
