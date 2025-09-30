@@ -1,14 +1,13 @@
 import { AfterViewInit, Component, computed, Signal, ViewChild, ElementRef, signal, output, input } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { GeocoderAutocomplete } from '@geoapify/geocoder-autocomplete';
-import { RouterLink } from '@angular/router';
 import * as L from 'leaflet';
 import 'mapbox-gl-leaflet';
 
 @Component({
 	selector: 'app-map',
 	imports: [
-		RouterLink
+		
 	],
 	templateUrl: './map.component.html',
 	styleUrl: './map.component.scss'

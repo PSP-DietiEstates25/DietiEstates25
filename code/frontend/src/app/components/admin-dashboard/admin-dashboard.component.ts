@@ -1,4 +1,3 @@
-import { RouterLink } from '@angular/router';
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -17,7 +16,7 @@ import {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './admin-dashboard.component.html',
 })
 export class AdminDashboardComponent {
