@@ -33,9 +33,9 @@ import lombok.ToString;
 
 @Getter
 @Setter
+@EqualsAndHashCode 
 @ToString
 @Builder
-@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -44,7 +44,6 @@ public class CadastralFilter {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@EqualsAndHashCode.Include
 	private Long id;
 	
 	@Embedded
@@ -94,15 +93,6 @@ public class CadastralFilter {
 		Search search
 		) {
 		this.createdDate = createdDate;
-		
-		/*
-		this.priceRange = new PriceRange(minPrice, maxPrice);
-		this.squareMetersRange = new SquareMetersRange(minSquareMeters, maxSquareMeters);
-		this.energyClassRange = new EnergyClassRange(minEnergyClass, maxEnergyClass);
-		this.roomsRange = new RoomsRange(minRooms, maxRooms);
-		this.floorRange = new FloorRange(minFloor, maxFloor);
-		this.setSearch(search); 
-		*/
 		this.priceRange = PriceRange.builder()
 				.minPrice(minPrice)
 				.maxPrice(maxPrice)
@@ -130,26 +120,6 @@ public class CadastralFilter {
 		
 		this.setSearch(search);
 	}
-	
-	/*
-	@Builder(builderMethodName = "cadastralFilterBuilder")
-	public CadastralFilter(
-		LocalDateTime createdDate,
-		PriceRange priceRange,
-		SquareMetersRange squareMetersRange,
-		EnergyClassRange energyClassRange,
-		RoomsRange roomsRange,
-		FloorRange floorRange,
-		Search search
-		) {
-		this.createdDate = createdDate;
-		this.priceRange = priceRange;
-		this.squareMetersRange = squareMetersRange;
-		this.energyClassRange = energyClassRange;
-		this.roomsRange = roomsRange;
-		this.floorRange = floorRange;
-		this.setSearch(search);
-	}*/
 	
 	public void setSearch(Search search) {
 		this.search = search;

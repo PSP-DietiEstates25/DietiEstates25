@@ -16,6 +16,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -45,7 +46,6 @@ public class Search {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@EqualsAndHashCode.Include
 	private Long id;
 	
 	@Enumerated(EnumType.STRING)
@@ -72,7 +72,7 @@ public class Search {
 	@OneToOne(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
 	private CadastralFilter cadastralFilter;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(
 			nullable = false,
 			name = "user_email",

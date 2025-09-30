@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.dietiestates.api.enums.ProposalCategory;
 import com.dietiestates.api.enums.ProposalStatus;
@@ -15,6 +14,7 @@ import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -75,14 +75,14 @@ public abstract class Proposal {
 		this.lastModifiedDate = lastModifiedDate;
 	}
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(
 			nullable = false,
 			name = "user_id",
 			foreignKey = @ForeignKey(name = "PROPOSAL_USER_ID_FK"))
 	protected User user;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(
 			nullable = false,
 			name = "real_estate_id",

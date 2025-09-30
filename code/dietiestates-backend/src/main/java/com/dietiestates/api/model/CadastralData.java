@@ -40,7 +40,6 @@ public class CadastralData {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@EqualsAndHashCode.Include
 	private Long id;
 	
 	@Column(nullable = false)

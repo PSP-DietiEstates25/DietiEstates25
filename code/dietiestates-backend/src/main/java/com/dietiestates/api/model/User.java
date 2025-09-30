@@ -49,7 +49,6 @@ public class User implements UserDetails, Principal {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@EqualsAndHashCode.Include
 	protected Long id;
 	
 	@Column(unique = true)

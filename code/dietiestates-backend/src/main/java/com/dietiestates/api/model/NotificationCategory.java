@@ -41,7 +41,6 @@ public class NotificationCategory {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@EqualsAndHashCode.Include
 	private Long id;
 	
 	@Column(unique = true)
