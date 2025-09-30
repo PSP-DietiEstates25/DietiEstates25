@@ -1,14 +1,12 @@
 package com.dietiestates.api.service;
 
-import java.time.LocalDateTime;
-
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.request.NotificationRequest;
 import com.dietiestates.api.enums.NotificationCategoryType;
 import com.dietiestates.api.exception.notfound.NotificationCategoryNotFoundException;
 import com.dietiestates.api.exception.notfound.UserNotFoundException;
-import com.dietiestates.api.model.Notification;
+import com.dietiestates.api.mapper.NotificationMapper;
 import com.dietiestates.api.repository.NotificationCategoryRepository;
 import com.dietiestates.api.repository.NotificationRepository;
 import com.dietiestates.api.repository.UserRepository;
@@ -20,28 +18,20 @@ import lombok.RequiredArgsConstructor;
 public class NotificationService {
 
 	private final NotificationRepository notificationRepository;
+	private final NotificationMapper notificationMapper;
 	private final NotificationCategoryRepository notificationCategoryRepository;
 	private final UserRepository userRepository;
 	
 	public void createNotification(NotificationRequest request) {
-		var notification = of(request);
-		notificationRepository.save(notification);
-	}
-	
-	public Notification of(NotificationRequest request) {
 		
 		var notificationCategory = notificationCategoryRepository.findByName(NotificationCategoryType.valueOf(request.getNotificationCategoryName()))
-					.orElseThrow(NotificationCategoryNotFoundException::new);
-		
+				.orElseThrow(NotificationCategoryNotFoundException::new);
+	
 		var user = userRepository.findByEmail(request.getUserEmail())
 				.orElseThrow(UserNotFoundException::new);
-		
-		return Notification.builder()
-				.createdDate(LocalDateTime.now())
-				.message(request.getMessage())
-				.notificationCategory(notificationCategory)
-				.user(user)
-				.build();
+	
+		var notification = notificationMapper.toEntity(request, notificationCategory, user);
+		notificationRepository.save(notification);
 	}
 	/*
 	private final NotificationRepository notifRepo;

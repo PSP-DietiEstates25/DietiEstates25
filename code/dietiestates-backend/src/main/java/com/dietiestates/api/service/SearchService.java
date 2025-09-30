@@ -1,6 +1,5 @@
 package com.dietiestates.api.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,8 +8,10 @@ import org.springframework.stereotype.Service;
 import com.dietiestates.api.dto.request.DetailRequest;
 import com.dietiestates.api.dto.request.SearchRequest;
 import com.dietiestates.api.dto.response.RealEstateResponse;
-import com.dietiestates.api.enums.AdCategory;
 import com.dietiestates.api.exception.notfound.UserNotFoundException;
+import com.dietiestates.api.mapper.DetailMapper;
+import com.dietiestates.api.mapper.RealEstateMapper;
+import com.dietiestates.api.mapper.SearchMapper;
 import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.model.Search;
 import com.dietiestates.api.repository.SearchRepository;
@@ -23,22 +24,31 @@ import lombok.RequiredArgsConstructor;
 public class SearchService {
 	
 	private final SearchRepository searchRepository;
+	private final SearchMapper searchMapper;
+	private final DetailMapper detailMapper;
+	
+	private final RealEstateMapper realEstateMapper;
 	private final UserRepository userRepository;
 	private final RealEstateService realEstateService;
 	private final SearchRealEstateService searchRealEstateService;
 	
 	private final GeographicalPositionService geographicalPositionService;
 	private final UtilityService utilityService;
-	private final DetailService detailService;
 	private final CadastralFilterService cadastralFilterService;
 	
 	public List<RealEstateResponse> createSearch(SearchRequest request) {
-		var search = of(request);
+		
+		var user = userRepository.findByEmail(request.getUserEmail())
+				.orElseThrow(UserNotFoundException::new);
+		
+		var search = searchMapper.toEntity(request, user);
+		
 	    search = searchRepository.save(search);
-		var detailDto = DetailRequest.builder()
-				.searchId(search.getId())
+	    
+		var detailRequest = DetailRequest.builder()
 				.build();
-		var detail = detailService.createDetail(detailDto);
+		
+		var detail = detailMapper.toEntity(detailRequest, null, null);
 		
 		geographicalPositionService.createGeographicalPosition(request.getGeographicalPosition(), detail.getId());
 		utilityService.createUtility(request.getUtility(), detail.getId());
@@ -52,37 +62,11 @@ public class SearchService {
 		var response = new ArrayList<RealEstateResponse>();
 		
 		searchRealEstates.forEach(realEstate -> {
-			var dto = RealEstateResponse.builder()
-					.createdDate(realEstate.getCreatedDate())
-					.lastModifiedDate(realEstate.getLastModifiedDate())
-					.id(realEstate.getId())
-					.category(realEstate.getCategory().toString())
-					.images(realEstate.getImages())
-					.description(realEstate.getDescription())
-					.estateAgentEmail(realEstate.getEstateAgent().getEmail())
-					.detailId(realEstate.getDetail().getId())
-					.cadastralDataId(realEstate.getCadastralData().getId())
-					.build();
-			
+			var dto = realEstateMapper.fromEntity(realEstate);
 			response.add(dto);
 		});
 		
 		return response;
-	}
-	
-	public Search of(SearchRequest request) {
-		
-		var user = userRepository.findByEmail(request.getUserEmail())
-				.orElseThrow(UserNotFoundException::new);
-		
-		return Search.builder()
-				.createdDate(LocalDateTime.now())
-				.category(AdCategory.valueOf(request.getCategory()))
-				.size(request.getSize())
-				.page(request.getPage() - 1)
-				.user(user)
-				.build();
-		
 	}
 	
 	public List<RealEstate> getSearchRealEstates(Search search){

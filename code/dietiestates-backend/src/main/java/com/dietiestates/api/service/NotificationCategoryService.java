@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.request.NotificationCategoryRequest;
 import com.dietiestates.api.enums.NotificationCategoryType;
+import com.dietiestates.api.mapper.NotificationCategoryMapper;
 import com.dietiestates.api.model.NotificationCategory;
 import com.dietiestates.api.repository.NotificationCategoryRepository;
 
@@ -16,9 +17,10 @@ import lombok.RequiredArgsConstructor;
 public class NotificationCategoryService {
 
 	private final NotificationCategoryRepository notificationCategoryRepository;
+	private final NotificationCategoryMapper notificationCategoryMapper;
 	
 	public void createNotificationCategory(NotificationCategoryRequest request) {
-		var notificationCategory = of(request);
+		var notificationCategory = notificationCategoryMapper.toEntity(request);
 		notificationCategoryRepository.save(notificationCategory);
 	}
 	

@@ -9,6 +9,7 @@ import com.dietiestates.api.enums.ProposalCategory;
 import com.dietiestates.api.enums.ProposalStatus;
 import com.dietiestates.api.exception.notfound.RealEstateNotFoundException;
 import com.dietiestates.api.exception.notfound.UserNotFoundException;
+import com.dietiestates.api.mapper.VisitMapper;
 import com.dietiestates.api.model.Visit;
 import com.dietiestates.api.repository.RealEstateRepository;
 import com.dietiestates.api.repository.UserRepository;
@@ -21,30 +22,21 @@ import lombok.RequiredArgsConstructor;
 public class VisitService {
 	
 	private final VisitRepository visitRepository;
+	private final VisitMapper visitMapper;
 	private final RealEstateRepository realEstateRepository;
 	private final UserRepository userRepository;
 	
 	public void createVisit(VisitRequest request, Long realEstateId) {
-		var visit = of(request, realEstateId);
-		visitRepository.save(visit);
-	}
-	
-	public Visit of(VisitRequest request, Long realEstateId) {
+		
 		var user = userRepository.findByEmail(request.getUserEmail())
 				.orElseThrow(UserNotFoundException::new);
 		
 		var realEstate = realEstateRepository.findById(realEstateId)
 				.orElseThrow(RealEstateNotFoundException::new);
 		
-		return Visit.visitBuilder()
-				.createdDate(LocalDateTime.now())
-				.category(ProposalCategory.VISIT)
-				.status(ProposalStatus.PENDING)
-				.user(user)
-				.realEstate(realEstate)
-				.date(request.getDate())
-				.time(request.getTime())
-				.build();
+		var visit = visitMapper.toEntity(request, user, realEstate);
+		
+		visitRepository.save(visit);
 	}
 
 	/*

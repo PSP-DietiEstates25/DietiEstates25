@@ -1,14 +1,13 @@
 package com.dietiestates.api.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.request.RealEstateRequest;
-import com.dietiestates.api.enums.AdCategory;
 import com.dietiestates.api.exception.notfound.EstateAgentNotFoundException;
+import com.dietiestates.api.mapper.RealEstateMapper;
 import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.repository.EstateAgentRepository;
 import com.dietiestates.api.repository.RealEstateRepository;
@@ -20,25 +19,17 @@ import lombok.RequiredArgsConstructor;
 public class RealEstateService {
 	
 	private final RealEstateRepository realEstateRepository;
+	private final RealEstateMapper realEstateMapper;
 	private final EstateAgentRepository estateAgentRepository;
 	
 	public void createRealEstate(RealEstateRequest request) {
-		var realEstate = of(request);
-		realEstateRepository.save(realEstate);
-	}
-	
-	public RealEstate of(RealEstateRequest request) {
 		
 		var estateAgent = estateAgentRepository.findByEmail(request.getEstateAgentEmail())
 				.orElseThrow(EstateAgentNotFoundException::new);
 		
-		return RealEstate.builder()
-				.createdDate(LocalDateTime.now())
-				.category(AdCategory.valueOf(request.getCategory()))
-				.images(request.getImages())
-				.description(request.getDescription())
-				.estateAgent(estateAgent)
-				.build();
+		var realEstate = realEstateMapper.toEntity(request, estateAgent);
+		
+		realEstateRepository.save(realEstate);
 	}
 	
 	public List<RealEstate> getAllRealEstates(){

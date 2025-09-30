@@ -1,15 +1,11 @@
 package com.dietiestates.api.service;
 
-import java.time.LocalDateTime;
-
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.request.OfferRequest;
-import com.dietiestates.api.enums.ProposalCategory;
-import com.dietiestates.api.enums.ProposalStatus;
 import com.dietiestates.api.exception.notfound.RealEstateNotFoundException;
 import com.dietiestates.api.exception.notfound.UserNotFoundException;
-import com.dietiestates.api.model.Offer;
+import com.dietiestates.api.mapper.OfferMapper;
 import com.dietiestates.api.repository.OfferRepository;
 import com.dietiestates.api.repository.RealEstateRepository;
 import com.dietiestates.api.repository.UserRepository;
@@ -21,29 +17,21 @@ import lombok.RequiredArgsConstructor;
 public class OfferService {
 
 	private final OfferRepository offerRepository;
+	private final OfferMapper offerMapper;
 	private final UserRepository userRepository;
 	private final RealEstateRepository realEstateRepository;
 	
 	public void createOffer(OfferRequest request, Long realEstateId) {
-		var offer = of(request, realEstateId);
-		offerRepository.save(offer);
-	}
-	
-	public Offer of(OfferRequest request, Long realEstateId) {
+		
 		var user = userRepository.findByEmail(request.getUserEmail())
 				.orElseThrow(UserNotFoundException::new);
 		
 		var realEstate = realEstateRepository.findById(realEstateId)
 				.orElseThrow(RealEstateNotFoundException::new);
 		
-		return Offer.offerBuilder()
-				.createdDate(LocalDateTime.now())
-				.category(ProposalCategory.valueOf(request.getCategory()))
-				.status(ProposalStatus.valueOf(request.getStatus()))
-				.user(user)
-				.realEstate(realEstate)
-				.amount(request.getAmount())
-				.build();
+		var offer = offerMapper.toEntity(request, user, realEstate);
+		
+		offerRepository.save(offer);
 	}
 	/*
     private final OfferRepository offerRepo;

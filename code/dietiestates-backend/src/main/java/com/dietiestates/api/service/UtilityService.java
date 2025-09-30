@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.request.UtilityRequest;
 import com.dietiestates.api.exception.notfound.DetailNotFoundException;
+import com.dietiestates.api.mapper.UtilityMapper;
 import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.model.Utility;
 import com.dietiestates.api.repository.DetailRepository;
@@ -19,24 +20,17 @@ import lombok.RequiredArgsConstructor;
 public class UtilityService {
 
 	private final UtilityRepository utilityRepository;
+	private final UtilityMapper utilityMapper;
 	private final DetailRepository detailRepository;
 	
 	public Utility createUtility(UtilityRequest request, Long detailId) {
-		var utility = of(request, detailId);
-		return utilityRepository.save(utility);
-	}
-	
-	public Utility of(UtilityRequest request, Long detailId) {
 		
 		var detail = detailRepository.findById(detailId)
 				.orElseThrow(DetailNotFoundException::new);
-				
-		return Utility.utilityBuilder()
-				.hasAirConditioning(request.getHasAirConditioning())
-				.hasDoorman(request.getHasDoorman())
-				.hasElevator(request.getHasElevator())
-				.detail(detail)
-				.build();
+		
+		var utility = utilityMapper.toEntity(request, detail);
+		
+		return utilityRepository.save(utility);
 	}
 	
 	public List<RealEstate> getUtilityRealEstates(Utility searchUtility, List<RealEstate> realEstates){

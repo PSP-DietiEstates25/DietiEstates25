@@ -1,6 +1,5 @@
 package com.dietiestates.api.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.request.GeographicalPositionRequest;
 import com.dietiestates.api.exception.notfound.DetailNotFoundException;
+import com.dietiestates.api.mapper.GeographicalPositionMapper;
 import com.dietiestates.api.model.GeographicalPosition;
 import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.repository.DetailRepository;
@@ -20,28 +20,17 @@ import lombok.RequiredArgsConstructor;
 public class GeographicalPositionService {
 
 	private final GeographicalPositionRepository geographicalPositionRepository;
+	private final GeographicalPositionMapper geographicalPositionMapper;
 	private final DetailRepository detailRepository;
 	
-	public GeographicalPosition createGeographicalPosition(GeographicalPositionRequest request, Long detailId) {
-		var geographicalPosition = of(request, detailId);
-		return geographicalPositionRepository.save(geographicalPosition);
-	}
-	
-	public GeographicalPosition of(GeographicalPositionRequest request, Long detailId) {
+	public void createGeographicalPosition(GeographicalPositionRequest request, Long detailId) {
 		
 		var detail = detailRepository.findById(detailId)
 				.orElseThrow(DetailNotFoundException::new);
 		
-		return GeographicalPosition.geographicalPositionBuilder()
-				.createdDate(LocalDateTime.now())
-				.city(request.getCity())
-				.municipality(request.getMunicipality())
-				.address(request.getAddress())
-				.latitude(request.getLatitude())
-				.longitude(request.getLongitude())
-				.radius(request.getRadius())
-				.detail(detail)
-				.build();
+		var geographicalPosition = geographicalPositionMapper.toEntity(request, detail);
+		
+		geographicalPositionRepository.save(geographicalPosition);
 	}
 	
 	public List<RealEstate> getGeographicalPositionRealEstates(GeographicalPosition searchGeographicalPosition, List<RealEstate> realEstates){
