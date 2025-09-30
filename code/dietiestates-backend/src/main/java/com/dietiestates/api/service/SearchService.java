@@ -25,11 +25,11 @@ public class SearchService {
 	
 	private final SearchRepository searchRepository;
 	private final SearchMapper searchMapper;
-	private final DetailMapper detailMapper;
 	
 	private final RealEstateMapper realEstateMapper;
 	private final UserRepository userRepository;
 	private final RealEstateService realEstateService;
+	private final DetailService detailService;
 	private final SearchRealEstateService searchRealEstateService;
 	
 	private final GeographicalPositionService geographicalPositionService;
@@ -46,13 +46,19 @@ public class SearchService {
 	    search = searchRepository.save(search);
 	    
 		var detailRequest = DetailRequest.builder()
+				.searchId(search.getId())
 				.build();
 		
-		var detail = detailMapper.toEntity(detailRequest, null, null);
+		var detail = detailService.createDetail(detailRequest);
+		
+		System.out.println("==============================================================================================");
+		System.out.println("Incoming cadastralFilter request: {}" + request.getCadastralFilter().toString());
+		System.out.println("==============================================================================================");;
 		
 		geographicalPositionService.createGeographicalPosition(request.getGeographicalPosition(), detail.getId());
 		utilityService.createUtility(request.getUtility(), detail.getId());
 		cadastralFilterService.createCadastralFilter(request.getCadastralFilter(), search.getId());
+		
 		
 		var searchRealEstates = this.getSearchRealEstates(search);
 		
