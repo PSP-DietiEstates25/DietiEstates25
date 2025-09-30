@@ -52,6 +52,20 @@ public class CadastralFilterService {
 		var cadastralFilterRealEstates = new ArrayList<RealEstate>();
 		realEstates.forEach(realEstate -> {
 			var realEstateCadastralData = realEstate.getCadastralData();
+			
+			if(
+					searchCadastralFilter.getPriceRange().contains(realEstateCadastralData.getPrice()) &&
+					searchCadastralFilter.getSquareMetersRange().contains(realEstateCadastralData.getSquareMeters()) &&
+					searchCadastralFilter.getEnergyClassRange().contains(realEstateCadastralData.getEnergyClass().getOrder()) &&
+					searchCadastralFilter.getRoomsRange().contains(realEstateCadastralData.getRooms()) &&
+					searchCadastralFilter.getFloorRange().contains(realEstateCadastralData.getFloor())
+					//square meters
+					//energy class
+					//rooms
+					//floor
+				)
+				
+			/*
 			if(
 					(
 						(
@@ -112,7 +126,7 @@ public class CadastralFilterService {
 							realEstateCadastralData.getFloor().compareTo(searchCadastralFilter.getFloorRange().getMaxFloor()) == 0
 						)
 					)
-			)
+			)*/
 				cadastralFilterRealEstates.add(realEstate);
 		});
 		

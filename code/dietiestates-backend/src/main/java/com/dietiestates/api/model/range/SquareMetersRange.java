@@ -23,4 +23,15 @@ public class SquareMetersRange {
 	
 	@Column(nullable = false, name = "max_square_meters")
 	private Integer maxSquareMeters;
+	
+	public Boolean contains(Integer squareMeters) {
+		
+		if(squareMeters != null && this.minSquareMeters != null && this.maxSquareMeters != null) {
+			
+			if(this.minSquareMeters.compareTo(squareMeters) < 0 && squareMeters.compareTo(this.maxSquareMeters) <= 0)
+				return true;
+			else return false;
+			
+		} else return false;
+	}
 }
