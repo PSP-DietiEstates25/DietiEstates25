@@ -1,9 +1,9 @@
+// src/app/components/create-ad/step-details.component.ts
 import { Component, inject } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AdDraftService } from '../../vecchioService/ad-draft.service';
-
-import { MapComponent } from "../map/map.component";
+import { CreateAdFacade } from './create-ad.facade';
+import { MapComponent } from '../map/map.component';
 
 @Component({
   selector: 'app-step-details',
@@ -13,38 +13,52 @@ import { MapComponent } from "../map/map.component";
 })
 export class StepDetailsComponent {
   private fb = inject(FormBuilder);
-  private draft = inject(AdDraftService);
   private router = inject(Router);
+  private facade = inject(CreateAdFacade);
 
-  submitted = false;
+  // default Napoli coords se non ancora settate
+  private readonly DEF_LAT = 40.85631;
+  private readonly DEF_LON = 14.24641;
 
   form = this.fb.nonNullable.group({
-    // ✅ latitudine e longitudine prese dal draft e con validatori
+    type: [
+      this.facade.draft().category ?? 'Appartamento',
+      [Validators.required],
+    ],
+    size: [
+      this.facade.draft().size ?? 0,
+      [Validators.required, Validators.min(0)],
+    ],
+    description: [this.facade.draft().description ?? ''],
     latitude: [
-      this.draft.draft().latitude,
+      this.facade.draft().latitude ?? this.DEF_LAT,
       [Validators.required, Validators.min(-90), Validators.max(90)],
     ],
     longitude: [
-      this.draft.draft().longitude,
+      this.facade.draft().longitude ?? this.DEF_LON,
       [Validators.required, Validators.min(-180), Validators.max(180)],
     ],
-    type: [this.draft.draft().type || 'Appartamento'],
-    size: [this.draft.draft().size, [Validators.min(0)]],
-    description: [this.draft.draft().description],
   });
 
   constructor() {
-    // ogni modifica del form aggiorna il draft
-    this.form.valueChanges.subscribe((v) => this.draft.patch(v));
+    // Ogni modifica aggiorna il draft in facciata
+    this.form.valueChanges.subscribe((v) => {
+      this.facade.patchDetails({
+        category: v.type, // → RealEstateDto.category
+        size: v.size, // → CadastralDataDto.size
+        description: v.description, // → RealEstateDto.description (o fallback al title)
+        latitude: v.latitude, // → GeographicalPositionDto.latitude
+        longitude: v.longitude, // → GeographicalPositionDto.longitude
+      });
+    });
   }
 
-  // ✅ collegati agli output della mappa
-  updateLatitude(latitude: number) {
-    this.form.patchValue({ latitude });
+  // Chiamate dal (latitudeChange)/(longitudeChange) della mappa
+  updateLatitude(lat: number) {
+    this.form.patchValue({ latitude: lat }, { emitEvent: true });
   }
-
-  updateLongitude(longitude: number) {
-    this.form.patchValue({ longitude });
+  updateLongitude(lon: number) {
+    this.form.patchValue({ longitude: lon }, { emitEvent: true });
   }
 
   back() {
@@ -52,9 +66,11 @@ export class StepDetailsComponent {
   }
 
   next() {
-    this.submitted = true;
-    if (this.form.valid) {
-      this.router.navigateByUrl('/agent/ads/new/photos');
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
     }
+    // Prossimo step: foto (poi review → facade.submit())
+    this.router.navigateByUrl('/agent/ads/new/photos');
   }
 }

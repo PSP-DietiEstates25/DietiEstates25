@@ -1,7 +1,7 @@
-import { Component, inject, signal, effect } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AdDraftService } from '../../vecchioService/ad-draft.service';
+import { CreateAdFacade } from './create-ad.facade';
 
 @Component({
   selector: 'app-step-basics',
@@ -11,20 +11,30 @@ import { AdDraftService } from '../../vecchioService/ad-draft.service';
 })
 export class StepBasicsComponent {
   private fb = inject(FormBuilder);
-  private draft = inject(AdDraftService);
   private router = inject(Router);
+  private facade = inject(CreateAdFacade);
 
   form = this.fb.nonNullable.group({
     title: [
-      this.draft.draft().title,
+      this.facade.draft().title ?? '',
       [Validators.required, Validators.minLength(3)],
     ],
-    price: [this.draft.draft().price, [Validators.required, Validators.min(0)]],
-    city: [this.draft.draft().city, [Validators.required]],
+    price: [
+      this.facade.draft().price ?? 0,
+      [Validators.required, Validators.min(0)],
+    ],
+    city: [this.facade.draft().city ?? '', [Validators.required]],
+
+    rooms: [this.facade.draft().rooms ?? 0, [Validators.min(0)]],
+    floor: [this.facade.draft().floor ?? 0, [Validators.min(0)]],
+    energyClass: [
+      this.facade.draft().energyClass ?? 'ND',
+      [Validators.required],
+    ],
   });
 
   constructor() {
-    this.form.valueChanges.subscribe((v) => this.draft.patch(v));
+    this.form.valueChanges.subscribe((v) => this.facade.patchBasics(v));
   }
 
   next() {

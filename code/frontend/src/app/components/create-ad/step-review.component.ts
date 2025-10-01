@@ -1,51 +1,64 @@
-import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { AdDraftService } from '../../vecchioService/ad-draft.service';
-import { AgentService } from '../../vecchioService/agent.service';
+import { CreateAdFacade } from './create-ad.facade';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-step-review',
   standalone: true,
-  imports: [CommonModule],
   templateUrl: './step-review.component.html',
+  imports: [DecimalPipe]
 })
 export class StepReviewComponent {
-  private draft = inject(AdDraftService);
-  private agent = inject(AgentService);
   private router = inject(Router);
+  private facade = inject(CreateAdFacade);
 
   loading = signal(false);
   error = signal<string | null>(null);
 
-  get d() {
-    return this.draft.draft();
+  // View-model per il tuo template: d.title, d.city, d.type, d.photos[], ecc.
+  d = computed(() => {
+    const draft = this.facade.draft();
+
+    // Genera nomi sintetici per le foto (l’HTML mostra f.name)
+    const photos = (draft.imagesBase64 ?? []).map((_, i) => ({
+      name: `foto-${i + 1}.jpg`,
+    }));
+
+    return {
+      title: draft.title ?? '',
+      price: draft.price ?? null,
+      city: draft.city ?? '',
+      type: draft.category ?? '', // mappa category -> type (come nel tuo HTML)
+      size: draft.size ?? null,
+      latitude: draft.latitude ?? null,
+      longitude: draft.longitude ?? null,
+      description: draft.description ?? '',
+      photos,
+    };
+  });
+
+  get draft() {
+    return this.facade.draft();
   }
 
   back() {
     this.router.navigateByUrl('/agent/ads/new/photos');
   }
 
-  publish() {
-    if (!this.draft.allValid()) {
-      this.error.set('Completa i passaggi richiesti.');
-      return;
-    }
-    this.loading.set(true);
+  async publish() {
     this.error.set(null);
-
-    const hasPhotos = this.draft.draft().photos.length > 0;
-    const body: any = hasPhotos ? this.draft.toFormData() : this.draft.draft();
-
-    this.agent.createAd(body).subscribe({
-      next: (_) => {
-        this.draft.reset();
-        this.router.navigateByUrl('/agent');
-      },
-      error: (err) => {
-        this.error.set(err?.error?.message || 'Creazione annuncio fallita');
-        this.loading.set(false);
-      },
-    });
+    this.loading.set(true);
+    try {
+      await this.facade.submit(); // Sequenza: Geo → Cadastral → Details → RealEstate
+      this.facade.reset();
+      this.router.navigateByUrl('/agent'); // vai alla dashboard agente
+    } catch (e: any) {
+      this.error.set(
+        e?.error?.message || e?.message || 'Creazione annuncio fallita'
+      );
+    } finally {
+      this.loading.set(false);
+    }
   }
 }

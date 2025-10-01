@@ -1,35 +1,54 @@
+// src/app/components/create-ad/step-photos.component.ts
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { AdDraftService } from '../../vecchioService/ad-draft.service';
+import { CreateAdFacade } from './create-ad.facade';
 
 @Component({
   selector: 'app-step-photos',
   standalone: true,
-  imports: [],
   templateUrl: './step-photos.component.html',
 })
 export class StepPhotosComponent {
-  private draft = inject(AdDraftService);
   private router = inject(Router);
+  private facade = inject(CreateAdFacade);
 
-  previews = signal<string[]>([]);
+  previews = signal<string[]>(this.facade.draft().imagesBase64 ?? []);
 
-  onFiles(e: Event) {
-    const input = e.target as HTMLInputElement;
-    const files = Array.from(input.files ?? []);
-    this.draft.setPhotos(files);
-    this.previews.set([]);
-    files.forEach((f) => {
-      const r = new FileReader();
-      r.onload = () =>
-        this.previews.update((arr) => [...arr, r.result as string]);
-      r.readAsDataURL(f);
-    });
+  async onFiles(ev: Event) {
+    const input = ev.target as HTMLInputElement | null;
+    const files = input?.files;
+    if (!files || files.length === 0) return;
+
+    const toBase64 = (f: File) =>
+      new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(f);
+      });
+
+    const newImages: string[] = [];
+    for (const f of Array.from(files)) {
+      if (!f.type.startsWith('image/')) continue;
+      try {
+        const b64 = await toBase64(f);
+        newImages.push(b64);
+      } catch {}
+    }
+
+    if (newImages.length > 0) {
+      const merged = [...this.previews(), ...newImages];
+      this.previews.set(merged);
+      this.facade.setImagesBase64(merged);
+    }
+
+    if (input) input.value = '';
   }
 
   back() {
     this.router.navigateByUrl('/agent/ads/new/details');
   }
+
   next() {
     this.router.navigateByUrl('/agent/ads/new/review');
   }

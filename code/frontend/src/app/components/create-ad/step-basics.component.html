@@ -41,4 +41,33 @@
     <a class="btn_ghost" routerLink="/agent">Annulla</a>
     <button type="button" class="btn_primary" (click)="next()">Avanti</button>
   </div>
+
+  <div class="grid sm:grid-cols-3 gap-4">
+    <div>
+      <label class="block text-sm mb-1 dark:text-slate-200">Stanze</label>
+      <input type="number" class="input_main" formControlName="rooms" />
+    </div>
+    <div>
+      <label class="block text-sm mb-1 dark:text-slate-200">Piano</label>
+      <input type="number" class="input_main" formControlName="floor" />
+    </div>
+    <div>
+      <label class="block text-sm mb-1 dark:text-slate-200"
+        >Classe Energetica</label
+      >
+      <select class="input_main" formControlName="energyClass">
+        <option>ND</option>
+        <option>A4</option>
+        <option>A3</option>
+        <option>A2</option>
+        <option>A1</option>
+        <option>B</option>
+        <option>C</option>
+        <option>D</option>
+        <option>E</option>
+        <option>F</option>
+        <option>G</option>
+      </select>
+    </div>
+  </div>
 </form>

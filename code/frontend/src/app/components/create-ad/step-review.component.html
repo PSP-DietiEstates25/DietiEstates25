@@ -3,27 +3,27 @@
     <h2 class="text-xl font-bold">Riepilogo</h2>
     <div class="rounded-2xl border dark:border-slate-700 p-4">
       <div class="grid sm:grid-cols-2 gap-4 text-sm">
-        <p><span class="font-semibold">Titolo:</span> {{ d.title || "—" }}</p>
+        <p><span class="font-semibold">Titolo:</span> {{ d().title || "—" }}</p>
         <p>
-          <span class="font-semibold">Prezzo:</span> @if(d.price != null){ €
-          {{ d.price | number : "1.0-0" }} } @else { — }
+          <span class="font-semibold">Prezzo:</span> @if(d().price != null){ €
+          {{ d().price | number : "1.0-0" }} } @else { — }
         </p>
-        <p><span class="font-semibold">Città:</span> {{ d.city || "—" }}</p>
-        <p><span class="font-semibold">Tipologia:</span> {{ d.type || "—" }}</p>
-        <p><span class="font-semibold">Mq:</span> {{ d.size ?? "—" }}</p>
+        <p><span class="font-semibold">Città:</span> {{ d().city || "—" }}</p>
+        <p><span class="font-semibold">Tipologia:</span> {{ d().type || "—" }}</p>
+        <p><span class="font-semibold">Mq:</span> {{ d().size ?? "—" }}</p>
         
         <p class="sm:col-span-2">
-          <span class="font-semibold">Latitudine:</span> {{ d.latitude || "—" }}
+          <span class="font-semibold">Latitudine:</span> {{ d().latitude || "—" }}
         </p>
         <p class="sm:col-span-2">
-          <span class="font-semibold">Longitudine:</span> {{ d.longitude || "—" }}
+          <span class="font-semibold">Longitudine:</span> {{ d().longitude || "—" }}
         </p>
 
 
 
         <p class="sm:col-span-2">
           <span class="font-semibold">Descrizione:</span>
-          {{ d.description || "—" }}
+          {{ d().description || "—" }}
         </p>
       </div>
     </div>
@@ -31,7 +31,7 @@
     <div class="rounded-2xl border dark:border-slate-700 p-4">
       <h3 class="font-semibold mb-3">Foto</h3>
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-        @for (f of d.photos; track f.name) {
+        @for (f of d().photos; track f.name) {
         <div
           class="rounded-xl border dark:border-slate-700 aspect-video flex items-center justify-center text-xs"
         >
@@ -52,7 +52,7 @@
       <button class="btn_ghost" (click)="back()">Indietro</button>
       <button
         class="btn_primary"
-        [disabled]="loading() || !d.title || !d.city || d.price == null"
+        [disabled]="loading() || !d().title || !d().city || d().price == null"
         (click)="publish()"
       >
         @if (loading()) { Pubblicazione… } @else { Pubblica annuncio }
