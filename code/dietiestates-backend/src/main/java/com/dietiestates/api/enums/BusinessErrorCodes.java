@@ -27,7 +27,10 @@ public enum BusinessErrorCodes {
     GEOGRAPHICAL_POSITION_NOT_FOUND(11004, HttpStatus.NOT_FOUND, "Geographical position not found"),
     DATA_NOT_FOUND(12004, HttpStatus.NOT_FOUND, "CadastralData not found"),
     SERVICES_NOT_FOUND(13004, HttpStatus.NOT_FOUND, "Utility not found"),
-    SEARCH_NOT_FOUND(14004, HttpStatus.NOT_FOUND, "Search not found")
+    SEARCH_NOT_FOUND(14004, HttpStatus.NOT_FOUND, "Search not found"),
+  
+    //FORBIDDEN ERRORS
+    CADASTRAL_DATA_NOT_OWNED_BY_REAL_ESTATE(15000, HttpStatus.FORBIDDEN, "Cadastral data not owned by real estate"),
     ;
 
     @Getter

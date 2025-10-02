@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.request.RealEstateRequest;
 import com.dietiestates.api.exception.notfound.EstateAgentNotFoundException;
+import com.dietiestates.api.exception.notfound.RealEstateNotFoundException;
 import com.dietiestates.api.mapper.RealEstateMapper;
 import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.repository.EstateAgentRepository;
@@ -30,6 +31,11 @@ public class RealEstateService {
 		var realEstate = realEstateMapper.toEntity(request, estateAgent);
 		
 		realEstateRepository.save(realEstate);
+	}
+	
+	public RealEstate getRealEstateById(Long id) {
+		return realEstateRepository.findById(id)
+				.orElseThrow(RealEstateNotFoundException::new);
 	}
 	
 	public List<RealEstate> getAllRealEstates(){
