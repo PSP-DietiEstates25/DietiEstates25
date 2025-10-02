@@ -9,11 +9,12 @@ import com.dietiestates.api.dto.request.DetailRequest;
 import com.dietiestates.api.dto.request.SearchRequest;
 import com.dietiestates.api.dto.response.RealEstateResponse;
 import com.dietiestates.api.exception.notfound.UserNotFoundException;
-import com.dietiestates.api.mapper.DetailMapper;
 import com.dietiestates.api.mapper.RealEstateMapper;
 import com.dietiestates.api.mapper.SearchMapper;
+import com.dietiestates.api.model.Detail;
 import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.model.Search;
+import com.dietiestates.api.model.User;
 import com.dietiestates.api.repository.SearchRepository;
 import com.dietiestates.api.repository.UserRepository;
 
@@ -38,33 +39,25 @@ public class SearchService {
 	
 	public List<RealEstateResponse> createSearch(SearchRequest request) {
 		
-		var user = userRepository.findByEmail(request.getUserEmail())
-				.orElseThrow(UserNotFoundException::new);
-		
+		var user = this.getSearchUser(request);		
 		var search = searchMapper.toEntity(request, user);
-		
 	    search = searchRepository.save(search);
-	    
-		var detailRequest = DetailRequest.builder()
+		var detailRequest = this.createDetailRequest(search);
+		var detail = detailService.createDetail(detailRequest);
+		this.setSearchFilters(request, search, detail);
+		var searchRealEstates = this.getSearchRealEstates(search);
+		this.createSearchRealEstate(search, searchRealEstates);
+		
+		return this.createSearchResponse(searchRealEstates);
+	}
+	
+	public DetailRequest createDetailRequest(Search search) {
+		return DetailRequest.builder()
 				.searchId(search.getId())
 				.build();
-		
-		var detail = detailService.createDetail(detailRequest);
-		
-		System.out.println("==============================================================================================");
-		System.out.println("Incoming cadastralFilter request: {}" + request.getCadastralFilter().toString());
-		System.out.println("==============================================================================================");;
-		
-		geographicalPositionService.createGeographicalPosition(request.getGeographicalPosition(), detail.getId());
-		utilityService.createUtility(request.getUtility(), detail.getId());
-		cadastralFilterService.createCadastralFilter(request.getCadastralFilter(), search.getId());
-		
-		
-		var searchRealEstates = this.getSearchRealEstates(search);
-		
-		if(!searchRealEstates.isEmpty())
-			searchRealEstateService.createSearchRealEstate(search, searchRealEstates);
-		
+	}
+	
+	public List<RealEstateResponse> createSearchResponse(List<RealEstate> searchRealEstates) {
 		var response = new ArrayList<RealEstateResponse>();
 		
 		searchRealEstates.forEach(realEstate -> {
@@ -73,6 +66,22 @@ public class SearchService {
 		});
 		
 		return response;
+	}
+	
+	public void createSearchRealEstate(Search search, List<RealEstate> searchRealEstates) {
+		if(!searchRealEstates.isEmpty())
+			searchRealEstateService.createSearchRealEstate(search, searchRealEstates);
+	}	
+	
+	public void setSearchFilters(SearchRequest request, Search search, Detail detail) {
+		geographicalPositionService.createGeographicalPosition(request.getGeographicalPosition(), detail.getId());
+		utilityService.createUtility(request.getUtility(), detail.getId());
+		cadastralFilterService.createCadastralFilter(request.getCadastralFilter(), search.getId());
+	}
+	
+	public User getSearchUser(SearchRequest request) {
+		return userRepository.findByEmail(request.getUserEmail())
+				.orElseThrow(UserNotFoundException::new);
 	}
 	
 	public List<RealEstate> getSearchRealEstates(Search search){
