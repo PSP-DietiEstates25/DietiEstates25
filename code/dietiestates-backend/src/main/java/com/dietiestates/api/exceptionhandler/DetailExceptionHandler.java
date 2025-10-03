@@ -8,17 +8,15 @@ import com.dietiestates.api.dto.response.ExceptionResponse;
 import com.dietiestates.api.exception.notfound.DetailNotFoundException;
 
 @RestControllerAdvice
-public class DetailsExceptionHandler {
+public class DetailExceptionHandler {
 
 	@ExceptionHandler(DetailNotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleNotFound(DetailNotFoundException exception) {
-        return ResponseEntity
-                .status(exception.getHttpErrorStatusCode())
-                .body(
-                        ExceptionResponse.builder()
-                                .businessErrorCode(exception.getBusinessErrorCode())
-                                .businessErrorMessage(exception.getMessage())
-                                .build()
-                );
+        return ResponseEntity.status(exception.getHttpErrorStatusCode()).body(
+                ExceptionResponse.builder()
+                .businessErrorCode(exception.getBusinessErrorCode())
+                .businessErrorMessage(exception.getMessage())
+                .build()
+        			);
     }
 }

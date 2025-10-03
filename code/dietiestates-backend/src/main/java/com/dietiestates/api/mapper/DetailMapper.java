@@ -21,7 +21,7 @@ public class DetailMapper {
 				.build();
 	}
 	
-	private DetailResponse fromEntity(Detail detail) {
+	public DetailResponse fromEntity(Detail detail) {
 		
 		var detailResponse = DetailResponse.builder()
 				.id(detail.getId())
