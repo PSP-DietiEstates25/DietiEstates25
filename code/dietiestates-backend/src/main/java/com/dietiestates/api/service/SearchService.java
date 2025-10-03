@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.dietiestates.api.dto.request.CadastralFilterRequest;
 import com.dietiestates.api.dto.request.DetailRequest;
 import com.dietiestates.api.dto.request.SearchRequest;
 import com.dietiestates.api.dto.response.RealEstateResponse;
@@ -17,7 +18,6 @@ import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.model.Search;
 import com.dietiestates.api.model.User;
 import com.dietiestates.api.repository.SearchRepository;
-import com.dietiestates.api.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,10 +28,10 @@ public class SearchService {
 	private final SearchRepository searchRepository;
 	private final SearchMapper searchMapper;
 	
-	private final RealEstateMapper realEstateMapper;
-	private final UserRepository userRepository;
-	private final RealEstateService realEstateService;
+	private final UserService userService;
 	private final DetailService detailService;
+	
+	private final RealEstateService realEstateService;
 	private final SearchRealEstateService searchRealEstateService;
 	
 	private final GeographicalPositionService geographicalPositionService;
@@ -40,17 +40,17 @@ public class SearchService {
 	
 	public List<RealEstateResponse> createSearch(SearchRequest request) {
 		
-		var user = this.getSearchUser(request);		
+		var user = userService.getUserByEmail(request.getUserEmail());
+
 		var search = searchMapper.toEntity(request, user);
 	    search = searchRepository.save(search);
-		var detailRequest = this.createDetailRequest(search);
-		var detail = detailService.createDetail(detailRequest);
+	    
+	    this.setDetail(search, request.getDetailId());
+	    this.setCadastralFilters(search, request.getCadastralFilter());
 		
-		this.setSearchFilters(request, search, detail);
-		var searchRealEstates = this.getSearchRealEstates(search);
-		this.createSearchRealEstate(search, searchRealEstates);
-		
-		return this.createSearchResponse(searchRealEstates);
+	    var searchedRealEstates = this.getSearchedRealEstates(search);
+	    
+		return realEstateService.createRealEstatesResponse(searchedRealEstates);
 	}
 	
 	public DetailRequest createDetailRequest(Search search) {
@@ -59,39 +59,18 @@ public class SearchService {
 				.build();
 	}
 	
-	public List<RealEstateResponse> createSearchResponse(List<RealEstate> searchRealEstates) {
-		var response = new ArrayList<RealEstateResponse>();
-		
-		searchRealEstates.forEach(realEstate -> {
-			var dto = realEstateMapper.fromEntity(realEstate);
-			response.add(dto);
-		});
-		
-		return response;
-	}
-	
 	public void createSearchRealEstate(Search search, List<RealEstate> searchRealEstates) {
 		if(!searchRealEstates.isEmpty())
 			searchRealEstateService.createSearchRealEstate(search, searchRealEstates);
 	}
 	
-	public Search getSearchById(Long searchId) {
-		return searchRepository.findById(searchId)
-				.orElseThrow(SearchNotFoundException::new);
+	public List<RealEstate> getSearchedRealEstates(Search search){
+		var searchedRealEstates = this.getRealEstates(search);
+		this.createSearchRealEstate(search, searchedRealEstates);
+		return searchedRealEstates;
 	}
 	
-	public void setSearchFilters(SearchRequest request, Search search, Detail detail) {
-		geographicalPositionService.createGeographicalPosition(request.getGeographicalPosition(), detail.getId());
-		utilityService.createUtility(request.getUtility(), detail.getId());
-		cadastralFilterService.createCadastralFilter(request.getCadastralFilter(), search.getId());
-	}
-	
-	public User getSearchUser(SearchRequest request) {
-		return userRepository.findByEmail(request.getUserEmail())
-				.orElseThrow(UserNotFoundException::new);
-	}
-	
-	public List<RealEstate> getSearchRealEstates(Search search){
+	public List<RealEstate> getRealEstates(Search search){
 		
 		var allRealEstates = realEstateService.getAllRealEstates();
 		
@@ -101,4 +80,21 @@ public class SearchService {
 		
 		return cadastralFilterRealEstates;
 	}
+	
+	public Search getSearchById(Long searchId) {
+		return searchRepository.findById(searchId)
+				.orElseThrow(SearchNotFoundException::new);
+	}
+	
+	public void setCadastralFilters(Search search, CadastralFilterRequest cadastralFilterRequest) {
+		var cadastralFilter = cadastralFilterService.createCadastralFilter(cadastralFilterRequest, search.getId());
+		cadastralFilter.setSearch(search);
+		
+	}
+	
+	public void setDetail(Search search, Long detailId) {
+		var detail = detailService.getDetailById(detailId);
+		detail.setSearch(search);
+	}
+	
 }

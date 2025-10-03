@@ -122,6 +122,6 @@ public class CadastralFilter {
 	
 	public void setSearch(Search search) {
 		this.search = search;
-		search.setCadastralFilter(this);;
+		search.setCadastralFilter(this);
 	}
 }

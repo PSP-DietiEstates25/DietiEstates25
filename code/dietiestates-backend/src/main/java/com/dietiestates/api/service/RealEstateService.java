@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.request.RealEstateRequest;
+import com.dietiestates.api.dto.response.RealEstateResponse;
 import com.dietiestates.api.exception.notfound.EstateAgentNotFoundException;
 import com.dietiestates.api.exception.notfound.RealEstateNotFoundException;
 import com.dietiestates.api.mapper.RealEstateMapper;
@@ -31,6 +32,18 @@ public class RealEstateService {
 		var realEstate = realEstateMapper.toEntity(request, estateAgent);
 		
 		realEstateRepository.save(realEstate);
+	}
+	
+	public List<RealEstateResponse> createRealEstatesResponse(List<RealEstate> realEstates) {
+		
+		var response = new ArrayList<RealEstateResponse>();
+		
+		realEstates.forEach(realEstate -> {
+			var realEstateResponse = realEstateMapper.fromEntity(realEstate);
+			response.add(realEstateResponse);
+		});
+		
+		return response;
 	}
 	
 	public RealEstate getRealEstateById(Long id) {

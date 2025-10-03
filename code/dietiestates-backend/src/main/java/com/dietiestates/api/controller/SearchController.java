@@ -23,7 +23,7 @@ public class SearchController {
 
 	private final SearchService searchService;
 	
-	@PostMapping
+	@PostMapping()
 	public ResponseEntity<List<RealEstateResponse>> createSearch(
 			@RequestBody @Valid SearchRequest request
 			){

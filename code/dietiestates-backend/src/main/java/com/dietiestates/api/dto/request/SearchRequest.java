@@ -38,15 +38,11 @@ public class SearchRequest {
 	@Email
 	private String userEmail;
 	
+	@Positive(message = "Detail id must be a positive number")
+	private Long detailId;
+	
 	@NotNull(message = "Cadastral filter is mandatory")
 	@Valid
 	private CadastralFilterRequest cadastralFilter;
 	
-	@NotNull(message = "Geographical position is mandatory")
-	@Valid
-	private GeographicalPositionRequest geographicalPosition;
-	
-	@NotNull(message = "Utility is mandatory")
-	@Valid
-	private UtilityRequest utility;
 }

@@ -25,12 +25,12 @@ public class CadastralFilterService {
 	
 	private final SearchService searchService;
 	
-	public void createCadastralFilter(CadastralFilterRequest request, Long searchId) {
+	public CadastralFilter createCadastralFilter(CadastralFilterRequest request, Long searchId) {
 		
 		var search = searchService.getSearchById(searchId);
 		
 		var cadastralFilter = cadastralFilterMapper.toEntity(request, search);
-		cadastralFilterRepository.save(cadastralFilter);
+		return cadastralFilterRepository.save(cadastralFilter);
 	}
 	
 	public CadastralFilterResponse getCadastralFilter(Long searchId, Long cadastralFilterId) {
