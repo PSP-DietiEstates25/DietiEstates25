@@ -30,15 +30,6 @@ public class CadastralFilterService {
 		
 		var cadastralFilter = cadastralFilterMapper.toEntity(request, search);
 		
-		System.out.println("==============================================================================================");
-		System.out.println("Incoming cadastralFilter request: {}" + cadastralFilter.getId());
-		System.out.println("Incoming cadastralFilter request: {}" + cadastralFilter.getPriceRange().toString());
-		System.out.println("Incoming cadastralFilter request: {}" + cadastralFilter.getEnergyClassRange().toString());
-		System.out.println("Incoming cadastralFilter request: {}" + cadastralFilter.getSquareMetersRange().toString());
-		System.out.println("Incoming cadastralFilter request: {}" + cadastralFilter.getRoomsRange().toString());
-		System.out.println("Incoming cadastralFilter request: {}" + cadastralFilter.getFloorRange().toString());
-		System.out.println("==============================================================================================");
-		
 		cadastralFilterRepository.save(cadastralFilter);
 	}
 	

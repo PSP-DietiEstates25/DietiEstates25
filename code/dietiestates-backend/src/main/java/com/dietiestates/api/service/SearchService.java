@@ -44,6 +44,7 @@ public class SearchService {
 	    search = searchRepository.save(search);
 		var detailRequest = this.createDetailRequest(search);
 		var detail = detailService.createDetail(detailRequest);
+		
 		this.setSearchFilters(request, search, detail);
 		var searchRealEstates = this.getSearchRealEstates(search);
 		this.createSearchRealEstate(search, searchRealEstates);
