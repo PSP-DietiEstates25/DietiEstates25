@@ -25,12 +25,14 @@ public enum BusinessErrorCodes {
     REAL_ESTATE_NOT_FOUND(9004, HttpStatus.NOT_FOUND, "Real estate not found"),
     DETAILS_NOT_FOUND(10004, HttpStatus.NOT_FOUND, "Detail not found"),
     GEOGRAPHICAL_POSITION_NOT_FOUND(11004, HttpStatus.NOT_FOUND, "Geographical position not found"),
-    DATA_NOT_FOUND(12004, HttpStatus.NOT_FOUND, "CadastralData not found"),
-    SERVICES_NOT_FOUND(13004, HttpStatus.NOT_FOUND, "Utility not found"),
-    SEARCH_NOT_FOUND(14004, HttpStatus.NOT_FOUND, "Search not found"),
+    SERVICES_NOT_FOUND(12004, HttpStatus.NOT_FOUND, "Utility not found"),
+    SEARCH_NOT_FOUND(13004, HttpStatus.NOT_FOUND, "Search not found"),
+    CADASTRAL_DATA_NOT_FOUND(14004, HttpStatus.NOT_FOUND, "CadastralData not found"),
+    CADASTRAL_FILTER_NOT_FOUND(15004, HttpStatus.NOT_FOUND, "CadastralFilter not found"),
   
     //FORBIDDEN ERRORS
-    CADASTRAL_DATA_NOT_OWNED_BY_REAL_ESTATE(15000, HttpStatus.FORBIDDEN, "Cadastral data not owned by real estate"),
+    CADASTRAL_DATA_NOT_OWNED_BY_REAL_ESTATE(14003, HttpStatus.FORBIDDEN, "Cadastral data not owned by real estate"),
+    CADASTRAL_FILTER_NOT_OWNED_BY_SEARCH(15003, HttpStatus.FORBIDDEN, "Cadastral filter not owned by search")
     ;
 
     @Getter

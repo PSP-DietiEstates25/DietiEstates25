@@ -6,12 +6,13 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.request.CadastralFilterRequest;
-import com.dietiestates.api.exception.notfound.SearchNotFoundException;
+import com.dietiestates.api.dto.response.CadastralFilterResponse;
+import com.dietiestates.api.exception.notfound.CadastralFilterNotFoundException;
+import com.dietiestates.api.exception.notowned.CadastralFilterNotOwnedBySearchException;
 import com.dietiestates.api.mapper.CadastralFilterMapper;
 import com.dietiestates.api.model.CadastralFilter;
 import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.repository.CadastralFilterRepository;
-import com.dietiestates.api.repository.SearchRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,16 +22,30 @@ public class CadastralFilterService {
 
 	private final CadastralFilterRepository cadastralFilterRepository;
 	private final CadastralFilterMapper cadastralFilterMapper;
-	private final SearchRepository searchRepository;
+	
+	private final SearchService searchService;
 	
 	public void createCadastralFilter(CadastralFilterRequest request, Long searchId) {
 		
-		var search = searchRepository.findById(searchId)
-				.orElseThrow(SearchNotFoundException::new);
+		var search = searchService.getSearchById(searchId);
 		
 		var cadastralFilter = cadastralFilterMapper.toEntity(request, search);
-		
 		cadastralFilterRepository.save(cadastralFilter);
+	}
+	
+	public CadastralFilterResponse getCadastralFilter(Long searchId, Long cadastralFilterId) {
+		
+		var cadastralFilter = this.getCadastralFilterById(cadastralFilterId);
+		var search = searchService.getSearchById(searchId);
+		
+		this.checkCadastralFilterOwnedBySearch(cadastralFilter.getSearch().getId(), search.getId());
+		
+		return cadastralFilterMapper.fromEntity(cadastralFilter);
+	}
+	
+	public CadastralFilter getCadastralFilterById(Long id) {
+		return cadastralFilterRepository.findById(id)
+				.orElseThrow(CadastralFilterNotFoundException::new);
 	}
 	
 	public List<RealEstate> getCadastralFilterRealEstates(CadastralFilter searchCadastralFilter,  List<RealEstate> realEstates){
@@ -48,5 +63,11 @@ public class CadastralFilterService {
 		});
 		
 		return cadastralFilterRealEstates;
+	}
+	
+	public void checkCadastralFilterOwnedBySearch(Long cadastralFilterId, Long searchId) {
+		
+		if(!cadastralFilterId.equals(searchId))
+			throw new CadastralFilterNotOwnedBySearchException();
 	}
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.dietiestates.api.dto.request.DetailRequest;
 import com.dietiestates.api.dto.request.SearchRequest;
 import com.dietiestates.api.dto.response.RealEstateResponse;
+import com.dietiestates.api.exception.notfound.SearchNotFoundException;
 import com.dietiestates.api.exception.notfound.UserNotFoundException;
 import com.dietiestates.api.mapper.RealEstateMapper;
 import com.dietiestates.api.mapper.SearchMapper;
@@ -72,7 +73,12 @@ public class SearchService {
 	public void createSearchRealEstate(Search search, List<RealEstate> searchRealEstates) {
 		if(!searchRealEstates.isEmpty())
 			searchRealEstateService.createSearchRealEstate(search, searchRealEstates);
-	}	
+	}
+	
+	public Search getSearchById(Long searchId) {
+		return searchRepository.findById(searchId)
+				.orElseThrow(SearchNotFoundException::new);
+	}
 	
 	public void setSearchFilters(SearchRequest request, Search search, Detail detail) {
 		geographicalPositionService.createGeographicalPosition(request.getGeographicalPosition(), detail.getId());
