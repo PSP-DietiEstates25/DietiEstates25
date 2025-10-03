@@ -3,6 +3,7 @@ package com.dietiestates.api.service;
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.request.DetailRequest;
+import com.dietiestates.api.exception.notfound.DetailNotFoundException;
 import com.dietiestates.api.exception.notfound.RealEstateNotFoundException;
 import com.dietiestates.api.exception.notfound.SearchNotFoundException;
 import com.dietiestates.api.mapper.DetailMapper;
@@ -42,5 +43,10 @@ public class DetailService {
 		var detail = detailMapper.toEntity(request, realEstate, search);
 		
 		return detailRepository.save(detail);
+	}
+	
+	public Detail getDetailById(Long detailId) {
+		return detailRepository.findById(detailId)
+				.orElseThrow(DetailNotFoundException::new);
 	}
 }

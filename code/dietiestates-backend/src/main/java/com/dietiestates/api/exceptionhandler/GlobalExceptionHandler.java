@@ -1,4 +1,4 @@
-package com.dietiestates.api.errorhandlers;
+package com.dietiestates.api.exceptionhandler;
 
 import java.util.HashSet;
 import java.util.Set;

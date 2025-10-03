@@ -6,11 +6,12 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.request.UtilityRequest;
-import com.dietiestates.api.exception.notfound.DetailNotFoundException;
+import com.dietiestates.api.dto.response.UtilityResponse;
+import com.dietiestates.api.exception.notfound.UtilityNotFoundException;
+import com.dietiestates.api.exception.notowned.UtilityNotOwnedByDetailException;
 import com.dietiestates.api.mapper.UtilityMapper;
 import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.model.Utility;
-import com.dietiestates.api.repository.DetailRepository;
 import com.dietiestates.api.repository.UtilityRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -21,18 +22,31 @@ public class UtilityService {
 
 	private final UtilityRepository utilityRepository;
 	private final UtilityMapper utilityMapper;
-	private final DetailRepository detailRepository;
+	
+	private final DetailService detailService;
 	
 	public Utility createUtility(UtilityRequest request, Long detailId) {
 		
-		var detail = detailRepository.findById(detailId)
-				.orElseThrow(DetailNotFoundException::new);
-		
+		var detail = detailService.getDetailById(detailId);
 		var utility = utilityMapper.toEntity(request, detail);
-		
 		return utilityRepository.save(utility);
 	}
 	
+	public UtilityResponse getUtility(Long detailId, Long utilityId) {
+		
+		var utility = this.getUtilityById(utilityId);
+		var detail = detailService.getDetailById(detailId);
+		
+		this.checkUtilityOwnedByDetail(detail.getId() , utility.getDetail().getId());
+		
+		return utilityMapper.fromEntity(utility);
+	}
+	
+	public Utility getUtilityById(Long id) {
+		return utilityRepository.findById(id)
+				.orElseThrow(UtilityNotFoundException::new);
+	}
+
 	public List<RealEstate> getUtilityRealEstates(Utility searchUtility, List<RealEstate> realEstates){
 		var utilityRealEstates = new ArrayList<RealEstate>();
 		realEstates.forEach(realEstate -> {
@@ -46,5 +60,12 @@ public class UtilityService {
 		});
 		
 		return utilityRealEstates;
+	}
+	
+	public void checkUtilityOwnedByDetail(Long detailId, Long utilityDetailId) {
+		
+		if(!detailId.equals(utilityDetailId))
+			throw new UtilityNotOwnedByDetailException();
+		
 	}
 }

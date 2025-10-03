@@ -6,6 +6,6 @@ import com.dietiestates.api.exception.AppException;
 public class DetailNotFoundException extends AppException {
 
 	public DetailNotFoundException() {
-		super(BusinessErrorCodes.DETAILS_NOT_FOUND);
+		super(BusinessErrorCodes.DETAIL_NOT_FOUND);
 	}
 }

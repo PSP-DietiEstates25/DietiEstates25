@@ -1,4 +1,4 @@
-package com.dietiestates.api.errorhandlers;
+package com.dietiestates.api.exceptionhandler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
