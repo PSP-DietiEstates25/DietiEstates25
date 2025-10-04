@@ -1,6 +1,5 @@
 package com.dietiestates.api.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -10,13 +9,9 @@ import com.dietiestates.api.dto.request.DetailRequest;
 import com.dietiestates.api.dto.request.SearchRequest;
 import com.dietiestates.api.dto.response.RealEstateResponse;
 import com.dietiestates.api.exception.notfound.SearchNotFoundException;
-import com.dietiestates.api.exception.notfound.UserNotFoundException;
-import com.dietiestates.api.mapper.RealEstateMapper;
 import com.dietiestates.api.mapper.SearchMapper;
-import com.dietiestates.api.model.Detail;
 import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.model.Search;
-import com.dietiestates.api.model.User;
 import com.dietiestates.api.repository.SearchRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -64,12 +59,19 @@ public class SearchService {
 			searchRealEstateService.createSearchRealEstate(search, searchRealEstates);
 	}
 	
+	//realEstateFinder - getRealEstatesBySearch
 	public List<RealEstate> getSearchedRealEstates(Search search){
 		var searchedRealEstates = this.getRealEstates(search);
 		this.createSearchRealEstate(search, searchedRealEstates);
 		return searchedRealEstates;
 	}
 	
+	//realEstateFinder
+	//getRealEstatesBySearchFilters
+	
+	//getRealEstatesByGeographicalPosition
+	//getRealEstatesByUtility
+	//getRealEstatesByCadastralFilter
 	public List<RealEstate> getRealEstates(Search search){
 		
 		var allRealEstates = realEstateService.getAllRealEstates();

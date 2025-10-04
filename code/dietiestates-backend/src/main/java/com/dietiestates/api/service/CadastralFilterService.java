@@ -23,22 +23,26 @@ public class CadastralFilterService {
 	private final CadastralFilterRepository cadastralFilterRepository;
 	private final CadastralFilterMapper cadastralFilterMapper;
 	
-	private final SearchService searchService;
+	//private final SearchService searchService;
 	
 	public CadastralFilter createCadastralFilter(CadastralFilterRequest request, Long searchId) {
 		
-		var search = searchService.getSearchById(searchId);
+		//var search = searchService.getSearchById(searchId);
+		//var cadastralFilter = cadastralFilterMapper.toEntity(request, search);
 		
-		var cadastralFilter = cadastralFilterMapper.toEntity(request, search);
+		var cadastralFilter = cadastralFilterMapper.toEntity(request);
+		
 		return cadastralFilterRepository.save(cadastralFilter);
 	}
 	
 	public CadastralFilterResponse getCadastralFilter(Long searchId, Long cadastralFilterId) {
 		
 		var cadastralFilter = this.getCadastralFilterById(cadastralFilterId);
-		var search = searchService.getSearchById(searchId);
+		//var search = searchService.getSearchById(searchId);
+		var search = cadastralFilter.getSearch();
 		
-		this.checkCadastralFilterOwnedBySearch(cadastralFilter.getSearch().getId(), search.getId());
+		//this.checkCadastralFilterOwnedBySearch(cadastralFilter.getSearch().getId(), search.getId());
+		this.checkCadastralFilterOwnedBySearch(searchId, search.getId());
 		
 		return cadastralFilterMapper.fromEntity(cadastralFilter);
 	}
@@ -48,6 +52,7 @@ public class CadastralFilterService {
 				.orElseThrow(CadastralFilterNotFoundException::new);
 	}
 	
+	//getRealEstatesByCadastralFilter
 	public List<RealEstate> getCadastralFilterRealEstates(CadastralFilter searchCadastralFilter,  List<RealEstate> realEstates){
 		var cadastralFilterRealEstates = new ArrayList<RealEstate>();
 		realEstates.forEach(realEstate -> {

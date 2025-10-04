@@ -21,14 +21,14 @@ public class DetailService {
 	private final DetailMapper detailMapper;
 	
 	private final RealEstateService realEstateService;
-	private final SearchService searchService;
+	//private final SearchService searchService;
 	
 	public void createDetail(DetailRequest request) {
 		
 		RealEstate realEstate = request.getRealEstateId() != null ? realEstateService.getRealEstateById(request.getRealEstateId()) : null;
-		Search search = request.getSearchId() != null ? searchService.getSearchById(request.getSearchId()) : null;
+		//Search search = request.getSearchId() != null ? searchService.getSearchById(request.getSearchId()) : null;
 		
-		var detail = detailMapper.toEntity(request, realEstate, search);
+		var detail = detailMapper.toEntity(request, realEstate, null);
 		detailRepository.save(detail);
 	}
 	

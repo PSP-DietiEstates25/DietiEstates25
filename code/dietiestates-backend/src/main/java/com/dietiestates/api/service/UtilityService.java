@@ -46,7 +46,6 @@ public class UtilityService {
 		return utilityRepository.findById(id)
 				.orElseThrow(UtilityNotFoundException::new);
 	}
-
 	public List<RealEstate> getUtilityRealEstates(Utility searchUtility, List<RealEstate> realEstates){
 		var utilityRealEstates = new ArrayList<RealEstate>();
 		realEstates.forEach(realEstate -> {

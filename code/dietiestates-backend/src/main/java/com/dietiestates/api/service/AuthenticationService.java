@@ -2,6 +2,8 @@ package com.dietiestates.api.service;
 
 import java.util.List;
 
+import javax.management.relation.RoleNotFoundException;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,8 +11,9 @@ import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.request.AuthenticationRequest;
 import com.dietiestates.api.dto.response.AuthenticationResponse;
+import com.dietiestates.api.finder.RoleFinder;
+import com.dietiestates.api.finder.UserFinder;
 import com.dietiestates.api.model.User;
-import com.dietiestates.api.repository.RoleRepository;
 import com.dietiestates.api.repository.UserRepository;
 import com.dietiestates.api.security.JwtService;
 
@@ -20,19 +23,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
-	private final RoleRepository roleRepository;
-	
-	private final PasswordEncoder passwordEncoder;
+	protected final RoleFinder roleFinder;
 	
 	private final UserRepository userRepository;
 	
-	private final AuthenticationManager authenticationManager;
+	protected final PasswordEncoder passwordEncoder;
+	protected final AuthenticationManager authenticationManager;
 	
 	private final JwtService jwtService;
 	
-	public void register(AuthenticationRequest request) {
-		var userRole = roleRepository.findByName("USER")
-				.orElseThrow(() -> new IllegalStateException("ROLE USER was not initialized!"));
+	public void register(AuthenticationRequest request) throws RoleNotFoundException {
+		var userRole = roleFinder.getByRoleName("USER");
 		var user = User
 				.builder()
 				.email(request.getEmail())
