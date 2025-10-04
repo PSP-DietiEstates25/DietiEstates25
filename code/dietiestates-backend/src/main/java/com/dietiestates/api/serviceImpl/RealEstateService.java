@@ -1,0 +1,113 @@
+package com.dietiestates.api.serviceImpl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.dietiestates.api.dto.request.RealEstateRequest;
+import com.dietiestates.api.dto.response.RealEstateResponse;
+import com.dietiestates.api.factory.RealEstateFactory;
+import com.dietiestates.api.finder.EstateAgentFinder;
+import com.dietiestates.api.finder.RealEstateFinder;
+import com.dietiestates.api.mapper.RealEstateMapper;
+import com.dietiestates.api.model.CadastralFilter;
+import com.dietiestates.api.model.GeographicalPosition;
+import com.dietiestates.api.model.RealEstate;
+import com.dietiestates.api.model.Search;
+import com.dietiestates.api.model.Utility;
+import com.dietiestates.api.repository.RealEstateRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class RealEstateService {
+	
+	private final RealEstateRepository realEstateRepository;
+	private final RealEstateFactory realEstateFactory;
+	private final RealEstateFinder realEstateFinder;
+	private final RealEstateMapper realEstateMapper;
+	
+	private final EstateAgentFinder estateAgentFinder;
+	
+	public void createRealEstate(RealEstateRequest request) {
+		
+		var realEstateSpec = realEstateMapper.toSpec(request);
+		
+		var estateAgent = estateAgentFinder.getEstateAgentByEmail(realEstateSpec.getEstateAgentEmail());
+		
+		var realEstate = realEstateFactory.createRealEstateFromSpec(realEstateSpec, estateAgent);
+		realEstateRepository.save(realEstate);
+	}
+	
+	public List<RealEstateResponse> createRealEstatesResponse(List<RealEstate> realEstates) {
+		
+		var response = new ArrayList<RealEstateResponse>();
+		
+		realEstates.forEach(realEstate -> {
+			var realEstateResponse = realEstateMapper.fromEntity(realEstate);
+			response.add(realEstateResponse);
+		});
+		
+		return response;
+	}
+	
+	public List<RealEstate> getRealEstatesBySearchFilter(Search search){
+		
+		var allRealEstates = realEstateFinder.getAllRealEstates();
+		
+		var realEstatesByGeographicalPosition = getRealEstatesByGeographicalPosition(search.getDetail().getGeographicalPosition(), allRealEstates);
+		var realEstatesByUtility = getRealEstatesByUtility(search.getDetail().getUtility(), realEstatesByGeographicalPosition);
+		var realEstatesByCadastralFilter = getRealEstatesByCadastralFilter(search.getCadastralFilter(), realEstatesByUtility);
+		
+		return realEstatesByCadastralFilter;
+	}
+
+	public List<RealEstate> getRealEstatesByGeographicalPosition(GeographicalPosition geographicalPosition, List<RealEstate> realEstates){
+		var realEstatesByGeographicalPosition = new ArrayList<RealEstate>();
+		realEstates.forEach(realEstate -> {
+			var realEstateGeographicalPosition = realEstate.getDetail().getGeographicalPosition();
+			if(
+					realEstateGeographicalPosition.getCity().equals(geographicalPosition.getCity()) &&
+					realEstateGeographicalPosition.getMunicipality().equals(geographicalPosition.getMunicipality())
+				)
+				realEstatesByGeographicalPosition.add(realEstate);
+		});
+		
+		return realEstatesByGeographicalPosition;
+	}
+	
+	public List<RealEstate> getRealEstatesByUtility(Utility utility, List<RealEstate> realEstates){
+		var realEstatesByUtility = new ArrayList<RealEstate>();
+		realEstates.forEach(realEstate -> {
+			var realEstateUtility = realEstate.getDetail().getUtility();
+			if(
+					realEstateUtility.getHasAirConditioning().equals(utility.getHasAirConditioning()) &&
+					realEstateUtility.getHasDoorman().equals(utility.getHasDoorman()) &&
+					realEstateUtility.getHasElevator().equals(utility.getHasElevator())
+				)
+				realEstatesByUtility.add(realEstate);
+		});
+		
+		return realEstatesByUtility;
+	}
+	
+	public List<RealEstate> getRealEstatesByCadastralFilter(CadastralFilter cadastralFilter,  List<RealEstate> realEstates){
+		var cadastralFilterRealEstates = new ArrayList<RealEstate>();
+		realEstates.forEach(realEstate -> {
+			var realEstateCadastralData = realEstate.getCadastralData();
+			if(
+					cadastralFilter.getPriceRange().contains(realEstateCadastralData.getPrice()) &&
+					cadastralFilter.getSquareMetersRange().contains(realEstateCadastralData.getSquareMeters()) &&
+					cadastralFilter.getEnergyClassRange().contains(realEstateCadastralData.getEnergyClass().getOrder()) &&
+					cadastralFilter.getRoomsRange().contains(realEstateCadastralData.getRooms()) &&
+					cadastralFilter.getFloorRange().contains(realEstateCadastralData.getFloor())
+				)
+				cadastralFilterRealEstates.add(realEstate);
+		});
+		
+		return cadastralFilterRealEstates;
+	}
+
+}
