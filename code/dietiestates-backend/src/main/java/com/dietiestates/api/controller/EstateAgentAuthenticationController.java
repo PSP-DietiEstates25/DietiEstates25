@@ -1,5 +1,7 @@
 package com.dietiestates.api.controller;
 
+import javax.management.relation.RoleNotFoundException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +31,7 @@ public class EstateAgentAuthenticationController extends AuthenticationControlle
 	@PostMapping
 	public ResponseEntity<EstateAgent> registerEstateAgent(
 			@RequestBody StafferRequest request
-			){
+			) throws RoleNotFoundException {
 		estateAgentAuthenticationService.register(request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}

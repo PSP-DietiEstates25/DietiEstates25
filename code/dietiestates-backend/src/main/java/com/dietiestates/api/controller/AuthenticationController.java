@@ -1,5 +1,7 @@
 package com.dietiestates.api.controller;
 
+import javax.management.relation.RoleNotFoundException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +29,7 @@ public class AuthenticationController {
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	public ResponseEntity<User> register(
 			@RequestBody @Valid AuthenticationRequest request
-	){
+			) throws RoleNotFoundException{
 		authenticationService.register(request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}

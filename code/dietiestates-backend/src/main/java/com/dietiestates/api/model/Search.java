@@ -68,8 +68,18 @@ public class Search {
 	@OneToOne(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Detail detail;
 	
+	@OneToOne
+	@JoinColumn(
+			nullable = true,
+			name = "cadastral_filter_id",
+			foreignKey = @ForeignKey(name = "SEARCH_CADASTRAL_FILTER_ID")
+			)
+	private CadastralFilter cadastralFilter;
+	
+	/*
 	@OneToOne(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
 	private CadastralFilter cadastralFilter;
+	*/
 	
 	@ManyToOne
 	@JoinColumn(
@@ -78,11 +88,38 @@ public class Search {
 			foreignKey = @ForeignKey(name = "SEARCH_USER_EMAIL_FK"))
 	private User user;
 	
+	@Builder(builderMethodName = "searchBuilder")
+	public Search(
+			AdCategory category,
+			Integer size,
+			Integer page,
+			LocalDateTime createdDate,
+			CadastralFilter cadastralFilter
+			) {
+		this.category = category;
+		this.size = size;
+		this.page = page;
+		this.createdDate = createdDate;
+		this.setCadastralFilter(cadastralFilter);
+	}
+	
 	@OneToMany(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<SearchRealEstate> searchRealEstates = new ArrayList<>();
 	
 	public void addSearchRealEstate(SearchRealEstate searchRealEstate) {
 		this.searchRealEstates.add(searchRealEstate);
 		searchRealEstate.setSearch(this);
+	}
+	
+	public void setCadastralFilter(CadastralFilter cadastralFilter) {
+		if(cadastralFilter != null) {
+			this.cadastralFilter = cadastralFilter;
+			cadastralFilter.setSearch(this);
+		}
+	}
+	
+	public void setDetail(Detail detail) {
+		this.detail = detail;
+		detail.setSearch(this);
 	}
 }
