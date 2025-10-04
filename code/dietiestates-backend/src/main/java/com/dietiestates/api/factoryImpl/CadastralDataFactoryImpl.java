@@ -2,9 +2,10 @@ package com.dietiestates.api.factoryImpl;
 
 import org.springframework.stereotype.Component;
 
-import com.dietiestates.api.dto.request.CadastralDataRequest;
 import com.dietiestates.api.factory.CadastralDataFactory;
 import com.dietiestates.api.model.CadastralData;
+import com.dietiestates.api.model.RealEstate;
+import com.dietiestates.api.spec.CadastralDataSpec;
 
 import lombok.RequiredArgsConstructor;
 
@@ -13,7 +14,17 @@ import lombok.RequiredArgsConstructor;
 public class CadastralDataFactoryImpl implements CadastralDataFactory {
 
 	@Override
-	public CadastralData createCadastralData(CadastralDataRequest request) {
-		return new CadastralData();
+	public CadastralData createCadastralDataFromSpec(
+			CadastralDataSpec spec,
+			RealEstate realEstate
+			) {
+		return CadastralData.cadastralDataBuilder()
+				.price(spec.getPrice())
+				.squareMeters(spec.getSquareMeters())
+				.energyClass(spec.getEnergyClass())
+				.rooms(spec.getRooms())
+				.floor(spec.getFloor())
+				.realEstate(realEstate)
+				.build();
 	}
 }

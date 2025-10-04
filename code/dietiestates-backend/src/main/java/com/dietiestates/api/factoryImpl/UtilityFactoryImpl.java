@@ -2,9 +2,10 @@ package com.dietiestates.api.factoryImpl;
 
 import org.springframework.stereotype.Component;
 
-import com.dietiestates.api.dto.request.UtilityRequest;
 import com.dietiestates.api.factory.UtilityFactory;
+import com.dietiestates.api.model.Detail;
 import com.dietiestates.api.model.Utility;
+import com.dietiestates.api.spec.UtilitySpec;
 
 import lombok.RequiredArgsConstructor;
 
@@ -13,9 +14,16 @@ import lombok.RequiredArgsConstructor;
 public class UtilityFactoryImpl implements UtilityFactory {
 
 	@Override
-	public Utility createUtility(UtilityRequest request, Long detailId) {
-		// TODO Auto-generated method stub
-		return null;
+	public Utility createUtilityFromSpec(
+			UtilitySpec spec,
+			Detail detail
+			) {
+		return Utility.utilityBuilder()
+				.hasAirConditioning(spec.getHasAirConditioning())
+				.hasDoorman(spec.getHasDoorman())
+				.hasElevator(spec.getHasElevator())
+				.detail(detail)
+				.build();
 	}
 
 }

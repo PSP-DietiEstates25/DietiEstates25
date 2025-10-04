@@ -2,9 +2,10 @@ package com.dietiestates.api.factoryImpl;
 
 import org.springframework.stereotype.Component;
 
-import com.dietiestates.api.dto.request.GeographicalPositionRequest;
 import com.dietiestates.api.factory.GeographicalPositionFactory;
+import com.dietiestates.api.model.Detail;
 import com.dietiestates.api.model.GeographicalPosition;
+import com.dietiestates.api.spec.GeographicalPositionSpec;
 
 import lombok.RequiredArgsConstructor;
 
@@ -13,7 +14,18 @@ import lombok.RequiredArgsConstructor;
 public class GeographicalPositionFactoryImpl implements GeographicalPositionFactory {
 
 	@Override
-	public GeographicalPosition createGeographicalPosition(GeographicalPositionRequest request, Long detailId) {
-		return null;
+	public GeographicalPosition createGeographicalPositionFromSpec(
+			GeographicalPositionSpec spec,
+			Detail detail
+			) {
+		return GeographicalPosition.geographicalPositionBuilder()
+				.city(spec.getCity())
+				.municipality(spec.getMunicipality())
+				.address(spec.getAddress())
+				.latitude(spec.getLatitude())
+				.longitude(spec.getLongitude())
+				.radius(spec.getRadius())
+				.detail(detail)
+				.build();
 	}
 }

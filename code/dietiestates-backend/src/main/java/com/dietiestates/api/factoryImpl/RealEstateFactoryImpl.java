@@ -2,9 +2,11 @@ package com.dietiestates.api.factoryImpl;
 
 import org.springframework.stereotype.Component;
 
-import com.dietiestates.api.dto.request.RealEstateRequest;
+import com.dietiestates.api.enums.AdCategory;
 import com.dietiestates.api.factory.RealEstateFactory;
+import com.dietiestates.api.model.EstateAgent;
 import com.dietiestates.api.model.RealEstate;
+import com.dietiestates.api.spec.RealEstateSpec;
 
 import lombok.RequiredArgsConstructor;
 
@@ -13,9 +15,16 @@ import lombok.RequiredArgsConstructor;
 public class RealEstateFactoryImpl implements RealEstateFactory {
 
 	@Override
-	public RealEstate createRealEstate(RealEstateRequest realEstate) {
-		// TODO Auto-generated method stub
-		return null;
+	public RealEstate createRealEstateFromSpec(
+			RealEstateSpec spec,
+			EstateAgent estateAgent
+			) {
+		return RealEstate.builder()
+				.category(AdCategory.valueOf(spec.getCategory()))
+				.images(spec.getImages())
+				.description(spec.getDescription())
+				.estateAgent(estateAgent)
+				.build();
 	}
 
 }

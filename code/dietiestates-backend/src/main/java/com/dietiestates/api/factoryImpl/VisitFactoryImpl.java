@@ -2,9 +2,13 @@ package com.dietiestates.api.factoryImpl;
 
 import org.springframework.stereotype.Component;
 
-import com.dietiestates.api.dto.request.VisitRequest;
+import com.dietiestates.api.enums.ProposalCategory;
+import com.dietiestates.api.enums.ProposalStatus;
 import com.dietiestates.api.factory.VisitFactory;
+import com.dietiestates.api.model.RealEstate;
+import com.dietiestates.api.model.User;
 import com.dietiestates.api.model.Visit;
+import com.dietiestates.api.spec.VisitSpec;
 
 import lombok.RequiredArgsConstructor;
 
@@ -13,9 +17,19 @@ import lombok.RequiredArgsConstructor;
 public class VisitFactoryImpl implements VisitFactory {
 
 	@Override
-	public Visit createVisit(VisitRequest request, Long realEstateId) {
-		// TODO Auto-generated method stub
-		return null;
+	public Visit createVisitFromSpec(
+			VisitSpec spec,
+			User user,
+			RealEstate realEstate
+			) {
+		return Visit.visitBuilder()
+				.category(ProposalCategory.valueOf(spec.getCategory()))
+				.status(ProposalStatus.valueOf(spec.getStatus()))
+				.user(user)
+				.realEstate(realEstate)
+				.date(spec.getDate())
+				.time(spec.getTime())
+				.build();
 	}
 
 }
