@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.NotificationCategoryRequest;
 import com.dietiestates.api.model.NotificationCategory;
-import com.dietiestates.api.service.NotificationCategoryService;
+import com.dietiestates.api.serviceImpl.NotificationCategoryService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/notification-categories")
+@RequestMapping("/notificationcategories")
 @RequiredArgsConstructor
 public class NotificationCategoryController {
 

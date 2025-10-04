@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.GeographicalPositionRequest;
 import com.dietiestates.api.dto.response.GeographicalPositionResponse;
-import com.dietiestates.api.service.GeographicalPositionService;
+import com.dietiestates.api.serviceImpl.GeographicalPositionService;
 
 import lombok.RequiredArgsConstructor;
 

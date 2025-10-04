@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.RealEstateRequest;
-import com.dietiestates.api.model.RealEstate;
-import com.dietiestates.api.service.RealEstateService;
+import com.dietiestates.api.serviceImpl.RealEstateService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,18 +31,6 @@ public class RealEstateController {
 		realEstateSerivce.createRealEstate(request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
-	
-	@GetMapping
-	public ResponseEntity<List<RealEstate>> getRealEstates(){
-		return ResponseEntity.status(HttpStatus.ACCEPTED).build();
-	}
-	
-	@GetMapping("/:realestateid")
-	public ResponseEntity<RealEstate> getRealEstate(){
-		return ResponseEntity.status(HttpStatus.OK).build();
-	}
-	
-	
 	
 	/*
 	private final RealEstateAdService adService;

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.OfferRequest;
-import com.dietiestates.api.service.OfferService;
+import com.dietiestates.api.serviceImpl.OfferService;
 
 import lombok.RequiredArgsConstructor;
 

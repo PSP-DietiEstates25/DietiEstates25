@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.NotificationRequest;
 import com.dietiestates.api.model.Notification;
-import com.dietiestates.api.service.NotificationService;
+import com.dietiestates.api.serviceImpl.NotificationService;
 
 import lombok.RequiredArgsConstructor;
 

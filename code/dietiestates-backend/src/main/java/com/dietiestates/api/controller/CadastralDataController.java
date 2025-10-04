@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.CadastralDataRequest;
 import com.dietiestates.api.dto.response.CadastralDataResponse;
-import com.dietiestates.api.service.CadastralDataService;
+import com.dietiestates.api.serviceImpl.CadastralDataService;
 
 import lombok.RequiredArgsConstructor;
 

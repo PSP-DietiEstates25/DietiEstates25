@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.StafferRequest;
 import com.dietiestates.api.model.EstateAgent;
-import com.dietiestates.api.service.AuthenticationService;
-import com.dietiestates.api.service.EstateAgentAuthenticationService;
+import com.dietiestates.api.serviceImpl.AuthenticationService;
+import com.dietiestates.api.serviceImpl.EstateAgentAuthenticationService;
 
 @RestController
-@RequestMapping("/auth/estate-agents")
+@RequestMapping("/auth/estateagents")
 public class EstateAgentAuthenticationController extends AuthenticationController {
 
 	private final EstateAgentAuthenticationService estateAgentAuthenticationService;

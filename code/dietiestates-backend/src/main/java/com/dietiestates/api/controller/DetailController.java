@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.DetailRequest;
 import com.dietiestates.api.dto.response.DetailResponse;
-import com.dietiestates.api.service.DetailService;
+import com.dietiestates.api.serviceImpl.DetailService;
 
 import lombok.RequiredArgsConstructor;
 

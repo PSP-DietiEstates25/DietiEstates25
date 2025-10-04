@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dietiestates.api.dto.request.AuthenticationRequest;
 import com.dietiestates.api.dto.response.AuthenticationResponse;
 import com.dietiestates.api.model.User;
-import com.dietiestates.api.service.AuthenticationService;
+import com.dietiestates.api.serviceImpl.AuthenticationService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
