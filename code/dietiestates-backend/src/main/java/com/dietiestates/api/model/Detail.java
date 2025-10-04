@@ -86,9 +86,10 @@ public class Detail {
 		realEstate.setDetail(this);
 	}
 	
+	/*
 	public void setSearch(Search search) {
 		this.search = search;
 		search.setDetail(this);;
 	}
-	
+	*/
 }

@@ -13,7 +13,6 @@ import com.dietiestates.api.model.range.PriceRange;
 import com.dietiestates.api.model.range.RoomsRange;
 import com.dietiestates.api.model.range.SquareMetersRange;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -26,7 +25,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -69,17 +67,17 @@ public class CadastralFilter {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 	
+	/*
 	@OneToOne(mappedBy = "cadastralFilter", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Search search;
+	*/
 	
-	/*
 	@OneToOne
 	@JoinColumn(
 			nullable = false,
 			name = "search_id",
 			foreignKey = @ForeignKey(name = "CADASTRAL_FILTER_SEARCH_ID_FK"))
 	private Search search;
-	*/
 	
 	@Builder(builderMethodName = "cadastralFilterBuilder")
 	public CadastralFilter(
@@ -93,8 +91,8 @@ public class CadastralFilter {
 		Integer minRooms,
 		Integer maxRooms,
 		Integer minFloor,
-		Integer maxFloor
-		//Search search
+		Integer maxFloor,
+		Search search
 		) {
 		this.createdDate = createdDate;
 		this.priceRange = PriceRange.builder()
@@ -122,13 +120,11 @@ public class CadastralFilter {
 				.maxFloor(maxFloor)
 				.build();
 		
-		//this.setSearch(search);
+		this.setSearch(search);
 	}
 	
-	/*
 	public void setSearch(Search search) {
 		this.search = search;
 		search.setCadastralFilter(this);
 	}
-	*/
 }

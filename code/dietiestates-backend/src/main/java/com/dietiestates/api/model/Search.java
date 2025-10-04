@@ -68,6 +68,7 @@ public class Search {
 	@OneToOne(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Detail detail;
 	
+	/*
 	@OneToOne
 	@JoinColumn(
 			nullable = true,
@@ -75,11 +76,10 @@ public class Search {
 			foreignKey = @ForeignKey(name = "SEARCH_CADASTRAL_FILTER_ID")
 			)
 	private CadastralFilter cadastralFilter;
+	*/
 	
-	/*
 	@OneToOne(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
 	private CadastralFilter cadastralFilter;
-	*/
 	
 	@ManyToOne
 	@JoinColumn(
@@ -94,13 +94,15 @@ public class Search {
 			Integer size,
 			Integer page,
 			LocalDateTime createdDate,
-			CadastralFilter cadastralFilter
+			User user
+			//CadastralFilter cadastralFilter
 			) {
 		this.category = category;
 		this.size = size;
 		this.page = page;
 		this.createdDate = createdDate;
-		this.setCadastralFilter(cadastralFilter);
+		user.addSearch(this);
+		//this.setCadastralFilter(cadastralFilter);
 	}
 	
 	@OneToMany(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -111,12 +113,14 @@ public class Search {
 		searchRealEstate.setSearch(this);
 	}
 	
+	/*
 	public void setCadastralFilter(CadastralFilter cadastralFilter) {
 		if(cadastralFilter != null) {
 			this.cadastralFilter = cadastralFilter;
 			cadastralFilter.setSearch(this);
 		}
 	}
+	*/
 	
 	public void setDetail(Detail detail) {
 		this.detail = detail;

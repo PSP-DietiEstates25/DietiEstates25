@@ -37,7 +37,6 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -77,6 +76,7 @@ public class User implements UserDetails, Principal {
 	@Column(insertable = false)
 	protected LocalDateTime lastModifiedDate;
 	
+	@Builder(builderMethodName = "userBuilder")
 	public User(
 			Long id,
 			String email,
