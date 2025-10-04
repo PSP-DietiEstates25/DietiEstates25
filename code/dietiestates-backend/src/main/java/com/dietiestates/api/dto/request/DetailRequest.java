@@ -1,5 +1,6 @@
 package com.dietiestates.api.dto.request;
 
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +16,9 @@ import lombok.ToString;
 @Builder
 public class DetailRequest {
 
+	//@Nullable
 	private Long realEstateId;
 	
+	//@Nullable
 	private Long searchId;
 }

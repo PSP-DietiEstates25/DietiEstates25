@@ -38,7 +38,8 @@ public enum BusinessErrorCodes {
     CADASTRAL_DATA_NOT_OWNED_BY_REAL_ESTATE(14003, HttpStatus.FORBIDDEN, "Cadastral data not owned by real estate"),
     CADASTRAL_FILTER_NOT_OWNED_BY_SEARCH(15003, HttpStatus.FORBIDDEN, "Cadastral filter not owned by search"),
     UTILITY_NOT_OWNED_BY_DETAIL(12003, HttpStatus.FORBIDDEN, "Utility not owned by detail"),
-    GEOGRAPHICAL_POSITION_NOT_OWNED_BY_DETAIL(11003, HttpStatus.FORBIDDEN, "Geographical position not owned by detail")
+    GEOGRAPHICAL_POSITION_NOT_OWNED_BY_DETAIL(11003, HttpStatus.FORBIDDEN, "Geographical position not owned by detail"),
+    OFFER_NOT_OWNED_BY_REAL_ESTATE(6003, HttpStatus.FORBIDDEN, "Offer not owned by real estate"),
     ;
 
     @Getter
