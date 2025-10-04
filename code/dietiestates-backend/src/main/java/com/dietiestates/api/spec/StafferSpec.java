@@ -14,14 +14,16 @@ public class StafferSpec extends AuthenticationSpec {
 
 	private String adminEmail;
 	
-	@Builder(builderMethodName = "StafferSpecBuilder")
+	@Builder(builderMethodName = "stafferSpecBuilder")
 	public StafferSpec(
 			String email,
 			String password,
+			Boolean accountLocked,
+			Boolean enabled,
 			String role,
 			String adminEmail
 			) {
-		super(email, password, role);
+		super(email, password, accountLocked, enabled, role);
 		this.adminEmail = adminEmail;
 	}
 }

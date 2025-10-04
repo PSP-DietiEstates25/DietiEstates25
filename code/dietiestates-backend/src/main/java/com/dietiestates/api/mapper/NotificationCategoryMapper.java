@@ -8,6 +8,7 @@ import com.dietiestates.api.dto.request.NotificationCategoryRequest;
 import com.dietiestates.api.dto.response.NotificationCategoryResponse;
 import com.dietiestates.api.enums.NotificationCategoryType;
 import com.dietiestates.api.model.NotificationCategory;
+import com.dietiestates.api.spec.NotificationCategorySpec;
 
 @Component
 public class NotificationCategoryMapper {
@@ -16,6 +17,13 @@ public class NotificationCategoryMapper {
 		return NotificationCategory.builder()
 				.createdDate(LocalDateTime.now())
 				.name(NotificationCategoryType.valueOf(request.getName()))
+				.isActive(request.getIsActive())
+				.build();
+	}
+	
+	public NotificationCategorySpec toSpec(NotificationCategoryRequest request) {
+		return NotificationCategorySpec.builder()
+				.name(request.getName())
 				.isActive(request.getIsActive())
 				.build();
 	}

@@ -6,6 +6,7 @@ import com.dietiestates.api.dto.request.UtilityRequest;
 import com.dietiestates.api.dto.response.UtilityResponse;
 import com.dietiestates.api.model.Detail;
 import com.dietiestates.api.model.Utility;
+import com.dietiestates.api.spec.UtilitySpec;
 
 @Component
 public class UtilityMapper {
@@ -16,6 +17,14 @@ public class UtilityMapper {
 				.hasDoorman(request.getHasDoorman())
 				.hasElevator(request.getHasElevator())
 				.detail(detail)
+				.build();
+	}
+	
+	public UtilitySpec toSpec(UtilityRequest request) {
+		return UtilitySpec.builder()
+				.hasAirConditioning(request.getHasAirConditioning())
+				.hasDoorman(request.getHasDoorman())
+				.hasElevator(request.getHasElevator())
 				.build();
 	}
 

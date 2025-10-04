@@ -8,11 +8,11 @@ import com.dietiestates.api.dto.request.CadastralFilterRequest;
 import com.dietiestates.api.dto.response.CadastralFilterResponse;
 import com.dietiestates.api.model.CadastralFilter;
 import com.dietiestates.api.model.Search;
+import com.dietiestates.api.spec.CadastralFilterSpec;
 
 @Component
 public class CadastralFilterMapper {
 	
-	/*
 	public CadastralFilter toEntity(CadastralFilterRequest request, Search search) {
 		return CadastralFilter.cadastralFilterBuilder()
 				.createdDate(LocalDateTime.now())
@@ -29,7 +29,21 @@ public class CadastralFilterMapper {
 				.search(search)
 				.build();
 	}
-	*/
+	
+	public CadastralFilterSpec toSpec(CadastralFilterRequest request) {
+		return CadastralFilterSpec.builder()
+				.minPrice(request.getMinPrice())
+				.maxPrice(request.getMaxPrice())
+				.minSquareMeters(request.getMinSquareMeters())
+				.maxSquareMeters(request.getMaxSquareMeters())
+				.minEnergyClass(request.getMinEnergyClass())
+				.maxEnergyClass(request.getMaxEnergyClass())
+				.minRooms(request.getMinRooms())
+				.maxRooms(request.getMaxRooms())
+				.minFloor(request.getMinFloor())
+				.maxFloor(request.getMaxFloor())
+				.build();
+	}
 	
 	public CadastralFilter toEntity(CadastralFilterRequest request) {
 		return CadastralFilter.cadastralFilterBuilder()

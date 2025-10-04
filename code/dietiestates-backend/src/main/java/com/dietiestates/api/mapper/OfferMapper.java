@@ -11,6 +11,7 @@ import com.dietiestates.api.enums.ProposalStatus;
 import com.dietiestates.api.model.Offer;
 import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.model.User;
+import com.dietiestates.api.spec.OfferSpec;
 
 @Component
 public class OfferMapper {
@@ -22,6 +23,15 @@ public class OfferMapper {
 				.status(ProposalStatus.valueOf(request.getStatus()))
 				.user(user)
 				.realEstate(realEstate)
+				.amount(request.getAmount())
+				.build();
+	}
+	
+	public OfferSpec toSpec(OfferRequest request) {
+		return OfferSpec.offerSpecBuilder()
+				.category(request.getCategory())
+				.status(request.getStatus())
+				.userEmail(request.getUserEmail())
 				.amount(request.getAmount())
 				.build();
 	}

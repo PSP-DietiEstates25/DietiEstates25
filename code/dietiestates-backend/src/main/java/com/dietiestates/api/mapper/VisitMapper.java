@@ -11,6 +11,7 @@ import com.dietiestates.api.enums.ProposalStatus;
 import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.model.User;
 import com.dietiestates.api.model.Visit;
+import com.dietiestates.api.spec.VisitSpec;
 
 @Component
 public class VisitMapper {
@@ -22,6 +23,16 @@ public class VisitMapper {
 				.status(ProposalStatus.valueOf(request.getStatus()))
 				.user(user)
 				.realEstate(realEstate)
+				.date(request.getDate())
+				.time(request.getTime())
+				.build();
+	}
+	
+	public VisitSpec toSpec(VisitRequest request) {
+		return VisitSpec.visitSpecBuilder()
+				.category(request.getCategory())
+				.status(request.getStatus())
+				.userEmail(request.getUserEmail())
 				.date(request.getDate())
 				.time(request.getTime())
 				.build();

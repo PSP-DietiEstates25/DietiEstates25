@@ -9,6 +9,7 @@ import com.dietiestates.api.dto.response.DetailResponse;
 import com.dietiestates.api.model.Detail;
 import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.model.Search;
+import com.dietiestates.api.spec.DetailSpec;
 
 @Component
 public class DetailMapper {
@@ -18,6 +19,13 @@ public class DetailMapper {
 				.createdDate(LocalDateTime.now())
 				.realEstate(realEstate)
 				.search(search)
+				.build();
+	}
+	
+	public DetailSpec toSpec(DetailRequest request) {
+		return DetailSpec.builder()
+				.realEstateId(request.getRealEstateId())
+				.searchId(request.getSearchId())
 				.build();
 	}
 	

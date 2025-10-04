@@ -9,6 +9,7 @@ import com.dietiestates.api.dto.response.RealEstateResponse;
 import com.dietiestates.api.enums.AdCategory;
 import com.dietiestates.api.model.EstateAgent;
 import com.dietiestates.api.model.RealEstate;
+import com.dietiestates.api.spec.RealEstateSpec;
 
 @Component
 public class RealEstateMapper {
@@ -20,6 +21,15 @@ public class RealEstateMapper {
 				.images(request.getImages())
 				.description(request.getDescription())
 				.estateAgent(estateAgent)
+				.build();
+	}
+	
+	public RealEstateSpec toSpec(RealEstateRequest request) {
+		return RealEstateSpec.builder()
+				.category(request.getCategory())
+				.images(request.getImages())
+				.description(request.getDescription())
+				.estateAgentEmail(request.getEstateAgentEmail())
 				.build();
 	}
 	

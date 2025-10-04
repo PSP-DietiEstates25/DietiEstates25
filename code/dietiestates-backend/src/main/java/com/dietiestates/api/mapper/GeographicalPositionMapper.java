@@ -8,6 +8,7 @@ import com.dietiestates.api.dto.request.GeographicalPositionRequest;
 import com.dietiestates.api.dto.response.GeographicalPositionResponse;
 import com.dietiestates.api.model.Detail;
 import com.dietiestates.api.model.GeographicalPosition;
+import com.dietiestates.api.spec.GeographicalPositionSpec;
 
 @Component
 public class GeographicalPositionMapper {
@@ -22,6 +23,17 @@ public class GeographicalPositionMapper {
 				.longitude(request.getLongitude())
 				.radius(request.getRadius())
 				.detail(detail)
+				.build();
+	}
+	
+	public GeographicalPositionSpec toSpec(GeographicalPositionRequest request) {
+		return GeographicalPositionSpec.builder()
+				.city(request.getCity())
+				.municipality(request.getMunicipality())
+				.address(request.getAddress())
+				.latitude(request.getLatitude())
+				.longitude(request.getLongitude())
+				.radius(request.getRadius())
 				.build();
 	}
 	

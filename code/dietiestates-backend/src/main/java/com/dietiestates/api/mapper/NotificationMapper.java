@@ -9,6 +9,7 @@ import com.dietiestates.api.dto.response.NotificationResponse;
 import com.dietiestates.api.model.Notification;
 import com.dietiestates.api.model.NotificationCategory;
 import com.dietiestates.api.model.User;
+import com.dietiestates.api.spec.NotificationSpec;
 
 @Component
 public class NotificationMapper {
@@ -23,6 +24,14 @@ public class NotificationMapper {
 				.message(request.getMessage())
 				.notificationCategory(notificationCategory)
 				.user(user)
+				.build();
+	}
+	
+	public NotificationSpec toSpec(NotificationRequest request) {
+		return NotificationSpec.builder()
+				.message(request.getMessage())
+				.notificationCategoryName(request.getNotificationCategoryName())
+				.userEmail(request.getUserEmail())
 				.build();
 	}
 	

@@ -9,10 +9,16 @@ import com.dietiestates.api.dto.response.SearchResponse;
 import com.dietiestates.api.enums.AdCategory;
 import com.dietiestates.api.model.Search;
 import com.dietiestates.api.model.User;
+import com.dietiestates.api.spec.SearchSpec;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class SearchMapper {
 
+	private final CadastralFilterMapper cadastralFilterMapper;
+	
 	public Search toEntity(SearchRequest request, User user) {
 		return Search.builder()
 				.createdDate(LocalDateTime.now())
@@ -20,6 +26,17 @@ public class SearchMapper {
 				.size(request.getSize())
 				.page(request.getPage() - 1)
 				.user(user)
+				.build();
+	}
+	
+	public SearchSpec toSpec(SearchRequest request) {
+		return SearchSpec.builder()
+				.category(request.getCategory())
+				.size(request.getSize())
+				.page(request.getPage())
+				.userEmail(request.getUserEmail())
+				.detailId(request.getDetailId())
+				.cadastralFilterSpec(cadastralFilterMapper.toSpec(request.getCadastralFilter()))
 				.build();
 	}
 	
