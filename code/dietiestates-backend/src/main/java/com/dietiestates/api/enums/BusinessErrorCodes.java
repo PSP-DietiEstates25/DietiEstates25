@@ -29,6 +29,10 @@ public enum BusinessErrorCodes {
     SEARCH_NOT_FOUND(13004, HttpStatus.NOT_FOUND, "Search not found"),
     CADASTRAL_DATA_NOT_FOUND(14004, HttpStatus.NOT_FOUND, "CadastralData not found"),
     CADASTRAL_FILTER_NOT_FOUND(15004, HttpStatus.NOT_FOUND, "CadastralFilter not found"),
+    ADMIN_ROLE_NOT_FOUND(16004, HttpStatus.NOT_FOUND, "Admin role not found"),
+    ESTATE_AGENT_ROLE_NOT_FOUND(16004, HttpStatus.NOT_FOUND, "Estate agent role not found"),
+    USER_ROLE_NOT_FOUND(16004, HttpStatus.NOT_FOUND, "User role not found"),
+    ROLE_NOT_FOUND(16004, HttpStatus.NOT_FOUND, "Role not found"),
   
     //FORBIDDEN ERRORS
     CADASTRAL_DATA_NOT_OWNED_BY_REAL_ESTATE(14003, HttpStatus.FORBIDDEN, "Cadastral data not owned by real estate"),
