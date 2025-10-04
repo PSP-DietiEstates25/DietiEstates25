@@ -1,12 +1,17 @@
 package com.dietiestates.api.factory;
 
-import com.dietiestates.api.dto.request.AuthenticationRequest;
-import com.dietiestates.api.dto.response.AuthenticationResponse;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.dietiestates.api.model.Role;
+import com.dietiestates.api.model.User;
+import com.dietiestates.api.spec.AuthenticationSpec;
 
 public interface AuthenticationFactory {
 
-	void register(AuthenticationRequest request);
-	
-	AuthenticationResponse Login(AuthenticationRequest request);
+	User createAccountFromSpec(
+			AuthenticationSpec spec,
+			PasswordEncoder encoder,
+			Role role
+			);
 	
 }

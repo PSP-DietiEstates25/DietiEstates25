@@ -1,9 +1,13 @@
 package com.dietiestates.api.factory;
 
-import com.dietiestates.api.dto.request.SearchRequest;
 import com.dietiestates.api.model.Search;
+import com.dietiestates.api.model.User;
+import com.dietiestates.api.spec.SearchSpec;
 
 public interface SearchFactory {
 
-	Search createSearch(SearchRequest request);
+	Search createSearchFromSpec(
+			SearchSpec spec,
+			User user
+			);
 }

@@ -1,9 +1,15 @@
 package com.dietiestates.api.factory;
 
-import com.dietiestates.api.dto.request.DetailRequest;
 import com.dietiestates.api.model.Detail;
+import com.dietiestates.api.model.RealEstate;
+import com.dietiestates.api.model.Search;
+import com.dietiestates.api.spec.DetailSpec;
 
 public interface DetailFactory {
 
-	Detail createDetail(DetailRequest request);
+	Detail createDetailFromSpec(
+			DetailSpec spec,
+			RealEstate realEstate,
+			Search search
+			);
 }

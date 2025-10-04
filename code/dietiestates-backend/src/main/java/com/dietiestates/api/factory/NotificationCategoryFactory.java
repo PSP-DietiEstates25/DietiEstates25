@@ -1,9 +1,11 @@
 package com.dietiestates.api.factory;
 
-import com.dietiestates.api.dto.request.NotificationCategoryRequest;
 import com.dietiestates.api.model.NotificationCategory;
+import com.dietiestates.api.spec.NotificationCategorySpec;
 
 public interface NotificationCategoryFactory {
 
-	NotificationCategory createNotificationCategory(NotificationCategoryRequest request);
+	NotificationCategory createNotificationCategoryFromSpec(
+			NotificationCategorySpec spec
+			);
 }

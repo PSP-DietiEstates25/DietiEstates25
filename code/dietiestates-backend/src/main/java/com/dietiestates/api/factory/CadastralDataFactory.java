@@ -1,9 +1,13 @@
 package com.dietiestates.api.factory;
 
-import com.dietiestates.api.dto.request.CadastralDataRequest;
 import com.dietiestates.api.model.CadastralData;
+import com.dietiestates.api.model.RealEstate;
+import com.dietiestates.api.spec.CadastralDataSpec;
 
 public interface CadastralDataFactory {
 	
-	CadastralData createCadastralData(CadastralDataRequest request);
+	CadastralData createCadastralDataFromSpec(
+			CadastralDataSpec spec,
+			RealEstate realEstate
+			);
 }
