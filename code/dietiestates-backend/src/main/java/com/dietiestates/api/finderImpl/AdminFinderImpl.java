@@ -15,7 +15,8 @@ public class AdminFinderImpl implements AdminFinder {
 
 	private final AdminRepository adminRepository;
 	
-	public Admin getAdminByEmail(String adminEmail) throws AdminNotFoundException {
+	public Admin getAdminByEmail(String adminEmail)
+			throws AdminNotFoundException {
 		return adminRepository.findByEmail(adminEmail)
 				.orElseThrow(AdminNotFoundException::new);
 	}

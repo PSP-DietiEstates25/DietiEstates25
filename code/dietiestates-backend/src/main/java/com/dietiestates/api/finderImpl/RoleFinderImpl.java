@@ -17,7 +17,8 @@ public class RoleFinderImpl implements RoleFinder {
 	private final RoleRepository roleRepository;
 	
 	@Override
-	public Role getByRoleName(String roleName) throws RoleNotFoundException {
+	public Role getByRoleName(String roleName)
+			throws RoleNotFoundException {
 		return roleRepository.findByName(roleName)
 				.orElseThrow(RoleNotFoundException::new);
 	}

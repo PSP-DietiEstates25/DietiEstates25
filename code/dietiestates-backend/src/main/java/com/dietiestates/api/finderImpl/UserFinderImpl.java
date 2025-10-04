@@ -16,7 +16,8 @@ public class UserFinderImpl implements UserFinder {
 	private final UserRepository userRepository;
 
 	@Override
-	public User getUserByEmail(String userEmail) throws UserNotFoundException {
+	public User getUserByEmail(String userEmail)
+			throws UserNotFoundException {
 		return userRepository.findByEmail(userEmail)
 				.orElseThrow(UserNotFoundException::new);
 	}

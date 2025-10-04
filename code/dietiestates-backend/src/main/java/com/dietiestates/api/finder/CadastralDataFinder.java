@@ -5,8 +5,7 @@ import com.dietiestates.api.model.CadastralData;
 
 public interface CadastralDataFinder {
 
-	CadastralData getCadastralDataById(Long cadastralDataId)
+	CadastralData getCadastralDataById(Long id)
 			throws CadastralDataNotFoundException;
 	
-	void checkCadastralDataOwnedByRealEstate();
 }
