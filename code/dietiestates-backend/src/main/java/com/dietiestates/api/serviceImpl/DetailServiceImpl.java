@@ -10,12 +10,13 @@ import com.dietiestates.api.finder.RealEstateFinder;
 import com.dietiestates.api.finder.SearchFinder;
 import com.dietiestates.api.mapper.DetailMapper;
 import com.dietiestates.api.repository.DetailRepository;
+import com.dietiestates.api.service.DetailService;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class DetailService {
+public class DetailServiceImpl implements DetailService {
 
 	private final DetailRepository detailRepository;
 	private final DetailFactory detailFactory;
@@ -25,6 +26,7 @@ public class DetailService {
 	private final RealEstateFinder realEstateFinder;
 	private final SearchFinder searchFinder;
 	
+	@Override
 	public void createDetail(DetailRequest request) {
 		
 		var detailSpec = detailMapper.toSpec(request);
@@ -36,7 +38,8 @@ public class DetailService {
 		detailRepository.save(detail);
 	}
 	
-	public DetailResponse getDetail(Long detailId) {
+	@Override
+	public DetailResponse getDetailById(Long detailId) {
 		var detail = detailFinder.getDetailById(detailId);
 		return detailMapper.fromEntity(detail);
 	} 

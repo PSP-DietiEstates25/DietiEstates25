@@ -10,15 +10,17 @@ import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.model.Search;
 import com.dietiestates.api.model.SearchRealEstate;
 import com.dietiestates.api.repository.SearchRealEstateRepository;
+import com.dietiestates.api.service.SearchRealEstateService;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class SearchRealEstateService {
+public class SearchRealEstateServiceImpl implements SearchRealEstateService {
 
 	private final SearchRealEstateRepository searchRealEstateRepository;
 	
+	@Override
 	public void createSearchRealEstate(Search search, List<RealEstate> realEstates) {
 		
 		var searchRealEstates = new ArrayList<SearchRealEstate>();
@@ -36,6 +38,7 @@ public class SearchRealEstateService {
 		});
 	}
 	
+	@Override
 	public SearchRealEstate of(Search search, RealEstate realEstate) {
 		return SearchRealEstate.searchRealEstateBuilder()
 				.createdDate(LocalDateTime.now())

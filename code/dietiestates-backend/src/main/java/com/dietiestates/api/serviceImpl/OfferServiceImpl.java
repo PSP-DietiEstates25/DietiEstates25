@@ -10,12 +10,13 @@ import com.dietiestates.api.finder.RealEstateFinder;
 import com.dietiestates.api.finder.UserFinder;
 import com.dietiestates.api.mapper.OfferMapper;
 import com.dietiestates.api.repository.OfferRepository;
+import com.dietiestates.api.service.OfferService;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class OfferService {
+public class OfferServiceImpl implements OfferService {
 
 	private final OfferRepository offerRepository;
 	private final OfferFactory offerFactory;
@@ -25,6 +26,7 @@ public class OfferService {
 	private final UserFinder userFinder;
 	private final RealEstateFinder realEstateFinder;
 	
+	@Override
 	public void createOffer(OfferRequest request, Long realEstateId) {
 		
 		var offerSpec = offerMapper.toSpec(request);
@@ -36,6 +38,7 @@ public class OfferService {
 		offerRepository.save(offer);
 	}
 	
+	@Override
 	public OfferResponse getOfferById(Long realEstateId, Long offerId) {
 		
 		var offer = offerFinder.getOfferById(offerId);

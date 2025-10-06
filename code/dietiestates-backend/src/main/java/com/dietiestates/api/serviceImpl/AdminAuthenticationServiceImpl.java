@@ -1,12 +1,11 @@
 package com.dietiestates.api.serviceImpl;
 
-import javax.management.relation.RoleNotFoundException;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.request.StafferRequest;
+import com.dietiestates.api.exception.notfound.RoleNotFoundException;
 import com.dietiestates.api.factory.AdminFactory;
 import com.dietiestates.api.factory.AuthenticationFactory;
 import com.dietiestates.api.finder.AdminFinder;
@@ -18,9 +17,10 @@ import com.dietiestates.api.mapper.UserMapper;
 import com.dietiestates.api.repository.AdminRepository;
 import com.dietiestates.api.repository.UserRepository;
 import com.dietiestates.api.security.JwtService;
+import com.dietiestates.api.service.AdminAuthenticationService;
 
 @Service
-public class AdminAuthenticationServiceImpl extends AuthenticationService {
+public class AdminAuthenticationServiceImpl extends AuthenticationServiceImpl implements AdminAuthenticationService {
 	
 	private final AdminRepository adminRepository;
 	private final AdminFactory adminFactory;
@@ -49,6 +49,7 @@ public class AdminAuthenticationServiceImpl extends AuthenticationService {
 		this.adminFactory = adminFactory;
 	}
 	
+	@Override
 	public void register(StafferRequest request) throws RoleNotFoundException {
 		
 		var stafferSpec = adminMapper.toSpec(request);

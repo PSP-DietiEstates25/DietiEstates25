@@ -1,7 +1,5 @@
 package com.dietiestates.api.serviceImpl;
 
-import javax.management.relation.RoleNotFoundException;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,25 +7,26 @@ import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.request.AuthenticationRequest;
 import com.dietiestates.api.dto.response.AuthenticationResponse;
+import com.dietiestates.api.exception.notfound.RoleNotFoundException;
 import com.dietiestates.api.factory.AuthenticationFactory;
 import com.dietiestates.api.finder.RoleFinder;
 import com.dietiestates.api.mapper.UserMapper;
 import com.dietiestates.api.model.User;
 import com.dietiestates.api.repository.UserRepository;
 import com.dietiestates.api.security.JwtService;
+import com.dietiestates.api.service.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AuthenticationService {
+public class AuthenticationServiceImpl implements AuthenticationService {
 
 	protected final RoleFinder roleFinder;
 	
 	private final UserRepository userRepository;
 	private final UserMapper userMapper;
 	
-	//@Qualifier("authenticationFactoryImpl")
 	private final AuthenticationFactory authenticationFactory;
 	
 	protected final PasswordEncoder passwordEncoder;
@@ -35,26 +34,7 @@ public class AuthenticationService {
 	
 	private final JwtService jwtService;
 	
-	/*
-	public AuthenticationService(
-            RoleFinder roleFinder,
-            UserRepository userRepository,
-            UserMapper userMapper,
-            @Qualifier("authenticationFactoryImpl") AuthenticationFactory authenticationFactory,
-            PasswordEncoder passwordEncoder,
-            AuthenticationManager authenticationManager,
-            JwtService jwtService
-    ) {
-        this.roleFinder = roleFinder;
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-        this.authenticationFactory = authenticationFactory;
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-        this.jwtService = jwtService;
-    }
-    */
-	
+	@Override
 	public void register(AuthenticationRequest request) throws RoleNotFoundException {
 		var authenticationSpec = userMapper.toSpec(request);
 		var userRole = roleFinder.getByRoleName("USER");
@@ -62,6 +42,7 @@ public class AuthenticationService {
 		userRepository.save(user);
 	}
 	
+	@Override
 	public AuthenticationResponse login(AuthenticationRequest request) {
 		
 		var auth = authenticationManager.authenticate(

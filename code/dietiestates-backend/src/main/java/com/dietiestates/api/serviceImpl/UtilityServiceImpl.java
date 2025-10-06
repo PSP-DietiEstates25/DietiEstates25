@@ -9,13 +9,14 @@ import com.dietiestates.api.finder.DetailFinder;
 import com.dietiestates.api.finder.UtilityFinder;
 import com.dietiestates.api.mapper.UtilityMapper;
 import com.dietiestates.api.repository.UtilityRepository;
+import com.dietiestates.api.service.UtilityService;
 import com.dietiestates.api.verifier.UtilityVerifier;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class UtilityService {
+public class UtilityServiceImpl implements UtilityService {
 
 	private final UtilityRepository utilityRepository;
 	private final UtilityFactory utilityFactory;
@@ -25,6 +26,7 @@ public class UtilityService {
 	
 	private final DetailFinder detailFinder;
 	
+	@Override
 	public void createUtility(UtilityRequest request, Long detailId) {
 		
 		var utilitySpec = utilityMapper.toSpec(request);
@@ -35,7 +37,8 @@ public class UtilityService {
 		utilityRepository.save(utility);
 	}
 	
-	public UtilityResponse getUtility(Long detailId, Long utilityId) {
+	@Override
+	public UtilityResponse getUtilityById(Long detailId, Long utilityId) {
 		
 		var utility = utilityFinder.getUtilityById(utilityId);
 		var detail = detailFinder.getDetailById(detailId);

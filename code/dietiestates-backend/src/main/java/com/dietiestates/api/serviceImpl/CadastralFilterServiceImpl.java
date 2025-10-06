@@ -9,13 +9,14 @@ import com.dietiestates.api.finder.CadastralFilterFinder;
 import com.dietiestates.api.finder.SearchFinder;
 import com.dietiestates.api.mapper.CadastralFilterMapper;
 import com.dietiestates.api.repository.CadastralFilterRepository;
+import com.dietiestates.api.service.CadastralFilterService;
 import com.dietiestates.api.verifier.CadastralFilterVerifier;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class CadastralFilterService {
+public class CadastralFilterServiceImpl implements CadastralFilterService {
 
 	private final CadastralFilterRepository cadastralFilterRepository;
 	private final CadastralFilterFactory cadastralFilterFactory;
@@ -25,6 +26,7 @@ public class CadastralFilterService {
 	
 	private final SearchFinder searchFinder;
 	
+	@Override
 	public void createCadastralFilter(CadastralFilterRequest request, Long searchId) {
 		
 		var cadastralFilterSpec = cadastralFilterMapper.toSpec(request);
@@ -35,7 +37,8 @@ public class CadastralFilterService {
 		cadastralFilterRepository.save(cadastralFilter);
 	}
 	
-	public CadastralFilterResponse getCadastralFilter(Long searchId, Long cadastralFilterId) {
+	@Override
+	public CadastralFilterResponse getCadastralFilterById(Long searchId, Long cadastralFilterId) {
 		
 		var cadastralFilter = cadastralFilterFinder.getCadastralFilterById(cadastralFilterId);
 		var search = searchFinder.getSearchById(searchId);

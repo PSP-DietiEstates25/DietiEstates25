@@ -17,12 +17,13 @@ import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.model.Search;
 import com.dietiestates.api.model.Utility;
 import com.dietiestates.api.repository.RealEstateRepository;
+import com.dietiestates.api.service.RealEstateService;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class RealEstateService {
+public class RealEstateServiceImpl implements RealEstateService {
 	
 	private final RealEstateRepository realEstateRepository;
 	private final RealEstateFactory realEstateFactory;
@@ -31,6 +32,7 @@ public class RealEstateService {
 	
 	private final EstateAgentFinder estateAgentFinder;
 	
+	@Override
 	public void createRealEstate(RealEstateRequest request) {
 		
 		var realEstateSpec = realEstateMapper.toSpec(request);
@@ -41,6 +43,7 @@ public class RealEstateService {
 		realEstateRepository.save(realEstate);
 	}
 	
+	@Override
 	public List<RealEstateResponse> createRealEstatesResponse(List<RealEstate> realEstates) {
 		
 		var response = new ArrayList<RealEstateResponse>();
@@ -53,6 +56,7 @@ public class RealEstateService {
 		return response;
 	}
 	
+	@Override
 	public List<RealEstate> getRealEstatesBySearchFilter(Search search){
 		
 		var allRealEstates = realEstateFinder.getAllRealEstates();
@@ -64,6 +68,7 @@ public class RealEstateService {
 		return realEstatesByCadastralFilter;
 	}
 
+	@Override
 	public List<RealEstate> getRealEstatesByGeographicalPosition(GeographicalPosition geographicalPosition, List<RealEstate> realEstates){
 		var realEstatesByGeographicalPosition = new ArrayList<RealEstate>();
 		realEstates.forEach(realEstate -> {
@@ -78,6 +83,7 @@ public class RealEstateService {
 		return realEstatesByGeographicalPosition;
 	}
 	
+	@Override
 	public List<RealEstate> getRealEstatesByUtility(Utility utility, List<RealEstate> realEstates){
 		var realEstatesByUtility = new ArrayList<RealEstate>();
 		realEstates.forEach(realEstate -> {
@@ -93,6 +99,7 @@ public class RealEstateService {
 		return realEstatesByUtility;
 	}
 	
+	@Override
 	public List<RealEstate> getRealEstatesByCadastralFilter(CadastralFilter cadastralFilter,  List<RealEstate> realEstates){
 		var cadastralFilterRealEstates = new ArrayList<RealEstate>();
 		realEstates.forEach(realEstate -> {

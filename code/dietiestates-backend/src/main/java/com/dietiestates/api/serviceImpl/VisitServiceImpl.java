@@ -9,12 +9,13 @@ import com.dietiestates.api.finder.UserFinder;
 import com.dietiestates.api.finder.VisitFinder;
 import com.dietiestates.api.mapper.VisitMapper;
 import com.dietiestates.api.repository.VisitRepository;
+import com.dietiestates.api.service.VisitService;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class VisitService {
+public class VisitServiceImpl implements VisitService {
 	
 	private final VisitRepository visitRepository;
 	private final VisitFactory visitFactory;
@@ -24,6 +25,7 @@ public class VisitService {
 	private final RealEstateFinder realEstateFinder;
 	private final UserFinder userFinder;
 	
+	@Override
 	public void createVisit(VisitRequest request, Long realEstateId) {
 		
 		var visitSpec = visitMapper.toSpec(request);

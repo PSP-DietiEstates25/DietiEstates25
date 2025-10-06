@@ -9,13 +9,14 @@ import com.dietiestates.api.finder.DetailFinder;
 import com.dietiestates.api.finder.GeographicalPositionFinder;
 import com.dietiestates.api.mapper.GeographicalPositionMapper;
 import com.dietiestates.api.repository.GeographicalPositionRepository;
+import com.dietiestates.api.service.GeographicalPositionService;
 import com.dietiestates.api.verifier.GeographicalPositionVerifier;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class GeographicalPositionService {
+public class GeographicalPositionServiceImpl implements GeographicalPositionService {
 
 	private final GeographicalPositionRepository geographicalPositionRepository;
 	private final GeographicalPositionFactory geographicalPositionFactory;
@@ -25,6 +26,7 @@ public class GeographicalPositionService {
 	
 	private final DetailFinder detailFinder;
 	
+	@Override
 	public void createGeographicalPosition(GeographicalPositionRequest request, Long detailId) {
 		
 		var geographicalPositionSpec = geographicalPositionMapper.toSpec(request);
@@ -35,7 +37,8 @@ public class GeographicalPositionService {
 		geographicalPositionRepository.save(geographicalPosition);
 	}
 	
-	public GeographicalPositionResponse getGeographicalPosition(Long detailId, Long geographicalPositionId) {
+	@Override
+	public GeographicalPositionResponse getGeographicalPositionById(Long detailId, Long geographicalPositionId) {
 		
 		var geographicalPosition = geographicalPositionFinder.getGeographicalPositionById(geographicalPositionId);
 		var detail = detailFinder.getDetailById(detailId);
