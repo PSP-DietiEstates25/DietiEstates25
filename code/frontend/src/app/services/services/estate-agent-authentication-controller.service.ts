@@ -28,7 +28,7 @@ export class EstateAgentAuthenticationControllerService extends BaseService {
   }
 
   /** Path part for operation `registerEstateAgent()` */
-  static readonly RegisterEstateAgentPath = '/auth/estate-agents';
+  static readonly RegisterEstateAgentPath = '/auth/estateagents';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -53,7 +53,7 @@ export class EstateAgentAuthenticationControllerService extends BaseService {
   }
 
   /** Path part for operation `register1()` */
-  static readonly Register1Path = '/auth/estate-agents/register';
+  static readonly Register1Path = '/auth/estateagents/register';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -78,7 +78,7 @@ export class EstateAgentAuthenticationControllerService extends BaseService {
   }
 
   /** Path part for operation `login1()` */
-  static readonly Login1Path = '/auth/estate-agents/login';
+  static readonly Login1Path = '/auth/estateagents/login';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.

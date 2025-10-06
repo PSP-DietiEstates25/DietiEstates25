@@ -34,4 +34,4 @@ export function createGeographicalPosition(http: HttpClient, rootUrl: string, pa
   );
 }
 
-createGeographicalPosition.PATH = '/details/{detailid}/geographical-positions';
+createGeographicalPosition.PATH = '/details/{detailid}/geographicalpositions';

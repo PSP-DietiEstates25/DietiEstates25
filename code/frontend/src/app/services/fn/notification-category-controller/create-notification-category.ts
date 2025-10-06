@@ -32,4 +32,4 @@ export function createNotificationCategory(http: HttpClient, rootUrl: string, pa
   );
 }
 
-createNotificationCategory.PATH = '/notification-categories';
+createNotificationCategory.PATH = '/notificationcategories';

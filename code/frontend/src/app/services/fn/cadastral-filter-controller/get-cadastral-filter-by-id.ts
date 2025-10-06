@@ -8,19 +8,18 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { CadastralFilterRequest } from '../../models/cadastral-filter-request';
+import { CadastralFilterResponse } from '../../models/cadastral-filter-response';
 
-export interface CreateCadastralFilter$Params {
+export interface GetCadastralFilterById$Params {
   searchid: number;
-      body: CadastralFilterRequest
+  cadastralfilterid: number;
 }
 
-export function createCadastralFilter(http: HttpClient, rootUrl: string, params: CreateCadastralFilter$Params, context?: HttpContext): Observable<StrictHttpResponse<{
-}>> {
-  const rb = new RequestBuilder(rootUrl, createCadastralFilter.PATH, 'post');
+export function getCadastralFilterById(http: HttpClient, rootUrl: string, params: GetCadastralFilterById$Params, context?: HttpContext): Observable<StrictHttpResponse<CadastralFilterResponse>> {
+  const rb = new RequestBuilder(rootUrl, getCadastralFilterById.PATH, 'get');
   if (params) {
     rb.path('searchid', params.searchid, {});
-    rb.body(params.body, 'application/json');
+    rb.path('cadastralfilterid', params.cadastralfilterid, {});
   }
 
   return http.request(
@@ -28,10 +27,9 @@ export function createCadastralFilter(http: HttpClient, rootUrl: string, params:
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<{
-      }>;
+      return r as StrictHttpResponse<CadastralFilterResponse>;
     })
   );
 }
 
-createCadastralFilter.PATH = '/searches/{searchid}/cadastralfilters';
+getCadastralFilterById.PATH = '/searches/{searchid}/cadastralfilters/{cadastralfilterid}';

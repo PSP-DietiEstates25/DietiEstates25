@@ -11,8 +11,11 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { CadastralFilterResponse } from '../models/cadastral-filter-response';
 import { createCadastralFilter } from '../fn/cadastral-filter-controller/create-cadastral-filter';
 import { CreateCadastralFilter$Params } from '../fn/cadastral-filter-controller/create-cadastral-filter';
+import { getCadastralFilterById } from '../fn/cadastral-filter-controller/get-cadastral-filter-by-id';
+import { GetCadastralFilterById$Params } from '../fn/cadastral-filter-controller/get-cadastral-filter-by-id';
 
 @Injectable({ providedIn: 'root' })
 export class CadastralFilterControllerService extends BaseService {
@@ -21,7 +24,7 @@ export class CadastralFilterControllerService extends BaseService {
   }
 
   /** Path part for operation `createCadastralFilter()` */
-  static readonly CreateCadastralFilterPath = '/searches/{searchid}/cadastral-filters';
+  static readonly CreateCadastralFilterPath = '/searches/{searchid}/cadastralfilters';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -46,6 +49,31 @@ export class CadastralFilterControllerService extends BaseService {
       map((r: StrictHttpResponse<{
 }>): {
 } => r.body)
+    );
+  }
+
+  /** Path part for operation `getCadastralFilterById()` */
+  static readonly GetCadastralFilterByIdPath = '/searches/{searchid}/cadastralfilters/{cadastralfilterid}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getCadastralFilterById()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getCadastralFilterById$Response(params: GetCadastralFilterById$Params, context?: HttpContext): Observable<StrictHttpResponse<CadastralFilterResponse>> {
+    return getCadastralFilterById(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getCadastralFilterById$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getCadastralFilterById(params: GetCadastralFilterById$Params, context?: HttpContext): Observable<CadastralFilterResponse> {
+    return this.getCadastralFilterById$Response(params, context).pipe(
+      map((r: StrictHttpResponse<CadastralFilterResponse>): CadastralFilterResponse => r.body)
     );
   }
 

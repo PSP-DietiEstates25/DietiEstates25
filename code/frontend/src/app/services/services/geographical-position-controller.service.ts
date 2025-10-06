@@ -13,6 +13,9 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { createGeographicalPosition } from '../fn/geographical-position-controller/create-geographical-position';
 import { CreateGeographicalPosition$Params } from '../fn/geographical-position-controller/create-geographical-position';
+import { GeographicalPositionResponse } from '../models/geographical-position-response';
+import { getGeographicalPositionById } from '../fn/geographical-position-controller/get-geographical-position-by-id';
+import { GetGeographicalPositionById$Params } from '../fn/geographical-position-controller/get-geographical-position-by-id';
 
 @Injectable({ providedIn: 'root' })
 export class GeographicalPositionControllerService extends BaseService {
@@ -21,7 +24,7 @@ export class GeographicalPositionControllerService extends BaseService {
   }
 
   /** Path part for operation `createGeographicalPosition()` */
-  static readonly CreateGeographicalPositionPath = '/details/{detailid}/geographical-positions';
+  static readonly CreateGeographicalPositionPath = '/details/{detailid}/geographicalpositions';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -46,6 +49,31 @@ export class GeographicalPositionControllerService extends BaseService {
       map((r: StrictHttpResponse<{
 }>): {
 } => r.body)
+    );
+  }
+
+  /** Path part for operation `getGeographicalPositionById()` */
+  static readonly GetGeographicalPositionByIdPath = '/details/{detailid}/geographicalpositions/{geographicalpositionid}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getGeographicalPositionById()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getGeographicalPositionById$Response(params: GetGeographicalPositionById$Params, context?: HttpContext): Observable<StrictHttpResponse<GeographicalPositionResponse>> {
+    return getGeographicalPositionById(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getGeographicalPositionById$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getGeographicalPositionById(params: GetGeographicalPositionById$Params, context?: HttpContext): Observable<GeographicalPositionResponse> {
+    return this.getGeographicalPositionById$Response(params, context).pipe(
+      map((r: StrictHttpResponse<GeographicalPositionResponse>): GeographicalPositionResponse => r.body)
     );
   }
 

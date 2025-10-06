@@ -13,6 +13,9 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { createUtility } from '../fn/utility-controller/create-utility';
 import { CreateUtility$Params } from '../fn/utility-controller/create-utility';
+import { getUtilityById } from '../fn/utility-controller/get-utility-by-id';
+import { GetUtilityById$Params } from '../fn/utility-controller/get-utility-by-id';
+import { UtilityResponse } from '../models/utility-response';
 
 @Injectable({ providedIn: 'root' })
 export class UtilityControllerService extends BaseService {
@@ -46,6 +49,31 @@ export class UtilityControllerService extends BaseService {
       map((r: StrictHttpResponse<{
 }>): {
 } => r.body)
+    );
+  }
+
+  /** Path part for operation `getUtilityById()` */
+  static readonly GetUtilityByIdPath = '/details/{detailid}/utilities/{utilityid}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getUtilityById()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getUtilityById$Response(params: GetUtilityById$Params, context?: HttpContext): Observable<StrictHttpResponse<UtilityResponse>> {
+    return getUtilityById(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getUtilityById$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getUtilityById(params: GetUtilityById$Params, context?: HttpContext): Observable<UtilityResponse> {
+    return this.getUtilityById$Response(params, context).pipe(
+      map((r: StrictHttpResponse<UtilityResponse>): UtilityResponse => r.body)
     );
   }
 

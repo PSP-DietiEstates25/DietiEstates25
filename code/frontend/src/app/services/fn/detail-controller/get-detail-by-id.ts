@@ -8,17 +8,16 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { DetailRequest } from '../../models/detail-request';
+import { DetailResponse } from '../../models/detail-response';
 
-export interface CreateDetails$Params {
-      body: DetailRequest
+export interface GetDetailById$Params {
+  detailid: number;
 }
 
-export function createDetails(http: HttpClient, rootUrl: string, params: CreateDetails$Params, context?: HttpContext): Observable<StrictHttpResponse<{
-}>> {
-  const rb = new RequestBuilder(rootUrl, createDetails.PATH, 'post');
+export function getDetailById(http: HttpClient, rootUrl: string, params: GetDetailById$Params, context?: HttpContext): Observable<StrictHttpResponse<DetailResponse>> {
+  const rb = new RequestBuilder(rootUrl, getDetailById.PATH, 'get');
   if (params) {
-    rb.body(params.body, 'application/json');
+    rb.path('detailid', params.detailid, {});
   }
 
   return http.request(
@@ -26,10 +25,9 @@ export function createDetails(http: HttpClient, rootUrl: string, params: CreateD
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<{
-      }>;
+      return r as StrictHttpResponse<DetailResponse>;
     })
   );
 }
 
-createDetails.PATH = '/details';
+getDetailById.PATH = '/details/{detailid}';

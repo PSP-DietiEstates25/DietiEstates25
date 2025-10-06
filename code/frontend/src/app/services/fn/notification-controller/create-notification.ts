@@ -32,4 +32,4 @@ export function createNotification(http: HttpClient, rootUrl: string, params: Cr
   );
 }
 
-createNotification.PATH = '/notifications';
+createNotification.PATH = '/notificationcategories/{notificationcategoryname}/notifications';
