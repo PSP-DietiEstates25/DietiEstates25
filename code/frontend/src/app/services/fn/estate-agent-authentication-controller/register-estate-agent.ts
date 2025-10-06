@@ -31,4 +31,4 @@ export function registerEstateAgent(http: HttpClient, rootUrl: string, params: R
   );
 }
 
-registerEstateAgent.PATH = '/auth/estate-agents';
+registerEstateAgent.PATH = '/auth/estateagents';

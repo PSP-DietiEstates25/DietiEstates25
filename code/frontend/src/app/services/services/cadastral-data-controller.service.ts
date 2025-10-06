@@ -11,8 +11,11 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { CadastralDataResponse } from '../models/cadastral-data-response';
 import { createCadastralData } from '../fn/cadastral-data-controller/create-cadastral-data';
 import { CreateCadastralData$Params } from '../fn/cadastral-data-controller/create-cadastral-data';
+import { getCadastralDataById } from '../fn/cadastral-data-controller/get-cadastral-data-by-id';
+import { GetCadastralDataById$Params } from '../fn/cadastral-data-controller/get-cadastral-data-by-id';
 
 @Injectable({ providedIn: 'root' })
 export class CadastralDataControllerService extends BaseService {
@@ -46,6 +49,31 @@ export class CadastralDataControllerService extends BaseService {
       map((r: StrictHttpResponse<{
 }>): {
 } => r.body)
+    );
+  }
+
+  /** Path part for operation `getCadastralDataById()` */
+  static readonly GetCadastralDataByIdPath = '/realestates/{realestateid}/cadastraldata/{cadastraldataid}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getCadastralDataById()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getCadastralDataById$Response(params: GetCadastralDataById$Params, context?: HttpContext): Observable<StrictHttpResponse<CadastralDataResponse>> {
+    return getCadastralDataById(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getCadastralDataById$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getCadastralDataById(params: GetCadastralDataById$Params, context?: HttpContext): Observable<CadastralDataResponse> {
+    return this.getCadastralDataById$Response(params, context).pipe(
+      map((r: StrictHttpResponse<CadastralDataResponse>): CadastralDataResponse => r.body)
     );
   }
 

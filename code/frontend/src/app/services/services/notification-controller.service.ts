@@ -13,6 +13,9 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { createNotification } from '../fn/notification-controller/create-notification';
 import { CreateNotification$Params } from '../fn/notification-controller/create-notification';
+import { getNotificationById } from '../fn/notification-controller/get-notification-by-id';
+import { GetNotificationById$Params } from '../fn/notification-controller/get-notification-by-id';
+import { NotificationResponse } from '../models/notification-response';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationControllerService extends BaseService {
@@ -21,7 +24,7 @@ export class NotificationControllerService extends BaseService {
   }
 
   /** Path part for operation `createNotification()` */
-  static readonly CreateNotificationPath = '/notifications';
+  static readonly CreateNotificationPath = '/notificationcategories/{notificationcategoryname}/notifications';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -46,6 +49,31 @@ export class NotificationControllerService extends BaseService {
       map((r: StrictHttpResponse<{
 }>): {
 } => r.body)
+    );
+  }
+
+  /** Path part for operation `getNotificationById()` */
+  static readonly GetNotificationByIdPath = '/notificationcategories/{notificationcategoryname}/notifications/{notificationid}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getNotificationById()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getNotificationById$Response(params: GetNotificationById$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationResponse>> {
+    return getNotificationById(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getNotificationById$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getNotificationById(params: GetNotificationById$Params, context?: HttpContext): Observable<NotificationResponse> {
+    return this.getNotificationById$Response(params, context).pipe(
+      map((r: StrictHttpResponse<NotificationResponse>): NotificationResponse => r.body)
     );
   }
 

@@ -8,8 +8,8 @@ export { RealEstateControllerService } from './services/real-estate-controller.s
 export { OfferControllerService } from './services/offer-controller.service';
 export { CadastralDataControllerService } from './services/cadastral-data-controller.service';
 export { VisitControllerService } from './services/visit-controller.service';
-export { NotificationControllerService } from './services/notification-controller.service';
 export { NotificationCategoryControllerService } from './services/notification-category-controller.service';
+export { NotificationControllerService } from './services/notification-controller.service';
 export { DetailControllerService } from './services/detail-controller.service';
 export { UtilityControllerService } from './services/utility-controller.service';
 export { GeographicalPositionControllerService } from './services/geographical-position-controller.service';

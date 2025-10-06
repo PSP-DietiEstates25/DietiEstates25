@@ -8,14 +8,17 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { RealEstate } from '../../models/real-estate';
+import { DetailRequest } from '../../models/detail-request';
 
-export interface GetRealEstate$Params {
+export interface CreateDetail$Params {
+      body: DetailRequest
 }
 
-export function getRealEstate(http: HttpClient, rootUrl: string, params?: GetRealEstate$Params, context?: HttpContext): Observable<StrictHttpResponse<RealEstate>> {
-  const rb = new RequestBuilder(rootUrl, getRealEstate.PATH, 'get');
+export function createDetail(http: HttpClient, rootUrl: string, params: CreateDetail$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+}>> {
+  const rb = new RequestBuilder(rootUrl, createDetail.PATH, 'post');
   if (params) {
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -23,9 +26,10 @@ export function getRealEstate(http: HttpClient, rootUrl: string, params?: GetRea
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<RealEstate>;
+      return r as StrictHttpResponse<{
+      }>;
     })
   );
 }
 
-getRealEstate.PATH = '/realestates/:realestateid';
+createDetail.PATH = '/details';

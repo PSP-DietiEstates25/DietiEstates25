@@ -8,17 +8,16 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { AuthenticationRequest } from '../../models/authentication-request';
-import { User } from '../../models/user';
 
-export interface Register1$Params {
-      body: AuthenticationRequest
+export interface GetNotificationCategoryByName$Params {
+  notificationcategoryname: string;
 }
 
-export function register1(http: HttpClient, rootUrl: string, params: Register1$Params, context?: HttpContext): Observable<StrictHttpResponse<User>> {
-  const rb = new RequestBuilder(rootUrl, register1.PATH, 'post');
+export function getNotificationCategoryByName(http: HttpClient, rootUrl: string, params: GetNotificationCategoryByName$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+}>> {
+  const rb = new RequestBuilder(rootUrl, getNotificationCategoryByName.PATH, 'get');
   if (params) {
-    rb.body(params.body, 'application/json');
+    rb.path('notificationcategoryname', params.notificationcategoryname, {});
   }
 
   return http.request(
@@ -26,9 +25,10 @@ export function register1(http: HttpClient, rootUrl: string, params: Register1$P
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<User>;
+      return r as StrictHttpResponse<{
+      }>;
     })
   );
 }
 
-register1.PATH = '/auth/estateagents/register';
+getNotificationCategoryByName.PATH = '/notificationcategories/{notificationcategoryname}';

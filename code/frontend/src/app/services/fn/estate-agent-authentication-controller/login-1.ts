@@ -31,4 +31,4 @@ export function login1(http: HttpClient, rootUrl: string, params: Login1$Params,
   );
 }
 
-login1.PATH = '/auth/estate-agents/login';
+login1.PATH = '/auth/estateagents/login';

@@ -8,14 +8,18 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { RealEstate } from '../../models/real-estate';
+import { UtilityResponse } from '../../models/utility-response';
 
-export interface GetRealEstates$Params {
+export interface GetUtilityById$Params {
+  detailid: number;
+  utilityid: number;
 }
 
-export function getRealEstates(http: HttpClient, rootUrl: string, params?: GetRealEstates$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<RealEstate>>> {
-  const rb = new RequestBuilder(rootUrl, getRealEstates.PATH, 'get');
+export function getUtilityById(http: HttpClient, rootUrl: string, params: GetUtilityById$Params, context?: HttpContext): Observable<StrictHttpResponse<UtilityResponse>> {
+  const rb = new RequestBuilder(rootUrl, getUtilityById.PATH, 'get');
   if (params) {
+    rb.path('detailid', params.detailid, {});
+    rb.path('utilityid', params.utilityid, {});
   }
 
   return http.request(
@@ -23,9 +27,9 @@ export function getRealEstates(http: HttpClient, rootUrl: string, params?: GetRe
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<RealEstate>>;
+      return r as StrictHttpResponse<UtilityResponse>;
     })
   );
 }
 
-getRealEstates.PATH = '/realestates';
+getUtilityById.PATH = '/details/{detailid}/utilities/{utilityid}';
