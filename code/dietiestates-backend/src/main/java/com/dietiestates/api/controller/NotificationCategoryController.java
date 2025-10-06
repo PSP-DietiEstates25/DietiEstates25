@@ -2,6 +2,8 @@ package com.dietiestates.api.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,5 +27,13 @@ public class NotificationCategoryController {
 			){
 		notificationCategoryService.createNotificationCategory(request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+	
+	@GetMapping("/{notificationcategoryname}")
+	public ResponseEntity<?> getNotificationCategoryByName(
+			@PathVariable String notificationcategoryname
+			){
+		var notificationCategory = notificationCategoryService.getNotificationCategoryByName(notificationcategoryname);
+		return ResponseEntity.status(HttpStatus.OK).body(notificationCategory);
 	}
 }

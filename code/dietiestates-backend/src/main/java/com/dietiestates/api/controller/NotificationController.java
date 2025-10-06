@@ -13,7 +13,7 @@ import com.dietiestates.api.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/notifications")
+@RequestMapping("/notificationcategories/{notificationcategoryname}/notifications")
 @RequiredArgsConstructor
 public class NotificationController {
 

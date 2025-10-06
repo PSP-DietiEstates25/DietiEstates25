@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.request.NotificationRequest;
 import com.dietiestates.api.dto.response.NotificationResponse;
+import com.dietiestates.api.exception.notowned.NotificationNotOwnedByNotificationCategoryException;
 import com.dietiestates.api.factory.NotificationFactory;
 import com.dietiestates.api.finder.NotificationCategoryFinder;
 import com.dietiestates.api.finder.NotificationFinder;
@@ -11,6 +12,7 @@ import com.dietiestates.api.finder.UserFinder;
 import com.dietiestates.api.mapper.NotificationMapper;
 import com.dietiestates.api.repository.NotificationRepository;
 import com.dietiestates.api.service.NotificationService;
+import com.dietiestates.api.verifier.NotificationVerifier;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +23,7 @@ public class NotificationServiceImpl implements NotificationService {
 	private final NotificationRepository notificationRepository;
 	private final NotificationFactory notificationFactory;
 	private final NotificationFinder notificationFinder;
+	private final NotificationVerifier notificationVerifier;
 	private final NotificationMapper notificationMapper;
 	
 	private final UserFinder userFinder;
@@ -39,8 +42,16 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 	
 	@Override
-	public NotificationResponse getNotificationById(Long id) {
-		var notification = notificationFinder.getNotificationById(id);
+	public NotificationResponse getNotificationById(
+			String notificationCategoryName,
+			Long notificationId
+			)
+					throws NotificationNotOwnedByNotificationCategoryException {
+		var notificationCategory = notificationCategoryFinder.getNotificationCategoryByName(notificationCategoryName);
+		var notification = notificationFinder.getNotificationById(notificationId);
+		
+		notificationVerifier.checkNotificationOwnedByNotificationCategory(notification.getNotificationCategory().getId(), notificationCategory.getId());
+		
 		return notificationMapper.fromEntity(notification);
 	}
 	
