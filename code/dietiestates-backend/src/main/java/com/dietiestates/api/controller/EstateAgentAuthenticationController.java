@@ -1,5 +1,6 @@
 package com.dietiestates.api.controller;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,7 @@ import com.dietiestates.api.service.EstateAgentAuthenticationService;
 @RequestMapping("/auth/estateagents")
 public class EstateAgentAuthenticationController extends AuthenticationController {
 
+	@Qualifier("estateAgentAuthenticationServiceImpl")
 	private final EstateAgentAuthenticationService estateAgentAuthenticationService;
 	
 	public EstateAgentAuthenticationController(
