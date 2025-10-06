@@ -16,6 +16,8 @@ public interface RealEstateService {
 	
 	List<RealEstateResponse> createRealEstatesResponse(List<RealEstate> realEstates);
 	
+	RealEstateResponse getRealEstateById(Long id);
+	
 	List<RealEstate> getRealEstatesBySearchFilter(Search search);
 	
 	List<RealEstate> getRealEstatesByGeographicalPosition(GeographicalPosition geographicalPosition, List<RealEstate> realEstates);

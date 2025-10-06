@@ -57,6 +57,12 @@ public class RealEstateServiceImpl implements RealEstateService {
 	}
 	
 	@Override
+	public RealEstateResponse getRealEstateById(Long id) {
+		var realEstate = realEstateFinder.getRealEstateById(id);
+		return realEstateMapper.fromEntity(realEstate);
+	}
+	
+	@Override
 	public List<RealEstate> getRealEstatesBySearchFilter(Search search){
 		
 		var allRealEstates = realEstateFinder.getAllRealEstates();
