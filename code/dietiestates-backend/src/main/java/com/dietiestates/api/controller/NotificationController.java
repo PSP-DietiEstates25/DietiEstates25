@@ -2,12 +2,15 @@ package com.dietiestates.api.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.NotificationRequest;
+import com.dietiestates.api.dto.response.NotificationResponse;
 import com.dietiestates.api.service.NotificationService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +30,14 @@ public class NotificationController {
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
+	@GetMapping("/{notificationid}")
+	public ResponseEntity<NotificationResponse> getNotificationById(
+			@PathVariable String notificationcategoryname,
+			@PathVariable Long notificationid
+			) {
+		var notification = notificationService.getNotificationById(notificationcategoryname, notificationid);
+		return ResponseEntity.status(HttpStatus.OK).body(notification);
+	}
 	//private final NotificationService notifService;
 	//private final NotificationPreferenceService prefService;
 
