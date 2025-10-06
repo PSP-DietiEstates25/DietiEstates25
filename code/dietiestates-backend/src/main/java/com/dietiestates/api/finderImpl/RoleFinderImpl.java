@@ -1,9 +1,8 @@
 package com.dietiestates.api.finderImpl;
 
-import javax.management.relation.RoleNotFoundException;
-
 import org.springframework.stereotype.Component;
 
+import com.dietiestates.api.exception.notfound.RoleNotFoundException;
 import com.dietiestates.api.finder.RoleFinder;
 import com.dietiestates.api.model.Role;
 import com.dietiestates.api.repository.RoleRepository;
