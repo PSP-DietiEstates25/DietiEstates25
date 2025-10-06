@@ -11,28 +11,28 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.StafferRequest;
 import com.dietiestates.api.dto.response.AuthenticationResponse;
-import com.dietiestates.api.serviceImpl.AdminAuthenticationServiceImpl;
-import com.dietiestates.api.serviceImpl.AuthenticationService;
+import com.dietiestates.api.service.AdminAuthenticationService;
+import com.dietiestates.api.service.AuthenticationService;
 
 @RestController
 @RequestMapping("/auth/admins")
 public class AdminAuthenticationController extends AuthenticationController {
 
-	private final AdminAuthenticationServiceImpl adminAuthenticationServiceImpl;
+	private final AdminAuthenticationService adminAuthenticationService;
 	
 	public AdminAuthenticationController(
 			AuthenticationService authenticationService,
-			AdminAuthenticationServiceImpl adminAuthenticationServiceImpl
+			AdminAuthenticationService adminAuthenticationService
 			) {
 		super(authenticationService);
-		this.adminAuthenticationServiceImpl = adminAuthenticationServiceImpl;
+		this.adminAuthenticationService = adminAuthenticationService;
 	}
 
 	@PostMapping
 	public ResponseEntity<AuthenticationResponse> registerAdmin(
 			@RequestBody StafferRequest request
 			) throws RoleNotFoundException{
-		adminAuthenticationServiceImpl.register(request);
+		adminAuthenticationService.register(request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }

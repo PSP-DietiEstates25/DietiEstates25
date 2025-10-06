@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.CadastralFilterRequest;
 import com.dietiestates.api.dto.response.CadastralFilterResponse;
-import com.dietiestates.api.serviceImpl.CadastralFilterService;
+import com.dietiestates.api.service.CadastralFilterService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,7 +36,7 @@ public class CadastralFilterController {
 			@PathVariable Long searchid,
 			@PathVariable Long cadastralfilterid
 			){
-		var cadastralFilter = cadastralFilterService.getCadastralFilter(searchid, cadastralfilterid);
+		var cadastralFilter = cadastralFilterService.getCadastralFilterById(searchid, cadastralfilterid);
 		return ResponseEntity.status(HttpStatus.OK).body(cadastralFilter);
 	}
 }

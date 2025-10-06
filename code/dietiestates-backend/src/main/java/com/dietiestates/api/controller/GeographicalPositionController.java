@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.GeographicalPositionRequest;
 import com.dietiestates.api.dto.response.GeographicalPositionResponse;
-import com.dietiestates.api.serviceImpl.GeographicalPositionService;
+import com.dietiestates.api.service.GeographicalPositionService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,7 +36,7 @@ public class GeographicalPositionController {
 			@PathVariable Long detailid, 
 			@PathVariable Long geographicalpositionid
 			){
-		var geographicalPosition = geographicalPositionService.getGeographicalPosition(detailid, geographicalpositionid);
+		var geographicalPosition = geographicalPositionService.getGeographicalPositionById(detailid, geographicalpositionid);
 		return ResponseEntity.status(HttpStatus.OK).body(geographicalPosition);
 	}
 }

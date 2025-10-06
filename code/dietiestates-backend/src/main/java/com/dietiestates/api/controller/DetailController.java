@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.DetailRequest;
 import com.dietiestates.api.dto.response.DetailResponse;
-import com.dietiestates.api.serviceImpl.DetailService;
+import com.dietiestates.api.service.DetailService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,7 +34,7 @@ public class DetailController {
 	public ResponseEntity<DetailResponse> getDetailById(
 			@PathVariable Long detailid
 			){
-		var detail = detailService.getDetail(detailid);
+		var detail = detailService.getDetailById(detailid);
 		return ResponseEntity.status(HttpStatus.OK).body(detail);
 	}
 }

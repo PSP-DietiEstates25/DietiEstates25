@@ -1,7 +1,5 @@
 package com.dietiestates.api.controller;
 
-import javax.management.relation.RoleNotFoundException;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,8 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.AuthenticationRequest;
 import com.dietiestates.api.dto.response.AuthenticationResponse;
+import com.dietiestates.api.exception.notfound.RoleNotFoundException;
 import com.dietiestates.api.model.User;
-import com.dietiestates.api.serviceImpl.AuthenticationService;
+import com.dietiestates.api.service.AuthenticationService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

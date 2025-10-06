@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.SearchRequest;
 import com.dietiestates.api.dto.response.RealEstateResponse;
-import com.dietiestates.api.serviceImpl.SearchService;
+import com.dietiestates.api.service.SearchService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

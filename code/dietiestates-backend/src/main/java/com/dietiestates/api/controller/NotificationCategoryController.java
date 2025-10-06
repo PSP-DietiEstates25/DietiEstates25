@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.NotificationCategoryRequest;
-import com.dietiestates.api.model.NotificationCategory;
-import com.dietiestates.api.serviceImpl.NotificationCategoryService;
+import com.dietiestates.api.service.NotificationCategoryService;
 
 import lombok.RequiredArgsConstructor;
 

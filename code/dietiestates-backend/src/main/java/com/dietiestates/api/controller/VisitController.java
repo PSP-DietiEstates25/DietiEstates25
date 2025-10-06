@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.VisitRequest;
-import com.dietiestates.api.model.Visit;
-import com.dietiestates.api.serviceImpl.VisitService;
+import com.dietiestates.api.service.VisitService;
 
 import lombok.RequiredArgsConstructor;
 
