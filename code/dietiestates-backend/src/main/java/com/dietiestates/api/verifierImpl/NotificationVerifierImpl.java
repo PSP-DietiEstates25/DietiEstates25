@@ -1,8 +1,14 @@
 package com.dietiestates.api.verifierImpl;
 
+import org.springframework.stereotype.Component;
+
 import com.dietiestates.api.exception.notowned.NotificationNotOwnedByNotificationCategoryException;
 import com.dietiestates.api.verifier.NotificationVerifier;
 
+import lombok.RequiredArgsConstructor;
+
+@Component
+@RequiredArgsConstructor
 public class NotificationVerifierImpl implements NotificationVerifier {
 
 	@Override

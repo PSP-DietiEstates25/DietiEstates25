@@ -1,5 +1,6 @@
 package com.dietiestates.api.serviceImpl;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +20,7 @@ import com.dietiestates.api.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Primary
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
