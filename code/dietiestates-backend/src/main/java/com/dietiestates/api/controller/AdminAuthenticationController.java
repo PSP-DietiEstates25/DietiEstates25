@@ -2,7 +2,6 @@ package com.dietiestates.api.controller;
 
 import javax.management.relation.RoleNotFoundException;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +18,6 @@ import com.dietiestates.api.service.AuthenticationService;
 @RequestMapping("/auth/admins")
 public class AdminAuthenticationController extends AuthenticationController {
 
-	@Qualifier("adminAuthenticationServiceImpl")
 	private final AdminAuthenticationService adminAuthenticationService;
 	
 	public AdminAuthenticationController(
