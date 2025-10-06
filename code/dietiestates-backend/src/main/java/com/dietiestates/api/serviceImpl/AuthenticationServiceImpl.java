@@ -19,7 +19,7 @@ import com.dietiestates.api.service.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;
 
-@Service
+@Service("authenticationServiceImpl")
 @Primary
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {

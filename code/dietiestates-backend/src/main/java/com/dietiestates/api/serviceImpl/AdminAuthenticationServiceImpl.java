@@ -19,7 +19,7 @@ import com.dietiestates.api.repository.UserRepository;
 import com.dietiestates.api.security.JwtService;
 import com.dietiestates.api.service.AdminAuthenticationService;
 
-@Service
+@Service("adminAuthenticationServiceImpl")
 public class AdminAuthenticationServiceImpl extends AuthenticationServiceImpl implements AdminAuthenticationService {
 	
 	private final AdminRepository adminRepository;

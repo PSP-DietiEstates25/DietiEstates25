@@ -18,7 +18,7 @@ import com.dietiestates.api.repository.UserRepository;
 import com.dietiestates.api.security.JwtService;
 import com.dietiestates.api.service.EstateAgentAuthenticationService;
 
-@Service
+@Service("estateAgentAuthenticationServiceImpl")
 public class EstateAgentAuthenticationServiceImpl extends AuthenticationServiceImpl implements EstateAgentAuthenticationService {
 
 	private final EstateAgentRepository estateAgentRepository;
