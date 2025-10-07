@@ -1,5 +1,12 @@
 import { Injectable, signal } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { Observable, of, throwError, from } from 'rxjs';
+import {
+  map,
+  switchMap,
+  catchError,
+  mergeMap,
+  toArray,
+} from 'rxjs/operators';
 
 import {
   GeographicalPositionControllerService as GeoSvc,
@@ -8,31 +15,41 @@ import {
   RealEstateControllerService as ReSvc,
 } from '../../services/services';
 
+import { GeographicalPositionRequest } from '../../services/models/geographical-position-request';
+import { CadastralDataRequest } from '../../services/models/cadastral-data-request';
+import { DetailRequest } from '../../services/models/detail-request';
+import { RealEstateRequest } from '../../services/models/real-estate-request';
+
 export interface CreateAdDraft {
+  // UI / campi usati dai componenti
   title?: string;
   price?: number;
-
-  address?: string;
   city?: string;
-  municipality?: string;
-  latitude?: number;
-  longitude?: number;
-  radius?: number | null;
+  address?: string;
+
+  type?: string; 
+  category?: string; 
 
   size?: number;
   rooms?: number;
   floor?: number;
-  energyClass?: string;
+  energy?: string; 
+  energyClass?: string; 
 
-  category?: string; 
   description?: string;
 
-  imagesBase64: string[];
+  latitude?: number;
+  longitude?: number;
+
+  photos?: File[];
+
+  // immagini pronte per invio API
+  imagesBase64?: string[];
 }
 
 @Injectable({ providedIn: 'root' })
 export class CreateAdFacade {
-  draft = signal<CreateAdDraft>({ imagesBase64: [] });
+  private _draft = signal<CreateAdDraft>({});
 
   constructor(
     private geoApi: GeoSvc,
@@ -41,135 +58,142 @@ export class CreateAdFacade {
     private reApi: ReSvc
   ) {}
 
-  patchBasics(b: Partial<CreateAdDraft>) {
-    this.draft.update((d) => ({ ...d, ...b }));
+  // draft
+  draft = this._draft.asReadonly();
+
+  // patch serve a tutti gli step per aggiornare il draft parzialmente
+  patchBasics(partial: Partial<CreateAdDraft>) {
+    this._draft.update((d) => ({ ...d, ...partial }));
   }
-  patchDetails(b: Partial<CreateAdDraft>) {
-    this.draft.update((d) => ({ ...d, ...b }));
+  patchDetails(partial: Partial<CreateAdDraft>) {
+    this._draft.update((d) => ({ ...d, ...partial }));
   }
-  setImagesBase64(arr: string[]) {
-    this.draft.update((d) => ({ ...d, imagesBase64: arr }));
+  setImagesBase64(list: string[]) {
+    this._draft.update((d) => ({ ...d, imagesBase64: list }));
+  }
+  setPhotos(files: File[]) {
+    this._draft.update((d) => ({ ...d, photos: files }));
   }
   reset() {
-    this.draft.set({ imagesBase64: [] });
+    this._draft.set({});
   }
 
-  private async invoke<T>(
-    svc: any,
-    methodNames: string[],
-    arg: any
-  ): Promise<T> {
-    for (const name of methodNames) {
-      const fn = svc?.[name];
-      if (typeof fn === 'function') {
-        try {
-          return await firstValueFrom(fn.call(svc, { body: arg }));
-        } catch {
-          /* try raw */
-        }
-        return await firstValueFrom(fn.call(svc, arg));
-      }
-    }
-    throw new Error(
-      `Metodo non trovato. Candidati provati: ${methodNames.join(', ')}`
+  // submit
+  submit(): Observable<void> {
+    const d = this._draft();
+    const email = this.getCurrentEmail() || '';
+
+    // 0) prepara immagini: se già presenti Base64 usale; altrimenti converte photos(File[]) -> Base64[]
+    const images$: Observable<string[]> =
+      d.imagesBase64 && d.imagesBase64.length
+        ? of(d.imagesBase64)
+        : d.photos && d.photos.length
+        ? from(d.photos).pipe(
+            mergeMap((f) => this.readFileAsDataURL$(f)),
+            toArray()
+          )
+        : of([]);
+
+    return images$.pipe(
+      // 1) RealEstate
+      switchMap((images) => {
+        const rePayload: RealEstateRequest = {
+          category: d.category || d.type || 'Appartamento',
+          description: d.description || (d.title ?? ''),
+          estateAgentEmail: email,
+          images,
+        };
+        return this.reApi.createRealEstate$Response({ body: rePayload });
+      }),
+      map((res) => {
+        const id = this.extractIdFromLocation(res.headers.get('Location'));
+        if (id == null) throw new Error('Impossibile ottenere ID real estate');
+        return id;
+      }),
+
+      // 2) Detail
+      switchMap((realEstateId) => {
+        const detailReq: DetailRequest = { realEstateId };
+        return this.detApi.createDetail$Response({ body: detailReq }).pipe(
+          map((res) => {
+            const detailId = this.extractIdFromLocation(
+              res.headers.get('Location')
+            );
+            if (detailId == null)
+              throw new Error('Impossibile ottenere ID detail');
+            return { realEstateId, detailId };
+          })
+        );
+      }),
+
+      // 3) GeographicalPosition
+      switchMap(({ realEstateId, detailId }) => {
+        const geoReq: GeographicalPositionRequest = {
+          address: d.address || '',
+          city: d.city || '',
+          municipality: d.city || '',
+          latitude: d.latitude as number,
+          longitude: d.longitude as number,
+        };
+        return this.geoApi
+          .createGeographicalPosition({ detailid: detailId, body: geoReq })
+          .pipe(map(() => ({ realEstateId })));
+      }),
+
+      // 4) CadastralData
+      switchMap(({ realEstateId }) => {
+        const cadReq: CadastralDataRequest = {
+          energyClass: d.energyClass || d.energy || 'ND',
+          floor: d.floor ?? 0,
+          price: d.price ?? 0,
+          rooms: d.rooms ?? 0,
+          squareMeters: d.size ?? 0,
+        };
+        return this.cadApi.createCadastralData({
+          realestateid: realEstateId,
+          body: cadReq,
+        });
+      }),
+
+      map(() => void 0),
+      catchError((err) => throwError(() => err))
     );
   }
 
-  private idFrom(obj: any, keys: string[]) {
-    for (const k of keys) if (obj && obj[k] != null) return obj[k];
-    throw new Error(`ID non trovato. Chiavi provate: ${keys.join(', ')}`);
+  // helpers
+  private extractIdFromLocation(location: string | null): number | null {
+    if (!location) return null;
+    const parts = location.split('/').filter(Boolean);
+    const id = Number(parts[parts.length - 1]);
+    return Number.isFinite(id) ? id : null;
   }
 
-  private getAgentEmailFromToken(): string | undefined {
+  private getCurrentEmail(): string | null {
+    const token = localStorage.getItem('auth.token');
+    const payload = this.decodeJwt(token);
+    return (payload?.email as string) || (payload?.sub as string) || null;
+  }
+
+  private decodeJwt(token: string | null): any | null {
     try {
-      const raw = localStorage.getItem('auth.token');
-      if (!raw) return;
-      const payload = JSON.parse(atob(raw.split('.')[1] || ''));
-      return payload?.sub ?? payload?.email ?? undefined;
+      if (!token) return null;
+      const base = token.split('.')[1];
+      const json = atob(base.replace(/-/g, '+').replace(/_/g, '/'));
+      return JSON.parse(json);
     } catch {
-      return;
+      return null;
     }
   }
 
-  async submit(): Promise<void> {
-    const d = this.draft();
-
-    const geoPayload: any = {
-      address: d.address ?? '',
-      city: d.city ?? '',
-      municipality: d.municipality ?? '',
-      latitude: d.latitude ?? 0,
-      longitude: d.longitude ?? 0,
-      radius: d.radius ?? null,
-      lat: d.latitude ?? 0,
-      lon: d.longitude ?? 0,
-    };
-
-    const geoRes = await this.invoke<any>(
-      this.geoApi,
-      [
-        'createGeographicalPosition',
-        'createGeographical',
-        'create',
-        'save',
-        'postGeographicalPosition',
-      ],
-      geoPayload
-    );
-
-    const geoId = this.idFrom(geoRes, [
-      'id',
-      'geoId',
-      'geographicalPositionId',
-    ]);
-
-    const cadPayload: any = {
-      price: d.price ?? 0,
-      size: d.size ?? 0,
-      rooms: d.rooms ?? 0,
-      floor: d.floor ?? 0,
-      energyClass: d.energyClass ?? 'ND',
-      mq: d.size ?? 0,
-      classEnergy: d.energyClass ?? 'ND',
-    };
-
-    const cadRes = await this.invoke<any>(
-      this.cadApi,
-      ['createCadastralData', 'create', 'save', 'postCadastralData'],
-      cadPayload
-    );
-
-    const cadId = this.idFrom(cadRes, ['id', 'cadastralDataId', 'cadId']);
-
-    const detPayload: any = {
-      geographicalPositionId: geoId,
-      cadastralDataId: cadId,
-    };
-
-    const detRes = await this.invoke<any>(
-      this.detApi,
-      ['createDetails', 'create', 'save', 'postDetails'],
-      detPayload
-    );
-
-    const detailsId = this.idFrom(detRes, ['id', 'detailsId']);
-
-    const email = this.getAgentEmailFromToken() ?? '';
-    const rePayload: any = {
-      category: d.category ?? 'Appartamento',
-      type: d.category ?? 'Appartamento', 
-      description: d.description || d.title || '',
-      detailsId,
-      estateAgentEmail: email,
-      agentEmail: email, 
-      images: d.imagesBase64 ?? [],
-      photos: d.imagesBase64 ?? [],
-    };
-
-    await this.invoke<any>(
-      this.reApi,
-      ['createRealEstate', 'create', 'save', 'postRealEstate'],
-      rePayload
-    );
+  private readFileAsDataURL$(file: File): Observable<string> {
+    return new Observable<string>((observer) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        observer.next(String(reader.result));
+        observer.complete();
+      };
+      reader.onerror = (e) => observer.error(e);
+      reader.readAsDataURL(file);
+    });
   }
 }
