@@ -16,7 +16,6 @@ export class StepDetailsComponent {
   private router = inject(Router);
   private facade = inject(CreateAdFacade);
 
-  // default Napoli coords se non ancora settate
   private readonly DEF_LAT = 40.85631;
   private readonly DEF_LON = 14.24641;
 
@@ -41,19 +40,17 @@ export class StepDetailsComponent {
   });
 
   constructor() {
-    // Ogni modifica aggiorna il draft in facciata
     this.form.valueChanges.subscribe((v) => {
       this.facade.patchDetails({
-        category: v.type, // → RealEstateDto.category
-        size: v.size, // → CadastralDataDto.size
-        description: v.description, // → RealEstateDto.description (o fallback al title)
-        latitude: v.latitude, // → GeographicalPositionDto.latitude
-        longitude: v.longitude, // → GeographicalPositionDto.longitude
+        category: v.type, 
+        size: v.size, 
+        description: v.description, 
+        latitude: v.latitude, 
+        longitude: v.longitude, 
       });
     });
   }
 
-  // Chiamate dal (latitudeChange)/(longitudeChange) della mappa
   updateLatitude(lat: number) {
     this.form.patchValue({ latitude: lat }, { emitEvent: true });
   }
@@ -70,7 +67,6 @@ export class StepDetailsComponent {
       this.form.markAllAsTouched();
       return;
     }
-    // Prossimo step: foto (poi review → facade.submit())
     this.router.navigateByUrl('/agent/ads/new/photos');
   }
 }
