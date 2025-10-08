@@ -17,28 +17,20 @@ public class DetailMapperImpl implements DetailMapper {
 	@Override
 	public DetailSpec toSpec(DetailRequest request) {
 		return DetailSpec.builder()
-				.realEstateId(request.getRealEstateId())
-				.searchId(request.getSearchId())
+				.geographicalPositionId(request.getGeographicalPositionId())
+				.utilityId(request.getUtilityId())
 				.build();
 	}
 	
 	@Override
 	public DetailResponse fromEntity(Detail detail) {
 		
-		var detailResponse = DetailResponse.builder()
+		return DetailResponse.builder()
 				.id(detail.getId())
 				.createdDate(detail.getCreatedDate())
 				.lastModifiedDate(detail.getLastModifiedDate())
 				.geographicalPositionId(detail.getGeographicalPosition().getId())
 				.utilityId(detail.getUtility().getId())
 				.build();
-		
-		if(detail.getSearch() != null)
-			detailResponse.setSearchId(detail.getSearch().getId());
-		
-		if(detail.getRealEstate() != null)
-			detailResponse.setSearchId(detail.getRealEstate().getId());
-		
-		return detailResponse;
 	}
 }

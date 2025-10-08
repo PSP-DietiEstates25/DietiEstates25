@@ -32,7 +32,7 @@ public class OfferMapperImpl implements OfferMapper {
 				.lastModifiedDate(offer.getLastModifiedDate())
 				.category(offer.getProposalCategory().toString())
 				.status(offer.getProposalStatus().toString())
-				.userEmail(offer.getUser().getEmail())
+				.userEmail(offer.getUser().getSecurityAccountDecorator().getAccountEmail())
 				.realEstateId(offer.getRealEstate().getId())
 				.amount(offer.getAmount())
 				.build();

@@ -31,7 +31,7 @@ public class NotificationMapperImpl implements NotificationMapper {
 				.lastModifiedDate(notification.getLastModifiedDate())
 				.message(notification.getMessage())
 				.notificationCategoryId(notification.getNotificationCategory().getId())
-				.userEmail(notification.getUser().getEmail())
+				.userEmail(notification.getUser().getSecurityAccountDecorator().getAccountEmail())
 				.build();
 	}
 }

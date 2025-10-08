@@ -3,14 +3,16 @@ package com.dietiestates.api.mapperimpl;
 import org.springframework.stereotype.Component;
 
 import com.dietiestates.api.dto.request.AuthenticationRequest;
-import com.dietiestates.api.mapper.UserMapper;
+import com.dietiestates.api.dto.response.AccountResponse;
+import com.dietiestates.api.mapper.AccountMapper;
+import com.dietiestates.api.model.Account;
 import com.dietiestates.api.spec.AuthenticationSpec;
 
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class UserMapperImpl implements UserMapper {
+public class AccountMapperImpl implements AccountMapper {
 
 	@Override
 	public AuthenticationSpec toSpec(AuthenticationRequest request) {
@@ -21,4 +23,16 @@ public class UserMapperImpl implements UserMapper {
 				.locked(false)
 				.build();
 	}
+
+	@Override
+	public AccountResponse fromEntity(Account account) {
+		return AccountResponse.builder()
+				.id(account.getAccountId())
+				.email(account.getAccountEmail())
+				.role(account.getAccountRole())
+				.enabled(true)
+				.locked(false)
+				.build();
+	}
+	
 }

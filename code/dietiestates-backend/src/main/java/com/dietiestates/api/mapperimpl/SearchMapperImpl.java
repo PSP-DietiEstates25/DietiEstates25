@@ -13,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class SearchMapperImpl implements SearchMapper {
-
-	private final CadastralFilterMapperImpl cadastralFilterMapperImpl;
 	
 	@Override
 	public SearchSpec toSpec(SearchRequest request) {
@@ -24,7 +22,7 @@ public class SearchMapperImpl implements SearchMapper {
 				.page(request.getPage())
 				.userEmail(request.getUserEmail())
 				.detailId(request.getDetailId())
-				.cadastralFilterSpec(cadastralFilterMapperImpl.toSpec(request.getCadastralFilter()))
+				.cadastralFilterId(request.getCadastralFilterId())
 				.build();
 	}
 	
@@ -38,7 +36,7 @@ public class SearchMapperImpl implements SearchMapper {
 				.page(search.getPage())
 				.detailId(search.getDetail().getId())
 				.cadastralFilterId(search.getCadastralFilter().getId())
-				.userEmail(search.getUser().getEmail())
+				.userEmail(search.getUser().getSecurityAccountDecorator().getAccountEmail())
 				.build();
 	}
 }

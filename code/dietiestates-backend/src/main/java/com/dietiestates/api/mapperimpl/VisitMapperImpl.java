@@ -33,7 +33,7 @@ public class VisitMapperImpl implements VisitMapper {
 				.lastModifiedDate(visit.getLastModifiedDate())
 				.category(visit.getProposalCategory().toString())
 				.status(visit.getProposalStatus().toString())
-				.userEmail(visit.getUser().getEmail())
+				.userEmail(visit.getUser().getSecurityAccountDecorator().getAccountEmail())
 				.realEstateId(visit.getRealEstate().getId())
 				.date(visit.getDate())
 				.time(visit.getTime())

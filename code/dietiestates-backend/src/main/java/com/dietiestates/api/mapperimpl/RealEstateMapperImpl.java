@@ -1,5 +1,8 @@
 package com.dietiestates.api.mapperimpl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.dietiestates.api.dto.request.RealEstateRequest;
@@ -33,9 +36,21 @@ public class RealEstateMapperImpl implements RealEstateMapper {
 				.category(realEstate.getCategory().toString())
 				.images(realEstate.getImages())
 				.description(realEstate.getDescription())
-				.estateAgentEmail(realEstate.getEstateAgent().getEmail())
+				.estateAgentEmail(realEstate.getEstateAgent().getSecurityAccountDecorator().getAccountEmail())
 				.detailId(realEstate.getDetail().getId())
 				.cadastralDataId(realEstate.getCadastralData().getId())
 				.build();
+	}
+
+	@Override
+	public List<RealEstateResponse> createRealEsatatesResponse(List<RealEstate> realEstates) {
+		
+		var response = new ArrayList<RealEstateResponse>();
+		realEstates.forEach(realEstate -> {
+			var realEstateResponse = fromEntity(realEstate);
+			response.add(realEstateResponse);
+		});
+		
+		return response;
 	}
 }
