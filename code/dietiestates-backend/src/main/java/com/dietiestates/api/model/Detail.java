@@ -6,7 +6,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -16,7 +15,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,9 +25,8 @@ import lombok.ToString;
 @Getter
 @Setter
 @EqualsAndHashCode
-@ToString
 @NoArgsConstructor
-@AllArgsConstructor
+@ToString
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Detail {
@@ -46,50 +43,36 @@ public class Detail {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 	
-	@OneToOne(mappedBy = "detail", cascade = CascadeType.ALL, orphanRemoval = true)
-	private GeographicalPosition geographicalPosition;
-	
-	@OneToOne(mappedBy = "detail", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Utility utility;
-		
 	@OneToOne
 	@JoinColumn(
-			nullable = true,
-			name = "search_id",
-			foreignKey = @ForeignKey(name = "DETAIL_SEARCH_ID_FK"))
-	private Search search;
+			nullable = false,
+			name = "geographical_position_id",
+			foreignKey = @ForeignKey(name = "DETAIL_GEOGRAPHICAL_POSITION_ID_FK"))
+	private GeographicalPosition geographicalPosition;
 	
 	@OneToOne
-    @JoinColumn(
-			nullable = true,
-			name = "real_estate_id",
-			foreignKey = @ForeignKey(name = "DETAIL_REAL_ESTATE_ID_FK"))
-	private RealEstate realEstate;
+	@JoinColumn(
+			nullable = false,
+			name = "utility_id",
+			foreignKey = @ForeignKey(name = "DETAIL_UTILITY_ID_FK"))
+	private Utility utility;
 	
-	@Builder(builderMethodName = "detailBuilder")
+	@Builder(builderMethodName = "builder")
 	public Detail(
-			LocalDateTime createdDate,
-			RealEstate realEstate,
-			Search search
+			GeographicalPosition geographicalPosition,
+			Utility utility
 			){
-		this.createdDate = createdDate;
-		
-		if(realEstate != null)
-			this.setRealEstate(realEstate);
-		
-		if(search != null)
-			this.setSearch(search);
+		setGeographicalPosition(geographicalPosition);
+		setUtility(utility);
 	}
 	
-	public void setRealEstate(RealEstate realEstate) {
-		this.realEstate = realEstate;
-		realEstate.setDetail(this);
+	public void setGeographicalPosition(GeographicalPosition geographicalPosition) {
+		this.geographicalPosition = geographicalPosition;
+		geographicalPosition.setDetail(this);
 	}
 	
-	/*
-	public void setSearch(Search search) {
-		this.search = search;
-		search.setDetail(this);;
+	public void setUtility(Utility utility) {
+		this.utility = utility;
+		utility.setDetail(this);
 	}
-	*/
 }

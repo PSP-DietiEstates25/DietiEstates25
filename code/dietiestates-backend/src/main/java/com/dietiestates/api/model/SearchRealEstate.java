@@ -10,11 +10,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,9 +23,8 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
 @NoArgsConstructor
-@AllArgsConstructor
+@EqualsAndHashCode
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class SearchRealEstate {
@@ -53,15 +50,13 @@ public class SearchRealEstate {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 	
-	@Builder(builderMethodName = "searchRealEstateBuilder")
+	@Builder(builderMethodName = "builder")
 	public SearchRealEstate(
-			LocalDateTime createdDate,
 			RealEstate realEstate,
 			Search search
 			) {
 		this.id = new SearchRealEstateKey(realEstate.getId(), search.getId());
-		this.createdDate = createdDate;
-		this.realEstate = realEstate;
-		this.search = search;
+		realEstate.addSearchRealEstate(this);
+		search.addSearchRealEstate(this);
 	}
 }

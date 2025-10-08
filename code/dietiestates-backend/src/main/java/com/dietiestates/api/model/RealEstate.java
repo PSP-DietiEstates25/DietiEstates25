@@ -16,7 +16,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,7 +24,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -35,11 +33,9 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@Builder
+@NoArgsConstructor
 @EqualsAndHashCode
 @ToString
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class RealEstate {
@@ -67,24 +63,49 @@ public class RealEstate {
     @Column(insertable = false)
     private LocalDateTime lastModifiedDate;
 
+    @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Proposal> proposals = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SearchRealEstate> searchRealEstates = new ArrayList<>();
+    
     @ManyToOne
     @JoinColumn(
     		nullable = false,
     		name = "estate_agent_id",
-    		foreignKey = @ForeignKey(name = "REAL_ESTATE_AGENT_ID_FK"))
+    		foreignKey = @ForeignKey(name = "REAL_ESTATE_ESTATE_AGENT_ID_FK"))
     private EstateAgent estateAgent;
 
-    @OneToOne(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Detail detail;
-    
-    @OneToOne(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne
+    @JoinColumn(
+			nullable = false,
+			name = "cadastral_data_id",
+			foreignKey = @ForeignKey(name = "REAL_ESTATE_CADASTRAL_DATA_ID_FK"))
 	private CadastralData cadastralData;
     
-    @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Proposal> proposals = new ArrayList<>();
+    @OneToOne
+    @JoinColumn(
+			nullable = false,
+			name = "detail_id",
+			foreignKey = @ForeignKey(name = "REAL_ESTATE_DETAIL_ID_FK"))
+    private Detail detail;
     
-    @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<SearchRealEstate> searchRealEstates = new ArrayList<>();
+    @Builder(builderMethodName = "builder")
+    public RealEstate(
+    		String category,
+    		String[] images,
+    		String description,
+    		EstateAgent estateAgent,
+    		CadastralData cadastralData,
+    		Detail detail
+    		) {
+    		this.category = AdCategory.valueOf(category);
+    		this.images = images;
+    		this.description = description;
+    		estateAgent.addRealEstate(this);
+    		setCadastralData(cadastralData);
+    		this.detail = detail;
+    }
     
     public void addProposal(Proposal proposal) {
 	    	this.proposals.add(proposal);
@@ -95,4 +116,10 @@ public class RealEstate {
     		this.searchRealEstates.add(searchRealEstate);
     		searchRealEstate.setRealEstate(this);
     	}
+    
+    public void setCadastralData(CadastralData cadastralData) {
+    		this.cadastralData = cadastralData;
+    		cadastralData.setRealEstate(this);
+    }
+    
 }

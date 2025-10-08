@@ -24,7 +24,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -35,9 +34,8 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
+@Builder
 @EqualsAndHashCode
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -65,21 +63,8 @@ public class Search {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 	
-	@OneToOne(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Detail detail;
-	
-	/*
-	@OneToOne
-	@JoinColumn(
-			nullable = true,
-			name = "cadastral_filter_id",
-			foreignKey = @ForeignKey(name = "SEARCH_CADASTRAL_FILTER_ID")
-			)
-	private CadastralFilter cadastralFilter;
-	*/
-	
-	@OneToOne(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
-	private CadastralFilter cadastralFilter;
+	@OneToMany(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SearchRealEstate> searchRealEstates = new ArrayList<>();
 	
 	@ManyToOne
 	@JoinColumn(
@@ -88,42 +73,46 @@ public class Search {
 			foreignKey = @ForeignKey(name = "SEARCH_USER_EMAIL_FK"))
 	private User user;
 	
-	@Builder(builderMethodName = "searchBuilder")
+	@OneToOne
+	@JoinColumn(
+			nullable = false,
+			name = "detail_id",
+			foreignKey = @ForeignKey(name = "SEARCH_DETAIL_ID_FK"))
+	private Detail detail;
+	
+	@OneToOne
+	@JoinColumn(
+			nullable = false,
+			name = "cadastral_filter_id",
+			foreignKey = @ForeignKey(name = "SEARCH_CADASTRAL_FILTER_ID_FK"))
+	private CadastralFilter cadastralFilter;
+	
+	@Builder(builderMethodName = "builder")
 	public Search(
-			AdCategory category,
+			String category,
 			Integer size,
 			Integer page,
-			LocalDateTime createdDate,
-			User user
-			//CadastralFilter cadastralFilter
+			User user,
+			CadastralFilter cadastralFilter,
+			Detail detail
 			) {
-		this.category = category;
+		this.category = AdCategory.valueOf(category);
 		this.size = size;
 		this.page = page;
-		this.createdDate = createdDate;
+		this.user = user;
 		user.addSearch(this);
-		//this.setCadastralFilter(cadastralFilter);
+		setCadastralFilter(cadastralFilter);
+		this.detail = detail;
 	}
-	
-	@OneToMany(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<SearchRealEstate> searchRealEstates = new ArrayList<>();
 	
 	public void addSearchRealEstate(SearchRealEstate searchRealEstate) {
 		this.searchRealEstates.add(searchRealEstate);
 		searchRealEstate.setSearch(this);
 	}
 	
-	/*
 	public void setCadastralFilter(CadastralFilter cadastralFilter) {
-		if(cadastralFilter != null) {
-			this.cadastralFilter = cadastralFilter;
-			cadastralFilter.setSearch(this);
-		}
+		this.cadastralFilter = cadastralFilter;
+		cadastralFilter.setSearch(this);
 	}
-	*/
 	
-	public void setDetail(Detail detail) {
-		this.detail = detail;
-		detail.setSearch(this);
-	}
 }

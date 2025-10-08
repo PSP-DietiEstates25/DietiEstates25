@@ -20,7 +20,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -31,9 +30,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -60,6 +57,15 @@ public class NotificationCategory {
 	
 	@OneToMany(mappedBy = "notificationCategory", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<Notification> notifications = new ArrayList<>();
+	
+	@Builder(builderMethodName = "builder")
+	public NotificationCategory(
+			String name,
+			Boolean isActive
+			) {
+		this.name = NotificationCategoryType.valueOf(name);
+		this.isActive = isActive;
+	}
 	
 	public void addNotification(Notification notification) {
 		notifications.add(notification);

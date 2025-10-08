@@ -13,17 +13,15 @@ import com.dietiestates.api.model.range.PriceRange;
 import com.dietiestates.api.model.range.RoomsRange;
 import com.dietiestates.api.model.range.SquareMetersRange;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,9 +31,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class CadastralFilter {
@@ -67,21 +63,11 @@ public class CadastralFilter {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 	
-	/*
 	@OneToOne(mappedBy = "cadastralFilter", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Search search;
-	*/
 	
-	@OneToOne
-	@JoinColumn(
-			nullable = false,
-			name = "search_id",
-			foreignKey = @ForeignKey(name = "CADASTRAL_FILTER_SEARCH_ID_FK"))
-	private Search search;
-	
-	@Builder(builderMethodName = "cadastralFilterBuilder")
+	@Builder(builderMethodName = "builder")
 	public CadastralFilter(
-		LocalDateTime createdDate,
 		BigDecimal minPrice,
 		BigDecimal maxPrice,
 		Integer minSquareMeters,
@@ -91,10 +77,8 @@ public class CadastralFilter {
 		Integer minRooms,
 		Integer maxRooms,
 		Integer minFloor,
-		Integer maxFloor,
-		Search search
+		Integer maxFloor
 		) {
-		this.createdDate = createdDate;
 		this.priceRange = PriceRange.builder()
 				.minPrice(minPrice)
 				.maxPrice(maxPrice)
@@ -119,12 +103,6 @@ public class CadastralFilter {
 				.minFloor(minFloor)
 				.maxFloor(maxFloor)
 				.build();
-		
-		this.setSearch(search);
 	}
 	
-	public void setSearch(Search search) {
-		this.search = search;
-		search.setCadastralFilter(this);
-	}
 }

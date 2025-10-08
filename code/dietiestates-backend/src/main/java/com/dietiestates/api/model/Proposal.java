@@ -14,7 +14,6 @@ import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,7 +22,6 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,7 +31,6 @@ import lombok.ToString;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode
 @ToString
 @Entity
@@ -43,49 +40,48 @@ public abstract class Proposal {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	protected Long id;
+	private Long id;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	protected ProposalCategory proposalCategory;
+	private ProposalCategory proposalCategory;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	protected ProposalStatus proposalStatus;
+	private ProposalStatus proposalStatus;
 	
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
-	protected LocalDateTime createdDate;
+	private LocalDateTime createdDate;
 
 	@LastModifiedDate
 	@Column(insertable = false)
-	protected LocalDateTime lastModifiedDate;
-	
-	public Proposal(
-			Long id,
-			String proposalCategory,
-			String proposalStatus,
-			LocalDateTime createdDate,
-			LocalDateTime lastModifiedDate
-			) {
-		this.id = id;
-		this.proposalCategory = ProposalCategory.valueOf(proposalCategory);
-		this.proposalStatus = ProposalStatus.valueOf(proposalStatus);
-		this.createdDate = createdDate;
-		this.lastModifiedDate = lastModifiedDate;
-	}
-	
+	private LocalDateTime lastModifiedDate;
+
 	@ManyToOne
 	@JoinColumn(
 			nullable = false,
 			name = "user_id",
 			foreignKey = @ForeignKey(name = "PROPOSAL_USER_ID_FK"))
-	protected User user;
+	private User user;
 	
 	@ManyToOne
 	@JoinColumn(
 			nullable = false,
 			name = "real_estate_id",
 			foreignKey = @ForeignKey(name = "PROPOSAL_REAL_ESTATE_ID"))
-	protected RealEstate realEstate;
+	private RealEstate realEstate;
+	
+	public Proposal(
+			String proposalCategory,
+			String proposalStatus,
+			User user,
+			RealEstate realEstate
+			) {
+		this.proposalCategory = ProposalCategory.valueOf(proposalCategory);
+		this.proposalStatus = ProposalStatus.valueOf(proposalStatus);
+		user.addProposal(this);
+		realEstate.addProposal(this);
+	}
+
 }

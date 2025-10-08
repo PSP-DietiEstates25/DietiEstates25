@@ -9,14 +9,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -28,9 +26,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode
-@Builder(toBuilder = true)
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Notification {
@@ -54,7 +50,7 @@ public class Notification {
 	@JoinColumn(
 			nullable = false,
 			name = "notification_category_id",
-			foreignKey = @ForeignKey(name = "NOTIFICATION_NOTIFICATION_CATEGORY_ID"))
+			foreignKey = @ForeignKey(name = "NOTIFICATION_NOTIFICATION_CATEGORY_ID_FK"))
 	private NotificationCategory notificationCategory;
 	
 	@ManyToOne
@@ -64,4 +60,14 @@ public class Notification {
 			foreignKey = @ForeignKey(name = "NOTIFICATION_USER_ID_FK"))
 	private User user;
 
+	@Builder(builderMethodName = "builder")
+	public Notification(
+			String message,
+			NotificationCategory notificationCategory,
+			User user
+			) {
+		this.message = message;
+		notificationCategory.addNotification(this);
+		user.addNotification(this);
+	}
 }

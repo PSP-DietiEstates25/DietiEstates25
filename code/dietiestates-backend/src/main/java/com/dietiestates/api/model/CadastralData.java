@@ -9,18 +9,16 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.dietiestates.api.enums.EnergyClass;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -31,9 +29,8 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode
+@NoArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class CadastralData {
@@ -66,34 +63,22 @@ public class CadastralData {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 	
-	@OneToOne
-	@JoinColumn(
-			nullable = false,
-			name = "real_estate_id",
-			foreignKey = @ForeignKey(name = "CADASTRAL_DATA_REAL_ESTATE_ID_FK"))
+	@OneToOne(mappedBy = "cadastralData", cascade = CascadeType.ALL, orphanRemoval = true)
 	private RealEstate realEstate;
 	
-	@Builder(builderMethodName = "cadastralDataBuilder")
+	@Builder(builderMethodName = "builder")
 	public CadastralData(
-		LocalDateTime createdDate,
 		BigDecimal price,
 		Integer squareMeters,
 		String energyClass,
 		Integer rooms,
-		Integer floor,
-		RealEstate realEstate
+		Integer floor
 		) {
-		this.createdDate = createdDate;
 		this.price = price;
 		this.squareMeters = squareMeters;
 		this.energyClass = EnergyClass.valueOf(energyClass);
 		this.rooms = rooms;
 		this.floor = floor;
-		this.setRealEstate(realEstate);
 	}
-	
-	public void setRealEstate(RealEstate realEstate) {
-		this.realEstate = realEstate;
-		realEstate.setCadastralData(this);
-	}
+
 }

@@ -6,16 +6,14 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,9 +24,8 @@ import lombok.ToString;
 @Getter
 @Setter
 @EqualsAndHashCode
-@ToString
 @NoArgsConstructor
-@AllArgsConstructor
+@ToString
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class GeographicalPosition {
@@ -63,23 +60,17 @@ public class GeographicalPosition {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 
-	@OneToOne
-	@JoinColumn(
-			nullable = false,
-			name = "detail_id",
-			foreignKey = @ForeignKey(name = "GEOGRAPHICAL_POSITION_DETAIL_ID_FK"))
+	@OneToOne(mappedBy = "geographicalPosition", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Detail detail;
 
-	@Builder(builderMethodName = "geographicalPositionBuilder")
+	@Builder(builderMethodName = "builder")
 	public GeographicalPosition(
 			String city,
 			String municipality,
 			String address,
 			Double latitude,
 			Double longitude,
-			Integer radius,
-			LocalDateTime createdDate,
-			Detail detail
+			Integer radius
 			){
 		this.city = city;
 		this.municipality = municipality;
@@ -87,12 +78,6 @@ public class GeographicalPosition {
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.radius = radius;
-		this.createdDate = createdDate;
-		this.setDetail(detail);
 	}
 	
-	public void setDetail(Detail detail) {
-		this.detail = detail;
-		detail.setGeographicalPosition(this);
-	}
 }

@@ -8,13 +8,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -24,10 +23,8 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
+@ToString
 @EqualsAndHashCode
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -41,15 +38,28 @@ public class Token {
 	
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
-	private LocalDateTime createdAt;
+	private LocalDateTime createdDate;
 	
 	@Column(nullable = false, updatable = false)
-	private LocalDateTime expiresAt;
+	private LocalDateTime expiresAtDate;
 	
 	@Column(nullable = false, updatable = false)
-	private LocalDateTime validatedAt;
+	private LocalDateTime validatedAtDate;
 	
 	@ManyToOne
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+	@JoinColumn(
+			nullable = false,
+			name = "account_id",
+			foreignKey = @ForeignKey(name = "TOKEN_DEFAULT_ACCOUNT_FK")
+			)
+	private DefaultAccount defaultAccount;
+	
+	@Builder(builderMethodName = "builder")
+	public Token(
+			String token,
+			DefaultAccount defaultAccount
+			) {
+		this.token = token;
+		defaultAccount.addToken(this);
+	}
 }
