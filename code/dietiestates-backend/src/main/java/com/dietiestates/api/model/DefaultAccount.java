@@ -17,8 +17,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,7 +54,7 @@ public class DefaultAccount implements Account {
 	@OneToMany(mappedBy="defaultAccount", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Token> tokens = new ArrayList<>();
 	
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(
 			nullable = false,
 			name = "role_name",
@@ -98,5 +98,4 @@ public class DefaultAccount implements Account {
 		tokens.add(token);
 		token.setDefaultAccount(this);
 	}
-
 }

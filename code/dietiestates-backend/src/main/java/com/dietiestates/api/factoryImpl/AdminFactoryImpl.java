@@ -14,10 +14,12 @@ public class AdminFactoryImpl implements AdminFactory {
 	
 	@Override
 	public Admin createAdminFromSpec(
-			DefaultAccount securityAccountDecorator
+			DefaultAccount securityAccountDecorator,
+			Admin admin
 			) {
 		return Admin.builder()
 				.securityAccountDecorator(securityAccountDecorator)
+				.admin(admin)
 				.build();
 	}
 }

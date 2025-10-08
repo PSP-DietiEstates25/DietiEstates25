@@ -47,13 +47,6 @@ public class Role {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 	
-	/*
-	 * @JsonIgnore previene non l'essere recuperato, ma l'essere serializzato all'interno della response
-	 */
-	@OneToOne(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonIgnore
-	private DefaultAccount defaultAccount;
-	
 	@Builder(builderMethodName = "builder")
 	public Role(
 			String name

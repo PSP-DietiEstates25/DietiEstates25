@@ -61,11 +61,11 @@ public class AdminAuthenticationServiceImpl extends AuthenticationServiceImpl im
 		var stafferSpec = adminMapper.toSpec(request);
 		var adminRole = roleFinder.getByRoleName("ADMIN");
 		var adminCreator = adminFinder.getAdminByEmail(stafferSpec.getAdminEmail());
-
+		
 		var defaultAccount = defaultAccountFactory.createAccountFromSpec(stafferSpec, passwordEncoder, adminRole);
 		var securityAccountDecorator = secutiryAccountDecoratorFactory.createSecurityAccountDecoratorFromSpec(defaultAccount);
 		
-		var admin = adminFactory.createAdminFromSpec(defaultAccount);
+		var admin = adminFactory.createAdminFromSpec(defaultAccount, adminCreator);
 		defaultAccountRepository.save(defaultAccount);
 		adminRepository.save(admin);
 	}

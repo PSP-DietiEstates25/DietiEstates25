@@ -10,7 +10,7 @@ public interface AccountFactory {
 
 	DefaultAccount createAccountFromSpec(
 			AuthenticationSpec spec,
-			PasswordEncoder passwordEncored,
-			Role rolel
+			PasswordEncoder passwordEncoder,
+			Role role
 			);
 }

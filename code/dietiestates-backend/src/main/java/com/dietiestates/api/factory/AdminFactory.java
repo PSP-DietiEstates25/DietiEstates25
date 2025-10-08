@@ -6,6 +6,7 @@ import com.dietiestates.api.model.DefaultAccount;
 public interface AdminFactory {
 
 	Admin createAdminFromSpec(
-			DefaultAccount securityAccountDecorator
+			DefaultAccount securityAccountDecorator,
+			Admin admin
 			);
 }

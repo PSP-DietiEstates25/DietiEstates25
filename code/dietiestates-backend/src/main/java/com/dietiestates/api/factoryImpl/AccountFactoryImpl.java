@@ -17,12 +17,12 @@ public class AccountFactoryImpl implements AccountFactory {
 	@Override
 	public DefaultAccount createAccountFromSpec(
 			AuthenticationSpec spec,
-			PasswordEncoder passwordEncored,
+			PasswordEncoder passwordEncoder,
 			Role role
 			) {
 		return DefaultAccount.builder()
 				.email(spec.getEmail())
-				.password(spec.getPassword())
+				.password(passwordEncoder.encode(spec.getPassword()))
 				.role(role)
 				.build();
 	}

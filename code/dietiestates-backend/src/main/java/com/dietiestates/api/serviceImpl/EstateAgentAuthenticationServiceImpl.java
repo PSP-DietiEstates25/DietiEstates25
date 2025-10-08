@@ -60,11 +60,12 @@ public class EstateAgentAuthenticationServiceImpl extends AuthenticationServiceI
 		
 		var stafferSpec = estateAgentMapper.toSpec(request);
 		var estateAgentRole = roleFinder.getByRoleName("ESTATE_AGENT");
+		var adminCreator = adminFinder.getAdminByEmail(stafferSpec.getAdminEmail());
 		
 		var defaultAccount = defaultAccountFactory.createAccountFromSpec(stafferSpec, passwordEncoder, estateAgentRole);
 		var securityAccountDecorator = secutiryAccountDecoratorFactory.createSecurityAccountDecoratorFromSpec(defaultAccount);
 				
-		var estateAgent = estateAgentFactory.createEstateAgentFromSpec(defaultAccount);
+		var estateAgent = estateAgentFactory.createEstateAgentFromSpec(defaultAccount, adminCreator);
 		defaultAccountRepository.save(defaultAccount);
 		estateAgentRepository.save(estateAgent);
 	}
