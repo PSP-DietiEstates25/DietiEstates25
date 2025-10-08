@@ -20,10 +20,9 @@ public class StafferRequest extends AuthenticationRequest {
 	public StafferRequest(
 			String email,
 			String password,
-			String role,
 			String adminEmail
 			) {
-		super(email, password, role);
+		super(email, password);
 		this.adminEmail = adminEmail;
 	}
 }

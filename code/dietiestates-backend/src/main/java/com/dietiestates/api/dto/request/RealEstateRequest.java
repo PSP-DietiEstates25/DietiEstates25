@@ -3,6 +3,7 @@ package com.dietiestates.api.dto.request;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,4 +34,10 @@ public class RealEstateRequest {
 	@NotBlank(message = "Estate agent email is mandatory")
 	@Email
 	private String estateAgentEmail;
+	
+	@Positive(message = "Cadastral data id must be a positive number")
+	private Long cadastralDataId;
+	
+	@Positive(message = "Detail id must be a positive number")
+	private Long detailId;
 }

@@ -1,6 +1,5 @@
 package com.dietiestates.api.dto.request;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -38,11 +37,10 @@ public class SearchRequest {
 	@Email
 	private String userEmail;
 	
+	@Positive(message = "Cadastral filter id must be a positive number")
+	private Long cadastralFilterId;
+	
 	@Positive(message = "Detail id must be a positive number")
 	private Long detailId;
-	
-	@NotNull(message = "Cadastral filter is mandatory")
-	@Valid
-	private CadastralFilterRequest cadastralFilter;
 	
 }

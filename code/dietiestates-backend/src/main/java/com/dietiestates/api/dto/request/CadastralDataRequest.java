@@ -2,7 +2,6 @@ package com.dietiestates.api.dto.request;
 
 import java.math.BigDecimal;
 
-import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;

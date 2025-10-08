@@ -23,8 +23,5 @@ public class AuthenticationRequest {
 	@NotEmpty(message = "Password is mandatory")
 	@NotBlank(message = "Password is mandatory")
 	private String password;
-	
-	@NotEmpty(message = "Role is mandatory")
-	@NotBlank(message = "Role is mandatory")
-	private String role;
+
 }
