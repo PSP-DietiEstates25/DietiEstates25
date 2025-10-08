@@ -1,0 +1,24 @@
+package com.dietiestates.api.finderImpl;
+
+import org.springframework.stereotype.Component;
+
+import com.dietiestates.api.exception.notfound.AccountNotFoundException;
+import com.dietiestates.api.finder.DefaultAccountFinder;
+import com.dietiestates.api.model.DefaultAccount;
+import com.dietiestates.api.repository.DefaultAccountRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Component
+@RequiredArgsConstructor
+public class DefaultAccountFinderImpl implements DefaultAccountFinder {
+
+	private final DefaultAccountRepository defaultAccountRepository;
+
+	@Override
+	public DefaultAccount getDefaultAccountByEmail(String email) {
+		return defaultAccountRepository.findByEmail(email)
+				.orElseThrow(AccountNotFoundException::new);
+	}
+	
+}
