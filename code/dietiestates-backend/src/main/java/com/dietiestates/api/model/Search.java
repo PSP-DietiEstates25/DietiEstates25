@@ -36,7 +36,6 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @Builder
-@EqualsAndHashCode
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Search {

@@ -24,7 +24,6 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor
-@EqualsAndHashCode
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class SearchRealEstate {
@@ -56,6 +55,11 @@ public class SearchRealEstate {
 			Search search
 			) {
 		this.id = new SearchRealEstateKey(realEstate.getId(), search.getId());
+		realEstate.addSearchRealEstate(this);
+		search.addSearchRealEstate(this);
+	}
+	
+	public void setParentAssociations() {
 		realEstate.addSearchRealEstate(this);
 		search.addSearchRealEstate(this);
 	}

@@ -34,7 +34,6 @@ import lombok.ToString;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
 @ToString
 @Entity
 @EntityListeners(AuditingEntityListener.class)

@@ -47,10 +47,10 @@ public class SearchServiceImpl implements SearchService {
 	    var cadastralFilter = cadastralFilterFinder.getCadastralFilterById(searchSpec.getCadastralFilterId());
 	    var detail = detailFinder.getDetailById(searchSpec.getDetailId());
 	    
-	    var search = searchFactory.createSearchFromSpec(searchSpec, user, cadastralFilter, detail);
-	    searchRepository.save(search);
-		
+	    var search = searchFactory.createSearchFromSpec(searchSpec, user, cadastralFilter, detail);	    
 	    var searchedRealEstates = this.getSearchedRealEstates(search);
+	    
+	    search = searchRepository.save(search);
 		return realEstateService.createRealEstatesResponse(searchedRealEstates);
 	}
 	
