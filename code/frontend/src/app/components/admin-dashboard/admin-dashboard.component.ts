@@ -7,11 +7,11 @@ import {
   Validators,
 } from '@angular/forms';
 import {
-  AdminService,
+  AdminDashboardFacade,
   AdminAd,
   AdminUser,
   Role,
-} from '../../vecchioService/admin.service';
+} from './admin-dashboard.facade';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -20,7 +20,7 @@ import {
   templateUrl: './admin-dashboard.component.html',
 })
 export class AdminDashboardComponent {
-  private api = inject(AdminService);
+  private api = inject(AdminDashboardFacade);
   private fb = inject(FormBuilder);
 
   tabs = [
