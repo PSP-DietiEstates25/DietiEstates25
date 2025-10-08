@@ -33,6 +33,7 @@ public enum BusinessErrorCodes {
     ESTATE_AGENT_ROLE_NOT_FOUND(16004, HttpStatus.NOT_FOUND, "Estate agent role not found"),
     USER_ROLE_NOT_FOUND(16004, HttpStatus.NOT_FOUND, "User role not found"),
     ROLE_NOT_FOUND(16004, HttpStatus.NOT_FOUND, "Role not found"),
+    ACCOUNT_NOT_FOUND(17004, HttpStatus.NOT_FOUND, "Account not found"),
   
     //FORBIDDEN ERRORS
     CADASTRAL_DATA_NOT_OWNED_BY_REAL_ESTATE(14003, HttpStatus.FORBIDDEN, "Cadastral data not owned by real estate"),

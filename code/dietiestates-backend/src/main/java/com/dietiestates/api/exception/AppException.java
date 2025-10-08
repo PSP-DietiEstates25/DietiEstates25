@@ -11,6 +11,7 @@ import lombok.Setter;
 @Setter
 public class AppException extends RuntimeException {
 	
+	private static final long serialVersionUID = 7092605775833609714L;
 	private final int businessErrorCode;
 	private final HttpStatus httpErrorStatusCode;
 	
