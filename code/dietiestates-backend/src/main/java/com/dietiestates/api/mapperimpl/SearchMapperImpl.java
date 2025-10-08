@@ -21,8 +21,8 @@ public class SearchMapperImpl implements SearchMapper {
 				.size(request.getSize())
 				.page(request.getPage())
 				.userEmail(request.getUserEmail())
-				.detailId(request.getDetailId())
 				.cadastralFilterId(request.getCadastralFilterId())
+				.detailId(request.getDetailId())
 				.build();
 	}
 	
