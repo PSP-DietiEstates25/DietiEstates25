@@ -30,11 +30,14 @@ public class NotificationServiceImpl implements NotificationService {
 	private final NotificationCategoryFinder notificationCategoryFinder;
 	
 	@Override
-	public void createNotification(NotificationRequest request) {
+	public void createNotification(
+			String notificationCategoryName,
+			NotificationRequest request
+			) {
 		
 		var notificationSpec = notificationMapper.toSpec(request);
 		
-		var notificationCategory = notificationCategoryFinder.getNotificationCategoryByName(notificationSpec.getNotificationCategoryName());
+		var notificationCategory = notificationCategoryFinder.getNotificationCategoryByName(notificationCategoryName.toUpperCase());
 		var user = userFinder.getUserByEmail(notificationSpec.getUserEmail());
 	
 		var notification = notificationFactory.createNotificationFromSpec(notificationSpec, notificationCategory, user);

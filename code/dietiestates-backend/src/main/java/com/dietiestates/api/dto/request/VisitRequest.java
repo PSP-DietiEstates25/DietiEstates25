@@ -18,21 +18,19 @@ public class VisitRequest extends ProposalRequest {
 
 	@NotEmpty(message = "Date is mandatory")
 	@NotBlank(message = "Date is mandatory")
-	@Future(message = "Date must be in the future")
-	private LocalDate date;
+	private String date;
 	
 	@NotEmpty(message = "Time is mandatory")
 	@NotBlank(message = "Time is mandatory")
-	@Future(message = "Time must be in the future")
-	private LocalTime time;
+	private String time;
 	
 	@Builder(builderMethodName = "visitDtoBuilder")
 	public VisitRequest(
 			String category,
 			String status,
 			String userEmail,
-			LocalDate date,
-			LocalTime time
+			String date,
+			String time
 			) {
 		super(category, status, userEmail);
 		this.date = date;

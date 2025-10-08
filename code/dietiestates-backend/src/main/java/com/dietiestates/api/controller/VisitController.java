@@ -14,7 +14,7 @@ import com.dietiestates.api.service.VisitService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/realEstates/{realestateid}/visits")
+@RequestMapping("/realestates/{realestateid}/visits")
 @RequiredArgsConstructor
 public class VisitController {
 
@@ -26,7 +26,7 @@ public class VisitController {
 			@PathVariable Long realestateid
 			){
 		visitService.createVisit(request, realestateid);
-		return ResponseEntity.status(HttpStatus.ACCEPTED).build(); 
+		return ResponseEntity.status(HttpStatus.OK).build(); 
 	}
 	/* 
     private final VisitService visitService;

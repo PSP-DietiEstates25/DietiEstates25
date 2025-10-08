@@ -1,5 +1,8 @@
 package com.dietiestates.api.factoryImpl;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 import org.springframework.stereotype.Component;
 
 import com.dietiestates.api.factory.VisitFactory;
@@ -25,8 +28,8 @@ public class VisitFactoryImpl implements VisitFactory {
 				.status(spec.getStatus())
 				.user(user)
 				.realEstate(realEstate)
-				.date(spec.getDate())
-				.time(spec.getTime())
+				.date(LocalDate.parse(spec.getDate()))
+				.time(LocalTime.parse(spec.getTime()))
 				.build();
 	}
 

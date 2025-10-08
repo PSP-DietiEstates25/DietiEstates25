@@ -15,16 +15,16 @@ import lombok.Setter;
 @NoArgsConstructor
 public class VisitSpec extends ProposalSpec {
 
-	private LocalDate date;
-	private LocalTime time;
+	private String date;
+	private String time;
 	
 	@Builder(builderMethodName = "visitSpecBuilder")
 	public VisitSpec(
 			String category,
 			String status,
 			String userEmail,
-			LocalDate date,
-			LocalTime time
+			String date,
+			String time
 			) {
 		super(category, status, userEmail);
 		this.date = date;

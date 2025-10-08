@@ -25,7 +25,7 @@ import lombok.ToString;
 @EntityListeners(AuditingEntityListener.class)
 public class Offer extends Proposal {
 
-	@Column(nullable = false, precision = 14, scale = 2)
+	@Column(nullable = true, precision = 14, scale = 2)
 	private BigDecimal amount;
 	
 	@Builder(builderMethodName = "builder")

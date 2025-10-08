@@ -24,9 +24,10 @@ public class NotificationController {
 	
 	@PostMapping
 	public ResponseEntity<?> createNotification(
+			@PathVariable String notificationcategoryname,
 			@RequestBody NotificationRequest request
 			){
-		notificationService.createNotification(request);
+		notificationService.createNotification(notificationcategoryname, request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	

@@ -14,6 +14,6 @@ import lombok.Setter;
 public class NotificationSpec {
 
 	private String message;
-	private String notificationCategoryName;
+	//private String notificationCategoryName;
 	private String userEmail;
 }
