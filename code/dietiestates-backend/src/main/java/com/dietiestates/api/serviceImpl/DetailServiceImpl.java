@@ -6,8 +6,8 @@ import com.dietiestates.api.dto.request.DetailRequest;
 import com.dietiestates.api.dto.response.DetailResponse;
 import com.dietiestates.api.factory.DetailFactory;
 import com.dietiestates.api.finder.DetailFinder;
-import com.dietiestates.api.finder.RealEstateFinder;
-import com.dietiestates.api.finder.SearchFinder;
+import com.dietiestates.api.finder.GeographicalPositionFinder;
+import com.dietiestates.api.finder.UtilityFinder;
 import com.dietiestates.api.mapper.DetailMapper;
 import com.dietiestates.api.repository.DetailRepository;
 import com.dietiestates.api.service.DetailService;
@@ -23,18 +23,18 @@ public class DetailServiceImpl implements DetailService {
 	private final DetailFinder detailFinder;
 	private final DetailMapper detailMapper;
 	
-	private final RealEstateFinder realEstateFinder;
-	private final SearchFinder searchFinder;
+	private final GeographicalPositionFinder geographicalPositionFinder;
+	private final UtilityFinder utilityFinder;
 	
 	@Override
 	public void createDetail(DetailRequest request) {
 		
 		var detailSpec = detailMapper.toSpec(request);
 		
-		var realEstate = request.getRealEstateId() != null ? realEstateFinder.getRealEstateById(request.getRealEstateId()) : null;
-		var search = request.getSearchId() != null ? searchFinder.getSearchById(request.getSearchId()) : null;
+		var geographicalPosition = geographicalPositionFinder.getGeographicalPositionById(detailSpec.getGeographicalPositionId());
+		var utility = utilityFinder.getUtilityById(detailSpec.getUtilityId());
 		
-		var detail = detailFactory.createDetailFromSpec(detailSpec, realEstate, search);
+		var detail = detailFactory.createDetailFromSpec(detailSpec, geographicalPosition, utility);
 		detailRepository.save(detail);
 	}
 	

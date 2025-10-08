@@ -40,8 +40,7 @@ public class SearchRealEstateServiceImpl implements SearchRealEstateService {
 	
 	@Override
 	public SearchRealEstate of(Search search, RealEstate realEstate) {
-		return SearchRealEstate.searchRealEstateBuilder()
-				.createdDate(LocalDateTime.now())
+		return SearchRealEstate.builder()
 				.realEstate(realEstate)
 				.search(search)
 				.build();

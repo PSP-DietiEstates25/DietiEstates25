@@ -6,13 +6,16 @@ import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.request.StafferRequest;
 import com.dietiestates.api.exception.notfound.RoleNotFoundException;
-import com.dietiestates.api.factory.AuthenticationFactory;
+import com.dietiestates.api.factory.AccountFactory;
 import com.dietiestates.api.factory.EstateAgentFactory;
+import com.dietiestates.api.factory.SecurityAccountDecoratorFactory;
+import com.dietiestates.api.factory.UserFactory;
 import com.dietiestates.api.finder.AdminFinder;
 import com.dietiestates.api.finder.EstateAgentFinder;
 import com.dietiestates.api.finder.RoleFinder;
 import com.dietiestates.api.mapper.EstateAgentMapper;
 import com.dietiestates.api.mapper.UserMapper;
+import com.dietiestates.api.repository.DefaultAccountRepository;
 import com.dietiestates.api.repository.EstateAgentRepository;
 import com.dietiestates.api.repository.UserRepository;
 import com.dietiestates.api.security.JwtService;
@@ -28,10 +31,13 @@ public class EstateAgentAuthenticationServiceImpl extends AuthenticationServiceI
 	private final EstateAgentMapper estateAgentMapper;
 
 	public EstateAgentAuthenticationServiceImpl(
+			AccountFactory defaultAccountFactory,
+			SecurityAccountDecoratorFactory secutiryAccountDecoratorFactory,
+			DefaultAccountRepository defaultAccountRepository,
 			RoleFinder roleFinder,
 			UserRepository userRepository,
 			UserMapper userMapper,
-			AuthenticationFactory authenticationFactory,
+			UserFactory authenticationFactory,
 			PasswordEncoder passwordEncoder,
 			AuthenticationManager authenticationManager, 
 			JwtService jwtService,
@@ -41,7 +47,7 @@ public class EstateAgentAuthenticationServiceImpl extends AuthenticationServiceI
 			EstateAgentFinder estateAgentFinder,
 			EstateAgentMapper estateAgentMapper
 			) {
-		super(roleFinder, userRepository, userMapper, authenticationFactory, passwordEncoder, authenticationManager, jwtService);
+		super(defaultAccountFactory, secutiryAccountDecoratorFactory, defaultAccountRepository, roleFinder, userRepository, userMapper, authenticationFactory, passwordEncoder, authenticationManager, jwtService);
 		this.estateAgentRepository = estateAgentRepository;
 		this.estateAgentFactory = estateAgentFactory;
 		this.adminFinder = adminFinder;
@@ -54,9 +60,12 @@ public class EstateAgentAuthenticationServiceImpl extends AuthenticationServiceI
 		
 		var stafferSpec = estateAgentMapper.toSpec(request);
 		var estateAgentRole = roleFinder.getByRoleName("ESTATE_AGENT");
-		var creator = adminFinder.getAdminByEmail(stafferSpec.getAdminEmail());
+		
+		var defaultAccount = defaultAccountFactory.createAccountFromSpec(stafferSpec, passwordEncoder, estateAgentRole);
+		var securityAccountDecorator = secutiryAccountDecoratorFactory.createSecurityAccountDecoratorFromSpec(defaultAccount);
 				
-		var estateAgent = estateAgentFactory.createEstateAgentFromSpec(stafferSpec, passwordEncoder, estateAgentRole, creator);
+		var estateAgent = estateAgentFactory.createEstateAgentFromSpec(defaultAccount);
+		defaultAccountRepository.save(defaultAccount);
 		estateAgentRepository.save(estateAgent);
 	}
 

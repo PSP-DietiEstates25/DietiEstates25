@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.dietiestates.api.dto.request.SearchRequest;
 import com.dietiestates.api.dto.response.RealEstateResponse;
 import com.dietiestates.api.factory.SearchFactory;
+import com.dietiestates.api.finder.CadastralFilterFinder;
 import com.dietiestates.api.finder.DetailFinder;
 import com.dietiestates.api.finder.SearchFinder;
 import com.dietiestates.api.finder.UserFinder;
@@ -32,6 +33,7 @@ public class SearchServiceImpl implements SearchService {
 	private final SearchMapper searchMapper;
 	
 	private final UserFinder userFinder;
+	private final CadastralFilterFinder cadastralFilterFinder;
 	private final DetailFinder detailFinder;
 	
 	private final SearchRealEstateServiceImpl searchRealEstateService;
@@ -42,16 +44,11 @@ public class SearchServiceImpl implements SearchService {
 		var searchSpec = searchMapper.toSpec(request);
 		
 		var user = userFinder.getUserByEmail(searchSpec.getUserEmail());
-
-		var search = searchFactory.createSearchFromSpec(searchSpec, user);
-	    search = searchRepository.save(search);
-	    
+	    var cadastralFilter = cadastralFilterFinder.getCadastralFilterById(searchSpec.getCadastralFilterId());
 	    var detail = detailFinder.getDetailById(searchSpec.getDetailId());
-	    search.setDetail(detail);
 	    
-	    search = searchRepository.save(search);
-	    
-	    cadastralFilterService.createCadastralFilter(request.getCadastralFilter(), search.getId());
+	    var search = searchFactory.createSearchFromSpec(searchSpec, user, cadastralFilter, detail);
+	    searchRepository.save(search);
 		
 	    var searchedRealEstates = this.getSearchedRealEstates(search);
 		return realEstateService.createRealEstatesResponse(searchedRealEstates);

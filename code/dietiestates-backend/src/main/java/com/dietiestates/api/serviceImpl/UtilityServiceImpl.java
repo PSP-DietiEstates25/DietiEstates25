@@ -21,32 +21,22 @@ public class UtilityServiceImpl implements UtilityService {
 	private final UtilityRepository utilityRepository;
 	private final UtilityFactory utilityFactory;
 	private final UtilityFinder utilityFinder;
-	private final UtilityVerifier utilityVerifier;
+	//private final UtilityVerifier utilityVerifier;
 	private final UtilityMapper utilityMapper;
 	
-	private final DetailFinder detailFinder;
-	
 	@Override
-	public void createUtility(UtilityRequest request, Long detailId) {
+	public void createUtility(UtilityRequest request) {
 		
 		var utilitySpec = utilityMapper.toSpec(request);
 		
-		var detail = detailFinder.getDetailById(detailId);
-		
-		var utility = utilityFactory.createUtilityFromSpec(utilitySpec, detail);
+		var utility = utilityFactory.createUtilityFromSpec(utilitySpec);
 		utilityRepository.save(utility);
 	}
 	
 	@Override
-	public UtilityResponse getUtilityById(Long detailId, Long utilityId) {
+	public UtilityResponse getUtilityById(Long utilityId) {
 		
 		var utility = utilityFinder.getUtilityById(utilityId);
-		var detail = detailFinder.getDetailById(detailId);
-		
-		utilityVerifier.checkUtilityOwnedByDetail(
-				utility.getDetail().getId(),
-				detail.getId()
-				);
 		
 		return utilityMapper.fromEntity(utility);
 	}

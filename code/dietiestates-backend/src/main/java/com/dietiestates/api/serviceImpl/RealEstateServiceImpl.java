@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.dietiestates.api.dto.request.RealEstateRequest;
 import com.dietiestates.api.dto.response.RealEstateResponse;
 import com.dietiestates.api.factory.RealEstateFactory;
+import com.dietiestates.api.finder.CadastralDataFinder;
+import com.dietiestates.api.finder.DetailFinder;
 import com.dietiestates.api.finder.EstateAgentFinder;
 import com.dietiestates.api.finder.RealEstateFinder;
 import com.dietiestates.api.mapper.RealEstateMapper;
@@ -31,6 +33,8 @@ public class RealEstateServiceImpl implements RealEstateService {
 	private final RealEstateMapper realEstateMapper;
 	
 	private final EstateAgentFinder estateAgentFinder;
+	private final CadastralDataFinder cadastralDataFinder;
+	private final DetailFinder detailFinder;
 	
 	@Override
 	public void createRealEstate(RealEstateRequest request) {
@@ -38,8 +42,10 @@ public class RealEstateServiceImpl implements RealEstateService {
 		var realEstateSpec = realEstateMapper.toSpec(request);
 		
 		var estateAgent = estateAgentFinder.getEstateAgentByEmail(realEstateSpec.getEstateAgentEmail());
+		var cadastralData = cadastralDataFinder.getCadastralDataById(realEstateSpec.getCadastralDataId());
+		var detail = detailFinder.getDetailById(realEstateSpec.getDetailId());
 		
-		var realEstate = realEstateFactory.createRealEstateFromSpec(realEstateSpec, estateAgent);
+		var realEstate = realEstateFactory.createRealEstateFromSpec(realEstateSpec, estateAgent, cadastralData, detail);
 		realEstateRepository.save(realEstate);
 	}
 	

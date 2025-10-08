@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.request.StafferRequest;
 import com.dietiestates.api.exception.notfound.RoleNotFoundException;
+import com.dietiestates.api.factory.AccountFactory;
 import com.dietiestates.api.factory.AdminFactory;
-import com.dietiestates.api.factory.AuthenticationFactory;
+import com.dietiestates.api.factory.SecurityAccountDecoratorFactory;
+import com.dietiestates.api.factory.UserFactory;
 import com.dietiestates.api.finder.AdminFinder;
 import com.dietiestates.api.finder.EstateAgentFinder;
 import com.dietiestates.api.finder.RoleFinder;
@@ -15,6 +17,7 @@ import com.dietiestates.api.finder.UserFinder;
 import com.dietiestates.api.mapper.AdminMapper;
 import com.dietiestates.api.mapper.UserMapper;
 import com.dietiestates.api.repository.AdminRepository;
+import com.dietiestates.api.repository.DefaultAccountRepository;
 import com.dietiestates.api.repository.UserRepository;
 import com.dietiestates.api.security.JwtService;
 import com.dietiestates.api.service.AdminAuthenticationService;
@@ -28,10 +31,13 @@ public class AdminAuthenticationServiceImpl extends AuthenticationServiceImpl im
 	private final AdminMapper adminMapper;
 
 	public AdminAuthenticationServiceImpl(
+			AccountFactory defaultAccountFactory,
+			SecurityAccountDecoratorFactory secutiryAccountDecoratorFactory,
+			DefaultAccountRepository defaultAccountRepository,
 			RoleFinder roleFinder,
 			UserRepository userRepository,
 			UserMapper userMapper,
-			AuthenticationFactory authenticationFactory,
+			UserFactory authenticationFactory,
 			PasswordEncoder passwordEncoder,
 			AuthenticationManager authenticationManager,
 			JwtService jwtService,
@@ -42,7 +48,7 @@ public class AdminAuthenticationServiceImpl extends AuthenticationServiceImpl im
 			AdminMapper adminMapper,
 			AdminFactory adminFactory
 			) {
-		super(roleFinder, userRepository, userMapper, authenticationFactory, passwordEncoder, authenticationManager, jwtService);
+		super(defaultAccountFactory, secutiryAccountDecoratorFactory, defaultAccountRepository, roleFinder, userRepository, userMapper, authenticationFactory, passwordEncoder, authenticationManager, jwtService);
 		this.adminRepository = adminRepository;
 		this.adminFinder = adminFinder;
 		this.adminMapper = adminMapper;
@@ -54,9 +60,13 @@ public class AdminAuthenticationServiceImpl extends AuthenticationServiceImpl im
 		
 		var stafferSpec = adminMapper.toSpec(request);
 		var adminRole = roleFinder.getByRoleName("ADMIN");
-		var creator = adminFinder.getAdminByEmail(stafferSpec.getAdminEmail());
+		var adminCreator = adminFinder.getAdminByEmail(stafferSpec.getAdminEmail());
 
-		var admin = adminFactory.createAdminFromSpec(stafferSpec, passwordEncoder, adminRole, creator);
+		var defaultAccount = defaultAccountFactory.createAccountFromSpec(stafferSpec, passwordEncoder, adminRole);
+		var securityAccountDecorator = secutiryAccountDecoratorFactory.createSecurityAccountDecoratorFromSpec(defaultAccount);
+		
+		var admin = adminFactory.createAdminFromSpec(defaultAccount);
+		defaultAccountRepository.save(defaultAccount);
 		adminRepository.save(admin);
 	}
 }

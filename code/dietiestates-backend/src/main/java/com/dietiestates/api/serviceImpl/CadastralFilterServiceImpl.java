@@ -21,29 +21,22 @@ public class CadastralFilterServiceImpl implements CadastralFilterService {
 	private final CadastralFilterRepository cadastralFilterRepository;
 	private final CadastralFilterFactory cadastralFilterFactory;
 	private final CadastralFilterFinder cadastralFilterFinder;
-	private final CadastralFilterVerifier cadastralFilterVerifier;
+	//private final CadastralFilterVerifier cadastralFilterVerifier;
 	private final CadastralFilterMapper cadastralFilterMapper;
 	
-	private final SearchFinder searchFinder;
-	
 	@Override
-	public void createCadastralFilter(CadastralFilterRequest request, Long searchId) {
+	public void createCadastralFilter(CadastralFilterRequest request) {
 		
 		var cadastralFilterSpec = cadastralFilterMapper.toSpec(request);
 		
-		var search = searchFinder.getSearchById(searchId);
-		
-		var cadastralFilter = cadastralFilterFactory.createCadastralFilterFromSpec(cadastralFilterSpec, search);
+		var cadastralFilter = cadastralFilterFactory.createCadastralFilterFromSpec(cadastralFilterSpec);
 		cadastralFilterRepository.save(cadastralFilter);
 	}
 	
 	@Override
-	public CadastralFilterResponse getCadastralFilterById(Long searchId, Long cadastralFilterId) {
+	public CadastralFilterResponse getCadastralFilterById(Long cadastralFilterId) {
 		
 		var cadastralFilter = cadastralFilterFinder.getCadastralFilterById(cadastralFilterId);
-		var search = searchFinder.getSearchById(searchId);
-		
-		cadastralFilterVerifier.checkCadastralFilterOwnedBySearch(cadastralFilter.getSearch().getId(), search.getId());
 
 		return cadastralFilterMapper.fromEntity(cadastralFilter);
 	}

@@ -6,7 +6,6 @@ import com.dietiestates.api.dto.request.CadastralDataRequest;
 import com.dietiestates.api.dto.response.CadastralDataResponse;
 import com.dietiestates.api.factory.CadastralDataFactory;
 import com.dietiestates.api.finder.CadastralDataFinder;
-import com.dietiestates.api.finder.RealEstateFinder;
 import com.dietiestates.api.mapper.CadastralDataMapper;
 import com.dietiestates.api.repository.CadastralDataRepository;
 import com.dietiestates.api.service.CadastralDataService;
@@ -21,32 +20,22 @@ public class CadastralDataServiceImpl implements CadastralDataService {
 	private final CadastralDataRepository cadastralDataRepository;
 	private final CadastralDataFactory cadastralDataFactory;
 	private final CadastralDataFinder cadastralDataFinder;
-	private final CadastralDataVerifier cadastralDataVerifier;
+	//private final CadastralDataVerifier cadastralDataVerifier;
 	private final CadastralDataMapper cadastralDataMapper;
 	
-	private final RealEstateFinder realEstateFinder;
-	
 	@Override
-	public void createCadastralData(CadastralDataRequest request, Long realEstateId) {
+	public void createCadastralData(CadastralDataRequest request) {
 		
 		var cadastralDataSpec = cadastralDataMapper.toSpec(request);
 		
-		var realEstate = realEstateFinder.getRealEstateById(realEstateId);
-		
-		var cadastralData = cadastralDataFactory.createCadastralDataFromSpec(cadastralDataSpec, realEstate);
+		var cadastralData = cadastralDataFactory.createCadastralDataFromSpec(cadastralDataSpec);
 		cadastralDataRepository.save(cadastralData);
 	}
 	
 	@Override
-	public CadastralDataResponse getCadastralDataById(Long cadastralDataId, Long realEstateId) {
+	public CadastralDataResponse getCadastralDataById(Long cadastralDataId) {
 		
 		var cadastralData = cadastralDataFinder.getCadastralDataById(cadastralDataId);
-		var realEstate = realEstateFinder.getRealEstateById(realEstateId);
-	
-		cadastralDataVerifier.checkCadastralDataOwnedByRealEstate(
-				cadastralData.getRealEstate().getId(),
-				realEstate.getId()
-				);
 		
 		return cadastralDataMapper.fromEntity(cadastralData);
 	}

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import com.dietiestates.api.dto.request.GeographicalPositionRequest;
 import com.dietiestates.api.dto.response.GeographicalPositionResponse;
 import com.dietiestates.api.factory.GeographicalPositionFactory;
-import com.dietiestates.api.finder.DetailFinder;
 import com.dietiestates.api.finder.GeographicalPositionFinder;
 import com.dietiestates.api.mapper.GeographicalPositionMapper;
 import com.dietiestates.api.repository.GeographicalPositionRepository;
@@ -21,32 +20,22 @@ public class GeographicalPositionServiceImpl implements GeographicalPositionServ
 	private final GeographicalPositionRepository geographicalPositionRepository;
 	private final GeographicalPositionFactory geographicalPositionFactory;
 	private final GeographicalPositionFinder geographicalPositionFinder;
-	private final GeographicalPositionVerifier geographicalPositionVerifier;
+	//private final GeographicalPositionVerifier geographicalPositionVerifier;
 	private final GeographicalPositionMapper geographicalPositionMapper;
 	
-	private final DetailFinder detailFinder;
-	
 	@Override
-	public void createGeographicalPosition(GeographicalPositionRequest request, Long detailId) {
+	public void createGeographicalPosition(GeographicalPositionRequest request) {
 		
 		var geographicalPositionSpec = geographicalPositionMapper.toSpec(request);
-		
-		var detail = detailFinder.getDetailById(detailId);
 
-		var geographicalPosition = geographicalPositionFactory.createGeographicalPositionFromSpec(geographicalPositionSpec, detail);
+		var geographicalPosition = geographicalPositionFactory.createGeographicalPositionFromSpec(geographicalPositionSpec);
 		geographicalPositionRepository.save(geographicalPosition);
 	}
 	
 	@Override
-	public GeographicalPositionResponse getGeographicalPositionById(Long detailId, Long geographicalPositionId) {
+	public GeographicalPositionResponse getGeographicalPositionById(Long geographicalPositionId) {
 		
 		var geographicalPosition = geographicalPositionFinder.getGeographicalPositionById(geographicalPositionId);
-		var detail = detailFinder.getDetailById(detailId);
-		
-		geographicalPositionVerifier.checkGeographicalPositionOwnedByDetail(
-				geographicalPosition.getDetail().getId(),
-				detail.getId()
-				);
 		
 		return geographicalPositionMapper.fromEntity(geographicalPosition);
 	}
