@@ -15,7 +15,6 @@ public class AuthenticationSpec {
 
 	private String email;
 	private String password;
-	private Boolean accountLocked;
 	private Boolean enabled;
-	private String role;
+	private Boolean locked;
 }

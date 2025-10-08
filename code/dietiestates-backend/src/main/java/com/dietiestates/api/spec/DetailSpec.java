@@ -13,6 +13,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class DetailSpec {
 
-	private Long realEstateId;
-	private Long searchId;
+	private Long geographicalPositionId;
+	private Long utilityId;
 }

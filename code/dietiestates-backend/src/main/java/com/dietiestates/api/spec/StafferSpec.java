@@ -20,10 +20,9 @@ public class StafferSpec extends AuthenticationSpec {
 			String password,
 			Boolean accountLocked,
 			Boolean enabled,
-			String role,
 			String adminEmail
 			) {
-		super(email, password, accountLocked, enabled, role);
+		super(email, password, accountLocked, enabled);
 		this.adminEmail = adminEmail;
 	}
 }

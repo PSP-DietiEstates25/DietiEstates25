@@ -17,4 +17,6 @@ public class RealEstateSpec {
 	private String[] images;
 	private String description;
 	private String estateAgentEmail;
+	private Long cadastralDataId;
+	private Long detailId;
 }
