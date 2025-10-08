@@ -18,6 +18,4 @@ public class DetailResponse {
 	private LocalDateTime lastModifiedDate;
 	private Long geographicalPositionId;
 	private Long utilityId;
-	private Long searchId;
-	private Long realEstateId;
 }
