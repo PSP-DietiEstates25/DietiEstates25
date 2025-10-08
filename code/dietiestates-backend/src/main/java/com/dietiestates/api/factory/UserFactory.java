@@ -1,11 +1,12 @@
 package com.dietiestates.api.factory;
 
-import com.dietiestates.api.model.Admin;
 import com.dietiestates.api.model.DefaultAccount;
+import com.dietiestates.api.model.User;
 
-public interface AdminFactory {
+public interface UserFactory {
 
-	Admin createAdminFromSpec(
+	User createUserFromSpec(
 			DefaultAccount securityAccountDecorator
 			);
+
 }
