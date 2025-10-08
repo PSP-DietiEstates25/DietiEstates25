@@ -5,7 +5,7 @@ import com.dietiestates.api.dto.response.UtilityResponse;
 
 public interface UtilityService {
 
-	void createUtility(UtilityRequest request, Long detailId);
+	void createUtility(UtilityRequest request);
 	
-	UtilityResponse getUtilityById(Long detailId, Long utilityId);
+	UtilityResponse getUtilityById(Long utilityId);
 }

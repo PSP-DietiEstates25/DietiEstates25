@@ -5,7 +5,7 @@ import com.dietiestates.api.dto.response.CadastralFilterResponse;
 
 public interface CadastralFilterService {
 
-	void createCadastralFilter(CadastralFilterRequest request, Long searchId);
+	void createCadastralFilter(CadastralFilterRequest request);
 	
-	CadastralFilterResponse getCadastralFilterById(Long searchId, Long cadastralFilterId);
+	CadastralFilterResponse getCadastralFilterById(Long cadastralFilterId);
 }

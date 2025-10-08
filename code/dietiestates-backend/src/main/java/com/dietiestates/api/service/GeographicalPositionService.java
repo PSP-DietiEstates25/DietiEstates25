@@ -5,7 +5,7 @@ import com.dietiestates.api.dto.response.GeographicalPositionResponse;
 
 public interface GeographicalPositionService {
 
-	void createGeographicalPosition(GeographicalPositionRequest request, Long detailId);
+	void createGeographicalPosition(GeographicalPositionRequest request);
 	
-	GeographicalPositionResponse getGeographicalPositionById(Long detailId, Long geographicalPositionId);
+	GeographicalPositionResponse getGeographicalPositionById(Long geographicalPositionId);
 }

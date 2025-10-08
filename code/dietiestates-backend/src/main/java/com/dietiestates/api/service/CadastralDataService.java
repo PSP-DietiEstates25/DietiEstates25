@@ -5,7 +5,7 @@ import com.dietiestates.api.dto.response.CadastralDataResponse;
 
 public interface CadastralDataService {
 
-	void createCadastralData(CadastralDataRequest request, Long realEstateId);
+	void createCadastralData(CadastralDataRequest request);
 	
-	CadastralDataResponse getCadastralDataById(Long cadastralDataId, Long realEstateId);
+	CadastralDataResponse getCadastralDataById(Long cadastralDataId);
 }
