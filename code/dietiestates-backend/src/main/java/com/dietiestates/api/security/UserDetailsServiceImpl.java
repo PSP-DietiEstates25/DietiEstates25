@@ -6,7 +6,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dietiestates.api.repository.UserRepository;
+import com.dietiestates.api.finder.DefaultAccountFinder;
+import com.dietiestates.api.model.SecurityAccountDecorator;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,13 +15,19 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-	private final UserRepository userRepository;
+	private final DefaultAccountFinder defaultAccountFinder;
 	
 	@Override
 	@Transactional
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		return userRepository.findByEmail(email)
-				.orElseThrow(() -> new UsernameNotFoundException("User not found."));
+		
+		var account = defaultAccountFinder.getDefaultAccountByEmail(email);
+		
+		return SecurityAccountDecorator.builder()
+				.defaultAccount(account)
+				.enabled(true)
+				.locked(false)
+				.build();
 	}
 
 }
