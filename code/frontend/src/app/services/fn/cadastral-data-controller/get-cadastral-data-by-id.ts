@@ -12,14 +12,12 @@ import { CadastralDataResponse } from '../../models/cadastral-data-response';
 
 export interface GetCadastralDataById$Params {
   cadastraldataid: number;
-  realestateid: number;
 }
 
 export function getCadastralDataById(http: HttpClient, rootUrl: string, params: GetCadastralDataById$Params, context?: HttpContext): Observable<StrictHttpResponse<CadastralDataResponse>> {
   const rb = new RequestBuilder(rootUrl, getCadastralDataById.PATH, 'get');
   if (params) {
     rb.path('cadastraldataid', params.cadastraldataid, {});
-    rb.path('realestateid', params.realestateid, {});
   }
 
   return http.request(
@@ -32,4 +30,4 @@ export function getCadastralDataById(http: HttpClient, rootUrl: string, params: 
   );
 }
 
-getCadastralDataById.PATH = '/realestates/{realestateid}/cadastraldata/{cadastraldataid}';
+getCadastralDataById.PATH = '/cadastraldata/{cadastraldataid}';

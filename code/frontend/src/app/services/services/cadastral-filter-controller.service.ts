@@ -24,7 +24,7 @@ export class CadastralFilterControllerService extends BaseService {
   }
 
   /** Path part for operation `createCadastralFilter()` */
-  static readonly CreateCadastralFilterPath = '/searches/{searchid}/cadastralfilters';
+  static readonly CreateCadastralFilterPath = '/cadastralfilters';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -53,7 +53,7 @@ export class CadastralFilterControllerService extends BaseService {
   }
 
   /** Path part for operation `getCadastralFilterById()` */
-  static readonly GetCadastralFilterByIdPath = '/searches/{searchid}/cadastralfilters/{cadastralfilterid}';
+  static readonly GetCadastralFilterByIdPath = '/cadastralfilters/{cadastralfilterid}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.

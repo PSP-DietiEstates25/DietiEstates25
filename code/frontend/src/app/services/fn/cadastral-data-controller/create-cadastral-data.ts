@@ -11,7 +11,6 @@ import { RequestBuilder } from '../../request-builder';
 import { CadastralDataRequest } from '../../models/cadastral-data-request';
 
 export interface CreateCadastralData$Params {
-  realestateid: number;
       body: CadastralDataRequest
 }
 
@@ -19,7 +18,6 @@ export function createCadastralData(http: HttpClient, rootUrl: string, params: C
 }>> {
   const rb = new RequestBuilder(rootUrl, createCadastralData.PATH, 'post');
   if (params) {
-    rb.path('realestateid', params.realestateid, {});
     rb.body(params.body, 'application/json');
   }
 
@@ -34,4 +32,4 @@ export function createCadastralData(http: HttpClient, rootUrl: string, params: C
   );
 }
 
-createCadastralData.PATH = '/realestates/{realestateid}/cadastraldata';
+createCadastralData.PATH = '/cadastraldata';

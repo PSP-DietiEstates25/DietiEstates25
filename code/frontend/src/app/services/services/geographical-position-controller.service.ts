@@ -24,7 +24,7 @@ export class GeographicalPositionControllerService extends BaseService {
   }
 
   /** Path part for operation `createGeographicalPosition()` */
-  static readonly CreateGeographicalPositionPath = '/details/{detailid}/geographicalpositions';
+  static readonly CreateGeographicalPositionPath = '/geographicalpositions';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -53,7 +53,7 @@ export class GeographicalPositionControllerService extends BaseService {
   }
 
   /** Path part for operation `getGeographicalPositionById()` */
-  static readonly GetGeographicalPositionByIdPath = '/details/{detailid}/geographicalpositions/{geographicalpositionid}';
+  static readonly GetGeographicalPositionByIdPath = '/geographicalpositions/{geographicalpositionid}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.

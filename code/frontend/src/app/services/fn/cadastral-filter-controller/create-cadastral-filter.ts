@@ -11,7 +11,6 @@ import { RequestBuilder } from '../../request-builder';
 import { CadastralFilterRequest } from '../../models/cadastral-filter-request';
 
 export interface CreateCadastralFilter$Params {
-  searchid: number;
       body: CadastralFilterRequest
 }
 
@@ -19,7 +18,6 @@ export function createCadastralFilter(http: HttpClient, rootUrl: string, params:
 }>> {
   const rb = new RequestBuilder(rootUrl, createCadastralFilter.PATH, 'post');
   if (params) {
-    rb.path('searchid', params.searchid, {});
     rb.body(params.body, 'application/json');
   }
 
@@ -34,4 +32,4 @@ export function createCadastralFilter(http: HttpClient, rootUrl: string, params:
   );
 }
 
-createCadastralFilter.PATH = '/searches/{searchid}/cadastralfilters';
+createCadastralFilter.PATH = '/cadastralfilters';
