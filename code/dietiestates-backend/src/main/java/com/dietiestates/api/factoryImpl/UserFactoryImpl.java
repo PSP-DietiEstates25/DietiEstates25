@@ -1,23 +1,26 @@
 package com.dietiestates.api.factoryImpl;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
-import com.dietiestates.api.factory.AdminFactory;
-import com.dietiestates.api.model.Admin;
+import com.dietiestates.api.factory.UserFactory;
 import com.dietiestates.api.model.DefaultAccount;
+import com.dietiestates.api.model.User;
 
 import lombok.RequiredArgsConstructor;
 
 @Component
+@Primary
 @RequiredArgsConstructor
-public class AdminFactoryImpl implements AdminFactory {
-	
+public class UserFactoryImpl implements UserFactory {
+
 	@Override
-	public Admin createAdminFromSpec(
+	public User createUserFromSpec(
 			DefaultAccount securityAccountDecorator
 			) {
-		return Admin.builder()
+		return User.builder()
 				.securityAccountDecorator(securityAccountDecorator)
 				.build();
 	}
+	
 }

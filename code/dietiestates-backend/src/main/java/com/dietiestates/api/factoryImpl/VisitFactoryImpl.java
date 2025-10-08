@@ -2,8 +2,6 @@ package com.dietiestates.api.factoryImpl;
 
 import org.springframework.stereotype.Component;
 
-import com.dietiestates.api.enums.ProposalCategory;
-import com.dietiestates.api.enums.ProposalStatus;
 import com.dietiestates.api.factory.VisitFactory;
 import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.model.User;
@@ -22,9 +20,9 @@ public class VisitFactoryImpl implements VisitFactory {
 			User user,
 			RealEstate realEstate
 			) {
-		return Visit.visitBuilder()
-				.category(ProposalCategory.valueOf(spec.getCategory()))
-				.status(ProposalStatus.valueOf(spec.getStatus()))
+		return Visit.builder()
+				.category(spec.getCategory())
+				.status(spec.getStatus())
 				.user(user)
 				.realEstate(realEstate)
 				.date(spec.getDate())

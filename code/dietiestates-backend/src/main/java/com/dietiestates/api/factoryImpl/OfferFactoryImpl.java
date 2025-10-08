@@ -2,8 +2,6 @@ package com.dietiestates.api.factoryImpl;
 
 import org.springframework.stereotype.Component;
 
-import com.dietiestates.api.enums.ProposalCategory;
-import com.dietiestates.api.enums.ProposalStatus;
 import com.dietiestates.api.factory.OfferFactory;
 import com.dietiestates.api.model.Offer;
 import com.dietiestates.api.model.RealEstate;
@@ -22,9 +20,9 @@ public class OfferFactoryImpl implements OfferFactory {
 			User user,
 			RealEstate realEstate
 			) {
-		return Offer.offerBuilder()
-				.category(ProposalCategory.valueOf(spec.getCategory()))
-				.status(ProposalStatus.valueOf(spec.getStatus()))
+		return Offer.builder()
+				.category(spec.getCategory())
+				.status(spec.getStatus())
 				.user(user)
 				.realEstate(realEstate)
 				.amount(spec.getAmount())

@@ -3,7 +3,6 @@ package com.dietiestates.api.factoryImpl;
 import org.springframework.stereotype.Component;
 
 import com.dietiestates.api.factory.UtilityFactory;
-import com.dietiestates.api.model.Detail;
 import com.dietiestates.api.model.Utility;
 import com.dietiestates.api.spec.UtilitySpec;
 
@@ -15,14 +14,12 @@ public class UtilityFactoryImpl implements UtilityFactory {
 
 	@Override
 	public Utility createUtilityFromSpec(
-			UtilitySpec spec,
-			Detail detail
+			UtilitySpec spec
 			) {
-		return Utility.utilityBuilder()
+		return Utility.builder()
 				.hasAirConditioning(spec.getHasAirConditioning())
 				.hasDoorman(spec.getHasDoorman())
 				.hasElevator(spec.getHasElevator())
-				.detail(detail)
 				.build();
 	}
 

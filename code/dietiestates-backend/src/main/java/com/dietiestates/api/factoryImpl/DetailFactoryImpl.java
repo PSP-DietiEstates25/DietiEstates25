@@ -4,8 +4,8 @@ import org.springframework.stereotype.Component;
 
 import com.dietiestates.api.factory.DetailFactory;
 import com.dietiestates.api.model.Detail;
-import com.dietiestates.api.model.RealEstate;
-import com.dietiestates.api.model.Search;
+import com.dietiestates.api.model.GeographicalPosition;
+import com.dietiestates.api.model.Utility;
 import com.dietiestates.api.spec.DetailSpec;
 
 import lombok.RequiredArgsConstructor;
@@ -17,12 +17,12 @@ public class DetailFactoryImpl implements DetailFactory {
 	@Override
 	public Detail createDetailFromSpec(
 			DetailSpec spec,
-			RealEstate realEstate,
-			Search search
+			GeographicalPosition geographicalPosition,
+			Utility utility
 			) {
-		return Detail.detailBuilder()
-				.realEstate(realEstate)
-				.search(search)
+		return Detail.builder()
+				.geographicalPosition(geographicalPosition)
+				.utility(utility)
 				.build();
 	}
 }

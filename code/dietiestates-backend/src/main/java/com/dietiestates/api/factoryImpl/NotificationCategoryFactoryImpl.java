@@ -2,7 +2,6 @@ package com.dietiestates.api.factoryImpl;
 
 import org.springframework.stereotype.Component;
 
-import com.dietiestates.api.enums.NotificationCategoryType;
 import com.dietiestates.api.factory.NotificationCategoryFactory;
 import com.dietiestates.api.model.NotificationCategory;
 import com.dietiestates.api.spec.NotificationCategorySpec;
@@ -18,7 +17,7 @@ public class NotificationCategoryFactoryImpl implements NotificationCategoryFact
 			NotificationCategorySpec spec
 			) {
 		return NotificationCategory.builder()
-				.name(NotificationCategoryType.valueOf(spec.getName()))
+				.name(spec.getName())
 				.isActive(spec.getIsActive())
 				.build();
 	}

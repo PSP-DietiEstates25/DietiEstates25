@@ -2,8 +2,9 @@ package com.dietiestates.api.factoryImpl;
 
 import org.springframework.stereotype.Component;
 
-import com.dietiestates.api.enums.AdCategory;
 import com.dietiestates.api.factory.RealEstateFactory;
+import com.dietiestates.api.model.CadastralData;
+import com.dietiestates.api.model.Detail;
 import com.dietiestates.api.model.EstateAgent;
 import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.spec.RealEstateSpec;
@@ -17,13 +18,17 @@ public class RealEstateFactoryImpl implements RealEstateFactory {
 	@Override
 	public RealEstate createRealEstateFromSpec(
 			RealEstateSpec spec,
-			EstateAgent estateAgent
+			EstateAgent estateAgent,
+			CadastralData cadastralData,
+			Detail detail
 			) {
 		return RealEstate.builder()
-				.category(AdCategory.valueOf(spec.getCategory()))
+				.category(spec.getCategory())
 				.images(spec.getImages())
 				.description(spec.getDescription())
 				.estateAgent(estateAgent)
+				.cadastralData(cadastralData)
+				.detail(detail)
 				.build();
 	}
 

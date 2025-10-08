@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 
 import com.dietiestates.api.factory.CadastralDataFactory;
 import com.dietiestates.api.model.CadastralData;
-import com.dietiestates.api.model.RealEstate;
 import com.dietiestates.api.spec.CadastralDataSpec;
 
 import lombok.RequiredArgsConstructor;
@@ -15,16 +14,14 @@ public class CadastralDataFactoryImpl implements CadastralDataFactory {
 
 	@Override
 	public CadastralData createCadastralDataFromSpec(
-			CadastralDataSpec spec,
-			RealEstate realEstate
+			CadastralDataSpec spec
 			) {
-		return CadastralData.cadastralDataBuilder()
+		return CadastralData.builder()
 				.price(spec.getPrice())
 				.squareMeters(spec.getSquareMeters())
 				.energyClass(spec.getEnergyClass())
 				.rooms(spec.getRooms())
 				.floor(spec.getFloor())
-				.realEstate(realEstate)
 				.build();
 	}
 }
