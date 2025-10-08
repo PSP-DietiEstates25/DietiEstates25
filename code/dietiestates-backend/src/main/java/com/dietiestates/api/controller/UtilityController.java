@@ -16,7 +16,7 @@ import com.dietiestates.api.service.UtilityService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/details/{detailid}/utilities")
+@RequestMapping("/utilities")
 @RequiredArgsConstructor
 public class UtilityController {
 
@@ -24,19 +24,17 @@ public class UtilityController {
 	
 	@PostMapping
 	public ResponseEntity<?> createUtility(
-			@PathVariable Long detailid,
 			@RequestBody UtilityRequest request
 			){
-		utilityService.createUtility(request, detailid);
+		utilityService.createUtility(request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
 	@GetMapping("/{utilityid}")
 	public ResponseEntity<UtilityResponse> getUtilityById(
-			@PathVariable Long detailid,
 			@PathVariable Long utilityid
 			){
-		var utility = utilityService.getUtilityById(detailid, utilityid);
+		var utility = utilityService.getUtilityById(utilityid);
 		return ResponseEntity.status(HttpStatus.OK).body(utility);
 	}
 }

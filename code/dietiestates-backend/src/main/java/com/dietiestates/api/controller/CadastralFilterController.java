@@ -16,7 +16,7 @@ import com.dietiestates.api.service.CadastralFilterService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/searches/{searchid}/cadastralfilters")
+@RequestMapping("/cadastralfilters")
 @RequiredArgsConstructor
 public class CadastralFilterController {
 
@@ -24,19 +24,17 @@ public class CadastralFilterController {
 	
 	@PostMapping
 	public ResponseEntity<?> createCadastralFilter(
-			@PathVariable Long searchid,
 			@RequestBody CadastralFilterRequest request
 				){
-		cadastralFilterService.createCadastralFilter(request, searchid);
+		cadastralFilterService.createCadastralFilter(request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
 	@GetMapping("/{cadastralfilterid}")
 	public ResponseEntity<CadastralFilterResponse> getCadastralFilterById(
-			@PathVariable Long searchid,
 			@PathVariable Long cadastralfilterid
 			){
-		var cadastralFilter = cadastralFilterService.getCadastralFilterById(searchid, cadastralfilterid);
+		var cadastralFilter = cadastralFilterService.getCadastralFilterById(cadastralfilterid);
 		return ResponseEntity.status(HttpStatus.OK).body(cadastralFilter);
 	}
 }

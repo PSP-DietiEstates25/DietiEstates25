@@ -16,7 +16,7 @@ import com.dietiestates.api.service.CadastralDataService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/realestates/{realestateid}/cadastraldata")
+@RequestMapping("/cadastraldata")
 @RequiredArgsConstructor
 public class CadastralDataController {
 
@@ -24,19 +24,17 @@ public class CadastralDataController {
 	
 	@PostMapping
 	public ResponseEntity<?> createCadastralData(
-			@PathVariable Long realestateid,
 			@RequestBody CadastralDataRequest request
 				){
-		cadastralDataService.createCadastralData(request, realestateid);
+		cadastralDataService.createCadastralData(request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
 	@GetMapping("/{cadastraldataid}")
 	public ResponseEntity<CadastralDataResponse> getCadastralDataById(
-			@PathVariable Long cadastraldataid,
-			@PathVariable Long realestateid
+			@PathVariable Long cadastraldataid
 			){
-		var cadastralData = cadastralDataService.getCadastralDataById(cadastraldataid, realestateid);
+		var cadastralData = cadastralDataService.getCadastralDataById(cadastraldataid);
 		return ResponseEntity.status(HttpStatus.OK).body(cadastralData);
 	}
 }

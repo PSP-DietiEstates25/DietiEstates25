@@ -16,7 +16,7 @@ import com.dietiestates.api.service.GeographicalPositionService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/details/{detailid}/geographicalpositions")
+@RequestMapping("/geographicalpositions")
 @RequiredArgsConstructor
 public class GeographicalPositionController {
 
@@ -24,19 +24,17 @@ public class GeographicalPositionController {
 	
 	@PostMapping
 	public ResponseEntity<?> createGeographicalPosition(
-			@PathVariable Long detailid,
 			@RequestBody GeographicalPositionRequest request
 			){
-		geographicalPositionService.createGeographicalPosition(request, detailid);
+		geographicalPositionService.createGeographicalPosition(request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
 	@GetMapping("/{geographicalpositionid}")
 	public ResponseEntity<GeographicalPositionResponse> getGeographicalPositionById(
-			@PathVariable Long detailid, 
 			@PathVariable Long geographicalpositionid
 			){
-		var geographicalPosition = geographicalPositionService.getGeographicalPositionById(detailid, geographicalpositionid);
+		var geographicalPosition = geographicalPositionService.getGeographicalPositionById(geographicalpositionid);
 		return ResponseEntity.status(HttpStatus.OK).body(geographicalPosition);
 	}
 }
