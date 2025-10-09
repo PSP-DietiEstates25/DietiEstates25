@@ -181,10 +181,6 @@ export class SearchFacade {
                     res.headers.get('Location') ?? res.headers.get('location');
                   cadastralFilterId = this.parseIdFromLocation(loc);
                 }
-                if (!cadastralFilterId)
-                  throw new Error(
-                    'Impossibile ottenere l’ID del filtro catastale'
-                  );
 
                 const req: SearchRequest = {
                   category,

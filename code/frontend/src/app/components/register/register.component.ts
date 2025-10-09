@@ -31,7 +31,6 @@ export class RegisterComponent {
   errorMsg = signal<string | null>(null);
 
   form = this.fb.nonNullable.group({
-    name: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
     passwords: this.fb.nonNullable.group(
       {

@@ -14,12 +14,7 @@ interface NavLink {
   standalone: true,
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
-  imports: [
-    CommonModule,
-    RouterLink,
-    RouterLinkActive,
-    MenuToggleComponent,
-  ],
+  imports: [CommonModule, RouterLink, RouterLinkActive, MenuToggleComponent],
 })
 export class NavbarComponent {
   isMenuOpen = false;
@@ -42,7 +37,6 @@ export class NavbarComponent {
       const state = this.auth.authState();
       this.isAuthenticated = !!state.isAuthenticated;
       const email = state.email;
-      this.displayName = email ? email.split('@')[0] : '';
     });
 
     effect(() => {
@@ -64,6 +58,13 @@ export class NavbarComponent {
   logout() {
     this.auth.logout();
     this.closeMenu();
+    clearStorage();
     this.router.navigateByUrl('/auth');
   }
+}
+
+function clearStorage() {
+  localStorage.removeItem('userEmail');
+  localStorage.removeItem('userRole');
+  localStorage.removeItem('isAuthenticated');
 }
