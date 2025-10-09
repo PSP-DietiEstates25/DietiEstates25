@@ -1,9 +1,21 @@
 <app-navbar></app-navbar>
+
 <section class="container mx-auto px-4 py-6">
-  <app-search-bar></app-search-bar>
+  <app-search-bar (search)="onSearch($event)"></app-search-bar>
+
+  <!-- Banner errori -->
+  @if (error()) {
+  <div
+    class="mt-3 rounded-xl border border-red-400/50 bg-red-50 dark:bg-red-900/20 p-3 text-red-700 dark:text-red-200"
+  >
+    {{ error() }}
+  </div>
+  }
+
   <!-- Filtri avanzati (collassabili) -->
   <details
-    class="rounded-2xl border dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 backdrop-blur p-4"
+    class="mt-3 rounded-2xl border dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 backdrop-blur p-4"
+    open
   >
     <summary class="cursor-pointer select-none font-semibold">
       Filtri avanzati
@@ -21,6 +33,7 @@
           placeholder="0"
         />
       </div>
+
       <div>
         <label class="block text-sm mb-1 dark:text-slate-200"
           >Prezzo max (€)</label
@@ -32,24 +45,39 @@
           placeholder="500000"
         />
       </div>
+
       <div>
         <label class="block text-sm mb-1 dark:text-slate-200">Stanze</label>
         <input
           type="number"
-          min="1"
+          min="0"
           [(ngModel)]="rooms"
           class="input_main"
           placeholder="3"
         />
       </div>
+
+      <!-- Categoria RENT/SALE -->
       <div>
-        <label class="block text-sm mb-1 dark:text-slate-200">Tipologia</label>
+        <label class="block text-sm mb-1 dark:text-slate-200">Categoria</label>
         <select class="input_main" [(ngModel)]="type">
-          <option value="">Qualsiasi</option>
-          <option>Appartamento</option>
-          <option>Casa indipendente</option>
+          <option value="SALE">Vendita</option>
+          <option value="RENT">Affitto</option>
         </select>
       </div>
+
+      <!-- Tipologia immobile -->
+      <div>
+        <label class="block text-sm mb-1 dark:text-slate-200"
+          >Tipologia immobile</label
+        >
+        <select class="input_main" [(ngModel)]="propertyType">
+          <option value="">Qualsiasi</option>
+          <option value="APARTMENT">Appartamento</option>
+          <option value="HOUSE">Casa indipendente</option>
+        </select>
+      </div>
+
       <div>
         <label class="block text-sm mb-1 dark:text-slate-200">Mq min</label>
         <input
@@ -60,6 +88,7 @@
           placeholder="50"
         />
       </div>
+
       <div>
         <label class="block text-sm mb-1 dark:text-slate-200">Mq max</label>
         <input
@@ -70,22 +99,28 @@
           placeholder="120"
         />
       </div>
+
     </div>
 
     <div class="mt-4 flex flex-wrap items-center gap-4">
       <div class="ml-auto">
         <label class="block text-sm mb-1 dark:text-slate-200">Ordina per</label>
         <select class="input_main" [(ngModel)]="orderBy">
-          <option value="recent">Più recenti</option>
-          <option value="price_asc">Prezzo ↑</option>
-          <option value="price_desc">Prezzo ↓</option>
+          <option value="RECENT">Più recenti</option>
+          <option value="PRICE_ASC">Prezzo ↑</option>
+          <option value="PRICE_DESC">Prezzo ↓</option>
         </select>
       </div>
     </div>
 
     <div class="mt-4 flex gap-2">
-      <button type="button" class="btn_primary" (click)="apply()">
-        Applica filtri
+      <button
+        type="button"
+        class="btn_primary"
+        (click)="apply()"
+        [disabled]="loading()"
+      >
+        {{ loading() ? "Cercando…" : "Applica filtri" }}
       </button>
       <button type="button" class="btn_ghost" (click)="clear()">Pulisci</button>
     </div>
