@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { AdService } from '../../vecchioService/rest-backend/ad/ad.service';
+import { OfferControllerService } from '../../services/services/offer-controller.service';
+import { OfferRequest } from '../../services/models/offer-request';
 
 @Component({
   selector: 'app-offer-form',
@@ -10,7 +11,7 @@ import { AdService } from '../../vecchioService/rest-backend/ad/ad.service';
 })
 export class OfferFormComponent {
   private fb = inject(FormBuilder);
-  private api = inject(AdService);
+  private api = inject(OfferControllerService);
 
   @Input({ required: true }) adId!: number;
   @Input() isLoggedIn = false;
@@ -31,28 +32,25 @@ export class OfferFormComponent {
       this.loginRequired.emit();
       return;
     }
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
+    if (this.form.invalid) return;
+
     this.loading = true;
-    this.ok = null;
-    this.err = null;
-    const { amount } = this.form.getRawValue();
-    this.api
-      .makeOffer(this.adId, {
-        amount: Number(amount),
-      })
-      .subscribe({
-        next: () => {
-          this.ok = 'Offerta inviata';
-          this.form.reset();
-          this.success.emit();
-        },
-        error: (e) => {
-          this.err = e?.error?.message || 'Errore invio offerta';
-        },
-        complete: () => (this.loading = false),
-      });
+    this.ok = this.err = null;
+
+    const body: OfferRequest = {
+      amount: this.form.value.amount!,
+      category: 'SALE',
+      status: 'PENDING',
+      userEmail: 'guest@public.local',
+    };
+
+    this.api.createOffer({ realestateid: this.adId, body }).subscribe({
+      next: () => (this.ok = 'Offerta inviata!'),
+      error: () => (this.err = 'Errore durante l’invio dell’offerta.'),
+      complete: () => {
+        this.loading = false;
+        if (this.ok) this.success.emit();
+      },
+    });
   }
 }

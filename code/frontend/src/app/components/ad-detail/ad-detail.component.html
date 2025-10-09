@@ -18,6 +18,7 @@
           class="w-full aspect-video object-cover"
         />
       </div>
+
       @if (ad()!.images?.length) {
       <div class="mt-3 grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
         @for (img of ad()!.images!; track img) {
@@ -41,20 +42,21 @@
         <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
           {{ ad()!.title }}
         </h1>
+
         <p class="text-slate-600 dark:text-slate-300 mt-1">
-          {{ ad()!.address }} • {{ ad()!.city }}
+          {{ ad()!.position?.address }} • {{ ad()!.city }}
         </p>
 
         <div class="mt-4 text-sm grid sm:grid-cols-2 gap-2">
-          @if (ad()!.type) {
-          <div>
-            <span class="font-semibold">Tipologia:</span> {{ ad()!.type }}
-          </div>
-          } @if (ad()!.size != null) {
-          <div><span class="font-semibold">Mq:</span> {{ ad()!.size }}</div>
+          @if (ad()!.surface != null) {
+          <div><span class="font-semibold">Mq:</span> {{ ad()!.surface }}</div>
           } @if (ad()!.rooms != null) {
           <div>
             <span class="font-semibold">Stanze:</span> {{ ad()!.rooms }}
+          </div>
+          } @if (ad()!.type) {
+          <div>
+            <span class="font-semibold">Tipologia:</span> {{ ad()!.type }}
           </div>
           } @if (ad()!.floor != null) {
           <div><span class="font-semibold">Piano:</span> {{ ad()!.floor }}</div>
@@ -81,7 +83,7 @@
         </div>
         @if (ad()!.agent) {
         <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">
-          Agente: {{ ad()!.agent!.name }}
+          Agente: {{ ad()!.agent!.email || "—" }}
         </p>
         }
       </div>
@@ -89,21 +91,17 @@
       <!-- OFFERTA -->
       <div class="rounded-2xl border dark:border-slate-700 p-4">
         <app-offer-form
-          [adId]="ad()!.id"
+          [adId]="ad()!.realEstateId"
           [isLoggedIn]="isLogged()"
-          (loginRequired)="goToLogin()"
-        >
-        </app-offer-form>
+        ></app-offer-form>
       </div>
 
       <!-- VISITA -->
       <div class="rounded-2xl border dark:border-slate-700 p-4">
         <app-visit-form
-          [adId]="ad()!.id"
+          [adId]="ad()!.realEstateId"
           [isLoggedIn]="isLogged()"
-          (loginRequired)="goToLogin()"
-        >
-        </app-visit-form>
+        ></app-visit-form>
       </div>
 
       <!-- CONTATTI AGENTE -->
