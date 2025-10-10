@@ -24,7 +24,7 @@ export class UtilityControllerService extends BaseService {
   }
 
   /** Path part for operation `createUtility()` */
-  static readonly CreateUtilityPath = '/details/{detailid}/utilities';
+  static readonly CreateUtilityPath = '/utilities';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -53,7 +53,7 @@ export class UtilityControllerService extends BaseService {
   }
 
   /** Path part for operation `getUtilityById()` */
-  static readonly GetUtilityByIdPath = '/details/{detailid}/utilities/{utilityid}';
+  static readonly GetUtilityByIdPath = '/utilities/{utilityid}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.

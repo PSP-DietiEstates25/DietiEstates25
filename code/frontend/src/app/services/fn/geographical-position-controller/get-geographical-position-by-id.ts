@@ -11,14 +11,12 @@ import { RequestBuilder } from '../../request-builder';
 import { GeographicalPositionResponse } from '../../models/geographical-position-response';
 
 export interface GetGeographicalPositionById$Params {
-  detailid: number;
   geographicalpositionid: number;
 }
 
 export function getGeographicalPositionById(http: HttpClient, rootUrl: string, params: GetGeographicalPositionById$Params, context?: HttpContext): Observable<StrictHttpResponse<GeographicalPositionResponse>> {
   const rb = new RequestBuilder(rootUrl, getGeographicalPositionById.PATH, 'get');
   if (params) {
-    rb.path('detailid', params.detailid, {});
     rb.path('geographicalpositionid', params.geographicalpositionid, {});
   }
 
@@ -32,4 +30,4 @@ export function getGeographicalPositionById(http: HttpClient, rootUrl: string, p
   );
 }
 
-getGeographicalPositionById.PATH = '/details/{detailid}/geographicalpositions/{geographicalpositionid}';
+getGeographicalPositionById.PATH = '/geographicalpositions/{geographicalpositionid}';

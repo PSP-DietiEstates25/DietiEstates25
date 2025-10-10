@@ -1,57 +1,48 @@
-import { Component, inject, signal, computed } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import {
-  AdService,
-  AdDetail,
-} from '../../vecchioService/rest-backend/ad/ad.service';
-import { AuthService } from '../../vecchioService/auth/auth.service';
-
+import { Component, inject, computed } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { AdDetailFacade } from './ad-detail.facade';
 import { OfferFormComponent } from '../offer/offer-form.component';
 import { VisitFormComponent } from '../visit/visit-form.component';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-ad-detail',
   standalone: true,
-  imports: [RouterLink, OfferFormComponent, VisitFormComponent],
+  imports: [RouterLink, OfferFormComponent, VisitFormComponent, DecimalPipe],
   templateUrl: './ad-detail.component.html',
 })
 export class AdDetailComponent {
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private api = inject(AdService);
-  private auth = inject(AuthService);
+  private facade = inject(AdDetailFacade);
 
-  ad = signal<AdDetail | null>(null);
-  loading = signal(true);
-  error = signal<string | null>(null);
-  mainImage = signal<string | null>(null);
-
-  isLogged = computed(() => this.auth.authState().isAuthenticated);
+  // re-export signals al template
+  loading = this.facade.loading;
+  error = this.facade.error;
+  ad = this.facade.vm;
+  mainImage = this.facade.mainImage;
 
   constructor() {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (!Number.isFinite(id)) {
-      this.error.set('Annuncio non trovato');
-      this.loading.set(false);
-      return;
-    }
-    this.api.getById(id).subscribe({
-      next: (data) => {
-        this.ad.set(data);
-        this.mainImage.set(data?.images?.[0] || data?.coverUrl || null);
-      },
-      error: () => this.error.set("Impossibile caricare l'annuncio"),
-      complete: () => this.loading.set(false),
+    const param =
+      this.route.snapshot.paramMap.get('detailId') ??
+      this.route.snapshot.paramMap.get('id');
+    const detailId = Number(param);
+    // se hai userEmail/category dal contesto auth/rotta, passali qui:
+    this.facade.loadByDetailId(detailId, {
+      userEmail: 'guest@public.local',
+      // category: 'SALE'
     });
   }
 
   setMain(src: string) {
-    this.mainImage.set(src);
+    this.facade.setMain(src);
   }
 
-  goToLogin() {
-    this.router.navigate(['/auth/login'], {
-      queryParams: { redirect: this.router.url },
-    });
+  isLogged() {
+    // collegamento ad auth state vero
+    if (localStorage.getItem('user')) {
+      return true;
+    }
+
+    return false;
   }
 }

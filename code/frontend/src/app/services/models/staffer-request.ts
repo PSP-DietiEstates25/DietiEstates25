@@ -6,5 +6,4 @@ export interface StafferRequest {
   adminEmail: string;
   email: string;
   password: string;
-  role: string;
 }

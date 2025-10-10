@@ -1,12 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { Observable, of, throwError, from } from 'rxjs';
-import {
-  map,
-  switchMap,
-  catchError,
-  mergeMap,
-  toArray,
-} from 'rxjs/operators';
+import { map, switchMap, catchError, mergeMap, toArray } from 'rxjs/operators';
 
 import {
   GeographicalPositionControllerService as GeoSvc,
@@ -27,14 +21,14 @@ export interface CreateAdDraft {
   city?: string;
   address?: string;
 
-  type?: string; 
-  category?: string; 
+  type?: string;
+  category?: string;
 
   size?: number;
   rooms?: number;
   floor?: number;
-  energy?: string; 
-  energyClass?: string; 
+  energy?: string;
+  energyClass?: string;
 
   description?: string;
 
@@ -113,7 +107,7 @@ export class CreateAdFacade {
 
       // 2) Detail
       switchMap((realEstateId) => {
-        const detailReq: DetailRequest = { realEstateId };
+        const detailReq: DetailRequest = {};
         return this.detApi.createDetail$Response({ body: detailReq }).pipe(
           map((res) => {
             const detailId = this.extractIdFromLocation(
@@ -136,7 +130,7 @@ export class CreateAdFacade {
           longitude: d.longitude as number,
         };
         return this.geoApi
-          .createGeographicalPosition({ detailid: detailId, body: geoReq })
+          .createGeographicalPosition({ body: geoReq })
           .pipe(map(() => ({ realEstateId })));
       }),
 
@@ -150,7 +144,6 @@ export class CreateAdFacade {
           squareMeters: d.size ?? 0,
         };
         return this.cadApi.createCadastralData({
-          realestateid: realEstateId,
           body: cadReq,
         });
       }),

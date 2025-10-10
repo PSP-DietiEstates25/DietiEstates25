@@ -34,4 +34,4 @@ export function createVisit(http: HttpClient, rootUrl: string, params: CreateVis
   );
 }
 
-createVisit.PATH = '/realEstates/{realestateid}/visits';
+createVisit.PATH = '/realestates/{realestateid}/visits';

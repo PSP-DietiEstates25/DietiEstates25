@@ -21,7 +21,7 @@ export class VisitControllerService extends BaseService {
   }
 
   /** Path part for operation `createVisit()` */
-  static readonly CreateVisitPath = '/realEstates/{realestateid}/visits';
+  static readonly CreateVisitPath = '/realestates/{realestateid}/visits';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.

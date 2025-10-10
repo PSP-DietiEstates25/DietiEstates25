@@ -7,7 +7,5 @@ export interface DetailResponse {
   geographicalPositionId?: number;
   id?: number;
   lastModifiedDate?: string;
-  realEstateId?: number;
-  searchId?: number;
   utilityId?: number;
 }

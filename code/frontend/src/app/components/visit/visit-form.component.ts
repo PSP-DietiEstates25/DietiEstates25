@@ -1,16 +1,17 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { AdService } from '../../vecchioService/rest-backend/ad/ad.service';
+import { VisitControllerService } from '../../services/services/visit-controller.service';
+import { VisitRequest } from '../../services/models/visit-request';
 
 @Component({
   selector: 'app-visit-form',
   standalone: true,
   imports: [ReactiveFormsModule],
-  templateUrl: `./visit-form.component.html`,
+  templateUrl: './visit-form.component.html',
 })
 export class VisitFormComponent {
   private fb = inject(FormBuilder);
-  private api = inject(AdService);
+  private api = inject(VisitControllerService);
 
   @Input({ required: true }) adId!: number;
   @Input() isLoggedIn = false;
@@ -24,7 +25,7 @@ export class VisitFormComponent {
 
   form = this.fb.nonNullable.group({
     date: ['', Validators.required],
-    time: [''],
+    time: ['', Validators.required],
   });
 
   submit() {
@@ -32,29 +33,26 @@ export class VisitFormComponent {
       this.loginRequired.emit();
       return;
     }
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
+    if (this.form.invalid) return;
+
     this.loading = true;
-    this.ok = null;
-    this.err = null;
-    const { date, time } = this.form.getRawValue();
-    this.api
-      .requestVisit(this.adId, {
-        date,
-        time: time || undefined,
-      })
-      .subscribe({
-        next: () => {
-          this.ok = 'Richiesta inviata';
-          this.form.reset();
-          this.success.emit();
-        },
-        error: (e) => {
-          this.err = e?.error?.message || 'Errore richiesta visita';
-        },
-        complete: () => (this.loading = false),
-      });
+    this.ok = this.err = null;
+
+    const body: VisitRequest = {
+      category: 'SALE',
+      status: 'PENDING',
+      date: this.form.value.date!,
+      time: this.form.value.time!,
+      userEmail: 'guest@public.local',
+    };
+
+    this.api.createVisit({ realestateid: this.adId, body }).subscribe({
+      next: () => (this.ok = 'Richiesta inviata!'),
+      error: () => (this.err = 'Errore durante l’invio della richiesta.'),
+      complete: () => {
+        this.loading = false;
+        if (this.ok) this.success.emit();
+      },
+    });
   }
 }

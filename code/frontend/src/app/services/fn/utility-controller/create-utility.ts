@@ -11,7 +11,6 @@ import { RequestBuilder } from '../../request-builder';
 import { UtilityRequest } from '../../models/utility-request';
 
 export interface CreateUtility$Params {
-  detailid: number;
       body: UtilityRequest
 }
 
@@ -19,7 +18,6 @@ export function createUtility(http: HttpClient, rootUrl: string, params: CreateU
 }>> {
   const rb = new RequestBuilder(rootUrl, createUtility.PATH, 'post');
   if (params) {
-    rb.path('detailid', params.detailid, {});
     rb.body(params.body, 'application/json');
   }
 
@@ -34,4 +32,4 @@ export function createUtility(http: HttpClient, rootUrl: string, params: CreateU
   );
 }
 
-createUtility.PATH = '/details/{detailid}/utilities';
+createUtility.PATH = '/utilities';

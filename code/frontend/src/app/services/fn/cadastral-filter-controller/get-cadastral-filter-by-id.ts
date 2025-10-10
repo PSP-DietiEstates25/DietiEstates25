@@ -11,14 +11,12 @@ import { RequestBuilder } from '../../request-builder';
 import { CadastralFilterResponse } from '../../models/cadastral-filter-response';
 
 export interface GetCadastralFilterById$Params {
-  searchid: number;
   cadastralfilterid: number;
 }
 
 export function getCadastralFilterById(http: HttpClient, rootUrl: string, params: GetCadastralFilterById$Params, context?: HttpContext): Observable<StrictHttpResponse<CadastralFilterResponse>> {
   const rb = new RequestBuilder(rootUrl, getCadastralFilterById.PATH, 'get');
   if (params) {
-    rb.path('searchid', params.searchid, {});
     rb.path('cadastralfilterid', params.cadastralfilterid, {});
   }
 
@@ -32,4 +30,4 @@ export function getCadastralFilterById(http: HttpClient, rootUrl: string, params
   );
 }
 
-getCadastralFilterById.PATH = '/searches/{searchid}/cadastralfilters/{cadastralfilterid}';
+getCadastralFilterById.PATH = '/cadastralfilters/{cadastralfilterid}';

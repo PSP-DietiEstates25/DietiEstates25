@@ -4,6 +4,5 @@
 
 export interface NotificationRequest {
   message: string;
-  notificationCategoryName: string;
   userEmail: string;
 }

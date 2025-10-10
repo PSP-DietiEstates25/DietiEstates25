@@ -11,6 +11,7 @@ import { RequestBuilder } from '../../request-builder';
 import { NotificationRequest } from '../../models/notification-request';
 
 export interface CreateNotification$Params {
+  notificationcategoryname: string;
       body: NotificationRequest
 }
 
@@ -18,6 +19,7 @@ export function createNotification(http: HttpClient, rootUrl: string, params: Cr
 }>> {
   const rb = new RequestBuilder(rootUrl, createNotification.PATH, 'post');
   if (params) {
+    rb.path('notificationcategoryname', params.notificationcategoryname, {});
     rb.body(params.body, 'application/json');
   }
 

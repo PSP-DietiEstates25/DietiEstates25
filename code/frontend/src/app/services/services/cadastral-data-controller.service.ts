@@ -24,7 +24,7 @@ export class CadastralDataControllerService extends BaseService {
   }
 
   /** Path part for operation `createCadastralData()` */
-  static readonly CreateCadastralDataPath = '/realestates/{realestateid}/cadastraldata';
+  static readonly CreateCadastralDataPath = '/cadastraldata';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -53,7 +53,7 @@ export class CadastralDataControllerService extends BaseService {
   }
 
   /** Path part for operation `getCadastralDataById()` */
-  static readonly GetCadastralDataByIdPath = '/realestates/{realestateid}/cadastraldata/{cadastraldataid}';
+  static readonly GetCadastralDataByIdPath = '/cadastraldata/{cadastraldataid}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.

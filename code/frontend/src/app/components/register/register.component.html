@@ -8,18 +8,6 @@
   }
 
   <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
-    <div>
-      <label class="block text-sm mb-1 dark:text-slate-200">Nome</label>
-      <input
-        type="text"
-        formControlName="name"
-        class="input_main"
-        placeholder="Mario"
-      />
-      @if (form.controls.name.touched && form.controls.name.invalid) {
-      <p class="text-sm text-red-600 mt-1">Minimo 2 caratteri</p>
-      }
-    </div>
 
     <div>
       <label class="block text-sm mb-1 dark:text-slate-200">Email</label>

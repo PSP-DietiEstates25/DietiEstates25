@@ -11,14 +11,12 @@ import { RequestBuilder } from '../../request-builder';
 import { UtilityResponse } from '../../models/utility-response';
 
 export interface GetUtilityById$Params {
-  detailid: number;
   utilityid: number;
 }
 
 export function getUtilityById(http: HttpClient, rootUrl: string, params: GetUtilityById$Params, context?: HttpContext): Observable<StrictHttpResponse<UtilityResponse>> {
   const rb = new RequestBuilder(rootUrl, getUtilityById.PATH, 'get');
   if (params) {
-    rb.path('detailid', params.detailid, {});
     rb.path('utilityid', params.utilityid, {});
   }
 
@@ -32,4 +30,4 @@ export function getUtilityById(http: HttpClient, rootUrl: string, params: GetUti
   );
 }
 
-getUtilityById.PATH = '/details/{detailid}/utilities/{utilityid}';
+getUtilityById.PATH = '/utilities/{utilityid}';

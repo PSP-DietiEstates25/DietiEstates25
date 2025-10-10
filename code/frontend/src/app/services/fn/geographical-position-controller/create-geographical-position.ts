@@ -11,7 +11,6 @@ import { RequestBuilder } from '../../request-builder';
 import { GeographicalPositionRequest } from '../../models/geographical-position-request';
 
 export interface CreateGeographicalPosition$Params {
-  detailid: number;
       body: GeographicalPositionRequest
 }
 
@@ -19,7 +18,6 @@ export function createGeographicalPosition(http: HttpClient, rootUrl: string, pa
 }>> {
   const rb = new RequestBuilder(rootUrl, createGeographicalPosition.PATH, 'post');
   if (params) {
-    rb.path('detailid', params.detailid, {});
     rb.body(params.body, 'application/json');
   }
 
@@ -34,4 +32,4 @@ export function createGeographicalPosition(http: HttpClient, rootUrl: string, pa
   );
 }
 
-createGeographicalPosition.PATH = '/details/{detailid}/geographicalpositions';
+createGeographicalPosition.PATH = '/geographicalpositions';
