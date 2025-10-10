@@ -35,93 +35,102 @@ export class AdminDashboardFacade {
   private agentAuth = inject(EstateAgentAuthenticationControllerService);
   private adminAuth = inject(AdminAuthenticationControllerService);
 
-private findAnyJwtFromClientStorage(): string | null {
-  const candidatesKeys = [
-    'token', 'jwt', 'access_token', 'id_token', 'auth_token', 'Authorization'
-  ];
+  private findAnyJwtFromClientStorage(): string | null {
+    const candidatesKeys = [
+      'token',
+      'jwt',
+      'access_token',
+      'id_token',
+      'auth_token',
+      'Authorization',
+    ];
 
-  const isJwt = (v: string | null | undefined) =>
-    !!v && /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/.test(v);
+    const isJwt = (v: string | null | undefined) =>
+      !!v && /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/.test(v);
 
-  const stripBearer = (v: string) =>
-    v.startsWith('Bearer ') ? v.slice('Bearer '.length).trim() : v.trim();
+    const stripBearer = (v: string) =>
+      v.startsWith('Bearer ') ? v.slice('Bearer '.length).trim() : v.trim();
 
-  // 1) chiavi note
-  for (const k of candidatesKeys) {
-    const v1 = localStorage.getItem(k);
-    if (v1 && isJwt(stripBearer(v1))) return stripBearer(v1);
+    // 1) chiavi note
+    for (const k of candidatesKeys) {
+      const v1 = localStorage.getItem(k);
+      if (v1 && isJwt(stripBearer(v1))) return stripBearer(v1);
 
-    const v2 = sessionStorage.getItem(k);
-    if (v2 && isJwt(stripBearer(v2))) return stripBearer(v2);
-  }
+      const v2 = sessionStorage.getItem(k);
+      if (v2 && isJwt(stripBearer(v2))) return stripBearer(v2);
+    }
 
-  // 2) scorri TUTTE le chiavi
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i)!;
-    const val = localStorage.getItem(key)!;
-    const s = stripBearer(val);
-    if (isJwt(s)) return s;
-  }
-  for (let i = 0; i < sessionStorage.length; i++) {
-    const key = sessionStorage.key(i)!;
-    const val = sessionStorage.getItem(key)!;
-    const s = stripBearer(val);
-    if (isJwt(s)) return s;
-  }
-
-  // 3) cookie: cerca qualcosa che sembri JWT
-  try {
-    const cookie = document?.cookie ?? '';
-    const parts = cookie.split(';').map(p => p.split('=').pop()!.trim());
-    for (const p of parts) {
-      const s = stripBearer(decodeURIComponent(p));
+    // 2) scorri TUTTE le chiavi
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)!;
+      const val = localStorage.getItem(key)!;
+      const s = stripBearer(val);
       if (isJwt(s)) return s;
     }
-  } catch { /* ignore */ }
+    for (let i = 0; i < sessionStorage.length; i++) {
+      const key = sessionStorage.key(i)!;
+      const val = sessionStorage.getItem(key)!;
+      const s = stripBearer(val);
+      if (isJwt(s)) return s;
+    }
 
-  return null;
-}
+    // 3) cookie: cerca qualcosa che sembri JWT
+    try {
+      const cookie = document?.cookie ?? '';
+      const parts = cookie.split(';').map((p) => p.split('=').pop()!.trim());
+      for (const p of parts) {
+        const s = stripBearer(decodeURIComponent(p));
+        if (isJwt(s)) return s;
+      }
+    } catch {
+      /* ignore */
+    }
 
-/** Decodifica il JWT trovato e prova a estrarre un’email utilizzabile come adminEmail */
-private getAdminEmailFromJwt(): string | null {
-  const token = this.findAnyJwtFromClientStorage();
-  if (!token) return null;
-
-  try {
-    const base64Url = token.split('.')[1];
-    if (!base64Url) return null;
-
-    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    base64 += '='.repeat((4 - (base64.length % 4)) % 4);
-
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-
-    const payload = JSON.parse(jsonPayload) as Record<string, unknown>;
-
-    const maybeEmail =
-      (payload['email'] as string | undefined) ??
-      (payload['preferred_username'] as string | undefined) ??
-      (payload['upn'] as string | undefined) ??
-      (payload['username'] as string | undefined) ??
-
-      ((typeof payload['sub'] === 'string' && payload['sub'].includes('@'))
-        ? (payload['sub'] as string)
-        : undefined);
-
-    if (maybeEmail && typeof maybeEmail === 'string') return maybeEmail;
-
-    console.warn('[AdminDashboard] JWT trovato ma senza email usabile. Payload:', payload);
-    return null;
-  } catch (e) {
-    console.warn('[AdminDashboard] Decode JWT fallito:', e);
     return null;
   }
-}
+
+  /** Decodifica il JWT trovato e prova a estrarre un’email utilizzabile come adminEmail */
+  private getAdminEmailFromJwt(): string | null {
+    const token = this.findAnyJwtFromClientStorage();
+    if (!token) return null;
+
+    try {
+      const base64Url = token.split('.')[1];
+      if (!base64Url) return null;
+
+      let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      base64 += '='.repeat((4 - (base64.length % 4)) % 4);
+
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+
+      const payload = JSON.parse(jsonPayload) as Record<string, unknown>;
+
+      const maybeEmail =
+        (payload['email'] as string | undefined) ??
+        (payload['preferred_username'] as string | undefined) ??
+        (payload['upn'] as string | undefined) ??
+        (payload['username'] as string | undefined) ??
+        (typeof payload['sub'] === 'string' && payload['sub'].includes('@')
+          ? (payload['sub'] as string)
+          : undefined);
+
+      if (maybeEmail && typeof maybeEmail === 'string') return maybeEmail;
+
+      console.warn(
+        '[AdminDashboard] JWT trovato ma senza email usabile. Payload:',
+        payload
+      );
+      return null;
+    } catch (e) {
+      console.warn('[AdminDashboard] Decode JWT fallito:', e);
+      return null;
+    }
+  }
 
   // ADS
   listAds(

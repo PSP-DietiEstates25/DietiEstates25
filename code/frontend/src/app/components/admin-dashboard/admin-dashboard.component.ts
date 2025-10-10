@@ -12,6 +12,8 @@ import {
   AdminUser,
   Role,
 } from './admin-dashboard.facade';
+import { Router } from '@angular/router';
+import { AuthService } from '../../vecchioService/auth/auth.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -22,6 +24,8 @@ import {
 export class AdminDashboardComponent {
   private api = inject(AdminDashboardFacade);
   private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private auth = inject(AuthService);
 
   tabs = [
     { key: 'ads' as const, label: 'Annunci' },
@@ -45,7 +49,7 @@ export class AdminDashboardComponent {
   createForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     role: ['AGENT' as Role, [Validators.required]],
-    password: ['', [Validators.required, Validators.minLength(6)]], // <--
+    password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
   constructor() {
@@ -133,4 +137,16 @@ export class AdminDashboardComponent {
       .updateUser(u.id, { role })
       .subscribe({ next: (_) => this.loadUsers() });
   }
+
+  logout() {
+    this.auth.logout();
+    clearStorage();
+    this.router.navigateByUrl('/auth');
+  }
+}
+
+function clearStorage() {
+  localStorage.removeItem('userEmail');
+  localStorage.removeItem('userRole');
+  localStorage.removeItem('isAuthenticated');
 }

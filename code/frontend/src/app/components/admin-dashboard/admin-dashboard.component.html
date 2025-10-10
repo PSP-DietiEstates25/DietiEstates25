@@ -13,9 +13,12 @@
         {{ t.label }}
       </button>
       }
+      <button class="btn_ghost cursor-pointer" (click)="logout()">
+        Logout
+      </button>
     </nav>
   </header>
-
+  
   <!-- ADS TAB -->
   @if (active() === 'ads') {
   <section>
