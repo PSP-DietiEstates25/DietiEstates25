@@ -1,6 +1,8 @@
 package com.dietiestates.api.security;
 
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
@@ -24,8 +26,9 @@ import lombok.RequiredArgsConstructor;
 public class JwtFilter extends OncePerRequestFilter {
 
 	private final JwtService jwtService;
-	
 	private final UserDetailsService userDetailsService;
+	private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
+
 	
 	@Override
 	protected void doFilterInternal(

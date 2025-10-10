@@ -1,8 +1,8 @@
 package com.dietiestates.api.finderImpl;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import com.dietiestates.api.exception.notfound.AccountNotFoundException;
 import com.dietiestates.api.finder.DefaultAccountFinder;
 import com.dietiestates.api.model.DefaultAccount;
 import com.dietiestates.api.repository.DefaultAccountRepository;
@@ -18,7 +18,7 @@ public class DefaultAccountFinderImpl implements DefaultAccountFinder {
 	@Override
 	public DefaultAccount getDefaultAccountByEmail(String email) {
 		return defaultAccountRepository.findByEmail(email)
-				.orElseThrow(AccountNotFoundException::new);
+				.orElseThrow(() -> new UsernameNotFoundException("Account with specified email not found"));
 	}
 	
 }
