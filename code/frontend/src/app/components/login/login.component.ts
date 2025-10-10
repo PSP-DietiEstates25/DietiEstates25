@@ -32,26 +32,36 @@ export class LoginComponent {
     this.errorMsg.set(null);
 
     const { email, password } = this.form.getRawValue();
-
     const body: AuthenticationRequest = { email, password };
 
     this.api.login({ body }).subscribe({
       next: (res) => {
         const token = res?.token ?? '';
         localStorage.setItem('auth.token', token);
-        localStorage.setItem('userEmail', email); 
+        localStorage.setItem('token', token);
+        localStorage.setItem('userEmail', email);
 
-        // prova a leggere il ruolo dal token; se manca, usa quello inviato
-        const jwtRole = (
-          decodeJwt(token)?.role as string | undefined
-        )?.toUpperCase();
-        const effectiveRole = jwtRole as
-          | 'CLIENT'
-          | 'AGENT'
+        const claims = safeDecodeJwt(token) ?? {};
+        const authorities: string[] = Array.isArray(claims.authorities)
+          ? claims.authorities
+          : [];
+
+        const roleFromAuthorities = authorities.includes('ESTATE_AGENT')
+          ? 'AGENT'
+          : authorities.includes('ADMIN')
+          ? 'ADMIN'
+          : authorities.includes('CLIENT')
+          ? 'CLIENT'
+          : authorities.includes('USER')
+          ? 'CLIENT'
+          : '';
+
+        const effectiveRole = roleFromAuthorities as
           | 'ADMIN'
-          | undefined;
+          | 'AGENT'
+          | 'CLIENT'
+          | '';
 
-        // redirect in base al ruolo
         switch (effectiveRole) {
           case 'AGENT':
             this.router.navigateByUrl('/agent');
@@ -62,6 +72,8 @@ export class LoginComponent {
           default:
             this.router.navigateByUrl('/');
         }
+
+        this.loading.set(false);
       },
       error: (err) => {
         this.errorMsg.set(err?.error?.message || 'Credenziali non valide');
@@ -71,13 +83,14 @@ export class LoginComponent {
   }
 }
 
-/** Decodifica veloce del payload JWT (senza verifica) */
-function decodeJwt(token: string | null): any | null {
+function safeDecodeJwt(token: string | null): any | null {
   try {
     if (!token) return null;
-    const base = token.split('.')[1];
-    const json = atob(base.replace(/-/g, '+').replace(/_/g, '/'));
-    return JSON.parse(json);
+    const part = token.split('.')[1];
+    if (!part) return null;
+    let base64 = part.replace(/-/g, '+').replace(/_/g, '/');
+    base64 += '='.repeat((4 - (base64.length % 4)) % 4);
+    return JSON.parse(atob(base64));
   } catch {
     return null;
   }
