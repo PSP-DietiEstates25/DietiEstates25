@@ -24,12 +24,14 @@ public class GeographicalPositionServiceImpl implements GeographicalPositionServ
 	private final GeographicalPositionMapper geographicalPositionMapper;
 	
 	@Override
-	public void createGeographicalPosition(GeographicalPositionRequest request) {
+	public GeographicalPositionResponse createGeographicalPosition(GeographicalPositionRequest request) {
 		
 		var geographicalPositionSpec = geographicalPositionMapper.toSpec(request);
 
 		var geographicalPosition = geographicalPositionFactory.createGeographicalPositionFromSpec(geographicalPositionSpec);
 		geographicalPositionRepository.save(geographicalPosition);
+		
+		return geographicalPositionMapper.fromEntity(geographicalPosition);
 	}
 	
 	@Override

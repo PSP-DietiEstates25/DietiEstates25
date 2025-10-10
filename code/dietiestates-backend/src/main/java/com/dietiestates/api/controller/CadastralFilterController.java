@@ -23,11 +23,11 @@ public class CadastralFilterController {
 	private final CadastralFilterService cadastralFilterService;
 	
 	@PostMapping
-	public ResponseEntity<?> createCadastralFilter(
+	public ResponseEntity<CadastralFilterResponse> createCadastralFilter(
 			@RequestBody CadastralFilterRequest request
 				){
-		cadastralFilterService.createCadastralFilter(request);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		var cadastralFilter = cadastralFilterService.createCadastralFilter(request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(cadastralFilter);
 	}
 	
 	@GetMapping("/{cadastralfilterid}")

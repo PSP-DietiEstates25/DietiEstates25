@@ -30,7 +30,7 @@ public class NotificationServiceImpl implements NotificationService {
 	private final NotificationCategoryFinder notificationCategoryFinder;
 	
 	@Override
-	public void createNotification(
+	public NotificationResponse createNotification(
 			String notificationCategoryName,
 			NotificationRequest request
 			) {
@@ -42,6 +42,8 @@ public class NotificationServiceImpl implements NotificationService {
 	
 		var notification = notificationFactory.createNotificationFromSpec(notificationSpec, notificationCategory, user);
 		notificationRepository.save(notification);
+		
+		return notificationMapper.fromEntity(notification);
 	}
 	
 	@Override

@@ -23,11 +23,11 @@ public class DetailController {
 	private final DetailService detailService;
 
 	@PostMapping
-	public ResponseEntity<?> createDetail(
+	public ResponseEntity<DetailResponse> createDetail(
 			@RequestBody DetailRequest request
 				) {
-		detailService.createDetail(request);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		var detail = detailService.createDetail(request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(detail);
 	}
 	
 	@GetMapping("/{detailid}")

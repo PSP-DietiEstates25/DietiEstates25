@@ -23,12 +23,12 @@ public class NotificationController {
 	private final NotificationService notificationService;
 	
 	@PostMapping
-	public ResponseEntity<?> createNotification(
+	public ResponseEntity<NotificationResponse> createNotification(
 			@PathVariable String notificationcategoryname,
 			@RequestBody NotificationRequest request
 			){
-		notificationService.createNotification(notificationcategoryname, request);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		var notification = notificationService.createNotification(notificationcategoryname, request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(notification);
 	}
 	
 	@GetMapping("/{notificationid}")

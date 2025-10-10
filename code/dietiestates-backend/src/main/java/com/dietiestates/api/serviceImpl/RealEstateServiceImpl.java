@@ -37,7 +37,7 @@ public class RealEstateServiceImpl implements RealEstateService {
 	private final DetailFinder detailFinder;
 	
 	@Override
-	public void createRealEstate(RealEstateRequest request) {
+	public RealEstateResponse createRealEstate(RealEstateRequest request) {
 		
 		var realEstateSpec = realEstateMapper.toSpec(request);
 		
@@ -47,6 +47,8 @@ public class RealEstateServiceImpl implements RealEstateService {
 		
 		var realEstate = realEstateFactory.createRealEstateFromSpec(realEstateSpec, estateAgent, cadastralData, detail);
 		realEstateRepository.save(realEstate);
+		
+		return realEstateMapper.fromEntity(realEstate);
 	}
 	
 	@Override

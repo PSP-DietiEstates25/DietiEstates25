@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.NotificationCategoryRequest;
+import com.dietiestates.api.dto.response.NotificationCategoryResponse;
 import com.dietiestates.api.service.NotificationCategoryService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,15 +23,15 @@ public class NotificationCategoryController {
 	private final NotificationCategoryService notificationCategoryService;
 	
 	@PostMapping
-	public ResponseEntity<?> createNotificationCategory(
+	public ResponseEntity<NotificationCategoryResponse> createNotificationCategory(
 			@RequestBody NotificationCategoryRequest request
 			){
-		notificationCategoryService.createNotificationCategory(request);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		var notificationCategory = notificationCategoryService.createNotificationCategory(request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(notificationCategory);
 	}
 	
 	@GetMapping("/{notificationcategoryname}")
-	public ResponseEntity<?> getNotificationCategoryByName(
+	public ResponseEntity<NotificationCategoryResponse> getNotificationCategoryByName(
 			@PathVariable String notificationcategoryname
 			){
 		var notificationCategory = notificationCategoryService.getNotificationCategoryByName(notificationcategoryname);

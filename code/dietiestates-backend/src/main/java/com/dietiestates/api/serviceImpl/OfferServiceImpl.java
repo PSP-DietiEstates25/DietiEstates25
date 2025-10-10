@@ -27,7 +27,7 @@ public class OfferServiceImpl implements OfferService {
 	private final RealEstateFinder realEstateFinder;
 	
 	@Override
-	public void createOffer(OfferRequest request, Long realEstateId) {
+	public OfferResponse createOffer(OfferRequest request, Long realEstateId) {
 		
 		var offerSpec = offerMapper.toSpec(request);
 		
@@ -36,6 +36,8 @@ public class OfferServiceImpl implements OfferService {
 		
 		var offer = offerFactory.createOfferFromSpec(offerSpec, user, realEstate);
 		offerRepository.save(offer);
+		
+		return offerMapper.fromEntity(offer);
 	}
 	
 	@Override

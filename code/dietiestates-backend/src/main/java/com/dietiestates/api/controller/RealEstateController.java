@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.RealEstateRequest;
+import com.dietiestates.api.dto.response.RealEstateResponse;
 import com.dietiestates.api.service.RealEstateService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,11 +23,11 @@ public class RealEstateController {
 	private static Logger logger = Logger.getLogger(RealEstateController.class.getName());
 	
 	@PostMapping
-	public ResponseEntity<?> createRealEstate(
+	public ResponseEntity<RealEstateResponse> createRealEstate(
 			@RequestBody RealEstateRequest request
 	){
-		realEstateSerivce.createRealEstate(request);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		var realEstate = realEstateSerivce.createRealEstate(request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(realEstate);
 	}
 	
 	/*

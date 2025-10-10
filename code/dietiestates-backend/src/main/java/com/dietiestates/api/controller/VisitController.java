@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.VisitRequest;
+import com.dietiestates.api.dto.response.VisitResponse;
 import com.dietiestates.api.service.VisitService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,12 +22,12 @@ public class VisitController {
 	private final VisitService visitService;
 	
 	@PostMapping
-	public ResponseEntity<?> createVisit(
+	public ResponseEntity<VisitResponse> createVisit(
 			@RequestBody VisitRequest request,
 			@PathVariable Long realestateid
 			){
-		visitService.createVisit(request, realestateid);
-		return ResponseEntity.status(HttpStatus.OK).build(); 
+		var visit = visitService.createVisit(request, realestateid);
+		return ResponseEntity.status(HttpStatus.OK).body(visit); 
 	}
 	/* 
     private final VisitService visitService;

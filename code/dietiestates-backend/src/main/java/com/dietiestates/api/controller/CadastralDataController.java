@@ -23,11 +23,11 @@ public class CadastralDataController {
 	private final CadastralDataService cadastralDataService;
 	
 	@PostMapping
-	public ResponseEntity<?> createCadastralData(
+	public ResponseEntity<CadastralDataResponse> createCadastralData(
 			@RequestBody CadastralDataRequest request
 				){
-		cadastralDataService.createCadastralData(request);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		var cadastralData = cadastralDataService.createCadastralData(request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(cadastralData);
 	}
 	
 	@GetMapping("/{cadastraldataid}")

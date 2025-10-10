@@ -25,12 +25,14 @@ public class CadastralFilterServiceImpl implements CadastralFilterService {
 	private final CadastralFilterMapper cadastralFilterMapper;
 	
 	@Override
-	public void createCadastralFilter(CadastralFilterRequest request) {
+	public CadastralFilterResponse createCadastralFilter(CadastralFilterRequest request) {
 		
 		var cadastralFilterSpec = cadastralFilterMapper.toSpec(request);
 		
 		var cadastralFilter = cadastralFilterFactory.createCadastralFilterFromSpec(cadastralFilterSpec);
 		cadastralFilterRepository.save(cadastralFilter);
+		
+		return cadastralFilterMapper.fromEntity(cadastralFilter);
 	}
 	
 	@Override

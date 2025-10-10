@@ -25,12 +25,14 @@ public class UtilityServiceImpl implements UtilityService {
 	private final UtilityMapper utilityMapper;
 	
 	@Override
-	public void createUtility(UtilityRequest request) {
+	public UtilityResponse createUtility(UtilityRequest request) {
 		
 		var utilitySpec = utilityMapper.toSpec(request);
 		
 		var utility = utilityFactory.createUtilityFromSpec(utilitySpec);
 		utilityRepository.save(utility);
+		
+		return utilityMapper.fromEntity(utility);
 	}
 	
 	@Override

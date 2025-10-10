@@ -23,11 +23,11 @@ public class GeographicalPositionController {
 	private final GeographicalPositionService geographicalPositionService;
 	
 	@PostMapping
-	public ResponseEntity<?> createGeographicalPosition(
+	public ResponseEntity<GeographicalPositionResponse> createGeographicalPosition(
 			@RequestBody GeographicalPositionRequest request
 			){
-		geographicalPositionService.createGeographicalPosition(request);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		var geographicalPosition = geographicalPositionService.createGeographicalPosition(request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(geographicalPosition);
 	}
 	
 	@GetMapping("/{geographicalpositionid}")

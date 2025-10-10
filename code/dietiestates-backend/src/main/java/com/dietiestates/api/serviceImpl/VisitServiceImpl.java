@@ -30,7 +30,7 @@ public class VisitServiceImpl implements VisitService {
 	private final UserFinder userFinder;
 	
 	@Override
-	public void createVisit(VisitRequest request, Long realEstateId) {
+	public VisitResponse createVisit(VisitRequest request, Long realEstateId) {
 		
 		var visitSpec = visitMapper.toSpec(request);
 		
@@ -39,6 +39,8 @@ public class VisitServiceImpl implements VisitService {
 		
 		var visit = visitFactory.createVisitFromSpec(visitSpec, user, realEstate);
 		visitRepository.save(visit);
+		
+		return visitMapper.fromEntity(visit);
 	}
 
 	@Override

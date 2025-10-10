@@ -12,7 +12,7 @@ import com.dietiestates.api.model.Utility;
 
 public interface RealEstateService {
 
-	void createRealEstate(RealEstateRequest request);
+	RealEstateResponse createRealEstate(RealEstateRequest request);
 	
 	List<RealEstateResponse> createRealEstatesResponse(List<RealEstate> realEstates);
 	

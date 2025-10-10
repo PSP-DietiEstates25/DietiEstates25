@@ -24,12 +24,14 @@ public class CadastralDataServiceImpl implements CadastralDataService {
 	private final CadastralDataMapper cadastralDataMapper;
 	
 	@Override
-	public void createCadastralData(CadastralDataRequest request) {
+	public CadastralDataResponse createCadastralData(CadastralDataRequest request) {
 		
 		var cadastralDataSpec = cadastralDataMapper.toSpec(request);
 		
 		var cadastralData = cadastralDataFactory.createCadastralDataFromSpec(cadastralDataSpec);
 		cadastralDataRepository.save(cadastralData);
+		
+		return cadastralDataMapper.fromEntity(cadastralData);
 	}
 	
 	@Override

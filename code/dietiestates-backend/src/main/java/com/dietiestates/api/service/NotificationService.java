@@ -6,7 +6,7 @@ import com.dietiestates.api.exception.notowned.NotificationNotOwnedByNotificatio
 
 public interface NotificationService {
 
-	void createNotification(
+	NotificationResponse createNotification(
 			String notificationCategoryName,
 			NotificationRequest request
 			);

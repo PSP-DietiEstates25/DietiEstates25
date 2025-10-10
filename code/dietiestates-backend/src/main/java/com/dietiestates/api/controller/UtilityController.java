@@ -23,11 +23,11 @@ public class UtilityController {
 	private final UtilityService utilityService;
 	
 	@PostMapping
-	public ResponseEntity<?> createUtility(
+	public ResponseEntity<UtilityResponse> createUtility(
 			@RequestBody UtilityRequest request
 			){
-		utilityService.createUtility(request);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		var utility = utilityService.createUtility(request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(utility);
 	}
 	
 	@GetMapping("/{utilityid}")

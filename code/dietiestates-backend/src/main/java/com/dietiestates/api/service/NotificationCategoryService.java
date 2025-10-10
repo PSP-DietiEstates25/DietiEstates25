@@ -5,7 +5,7 @@ import com.dietiestates.api.dto.response.NotificationCategoryResponse;
 
 public interface NotificationCategoryService {
 
-	void createNotificationCategory(NotificationCategoryRequest request);
+	NotificationCategoryResponse createNotificationCategory(NotificationCategoryRequest request);
 	
 	NotificationCategoryResponse getNotificationCategoryByName(String notificationCategoryName);
 }

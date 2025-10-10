@@ -8,7 +8,7 @@ import com.dietiestates.api.model.SearchRealEstate;
 
 public interface SearchRealEstateService {
 
-	public void createSearchRealEstate(Search search, List<RealEstate> realEstates);
+	void createSearchRealEstate(Search search, List<RealEstate> realEstates);
 	
-	public SearchRealEstate of(Search search, RealEstate realEstate);
+	SearchRealEstate of(Search search, RealEstate realEstate);
 }

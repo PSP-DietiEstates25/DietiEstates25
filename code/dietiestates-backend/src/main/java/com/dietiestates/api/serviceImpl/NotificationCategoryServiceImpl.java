@@ -22,12 +22,14 @@ public class NotificationCategoryServiceImpl implements NotificationCategoryServ
 	private final NotificationCategoryMapper notificationCategoryMapper;
 	
 	@Override
-	public void createNotificationCategory(NotificationCategoryRequest request) {
+	public NotificationCategoryResponse createNotificationCategory(NotificationCategoryRequest request) {
 		
 		var notificationCategorySpec = notificationCategoryMapper.toSpec(request);
 		
 		var notificationCategory = notificationCategoryFactory.createNotificationCategoryFromSpec(notificationCategorySpec);
 		notificationCategoryRepository.save(notificationCategory);
+		
+		return notificationCategoryMapper.fromEntity(notificationCategory);
 	}
 	
 	@Override

@@ -6,7 +6,7 @@ import com.dietiestates.api.exception.notowned.VisitNotOwnedByRealEstateExceptio
 
 public interface VisitService {
 
-	void createVisit(VisitRequest request, Long realEstateId);
+	VisitResponse createVisit(VisitRequest request, Long realEstateId);
 	
 	VisitResponse getVisitById(
 			Long realEstateId,

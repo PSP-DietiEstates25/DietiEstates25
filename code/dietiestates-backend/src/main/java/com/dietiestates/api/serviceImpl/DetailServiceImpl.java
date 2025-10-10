@@ -27,7 +27,7 @@ public class DetailServiceImpl implements DetailService {
 	private final UtilityFinder utilityFinder;
 	
 	@Override
-	public void createDetail(DetailRequest request) {
+	public DetailResponse createDetail(DetailRequest request) {
 		
 		var detailSpec = detailMapper.toSpec(request);
 		
@@ -36,6 +36,8 @@ public class DetailServiceImpl implements DetailService {
 		
 		var detail = detailFactory.createDetailFromSpec(detailSpec, geographicalPosition, utility);
 		detailRepository.save(detail);
+		
+		return detailMapper.fromEntity(detail);
 	}
 	
 	@Override
