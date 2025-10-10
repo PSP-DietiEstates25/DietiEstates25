@@ -155,10 +155,6 @@
         <h3 class="font-semibold mb-3">Crea utente</h3>
         <form [formGroup]="createForm" class="grid sm:grid-cols-2 gap-3">
           <div class="sm:col-span-2">
-            <label for="name" class="block text-sm mb-1">Nome</label>
-            <input id="name" class="input_main" formControlName="name" />
-          </div>
-          <div class="sm:col-span-2">
             <label for="email" class="block text-sm mb-1">Email</label>
             <input
               id="email"
@@ -200,10 +196,6 @@
           @for (u of users(); track u.id) {
           <div class="py-3 flex items-center gap-3">
             <div class="flex-1">
-              <div class="font-medium">
-                {{ u.name }}
-                <span class="text-xs text-slate-500">({{ u.email }})</span>
-              </div>
               <div class="text-xs text-slate-500">
                 Creato {{ u.createdAt | date : "short" }}
               </div>

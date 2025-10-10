@@ -41,11 +41,11 @@ export class AdminDashboardComponent {
   users = signal<AdminUser[]>([]);
   usersLoading = signal(false);
   roleFilter = signal<Role | ''>('');
+
   createForm = this.fb.nonNullable.group({
-    name: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
     role: ['AGENT' as Role, [Validators.required]],
-    password: [''],
+    password: ['', [Validators.required, Validators.minLength(6)]], // <--
   });
 
   constructor() {
@@ -114,7 +114,6 @@ export class AdminDashboardComponent {
     this.api.createUser(this.createForm.getRawValue()).subscribe({
       next: (_) => {
         this.createForm.reset({
-          name: '',
           email: '',
           role: 'AGENT',
           password: '',
