@@ -29,7 +29,7 @@ public class AccountMapperImpl implements AccountMapper {
 		return AccountResponse.builder()
 				.id(account.getAccountId())
 				.email(account.getAccountEmail())
-				.role(account.getAccountRole())
+				.role(account.getAccountRole().getName())
 				.enabled(true)
 				.locked(false)
 				.build();

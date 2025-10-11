@@ -18,7 +18,6 @@ import com.dietiestates.api.mapper.UserMapper;
 import com.dietiestates.api.repository.DefaultAccountRepository;
 import com.dietiestates.api.repository.EstateAgentRepository;
 import com.dietiestates.api.repository.UserRepository;
-import com.dietiestates.api.security.JwtService;
 import com.dietiestates.api.service.EstateAgentAuthenticationService;
 
 @Service("estateAgentAuthenticationServiceImpl")

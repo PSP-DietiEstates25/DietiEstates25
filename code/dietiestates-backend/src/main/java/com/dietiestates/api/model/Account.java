@@ -10,7 +10,7 @@ import jakarta.persistence.InheritanceType;
 public interface Account extends Authenticable {
 	Long getAccountId();
 	String getAccountEmail();
-	String getAccountRole();
+	Role getAccountRole();
 	LocalDateTime getCreatedDate();
 	LocalDateTime getLastModifiedDate();
 	List<Token> getTokens();

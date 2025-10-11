@@ -1,4 +1,4 @@
-package com.dietiestates.api.security;
+package com.dietiestates.api.serviceImpl;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

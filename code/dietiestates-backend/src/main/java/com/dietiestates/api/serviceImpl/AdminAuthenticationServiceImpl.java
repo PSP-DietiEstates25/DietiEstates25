@@ -19,7 +19,6 @@ import com.dietiestates.api.mapper.UserMapper;
 import com.dietiestates.api.repository.AdminRepository;
 import com.dietiestates.api.repository.DefaultAccountRepository;
 import com.dietiestates.api.repository.UserRepository;
-import com.dietiestates.api.security.JwtService;
 import com.dietiestates.api.service.AdminAuthenticationService;
 
 @Service("adminAuthenticationServiceImpl")

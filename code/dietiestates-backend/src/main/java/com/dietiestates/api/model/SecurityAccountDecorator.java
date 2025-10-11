@@ -3,13 +3,14 @@ package com.dietiestates.api.model;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -50,7 +51,9 @@ public class SecurityAccountDecorator extends AccountDecorator implements UserDe
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities(){
-		return List.of(() -> getAccountRole());
+		return List.of(getAccountRole()).stream()
+				.map(role -> new SimpleGrantedAuthority(role.getName()))
+				.collect(Collectors.toList());
 	}
 	
 	@Override

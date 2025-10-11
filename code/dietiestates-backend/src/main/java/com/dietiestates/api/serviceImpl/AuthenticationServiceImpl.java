@@ -17,7 +17,6 @@ import com.dietiestates.api.mapper.UserMapper;
 import com.dietiestates.api.model.SecurityAccountDecorator;
 import com.dietiestates.api.repository.DefaultAccountRepository;
 import com.dietiestates.api.repository.UserRepository;
-import com.dietiestates.api.security.JwtService;
 import com.dietiestates.api.service.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;

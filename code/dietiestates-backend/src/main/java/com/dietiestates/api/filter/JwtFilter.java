@@ -1,11 +1,9 @@
-package com.dietiestates.api.security;
+package com.dietiestates.api.filter;
 
 import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.springframework.http.HttpHeaders;
-import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,8 +12,12 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.dietiestates.api.serviceImpl.JwtService;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,33 +33,27 @@ public class JwtFilter extends OncePerRequestFilter {
 
 	
 	@Override
-	protected void doFilterInternal(
-			@NonNull HttpServletRequest request, 
-			@NonNull HttpServletResponse response, 
-			@NonNull FilterChain filterChain
-	) throws ServletException, IOException {
+	public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+			throws ServletException, IOException {
 		
 		if(request.getServletPath().contains("/api/v1/auth")) {
-			filterChain.doFilter(request, response);
+			chain.doFilter(request, response);
 			return;
 		}
 		
-		final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-		final String jwt;
-		final String accountEmail;
+		var jwtToken = (String) request.getAttribute("token");
 		
-		if(authHeader == null || !authHeader.startsWith("Bearer ")) {
-			filterChain.doFilter(request, response);
+		if(jwtToken == null || jwtToken.isEmpty() || jwtToken.isBlank()) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
 		
-		jwt = authHeader.substring(7);
-		accountEmail = jwtService.extractUsername(jwt);
+		var accountEmail = jwtService.extractUsername(jwtToken);
 		
 		if(accountEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 			UserDetails userDetails = userDetailsService.loadUserByUsername(accountEmail);
 			
-			if(jwtService.isTokenValid(jwt, userDetails)) {
+			if(jwtService.isTokenValid(jwtToken, userDetails)) {
 				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
 						userDetails, 
 						null, 
@@ -72,8 +68,7 @@ public class JwtFilter extends OncePerRequestFilter {
 			}
 		}
 		
-		filterChain.doFilter(request, response);
+		chain.doFilter(request, response);
 	}
 
-	
 }

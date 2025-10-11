@@ -1,4 +1,4 @@
-package com.dietiestates.api.security;
+package com.dietiestates.api.config;
 
 import java.util.List;
 
@@ -18,6 +18,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.dietiestates.api.filter.JwtFilter;
+import com.dietiestates.api.filter.RequestAuthHeaderValidationFilter;
+
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -26,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
+	private final RequestAuthHeaderValidationFilter requestValidationFilter;
+	
 	private final JwtFilter jwtAuthFilter;
 
 	private final AuthenticationProvider authenticationProvider;
@@ -35,6 +40,7 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		
 		http
 				.cors(Customizer.withDefaults())
 				.csrf(AbstractHttpConfigurer::disable)
@@ -57,7 +63,8 @@ public class SecurityConfig {
 						.authenticated())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authenticationProvider(authenticationProvider)
-				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(requestValidationFilter, JwtFilter.class);
 
 		return http.build();
 	}
