@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class CadastralDataMapperImpl implements CadastralDataMapper {
-	
 	@Override
 	public CadastralDataSpec toSpec(CadastralDataRequest request) {
 		return CadastralDataSpec.builder()
@@ -24,7 +23,7 @@ public class CadastralDataMapperImpl implements CadastralDataMapper {
 				.floor(request.getFloor())
 				.build();
 	}
-	
+
 	@Override
 	public CadastralDataResponse fromEntity(CadastralData cadastralData) {
 		return CadastralDataResponse.builder()
@@ -33,10 +32,10 @@ public class CadastralDataMapperImpl implements CadastralDataMapper {
 				.lastModifiedDate(cadastralData.getLastModifiedDate())
 				.price(cadastralData.getPrice())
 				.squareMeters(cadastralData.getSquareMeters())
-				.energyClass(cadastralData.getEnergyClass().toString())
+				.energyClass(cadastralData.getEnergyClass() != null ? cadastralData.getEnergyClass().toString() : null)
 				.rooms(cadastralData.getRooms())
 				.floor(cadastralData.getFloor())
-				.realEstateId(cadastralData.getRealEstate().getId())
+				.realEstateId(cadastralData.getRealEstate() != null ? cadastralData.getRealEstate().getId() : null)
 				.build();
 	}
 }

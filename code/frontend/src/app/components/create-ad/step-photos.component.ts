@@ -1,5 +1,4 @@
-// src/app/components/create-ad/step-photos.component.ts
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { CreateAdFacade } from './create-ad.facade';
 
@@ -9,47 +8,46 @@ import { CreateAdFacade } from './create-ad.facade';
   templateUrl: './step-photos.component.html',
 })
 export class StepPhotosComponent {
-  private router = inject(Router);
   private facade = inject(CreateAdFacade);
+  private router = inject(Router);
 
-  previews = signal<string[]>(this.facade.draft().imagesBase64 ?? []);
+  previews: string[] = [];
 
-  async onFiles(ev: Event) {
-    const input = ev.target as HTMLInputElement | null;
-    const files = input?.files;
-    if (!files || files.length === 0) return;
-
-    const toBase64 = (f: File) =>
-      new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(f);
-      });
-
-    const newImages: string[] = [];
-    for (const f of Array.from(files)) {
-      if (!f.type.startsWith('image/')) continue;
-      try {
-        const b64 = await toBase64(f);
-        newImages.push(b64);
-      } catch {}
-    }
-
-    if (newImages.length > 0) {
-      const merged = [...this.previews(), ...newImages];
-      this.previews.set(merged);
-      this.facade.setImagesBase64(merged);
-    }
-
-    if (input) input.value = '';
+  ngOnInit() {
+    this.rebuildPreviews();
   }
 
-  back() {
-    this.router.navigateByUrl('/agent/ads/new/details');
+  ngOnDestroy() {
+    this.clearPreviews();
+  }
+
+  onFilesSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const files = Array.from(input.files ?? []);
+    if (!files.length) return;
+    this.facade.addImages(files); 
+    this.rebuildPreviews(); 
+    input.value = ''; 
+  }
+
+  remove(i: number) {
+    this.facade.removeImage(i);
+    this.rebuildPreviews();
   }
 
   next() {
-    this.router.navigateByUrl('/agent/ads/new/review');
+    this.router.navigate(['/agent/ads/new/review']);
+  }
+
+  private rebuildPreviews() {
+    this.clearPreviews();
+    this.previews = (this.facade.images() ?? []).map((f) =>
+      URL.createObjectURL(f)
+    );
+  }
+
+  private clearPreviews() {
+    for (const url of this.previews) URL.revokeObjectURL(url);
+    this.previews = [];
   }
 }

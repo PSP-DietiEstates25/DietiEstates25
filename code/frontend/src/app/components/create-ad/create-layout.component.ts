@@ -1,12 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
-import {
-  Router,
-  RouterLink,
-  RouterLinkActive,
-  ActivatedRoute,
-  RouterModule,
-} from '@angular/router';
-import { AdDraftService } from '../../vecchioService/ad-draft.service';
+import { RouterLink, RouterLinkActive, RouterModule } from '@angular/router';
+import { CreateAdFacade } from './create-ad.facade';
 
 @Component({
   selector: 'app-agent-create-layout',
@@ -15,15 +9,20 @@ import { AdDraftService } from '../../vecchioService/ad-draft.service';
   templateUrl: './create-layout.component.html',
 })
 export class AgentCreateLayoutComponent {
-  private draft = inject(AdDraftService);
-  steps = [
-    { key: 'basics', label: 'Dati principali', valid: this.draft.basicsValid },
-    { key: 'details', label: 'Dettagli', valid: this.draft.detailsValid },
-    { key: 'photos', label: 'Foto', valid: this.draft.photosValid },
-    {
-      key: 'review',
-      label: 'Riepilogo',
-      valid: computed(() => this.draft.allValid()),
-    },
-  ] as const;
+  private facade = inject(CreateAdFacade);
+
+  basicsValid = computed(() => !!this.facade.basics());
+  detailsValid = computed(
+    () => !!(this.facade.utilities() && this.facade.position())
+  );
+  photosValid = computed(() => this.facade.images().length > 0);
+  allValid = computed(() => this.facade.allValid());
+
+steps = [
+  { key: 'basics',    label: 'Dati principali', valid: this.basicsValid },
+  { key: 'details',   label: 'Dettagli',        valid: this.detailsValid },
+  { key: 'cadastral', label: 'Catastali',       valid: computed(() => !!this.facade.cadastral()) },
+  { key: 'photos',    label: 'Foto',            valid: this.photosValid },
+  { key: 'review',    label: 'Riepilogo',       valid: this.allValid },
+] as const;
 }

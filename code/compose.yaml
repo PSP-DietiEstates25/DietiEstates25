@@ -8,9 +8,9 @@ services:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
-      PGDATA: /var/lib/postgresql/data
+      PGDATA: /var/lib/postgresql/dieti
     volumes:
-      - postgres_backend:/var/lib/postgresql/data
+      - postgres_backend:/var/lib/postgresql/dieti
     ports:
       - 5432:5432
     networks:

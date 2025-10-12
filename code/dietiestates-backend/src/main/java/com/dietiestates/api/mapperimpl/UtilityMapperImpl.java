@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class UtilityMapperImpl implements UtilityMapper {
-	
+
 	@Override
 	public UtilitySpec toSpec(UtilityRequest request) {
 		return UtilitySpec.builder()
@@ -32,7 +32,7 @@ public class UtilityMapperImpl implements UtilityMapper {
 				.hasAirConditioning(utility.getHasAirConditioning())
 				.hasDoorman(utility.getHasDoorman())
 				.hasElevator(utility.getHasElevator())
-				.detailId(utility.getDetail().getId())
+				.detailId(utility.getDetail() != null ? utility.getDetail().getId() : null)
 				.build();
 	}
 }

@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class GeographicalPositionMapperImpl implements GeographicalPositionMapper {
-	
+
 	@Override
 	public GeographicalPositionSpec toSpec(GeographicalPositionRequest request) {
 		return GeographicalPositionSpec.builder()
@@ -25,7 +25,7 @@ public class GeographicalPositionMapperImpl implements GeographicalPositionMappe
 				.radius(request.getRadius())
 				.build();
 	}
-	
+
 	@Override
 	public GeographicalPositionResponse fromEntity(GeographicalPosition geographicalPosition) {
 		return GeographicalPositionResponse.builder()
@@ -38,7 +38,8 @@ public class GeographicalPositionMapperImpl implements GeographicalPositionMappe
 				.longitude(geographicalPosition.getLongitude())
 				.latitude(geographicalPosition.getLatitude())
 				.radius(geographicalPosition.getRadius())
-				.detailId(geographicalPosition.getDetail().getId())
+				.detailId(geographicalPosition.getDetail() != null ? geographicalPosition.getDetail().getId() : null)
 				.build();
 	}
+
 }

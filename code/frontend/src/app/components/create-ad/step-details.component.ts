@@ -1,6 +1,5 @@
-// src/app/components/create-ad/step-details.component.ts
-import { Component, inject } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit, inject } from '@angular/core';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CreateAdFacade } from './create-ad.facade';
 import { MapComponent } from '../map/map.component';
@@ -11,62 +10,49 @@ import { MapComponent } from '../map/map.component';
   imports: [ReactiveFormsModule, MapComponent],
   templateUrl: './step-details.component.html',
 })
-export class StepDetailsComponent {
+export class StepDetailsComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private router = inject(Router);
   private facade = inject(CreateAdFacade);
+  private router = inject(Router);
 
-  private readonly DEF_LAT = 40.85631;
-  private readonly DEF_LON = 14.24641;
-
-  form = this.fb.nonNullable.group({
-    type: [
-      this.facade.draft().category ?? 'Appartamento',
-      [Validators.required],
-    ],
-    size: [
-      this.facade.draft().size ?? 0,
-      [Validators.required, Validators.min(0)],
-    ],
-    description: [this.facade.draft().description ?? ''],
-    latitude: [
-      this.facade.draft().latitude ?? this.DEF_LAT,
-      [Validators.required, Validators.min(-90), Validators.max(90)],
-    ],
-    longitude: [
-      this.facade.draft().longitude ?? this.DEF_LON,
-      [Validators.required, Validators.min(-180), Validators.max(180)],
-    ],
+  utilitiesForm = this.fb.nonNullable.group({
+    hasElevator: [false],
+    hasDoorman: [false],
+    hasAirConditioning: [false],
   });
 
-  constructor() {
-    this.form.valueChanges.subscribe((v) => {
-      this.facade.patchDetails({
-        category: v.type, 
-        size: v.size, 
-        description: v.description, 
-        latitude: v.latitude, 
-        longitude: v.longitude, 
-      });
-    });
+  positionForm = this.fb.nonNullable.group({
+    address: ['', Validators.required],
+    city: ['', Validators.required],
+    municipality: ['', Validators.required],
+    latitude: [40.85631, Validators.required],
+    longitude: [14.24641, Validators.required],
+    radius: [0],
+  });
+
+  ngOnInit(): void {
+    const u = this.facade.utilities();
+    if (u) this.utilitiesForm.patchValue(u, { emitEvent: false });
+
+    const p = this.facade.position();
+    if (p) this.positionForm.patchValue(p, { emitEvent: false });
   }
 
-  updateLatitude(lat: number) {
-    this.form.patchValue({ latitude: lat }, { emitEvent: true });
+  onLatChange(lat: number) {
+    this.positionForm.patchValue({ latitude: lat });
   }
-  updateLongitude(lon: number) {
-    this.form.patchValue({ longitude: lon }, { emitEvent: true });
-  }
-
-  back() {
-    this.router.navigateByUrl('/agent/ads/new/basics');
+  onLngChange(lng: number) {
+    this.positionForm.patchValue({ longitude: lng });
   }
 
   next() {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
+    if (this.utilitiesForm.invalid || this.positionForm.invalid) {
+      this.utilitiesForm.markAllAsTouched();
+      this.positionForm.markAllAsTouched();
       return;
     }
-    this.router.navigateByUrl('/agent/ads/new/photos');
+    this.facade.setUtilities(this.utilitiesForm.getRawValue());
+    this.facade.setPosition(this.positionForm.getRawValue());
+    this.router.navigate(['/agent/ads/new/cadastral']);
   }
 }

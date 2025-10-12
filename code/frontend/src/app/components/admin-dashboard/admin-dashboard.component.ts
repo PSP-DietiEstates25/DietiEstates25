@@ -13,7 +13,6 @@ import {
   Role,
 } from './admin-dashboard.facade';
 import { Router } from '@angular/router';
-import { AuthService } from '../../vecchioService/auth/auth.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -25,7 +24,6 @@ export class AdminDashboardComponent {
   private api = inject(AdminDashboardFacade);
   private fb = inject(FormBuilder);
   private router = inject(Router);
-  private auth = inject(AuthService);
 
   tabs = [
     { key: 'ads' as const, label: 'Annunci' },
@@ -139,9 +137,15 @@ export class AdminDashboardComponent {
   }
 
   logout() {
-    this.auth.logout();
-    clearStorage();
-    this.router.navigateByUrl('/auth');
+    try {
+      localStorage.removeItem('auth.token');
+      localStorage.removeItem('token');
+      localStorage.removeItem('userEmail');
+      sessionStorage.removeItem('auth.token');
+      sessionStorage.removeItem('token');
+    } finally {
+      this.router.navigateByUrl('auth/login');
+    }
   }
 }
 

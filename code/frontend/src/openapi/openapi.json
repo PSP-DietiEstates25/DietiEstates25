@@ -1245,17 +1245,17 @@
           "role": {
             "$ref": "#/components/schemas/Role"
           },
-          "accountId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "accountRole": {
+          "accountPassword": {
             "type": "string"
           },
           "accountEmail": {
             "type": "string"
           },
-          "accountPassword": {
+          "accountId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "accountRole": {
             "type": "string"
           }
         }

@@ -2,6 +2,7 @@ package com.dietiestates.api.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -11,7 +12,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.dietiestates.api.enums.AdCategory;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
@@ -21,6 +24,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -47,9 +51,11 @@ public class RealEstate {
     @Column(nullable = false)
     private AdCategory category;
 
-    //@Lob
-    @Column(nullable = false)
-    private String[] images;
+    @ElementCollection
+    @CollectionTable(name = "real_estate_image", joinColumns = @JoinColumn(name = "real_estate_id", foreignKey = @ForeignKey(name = "RE_IMAGE_REALESTATE_ID_FK")))
+    @Column(name = "content", columnDefinition = "TEXT", nullable = false)
+    @Lob
+    private List<String> images = new ArrayList<>();
 
     @Column(nullable = false)
     private String description;
@@ -64,61 +70,51 @@ public class RealEstate {
 
     @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Proposal> proposals = new ArrayList<>();
-    
+
     @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SearchRealEstate> searchRealEstates = new ArrayList<>();
-    
+
     @ManyToOne
-    @JoinColumn(
-    		nullable = false,
-    		name = "estate_agent_id",
-    		foreignKey = @ForeignKey(name = "REAL_ESTATE_ESTATE_AGENT_ID_FK"))
+    @JoinColumn(nullable = false, name = "estate_agent_id", foreignKey = @ForeignKey(name = "REAL_ESTATE_ESTATE_AGENT_ID_FK"))
     private EstateAgent estateAgent;
 
     @OneToOne
-    @JoinColumn(
-			nullable = false,
-			name = "cadastral_data_id",
-			foreignKey = @ForeignKey(name = "REAL_ESTATE_CADASTRAL_DATA_ID_FK"))
-	private CadastralData cadastralData;
-    
+    @JoinColumn(nullable = false, name = "cadastral_data_id", foreignKey = @ForeignKey(name = "REAL_ESTATE_CADASTRAL_DATA_ID_FK"))
+    private CadastralData cadastralData;
+
     @OneToOne
-    @JoinColumn(
-			nullable = false,
-			name = "detail_id",
-			foreignKey = @ForeignKey(name = "REAL_ESTATE_DETAIL_ID_FK"))
+    @JoinColumn(nullable = false, name = "detail_id", foreignKey = @ForeignKey(name = "REAL_ESTATE_DETAIL_ID_FK"))
     private Detail detail;
-    
+
     @Builder(builderMethodName = "builder")
     public RealEstate(
-    		String category,
-    		String[] images,
-    		String description,
-    		EstateAgent estateAgent,
-    		CadastralData cadastralData,
-    		Detail detail
-    		) {
-    		this.category = AdCategory.valueOf(category);
-    		this.images = images;
-    		this.description = description;
-    		estateAgent.addRealEstate(this);
-    		setCadastralData(cadastralData);
-    		this.detail = detail;
+            String category,
+            String[] images,
+            String description,
+            EstateAgent estateAgent,
+            CadastralData cadastralData,
+            Detail detail) {
+        this.category = AdCategory.valueOf(category);
+        this.images = images != null ? Arrays.asList(images) : new ArrayList<>();
+        this.description = description;
+        estateAgent.addRealEstate(this);
+        setCadastralData(cadastralData);
+        this.detail = detail;
     }
-    
+
     public void addProposal(Proposal proposal) {
-	    	this.proposals.add(proposal);
-	    	proposal.setRealEstate(this);
+        this.proposals.add(proposal);
+        proposal.setRealEstate(this);
     }
-    
+
     public void addSearchRealEstate(SearchRealEstate searchRealEstate) {
-    		this.searchRealEstates.add(searchRealEstate);
-    		searchRealEstate.setRealEstate(this);
-    	}
-    
-    public void setCadastralData(CadastralData cadastralData) {
-    		this.cadastralData = cadastralData;
-    		cadastralData.setRealEstate(this);
+        this.searchRealEstates.add(searchRealEstate);
+        searchRealEstate.setRealEstate(this);
     }
-    
+
+    public void setCadastralData(CadastralData cadastralData) {
+        this.cadastralData = cadastralData;
+        cadastralData.setRealEstate(this);
+    }
+
 }
