@@ -107,6 +107,21 @@ export class CreateAdFacade {
     this.images.set(arr);
   }
 
+  resetDraft() {
+    this.basics.set(null);
+    this.utilities.set(null);
+    this.position.set(null);
+    this.cadastral.set(null);
+    this.images.set([]);
+    this.error.set(null);
+    this.loading.set(false);
+  }
+
+  cancel() {
+    this.resetDraft();
+    this.router.navigateByUrl('/agent');
+  }
+
   createAd() {
     const basics = this.basics();
     const util = this.utilities();
@@ -244,6 +259,7 @@ export class CreateAdFacade {
       )
       .subscribe((realEstateId: number) => {
         // Arrivi qui solo se tutto OK
+        this.resetDraft();
         this.router.navigateByUrl('/agent');
       });
   }
@@ -300,9 +316,5 @@ export class CreateAdFacade {
       if (m) return Number(m[1]);
     }
     return null;
-  }
-
-  private logBody(tag: string, resp: any) {
-    console.log(tag, resp?.body ?? resp);
   }
 }

@@ -13,4 +13,13 @@ export class StepReviewComponent {
   publish() {
     this.facade.createAd();
   }
+
+  onCancel() {
+    if (this.facade.loading()) return;
+    const ok = confirm(
+      'Annullare la creazione dell’annuncio? I dati non salvati andranno persi.'
+    );
+    if (!ok) return;
+    this.facade.cancel();
+  }
 }

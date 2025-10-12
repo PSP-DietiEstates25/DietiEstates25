@@ -19,4 +19,15 @@
       @if (facade.loading()) { Pubblicazione… } @else { Pubblica annuncio }
     </button>
   </div>
+
+  <div class="mt-4 flex justify-end gap-2">
+    <button
+      type="button"
+      class="btn_ghost"
+      (click)="onCancel()"
+      [disabled]="facade.loading()"
+    >
+      Annulla
+    </button>
+  </div>
 </section>
