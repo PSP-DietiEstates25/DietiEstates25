@@ -58,7 +58,7 @@ public class EstateAgentAuthenticationServiceImpl extends AuthenticationServiceI
 	public void register(StafferRequest request) throws RoleNotFoundException {
 		
 		var stafferSpec = estateAgentMapper.toSpec(request);
-		var estateAgentRole = roleFinder.getByRoleName("ESTATE_AGENT");
+		var estateAgentRole = roleFinder.getByRoleName("ROLE_ESTATE_AGENT");
 		var adminCreator = adminFinder.getAdminByEmail(stafferSpec.getAdminEmail());
 		
 		var defaultAccount = defaultAccountFactory.createAccountFromSpec(stafferSpec, passwordEncoder, estateAgentRole);

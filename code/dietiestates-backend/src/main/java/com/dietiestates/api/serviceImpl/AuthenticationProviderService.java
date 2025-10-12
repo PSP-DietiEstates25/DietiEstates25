@@ -17,19 +17,23 @@ public class AuthenticationProviderService
 	implements AuthenticationProvider {
 
 	private final UserDetailsServiceImpl userDetailsService;
-	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	//private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	@Override
 	public Authentication authenticate(Authentication authentication)
 			throws AuthenticationException {
+		
 		String email = authentication.getName();
 		String password = authentication.getCredentials().toString();
 		
 		var user = userDetailsService.loadUserByUsername(email);
 		
-		return this.checkPassword(user, password);
-		
-		
+		//return this.checkPassword(user, password);
+		return new UsernamePasswordAuthenticationToken(
+				user.getUsername(),
+				user.getPassword(),
+				user.getAuthorities()
+				);
 	}
 
 	@Override
@@ -37,6 +41,7 @@ public class AuthenticationProviderService
 		return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
 	}
 
+	/*
 	private Authentication checkPassword(UserDetails user, String rawPassword) {
 		
 		if(bCryptPasswordEncoder.matches(rawPassword, user.getPassword())) {
@@ -49,4 +54,5 @@ public class AuthenticationProviderService
 			throw new BadCredentialsException("Bad credentials");
 		}
 	}
+	*/
 }

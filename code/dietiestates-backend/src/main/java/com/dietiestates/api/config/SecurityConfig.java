@@ -30,9 +30,8 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	private final RequestAuthHeaderValidationFilter requestValidationFilter;
-	
 	private final JwtFilter jwtAuthFilter;
-
+	
 	private final AuthenticationProvider authenticationProvider;
 
 	@Value("${security.cors.allowed-origin:http://localhost:4200}")
@@ -41,12 +40,41 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		
-		http
-				.cors(Customizer.withDefaults())
-				.csrf(AbstractHttpConfigurer::disable)
-				.authorizeHttpRequests(req -> req.requestMatchers(
+		http.cors(Customizer.withDefaults());
+		http.csrf(AbstractHttpConfigurer::disable);
+		http.authenticationProvider(authenticationProvider);
+		http.authorizeHttpRequests(
+				req -> req
+				.requestMatchers(
+						"/auth/estateagent",
+						"/auth/admins",
+						"/auth/realestates",
+						"/notificationcategories"
+						).hasRole("ADMIN")
+				.requestMatchers(
+						"/realestates",
+						"/offers",
+						"/visits",
+						"/cadastraldata",
+						"/details",
+						"/geographicalpositions",
+						"/utilities"
+						).hasRole("ESTATE_AGENT")
+				.requestMatchers(
+						"/searches",
+						"/visits",
+						"/offers",
+						"/cadastralfilters",
+						"/details",
+						"/geographicalpositions",
+						"/utilities",
+						"notifications"
+						).hasRole("USER")
+				.anyRequest().permitAll());
+				/*
+				.requestMatchers(
 						"/auth/**",
-						"/**",
+						// "/**"y,
 						"/v2/api-docs",
 						"/v3/api-docs",
 						"/v3/api-docs/**",
@@ -57,14 +85,12 @@ public class SecurityConfig {
 						"/swagger-ui/**",
 						"/webjars/**",
 						"/swagger-ui.html"
-						)
-						.permitAll()
-						.anyRequest()
-						.authenticated())
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authenticationProvider(authenticationProvider)
-				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-				.addFilterBefore(requestValidationFilter, JwtFilter.class);
+				).authenticated().anyRequest().permitAll()
+				
+				);*/
+		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+		http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+		http.addFilterBefore(requestValidationFilter, JwtFilter.class);
 
 		return http.build();
 	}

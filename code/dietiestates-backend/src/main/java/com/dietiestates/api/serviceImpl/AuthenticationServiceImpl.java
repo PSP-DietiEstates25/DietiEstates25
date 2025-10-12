@@ -2,7 +2,7 @@ package com.dietiestates.api.serviceImpl;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +46,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	public void register(AuthenticationRequest request) throws RoleNotFoundException {
 		
 		var authenticationSpec = userMapper.toSpec(request);
-		var userRole = roleFinder.getByRoleName("USER");
+		var userRole = roleFinder.getByRoleName("ROLE_USER");
 		
 		var defaultAccount = defaultAccountFactory.createAccountFromSpec(authenticationSpec, passwordEncoder, userRole);
 		var securityAccountDecorator = secutiryAccountDecoratorFactory.createSecurityAccountDecoratorFromSpec(defaultAccount);
@@ -57,16 +57,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 	
 	@Override
-	public AuthenticationResponse login(AuthenticationRequest request) {
+	public AuthenticationResponse login(Authentication authentication) {
 		
-		var auth = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(
-					request.getEmail(),
-					request.getPassword()
-				)
-		);
-		
-		var user = ((SecurityAccountDecorator)auth.getPrincipal());
+		var user = ((SecurityAccountDecorator)authentication.getPrincipal());
 		var token = jwtService.generateToken(user);
 		
 		return AuthenticationResponse

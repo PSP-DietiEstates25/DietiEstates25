@@ -58,7 +58,7 @@ public class AdminAuthenticationServiceImpl extends AuthenticationServiceImpl im
 	public void register(StafferRequest request) throws RoleNotFoundException {
 		
 		var stafferSpec = adminMapper.toSpec(request);
-		var adminRole = roleFinder.getByRoleName("ADMIN");
+		var adminRole = roleFinder.getByRoleName("ROLE_ADMIN");
 		var adminCreator = adminFinder.getAdminByEmail(stafferSpec.getAdminEmail());
 		
 		var defaultAccount = defaultAccountFactory.createAccountFromSpec(stafferSpec, passwordEncoder, adminRole);
