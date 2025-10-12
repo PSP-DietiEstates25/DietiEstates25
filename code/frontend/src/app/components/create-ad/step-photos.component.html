@@ -9,21 +9,29 @@
       class="input_main"
       accept="image/*"
       multiple
-      (change)="onFiles($event)"
+      (change)="onFilesSelected($event)"
     />
   </div>
 
+  <!-- Preview persistente basata sul facade -->
+  @if (previews.length) {
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-    @for (src of previews(); track src) {
-    <img
-      [src]="src"
-      class="rounded-xl border dark:border-slate-700 aspect-video object-cover"
-    />
+    @for (url of previews; track url; let i = $index) {
+    <div class="relative aspect-square rounded-lg overflow-hidden border">
+      <img [src]="url" alt="preview" class="w-full h-full object-cover" />
+      <button
+        type="button"
+        class="absolute top-2 right-2 btn_ghost text-xs"
+        (click)="remove(i)"
+      >
+        Rimuovi
+      </button>
+    </div>
     }
   </div>
+  }
 
-  <div class="flex justify-between gap-2 mt-2">
-    <button type="button" class="btn_ghost" (click)="back()">Indietro</button>
-    <button type="button" class="btn_primary" (click)="next()">Avanti</button>
+  <div class="flex justify-end gap-2">
+    <button class="btn_primary" type="button" (click)="next()">Avanti</button>
   </div>
 </div>

@@ -1,0 +1,61 @@
+<form [formGroup]="form" class="grid sm:grid-cols-2 gap-4">
+  <div>
+    <label for="price" class="block text-sm mb-1 dark:text-slate-200"
+      >Prezzo (€)</label
+    >
+    <input
+      id="price"
+      type="number"
+      class="input_main"
+      formControlName="price"
+    />
+  </div>
+  <div>
+    <label for="rooms" class="block text-sm mb-1 dark:text-slate-200"
+      >Stanze</label
+    >
+    <input
+      id="rooms"
+      type="number"
+      class="input_main"
+      formControlName="rooms"
+    />
+  </div>
+  <div>
+    <label for="floor" class="block text-sm mb-1 dark:text-slate-200"
+      >Piano</label
+    >
+    <input
+      id="floor"
+      type="number"
+      class="input_main"
+      formControlName="floor"
+    />
+  </div>
+  <div>
+    <label for="energyClass" class="block text-sm mb-1 dark:text-slate-200"
+      >Classe energetica</label
+    >
+    <select id="energyClass" class="input_main" formControlName="energyClass">
+      <option value="">Seleziona…</option>
+      @for (c of ['A4','A3','A2','A1','B','C','D','E','F','G']; track c) {
+      <option [value]="c">{{ c }}</option>
+      }
+    </select>
+  </div>
+  <div>
+    <label for="sqm" class="block text-sm mb-1 dark:text-slate-200"
+      >Metri quadri</label
+    >
+    <input
+      id="sqm"
+      type="number"
+      class="input_main"
+      formControlName="squareMeters"
+    />
+  </div>
+
+  <div class="sm:col-span-2 flex justify-end gap-2">
+    <button class="btn_primary" type="button" (click)="next()">Avanti</button>
+  </div>
+</form>

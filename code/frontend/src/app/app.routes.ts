@@ -100,6 +100,13 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'cadastral',
+            loadComponent: () =>
+              import('./components/create-ad/step-cadastral.component').then(
+                (m) => m.StepCadastralComponent
+              ),
+          },
+          {
             path: 'photos',
             loadComponent: () =>
               import('./components/create-ad/step-photos.component').then(

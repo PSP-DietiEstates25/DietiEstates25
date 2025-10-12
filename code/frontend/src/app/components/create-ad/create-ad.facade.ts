@@ -1,181 +1,271 @@
-import { Injectable, signal } from '@angular/core';
-import { Observable, of, throwError, from } from 'rxjs';
-import { map, switchMap, catchError, mergeMap, toArray } from 'rxjs/operators';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import {
+  catchError,
+  map,
+  mergeMap,
+  switchMap,
+  toArray,
+  finalize,
+} from 'rxjs/operators';
+import { EMPTY, of, from, Observable } from 'rxjs';
 
 import {
   GeographicalPositionControllerService as GeoSvc,
   CadastralDataControllerService as CadSvc,
   DetailControllerService as DetSvc,
+  UtilityControllerService as UtlSvc,
   RealEstateControllerService as ReSvc,
 } from '../../services/services';
 
 import { GeographicalPositionRequest } from '../../services/models/geographical-position-request';
 import { CadastralDataRequest } from '../../services/models/cadastral-data-request';
 import { DetailRequest } from '../../services/models/detail-request';
+import { UtilityRequest } from '../../services/models/utility-request';
 import { RealEstateRequest } from '../../services/models/real-estate-request';
 
-export interface CreateAdDraft {
-  // UI / campi usati dai componenti
-  title?: string;
-  price?: number;
-  city?: string;
-  address?: string;
+export type Category = 'SALE' | 'RENT';
 
-  type?: string;
-  category?: string;
+export interface BasicsDraft {
+  category: Category;
+  description: string;
+}
 
-  size?: number;
-  rooms?: number;
-  floor?: number;
-  energy?: string;
-  energyClass?: string;
+export interface UtilitiesDraft {
+  hasElevator: boolean;
+  hasDoorman: boolean;
+  hasAirConditioning: boolean;
+}
 
-  description?: string;
+export interface PositionDraft {
+  address: string;
+  city: string;
+  municipality: string;
+  latitude: number;
+  longitude: number;
+  radius?: number;
+}
 
-  latitude?: number;
-  longitude?: number;
-
-  photos?: File[];
-
-  // immagini pronte per invio API
-  imagesBase64?: string[];
+export interface CadastralDraft {
+  price: number;
+  rooms: number;
+  floor: number;
+  energyClass: 'A4' | 'A3' | 'A2' | 'A1' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
+  squareMeters: number;
 }
 
 @Injectable({ providedIn: 'root' })
 export class CreateAdFacade {
-  private _draft = signal<CreateAdDraft>({});
+  private geo = inject(GeoSvc);
+  private cad = inject(CadSvc);
+  private det = inject(DetSvc);
+  private utl = inject(UtlSvc);
+  private re = inject(ReSvc);
+  private router = inject(Router);
 
-  constructor(
-    private geoApi: GeoSvc,
-    private cadApi: CadSvc,
-    private detApi: DetSvc,
-    private reApi: ReSvc
-  ) {}
+  basics = signal<BasicsDraft | null>(null);
+  utilities = signal<UtilitiesDraft | null>(null);
+  position = signal<PositionDraft | null>(null);
+  cadastral = signal<CadastralDraft | null>(null);
+  images = signal<File[]>([]);
 
-  // draft
-  draft = this._draft.asReadonly();
+  loading = signal(false);
+  error = signal<string | null>(null);
 
-  // patch serve a tutti gli step per aggiornare il draft parzialmente
-  patchBasics(partial: Partial<CreateAdDraft>) {
-    this._draft.update((d) => ({ ...d, ...partial }));
+  allValid = computed(
+    () =>
+      !!(
+        this.basics() &&
+        this.utilities() &&
+        this.position() &&
+        this.cadastral() &&
+        this.images().length
+      )
+  );
+
+  setBasics(v: BasicsDraft) {
+    this.basics.set(v);
   }
-  patchDetails(partial: Partial<CreateAdDraft>) {
-    this._draft.update((d) => ({ ...d, ...partial }));
+  setUtilities(v: UtilitiesDraft) {
+    this.utilities.set(v);
   }
-  setImagesBase64(list: string[]) {
-    this._draft.update((d) => ({ ...d, imagesBase64: list }));
+  setPosition(v: PositionDraft) {
+    this.position.set(v);
   }
-  setPhotos(files: File[]) {
-    this._draft.update((d) => ({ ...d, photos: files }));
+  setCadastral(v: CadastralDraft) {
+    this.cadastral.set(v);
   }
-  reset() {
-    this._draft.set({});
+  setImages(files: File[]) {
+    this.images.set(files ?? []);
+  }
+  addImages(files: File[]) {
+    this.images.set([...(this.images() ?? []), ...(files ?? [])]);
+  }
+  removeImage(index: number) {
+    const arr = [...(this.images() ?? [])];
+    arr.splice(index, 1);
+    this.images.set(arr);
   }
 
-  // submit
-  submit(): Observable<void> {
-    const d = this._draft();
-    const email = this.getCurrentEmail() || '';
+  createAd() {
+    const basics = this.basics();
+    const util = this.utilities();
+    const pos = this.position();
+    const cad = this.cadastral();
+    const imgs = this.images();
+    const agentEmail = this.getAgentEmail();
 
-    // 0) prepara immagini: se già presenti Base64 usale; altrimenti converte photos(File[]) -> Base64[]
-    const images$: Observable<string[]> =
-      d.imagesBase64 && d.imagesBase64.length
-        ? of(d.imagesBase64)
-        : d.photos && d.photos.length
-        ? from(d.photos).pipe(
-            mergeMap((f) => this.readFileAsDataURL$(f)),
-            toArray()
+    if (!basics || !util || !pos || !cad) {
+      this.error.set('Compila tutti gli step prima di pubblicare.');
+      return;
+    }
+
+    if (!agentEmail) {
+      this.error.set(
+        "Impossibile ottenere l'email dell'agente. Effettua nuovamente il login."
+      );
+      return;
+    }
+
+    const utilityReq: UtilityRequest = {
+      hasAirConditioning: !!util.hasAirConditioning,
+      hasDoorman: !!util.hasDoorman,
+      hasElevator: !!util.hasElevator,
+    };
+
+    const gpReq: GeographicalPositionRequest = {
+      address: pos.address,
+      city: pos.city,
+      municipality: pos.municipality,
+      latitude: pos.latitude,
+      longitude: pos.longitude,
+      radius: pos.radius ?? 0,
+    };
+
+    const cadReq: CadastralDataRequest = {
+      price: cad.price,
+      rooms: cad.rooms,
+      floor: cad.floor,
+      energyClass: cad.energyClass,
+      squareMeters: cad.squareMeters,
+    } as CadastralDataRequest;
+
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.utl
+      .createUtility$Response({ body: utilityReq })
+      .pipe(
+        // utilityId: number
+        map((resp): number => {
+          const id = this.extractId(resp, ['utilityId']);
+          if (id == null) throw new Error('Utility creata ma ID non presente');
+          return id;
+        }),
+
+        // { utilityId, gpId }: entrambi number
+        switchMap((utilityId: number) =>
+          this.geo.createGeographicalPosition$Response({ body: gpReq }).pipe(
+            map((resp): { utilityId: number; gpId: number } => {
+              const gpId = this.extractId(resp, ['geographicalPositionId']);
+              if (gpId == null)
+                throw new Error(
+                  'GeographicalPosition creata ma ID non presente'
+                );
+              return { utilityId, gpId };
+            })
           )
-        : of([]);
+        ),
 
-    return images$.pipe(
-      // 1) RealEstate
-      switchMap((images) => {
-        const rePayload: RealEstateRequest = {
-          category: d.category || d.type || 'Appartamento',
-          description: d.description || (d.title ?? ''),
-          estateAgentEmail: email,
-          images,
-        };
-        return this.reApi.createRealEstate$Response({ body: rePayload });
-      }),
-      map((res) => {
-        const id = this.extractIdFromLocation(res.headers.get('Location'));
-        if (id == null) throw new Error('Impossibile ottenere ID real estate');
-        return id;
-      }),
+        // { detailId }
+        switchMap(({ utilityId, gpId }) =>
+          this.det
+            .createDetail$Response({
+              body: { geographicalPositionId: gpId, utilityId },
+            })
+            .pipe(
+              map((resp): { detailId: number } => {
+                const detailId = this.extractId(resp, ['detailId']);
+                if (detailId == null)
+                  throw new Error('Detail creato ma ID non presente');
+                return { detailId };
+              })
+            )
+        ),
 
-      // 2) Detail
-      switchMap((realEstateId) => {
-        const detailReq: DetailRequest = {};
-        return this.detApi.createDetail$Response({ body: detailReq }).pipe(
-          map((res) => {
-            const detailId = this.extractIdFromLocation(
-              res.headers.get('Location')
-            );
-            if (detailId == null)
-              throw new Error('Impossibile ottenere ID detail');
-            return { realEstateId, detailId };
-          })
-        );
-      }),
+        // { detailId, cadastralId }
+        switchMap(({ detailId }) =>
+          this.cad.createCadastralData$Response({ body: cadReq }).pipe(
+            map((resp): { detailId: number; cadastralId: number } => {
+              const cadastralId = this.extractId(resp, ['cadastralDataId']);
+              if (cadastralId == null)
+                throw new Error('Cadastral creato ma ID non presente');
+              return { detailId, cadastralId };
+            })
+          )
+        ),
 
-      // 3) GeographicalPosition
-      switchMap(({ realEstateId, detailId }) => {
-        const geoReq: GeographicalPositionRequest = {
-          address: d.address || '',
-          city: d.city || '',
-          municipality: d.city || '',
-          latitude: d.latitude as number,
-          longitude: d.longitude as number,
-        };
-        return this.geoApi
-          .createGeographicalPosition({ body: geoReq })
-          .pipe(map(() => ({ realEstateId })));
-      }),
+        // realEstateId: number
+        switchMap(({ detailId, cadastralId }) =>
+          this.readFilesAsDataURL$(imgs).pipe(
+            map((s) => this.dataUrlToBase64(s)),
+            toArray(),
+            switchMap((imagesBase64: string[]) =>
+              this.re
+                .createRealEstate$Response({
+                  body: {
+                    detailId,
+                    cadastralDataId: cadastralId,
+                    category: basics.category,
+                    description: basics.description,
+                    estateAgentEmail: agentEmail,
+                    images: imagesBase64,
+                  } as RealEstateRequest,
+                })
+                .pipe(
+                  map((resp): number => {
+                    const realEstateId = this.extractId(resp, ['realEstateId']);
+                    if (realEstateId == null)
+                      throw new Error('Annuncio creato ma ID non presente');
+                    return realEstateId;
+                  })
+                )
+            )
+          )
+        ),
 
-      // 4) CadastralData
-      switchMap(({ realEstateId }) => {
-        const cadReq: CadastralDataRequest = {
-          energyClass: d.energyClass || d.energy || 'ND',
-          floor: d.floor ?? 0,
-          price: d.price ?? 0,
-          rooms: d.rooms ?? 0,
-          squareMeters: d.size ?? 0,
-        };
-        return this.cadApi.createCadastralData({
-          body: cadReq,
-        });
-      }),
-
-      map(() => void 0),
-      catchError((err) => throwError(() => err))
-    );
+        catchError((e) => {
+          this.error.set(
+            e?.error?.message || e?.message || 'Creazione annuncio fallita'
+          );
+          return EMPTY;
+        }),
+        finalize(() => this.loading.set(false))
+      )
+      .subscribe((realEstateId: number) => {
+        // Arrivi qui solo se tutto OK
+        this.router.navigateByUrl('/agent');
+      });
   }
 
-  // helpers
-  private extractIdFromLocation(location: string | null): number | null {
-    if (!location) return null;
-    const parts = location.split('/').filter(Boolean);
-    const id = Number(parts[parts.length - 1]);
-    return Number.isFinite(id) ? id : null;
-  }
-
-  private getCurrentEmail(): string | null {
-    const token = localStorage.getItem('auth.token');
-    const payload = this.decodeJwt(token);
-    return (payload?.email as string) || (payload?.sub as string) || null;
-  }
-
-  private decodeJwt(token: string | null): any | null {
+  private getAgentEmail(): string | null {
     try {
+      const stored = localStorage.getItem('userEmail');
+      if (stored) return stored;
+      const token = localStorage.getItem('auth.token');
       if (!token) return null;
       const base = token.split('.')[1];
       const json = atob(base.replace(/-/g, '+').replace(/_/g, '/'));
-      return JSON.parse(json);
+      const payload = JSON.parse(json);
+      return payload.email || payload.sub || null;
     } catch {
       return null;
     }
+  }
+
+  // ---- utils ----
+  private readFilesAsDataURL$(files: File[]): Observable<string> {
+    return from(files).pipe(mergeMap((f) => this.readFileAsDataURL$(f)));
   }
 
   private readFileAsDataURL$(file: File): Observable<string> {
@@ -188,5 +278,31 @@ export class CreateAdFacade {
       reader.onerror = (e) => observer.error(e);
       reader.readAsDataURL(file);
     });
+  }
+
+  private dataUrlToBase64(dataUrl: string): string {
+    const i = dataUrl.indexOf(',');
+    const s = i >= 0 ? dataUrl.slice(i + 1) : dataUrl;
+    return s.replace(/\s/g, '');
+  }
+
+  private extractId(resp: any, fallbackKeys: string[] = []): number | null {
+    const body = resp?.body ?? resp;
+    const keys = ['id', ...fallbackKeys];
+    for (const k of keys) {
+      const v = body?.[k];
+      if (v != null && !Number.isNaN(Number(v))) return Number(v);
+    }
+    const headers = resp?.headers;
+    const loc = headers?.get?.('Location') || headers?.get?.('location');
+    if (loc) {
+      const m = String(loc).match(/\/(\d+)(?!.*\d)/);
+      if (m) return Number(m[1]);
+    }
+    return null;
+  }
+
+  private logBody(tag: string, resp: any) {
+    console.log(tag, resp?.body ?? resp);
   }
 }

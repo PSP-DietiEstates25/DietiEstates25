@@ -7,7 +7,6 @@ import {
   VisitVM,
   OfferVM,
 } from './agent-dashboard.facade';
-import { AuthService } from '../../vecchioService/auth/auth.service';
 
 @Component({
   selector: 'app-agent-dashboard',
@@ -18,7 +17,6 @@ import { AuthService } from '../../vecchioService/auth/auth.service';
 export class AgentDashboardComponent {
   private router = inject(Router);
   private facade = inject(AgentDashboardFacade);
-  private auth = inject(AuthService);
 
   // Tabs
   tabs: Array<{ key: 'visits' | 'ads' | 'offers'; label: string }> = [
@@ -101,9 +99,15 @@ export class AgentDashboardComponent {
   }
 
   logout() {
-    this.auth.logout();
-    clearStorage();
-    this.router.navigateByUrl('/auth');
+    try {
+      localStorage.removeItem('auth.token');
+      localStorage.removeItem('token');
+      localStorage.removeItem('userEmail');
+      sessionStorage.removeItem('auth.token');
+      sessionStorage.removeItem('token');
+    } finally {
+      this.router.navigateByUrl('auth/login');
+    }
   }
 }
 

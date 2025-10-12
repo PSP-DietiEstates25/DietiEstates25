@@ -1,49 +1,107 @@
-<form [formGroup]="form" class="grid sm:grid-cols-2 gap-4">
-  
-  <div>
-    <label for="type" class="block text-sm mb-1 dark:text-slate-200"
-      >Tipologia</label
-    >
-    <select id="type" class="input_main" formControlName="type">
-      <option>Appartamento</option>
-      <option>Casa indipendente</option>
-      <option>Stanza</option>
-      <option>Attico</option>
-    </select>
-  </div>
-  <div>
-    <label for="size" class="block text-sm mb-1 dark:text-slate-200">Mq</label>
-    <input id="size" type="number" class="input_main" formControlName="size" />
-  </div>
-  <div class="sm:col-span-2">
-    <label for="description" class="block text-sm mb-1 dark:text-slate-200"
-      >Descrizione</label
-    >
-    <textarea
-      id="description"
-      rows="4"
-      class="input_main"
-      formControlName="description"
-      placeholder="Dettagli dell'immobile"
-    ></textarea>
-  </div>
+<section class="grid lg:grid-cols-3 gap-6">
+  <form [formGroup]="utilitiesForm" class="grid gap-3 lg:col-span-1">
+    <h3 class="font-semibold">Servizi</h3>
+    <label class="flex items-center gap-2">
+      <input type="checkbox" formControlName="hasElevator" /> Ascensore
+    </label>
+    <label class="flex items-center gap-2">
+      <input type="checkbox" formControlName="hasDoorman" /> Portiere
+    </label>
+    <label class="flex items-center gap-2">
+      <input type="checkbox" formControlName="hasAirConditioning" /> Aria
+      condizionata
+    </label>
+  </form>
 
- <div class="sm:col-span-2 h-100 relative">
-    <label for="map" class="label_style">Posizione immobile</label>
+  <div class="grid gap-3 lg:col-span-2">
+    <h3 class="font-semibold">Posizione</h3>
 
-    <app-map
-      [isEditable]="false"
-      [initialLatitude]="form.get('latitude')?.value || 40.85631"
-      [initialLongitude]="form.get('longitude')?.value || 14.24641"
-      (latitudeChange)="updateLatitude($event)"
-      (longitudeChange)="updateLongitude($event)"
-    ></app-map>
+    <!-- Mappa interattiva -->
+    <div class="relative rounded-xl overflow-hidden border h-96">
+      <app-map
+        [initialLatitude]="positionForm.value.latitude!"
+        [initialLongitude]="positionForm.value.longitude!"
+        [initialZoom]="13"
+        [isEditable]="false"
+        (latitudeChange)="onLatChange($event)"
+        (longitudeChange)="onLngChange($event)"
+      />
+    </div>
+
+    <form [formGroup]="positionForm" class="grid sm:grid-cols-2 gap-4">
+      <div class="sm:col-span-2">
+        <label for="address" class="block text-sm mb-1 dark:text-slate-200"
+          >Indirizzo</label
+        >
+        <input
+          id="address"
+          class="input_main"
+          formControlName="address"
+          placeholder="Via Roma 1"
+        />
+      </div>
+      <div>
+        <label for="city" class="block text-sm mb-1 dark:text-slate-200"
+          >Città</label
+        >
+        <input
+          id="city"
+          class="input_main"
+          formControlName="city"
+          placeholder="Napoli"
+        />
+      </div>
+      <div>
+        <label for="municipality" class="block text-sm mb-1 dark:text-slate-200"
+          >Comune</label
+        >
+        <input
+          id="municipality"
+          class="input_main"
+          formControlName="municipality"
+          placeholder="NA"
+        />
+      </div>
+      <div>
+        <label for="radius" class="block text-sm mb-1 dark:text-slate-200"
+          >Raggio (m)</label
+        >
+        <input
+          id="radius"
+          type="number"
+          class="input_main"
+          formControlName="radius"
+          placeholder="0"
+        />
+      </div>
+      <div>
+        <label for="lat" class="block text-sm mb-1 dark:text-slate-200"
+          >Latitudine</label
+        >
+        <input
+          id="lat"
+          type="number"
+          step="any"
+          class="input_main"
+          formControlName="latitude"
+        />
+      </div>
+      <div>
+        <label for="lng" class="block text-sm mb-1 dark:text-slate-200"
+          >Longitudine</label
+        >
+        <input
+          id="lng"
+          type="number"
+          step="any"
+          class="input_main"
+          formControlName="longitude"
+        />
+      </div>
+    </form>
+
+    <div class="flex justify-end gap-2 mt-2">
+      <button class="btn_primary" type="button" (click)="next()">Avanti</button>
+    </div>
   </div>
-
-
-
-  <div class="sm:col-span-2 flex justify-between gap-2 mt-2">
-    <button type="button" class="btn_ghost" (click)="back()">Indietro</button>
-    <button type="button" class="btn_primary" (click)="next()">Avanti</button>
-  </div>
-</form>
+</section>

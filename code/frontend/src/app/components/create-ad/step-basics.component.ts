@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit, inject } from '@angular/core';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CreateAdFacade } from './create-ad.facade';
+import { CreateAdFacade, Category } from './create-ad.facade';
 
 @Component({
   selector: 'app-step-basics',
@@ -9,32 +9,19 @@ import { CreateAdFacade } from './create-ad.facade';
   imports: [ReactiveFormsModule],
   templateUrl: './step-basics.component.html',
 })
-export class StepBasicsComponent {
+export class StepBasicsComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private router = inject(Router);
   private facade = inject(CreateAdFacade);
+  private router = inject(Router);
 
   form = this.fb.nonNullable.group({
-    title: [
-      this.facade.draft().title ?? '',
-      [Validators.required, Validators.minLength(3)],
-    ],
-    price: [
-      this.facade.draft().price ?? 0,
-      [Validators.required, Validators.min(0)],
-    ],
-    city: [this.facade.draft().city ?? '', [Validators.required]],
-
-    rooms: [this.facade.draft().rooms ?? 0, [Validators.min(0)]],
-    floor: [this.facade.draft().floor ?? 0, [Validators.min(0)]],
-    energyClass: [
-      this.facade.draft().energyClass ?? 'ND',
-      [Validators.required],
-    ],
+    category: ['SALE' as Category, Validators.required],
+    description: ['', [Validators.required, Validators.minLength(3)]],
   });
 
-  constructor() {
-    this.form.valueChanges.subscribe((v) => this.facade.patchBasics(v));
+  ngOnInit(): void {
+    const b = this.facade.basics();
+    if (b) this.form.patchValue(b, { emitEvent: false });
   }
 
   next() {
@@ -42,6 +29,7 @@ export class StepBasicsComponent {
       this.form.markAllAsTouched();
       return;
     }
-    this.router.navigateByUrl('/agent/ads/new/details');
+    this.facade.setBasics(this.form.getRawValue());
+    this.router.navigate(['/agent/ads/new/details']);
   }
 }
