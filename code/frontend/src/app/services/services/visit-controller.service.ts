@@ -13,6 +13,7 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { createVisit } from '../fn/visit-controller/create-visit';
 import { CreateVisit$Params } from '../fn/visit-controller/create-visit';
+import { VisitResponse } from '../models/visit-response';
 
 @Injectable({ providedIn: 'root' })
 export class VisitControllerService extends BaseService {
@@ -29,8 +30,7 @@ export class VisitControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createVisit$Response(params: CreateVisit$Params, context?: HttpContext): Observable<StrictHttpResponse<{
-}>> {
+  createVisit$Response(params: CreateVisit$Params, context?: HttpContext): Observable<StrictHttpResponse<VisitResponse>> {
     return createVisit(this.http, this.rootUrl, params, context);
   }
 
@@ -40,12 +40,9 @@ export class VisitControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createVisit(params: CreateVisit$Params, context?: HttpContext): Observable<{
-}> {
+  createVisit(params: CreateVisit$Params, context?: HttpContext): Observable<VisitResponse> {
     return this.createVisit$Response(params, context).pipe(
-      map((r: StrictHttpResponse<{
-}>): {
-} => r.body)
+      map((r: StrictHttpResponse<VisitResponse>): VisitResponse => r.body)
     );
   }
 

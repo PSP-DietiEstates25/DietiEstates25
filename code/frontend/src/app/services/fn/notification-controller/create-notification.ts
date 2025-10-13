@@ -9,14 +9,14 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 import { NotificationRequest } from '../../models/notification-request';
+import { NotificationResponse } from '../../models/notification-response';
 
 export interface CreateNotification$Params {
   notificationcategoryname: string;
       body: NotificationRequest
 }
 
-export function createNotification(http: HttpClient, rootUrl: string, params: CreateNotification$Params, context?: HttpContext): Observable<StrictHttpResponse<{
-}>> {
+export function createNotification(http: HttpClient, rootUrl: string, params: CreateNotification$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationResponse>> {
   const rb = new RequestBuilder(rootUrl, createNotification.PATH, 'post');
   if (params) {
     rb.path('notificationcategoryname', params.notificationcategoryname, {});
@@ -28,8 +28,7 @@ export function createNotification(http: HttpClient, rootUrl: string, params: Cr
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<{
-      }>;
+      return r as StrictHttpResponse<NotificationResponse>;
     })
   );
 }

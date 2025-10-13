@@ -32,8 +32,7 @@ export class NotificationControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createNotification$Response(params: CreateNotification$Params, context?: HttpContext): Observable<StrictHttpResponse<{
-}>> {
+  createNotification$Response(params: CreateNotification$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationResponse>> {
     return createNotification(this.http, this.rootUrl, params, context);
   }
 
@@ -43,12 +42,9 @@ export class NotificationControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createNotification(params: CreateNotification$Params, context?: HttpContext): Observable<{
-}> {
+  createNotification(params: CreateNotification$Params, context?: HttpContext): Observable<NotificationResponse> {
     return this.createNotification$Response(params, context).pipe(
-      map((r: StrictHttpResponse<{
-}>): {
-} => r.body)
+      map((r: StrictHttpResponse<NotificationResponse>): NotificationResponse => r.body)
     );
   }
 

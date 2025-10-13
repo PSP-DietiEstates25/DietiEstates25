@@ -13,6 +13,7 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { createOffer } from '../fn/offer-controller/create-offer';
 import { CreateOffer$Params } from '../fn/offer-controller/create-offer';
+import { OfferResponse } from '../models/offer-response';
 
 @Injectable({ providedIn: 'root' })
 export class OfferControllerService extends BaseService {
@@ -29,8 +30,7 @@ export class OfferControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createOffer$Response(params: CreateOffer$Params, context?: HttpContext): Observable<StrictHttpResponse<{
-}>> {
+  createOffer$Response(params: CreateOffer$Params, context?: HttpContext): Observable<StrictHttpResponse<OfferResponse>> {
     return createOffer(this.http, this.rootUrl, params, context);
   }
 
@@ -40,12 +40,9 @@ export class OfferControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createOffer(params: CreateOffer$Params, context?: HttpContext): Observable<{
-}> {
+  createOffer(params: CreateOffer$Params, context?: HttpContext): Observable<OfferResponse> {
     return this.createOffer$Response(params, context).pipe(
-      map((r: StrictHttpResponse<{
-}>): {
-} => r.body)
+      map((r: StrictHttpResponse<OfferResponse>): OfferResponse => r.body)
     );
   }
 

@@ -9,13 +9,13 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 import { UtilityRequest } from '../../models/utility-request';
+import { UtilityResponse } from '../../models/utility-response';
 
 export interface CreateUtility$Params {
       body: UtilityRequest
 }
 
-export function createUtility(http: HttpClient, rootUrl: string, params: CreateUtility$Params, context?: HttpContext): Observable<StrictHttpResponse<{
-}>> {
+export function createUtility(http: HttpClient, rootUrl: string, params: CreateUtility$Params, context?: HttpContext): Observable<StrictHttpResponse<UtilityResponse>> {
   const rb = new RequestBuilder(rootUrl, createUtility.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
@@ -26,8 +26,7 @@ export function createUtility(http: HttpClient, rootUrl: string, params: CreateU
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<{
-      }>;
+      return r as StrictHttpResponse<UtilityResponse>;
     })
   );
 }

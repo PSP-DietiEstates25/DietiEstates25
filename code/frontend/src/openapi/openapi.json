@@ -31,7 +31,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/UtilityResponse"
                 }
               }
             }
@@ -71,6 +71,25 @@
       }
     },
     "/realestates": {
+      "get": {
+        "tags": ["real-estate-controller"],
+        "operationId": "getAllRealEstates",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RealEstateResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "tags": ["real-estate-controller"],
         "operationId": "createRealEstate",
@@ -90,7 +109,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/RealEstateResponse"
                 }
               }
             }
@@ -129,7 +148,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/VisitResponse"
                 }
               }
             }
@@ -168,7 +187,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/OfferResponse"
                 }
               }
             }
@@ -196,7 +215,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/NotificationCategoryResponse"
                 }
               }
             }
@@ -234,7 +253,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/NotificationResponse"
                 }
               }
             }
@@ -262,7 +281,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/GeographicalPositionResponse"
                 }
               }
             }
@@ -290,7 +309,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/DetailResponse"
                 }
               }
             }
@@ -318,7 +337,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/CadastralFilterResponse"
                 }
               }
             }
@@ -346,7 +365,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/CadastralDataResponse"
                 }
               }
             }
@@ -607,6 +626,35 @@
         }
       }
     },
+    "/realestates/{realestateid}": {
+      "get": {
+        "tags": ["real-estate-controller"],
+        "operationId": "getRealEstateById",
+        "parameters": [
+          {
+            "name": "realestateid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RealEstateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/notificationcategories/{notificationcategoryname}": {
       "get": {
         "tags": ["notification-category-controller"],
@@ -627,7 +675,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/NotificationCategoryResponse"
                 }
               }
             }
@@ -806,6 +854,36 @@
         },
         "required": ["hasAirConditioning", "hasDoorman", "hasElevator"]
       },
+      "UtilityResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifiedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "hasAirConditioning": {
+            "type": "boolean"
+          },
+          "hasDoorman": {
+            "type": "boolean"
+          },
+          "hasElevator": {
+            "type": "boolean"
+          },
+          "detailId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
       "SearchRequest": {
         "type": "object",
         "properties": {
@@ -935,6 +1013,43 @@
         },
         "required": ["category", "date", "status", "time", "userEmail"]
       },
+      "VisitResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifiedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "category": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "userEmail": {
+            "type": "string"
+          },
+          "realEstateId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "time": {
+            "type": "string"
+          }
+        }
+      },
       "OfferRequest": {
         "type": "object",
         "properties": {
@@ -956,6 +1071,39 @@
         },
         "required": ["amount", "category", "status", "userEmail"]
       },
+      "OfferResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifiedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "category": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "userEmail": {
+            "type": "string"
+          },
+          "realEstateId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "amount": {
+            "type": "number"
+          }
+        }
+      },
       "NotificationCategoryRequest": {
         "type": "object",
         "properties": {
@@ -968,6 +1116,29 @@
           }
         },
         "required": ["isActive", "name"]
+      },
+      "NotificationCategoryResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifiedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
       },
       "NotificationRequest": {
         "type": "object",
@@ -982,6 +1153,33 @@
           }
         },
         "required": ["message", "userEmail"]
+      },
+      "NotificationResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifiedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "message": {
+            "type": "string"
+          },
+          "notificationCategoryId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userEmail": {
+            "type": "string"
+          }
+        }
       },
       "GeographicalPositionRequest": {
         "type": "object",
@@ -1015,9 +1213,76 @@
         },
         "required": ["address", "city", "latitude", "longitude", "municipality"]
       },
+      "GeographicalPositionResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifiedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "city": {
+            "type": "string"
+          },
+          "municipality": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "radius": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "detailId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
       "DetailRequest": {
         "type": "object",
         "properties": {
+          "geographicalPositionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "utilityId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "DetailResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifiedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
           "geographicalPositionId": {
             "type": "integer",
             "format": "int64"
@@ -1083,6 +1348,65 @@
           "minSquareMeters"
         ]
       },
+      "CadastralFilterResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "minPrice": {
+            "type": "number"
+          },
+          "maxPrice": {
+            "type": "number"
+          },
+          "minSquareMeters": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxSquareMeters": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minEnergyClass": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxEnergyClass": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minRooms": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxRooms": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minFloor": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxFloor": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifiedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "searchId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
       "CadastralDataRequest": {
         "type": "object",
         "properties": {
@@ -1107,6 +1431,45 @@
           }
         },
         "required": ["energyClass", "floor", "price", "rooms", "squareMeters"]
+      },
+      "CadastralDataResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "price": {
+            "type": "number"
+          },
+          "squareMeters": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "energyClass": {
+            "type": "string"
+          },
+          "rooms": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "floor": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifiedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "realEstateId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
       },
       "AuthenticationRequest": {
         "type": "object",
@@ -1777,228 +2140,6 @@
           }
         },
         "required": ["adminEmail", "email", "password"]
-      },
-      "UtilityResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "createdDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastModifiedDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "hasAirConditioning": {
-            "type": "boolean"
-          },
-          "hasDoorman": {
-            "type": "boolean"
-          },
-          "hasElevator": {
-            "type": "boolean"
-          },
-          "detailId": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
-      "NotificationResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "createdDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastModifiedDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "message": {
-            "type": "string"
-          },
-          "notificationCategoryId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "userEmail": {
-            "type": "string"
-          }
-        }
-      },
-      "GeographicalPositionResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "createdDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastModifiedDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "city": {
-            "type": "string"
-          },
-          "municipality": {
-            "type": "string"
-          },
-          "address": {
-            "type": "string"
-          },
-          "longitude": {
-            "type": "number",
-            "format": "double"
-          },
-          "latitude": {
-            "type": "number",
-            "format": "double"
-          },
-          "radius": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "detailId": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
-      "DetailResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "createdDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastModifiedDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "geographicalPositionId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "utilityId": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
-      "CadastralFilterResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "minPrice": {
-            "type": "number"
-          },
-          "maxPrice": {
-            "type": "number"
-          },
-          "minSquareMeters": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "maxSquareMeters": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "minEnergyClass": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "maxEnergyClass": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "minRooms": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "maxRooms": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "minFloor": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "maxFloor": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "createdDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastModifiedDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "searchId": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
-      "CadastralDataResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "price": {
-            "type": "number"
-          },
-          "squareMeters": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "energyClass": {
-            "type": "string"
-          },
-          "rooms": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "floor": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "createdDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastModifiedDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "realEstateId": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
       }
     }
   }

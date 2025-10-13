@@ -32,8 +32,7 @@ export class UtilityControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createUtility$Response(params: CreateUtility$Params, context?: HttpContext): Observable<StrictHttpResponse<{
-}>> {
+  createUtility$Response(params: CreateUtility$Params, context?: HttpContext): Observable<StrictHttpResponse<UtilityResponse>> {
     return createUtility(this.http, this.rootUrl, params, context);
   }
 
@@ -43,12 +42,9 @@ export class UtilityControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createUtility(params: CreateUtility$Params, context?: HttpContext): Observable<{
-}> {
+  createUtility(params: CreateUtility$Params, context?: HttpContext): Observable<UtilityResponse> {
     return this.createUtility$Response(params, context).pipe(
-      map((r: StrictHttpResponse<{
-}>): {
-} => r.body)
+      map((r: StrictHttpResponse<UtilityResponse>): UtilityResponse => r.body)
     );
   }
 

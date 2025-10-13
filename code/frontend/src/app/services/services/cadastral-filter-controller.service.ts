@@ -32,8 +32,7 @@ export class CadastralFilterControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createCadastralFilter$Response(params: CreateCadastralFilter$Params, context?: HttpContext): Observable<StrictHttpResponse<{
-}>> {
+  createCadastralFilter$Response(params: CreateCadastralFilter$Params, context?: HttpContext): Observable<StrictHttpResponse<CadastralFilterResponse>> {
     return createCadastralFilter(this.http, this.rootUrl, params, context);
   }
 
@@ -43,12 +42,9 @@ export class CadastralFilterControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createCadastralFilter(params: CreateCadastralFilter$Params, context?: HttpContext): Observable<{
-}> {
+  createCadastralFilter(params: CreateCadastralFilter$Params, context?: HttpContext): Observable<CadastralFilterResponse> {
     return this.createCadastralFilter$Response(params, context).pipe(
-      map((r: StrictHttpResponse<{
-}>): {
-} => r.body)
+      map((r: StrictHttpResponse<CadastralFilterResponse>): CadastralFilterResponse => r.body)
     );
   }
 

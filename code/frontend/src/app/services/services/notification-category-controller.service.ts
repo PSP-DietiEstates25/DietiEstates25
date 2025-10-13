@@ -15,6 +15,7 @@ import { createNotificationCategory } from '../fn/notification-category-controll
 import { CreateNotificationCategory$Params } from '../fn/notification-category-controller/create-notification-category';
 import { getNotificationCategoryByName } from '../fn/notification-category-controller/get-notification-category-by-name';
 import { GetNotificationCategoryByName$Params } from '../fn/notification-category-controller/get-notification-category-by-name';
+import { NotificationCategoryResponse } from '../models/notification-category-response';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationCategoryControllerService extends BaseService {
@@ -31,8 +32,7 @@ export class NotificationCategoryControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createNotificationCategory$Response(params: CreateNotificationCategory$Params, context?: HttpContext): Observable<StrictHttpResponse<{
-}>> {
+  createNotificationCategory$Response(params: CreateNotificationCategory$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationCategoryResponse>> {
     return createNotificationCategory(this.http, this.rootUrl, params, context);
   }
 
@@ -42,12 +42,9 @@ export class NotificationCategoryControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createNotificationCategory(params: CreateNotificationCategory$Params, context?: HttpContext): Observable<{
-}> {
+  createNotificationCategory(params: CreateNotificationCategory$Params, context?: HttpContext): Observable<NotificationCategoryResponse> {
     return this.createNotificationCategory$Response(params, context).pipe(
-      map((r: StrictHttpResponse<{
-}>): {
-} => r.body)
+      map((r: StrictHttpResponse<NotificationCategoryResponse>): NotificationCategoryResponse => r.body)
     );
   }
 
@@ -60,8 +57,7 @@ export class NotificationCategoryControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getNotificationCategoryByName$Response(params: GetNotificationCategoryByName$Params, context?: HttpContext): Observable<StrictHttpResponse<{
-}>> {
+  getNotificationCategoryByName$Response(params: GetNotificationCategoryByName$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationCategoryResponse>> {
     return getNotificationCategoryByName(this.http, this.rootUrl, params, context);
   }
 
@@ -71,12 +67,9 @@ export class NotificationCategoryControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getNotificationCategoryByName(params: GetNotificationCategoryByName$Params, context?: HttpContext): Observable<{
-}> {
+  getNotificationCategoryByName(params: GetNotificationCategoryByName$Params, context?: HttpContext): Observable<NotificationCategoryResponse> {
     return this.getNotificationCategoryByName$Response(params, context).pipe(
-      map((r: StrictHttpResponse<{
-}>): {
-} => r.body)
+      map((r: StrictHttpResponse<NotificationCategoryResponse>): NotificationCategoryResponse => r.body)
     );
   }
 

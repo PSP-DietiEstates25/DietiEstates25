@@ -9,14 +9,14 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 import { OfferRequest } from '../../models/offer-request';
+import { OfferResponse } from '../../models/offer-response';
 
 export interface CreateOffer$Params {
   realestateid: number;
       body: OfferRequest
 }
 
-export function createOffer(http: HttpClient, rootUrl: string, params: CreateOffer$Params, context?: HttpContext): Observable<StrictHttpResponse<{
-}>> {
+export function createOffer(http: HttpClient, rootUrl: string, params: CreateOffer$Params, context?: HttpContext): Observable<StrictHttpResponse<OfferResponse>> {
   const rb = new RequestBuilder(rootUrl, createOffer.PATH, 'post');
   if (params) {
     rb.path('realestateid', params.realestateid, {});
@@ -28,8 +28,7 @@ export function createOffer(http: HttpClient, rootUrl: string, params: CreateOff
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<{
-      }>;
+      return r as StrictHttpResponse<OfferResponse>;
     })
   );
 }

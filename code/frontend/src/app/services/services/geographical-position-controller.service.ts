@@ -32,8 +32,7 @@ export class GeographicalPositionControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createGeographicalPosition$Response(params: CreateGeographicalPosition$Params, context?: HttpContext): Observable<StrictHttpResponse<{
-}>> {
+  createGeographicalPosition$Response(params: CreateGeographicalPosition$Params, context?: HttpContext): Observable<StrictHttpResponse<GeographicalPositionResponse>> {
     return createGeographicalPosition(this.http, this.rootUrl, params, context);
   }
 
@@ -43,12 +42,9 @@ export class GeographicalPositionControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createGeographicalPosition(params: CreateGeographicalPosition$Params, context?: HttpContext): Observable<{
-}> {
+  createGeographicalPosition(params: CreateGeographicalPosition$Params, context?: HttpContext): Observable<GeographicalPositionResponse> {
     return this.createGeographicalPosition$Response(params, context).pipe(
-      map((r: StrictHttpResponse<{
-}>): {
-} => r.body)
+      map((r: StrictHttpResponse<GeographicalPositionResponse>): GeographicalPositionResponse => r.body)
     );
   }
 

@@ -8,17 +8,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { RealEstateRequest } from '../../models/real-estate-request';
 import { RealEstateResponse } from '../../models/real-estate-response';
 
-export interface CreateRealEstate$Params {
-      body: RealEstateRequest
+export interface GetAllRealEstates$Params {
 }
 
-export function createRealEstate(http: HttpClient, rootUrl: string, params: CreateRealEstate$Params, context?: HttpContext): Observable<StrictHttpResponse<RealEstateResponse>> {
-  const rb = new RequestBuilder(rootUrl, createRealEstate.PATH, 'post');
+export function getAllRealEstates(http: HttpClient, rootUrl: string, params?: GetAllRealEstates$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<RealEstateResponse>>> {
+  const rb = new RequestBuilder(rootUrl, getAllRealEstates.PATH, 'get');
   if (params) {
-    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -26,9 +23,9 @@ export function createRealEstate(http: HttpClient, rootUrl: string, params: Crea
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<RealEstateResponse>;
+      return r as StrictHttpResponse<Array<RealEstateResponse>>;
     })
   );
 }
 
-createRealEstate.PATH = '/realestates';
+getAllRealEstates.PATH = '/realestates';

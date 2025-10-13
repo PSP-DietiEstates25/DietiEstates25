@@ -9,13 +9,13 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 import { CadastralFilterRequest } from '../../models/cadastral-filter-request';
+import { CadastralFilterResponse } from '../../models/cadastral-filter-response';
 
 export interface CreateCadastralFilter$Params {
       body: CadastralFilterRequest
 }
 
-export function createCadastralFilter(http: HttpClient, rootUrl: string, params: CreateCadastralFilter$Params, context?: HttpContext): Observable<StrictHttpResponse<{
-}>> {
+export function createCadastralFilter(http: HttpClient, rootUrl: string, params: CreateCadastralFilter$Params, context?: HttpContext): Observable<StrictHttpResponse<CadastralFilterResponse>> {
   const rb = new RequestBuilder(rootUrl, createCadastralFilter.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
@@ -26,8 +26,7 @@ export function createCadastralFilter(http: HttpClient, rootUrl: string, params:
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<{
-      }>;
+      return r as StrictHttpResponse<CadastralFilterResponse>;
     })
   );
 }

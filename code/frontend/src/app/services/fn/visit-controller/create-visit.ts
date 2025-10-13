@@ -9,14 +9,14 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 import { VisitRequest } from '../../models/visit-request';
+import { VisitResponse } from '../../models/visit-response';
 
 export interface CreateVisit$Params {
   realestateid: number;
       body: VisitRequest
 }
 
-export function createVisit(http: HttpClient, rootUrl: string, params: CreateVisit$Params, context?: HttpContext): Observable<StrictHttpResponse<{
-}>> {
+export function createVisit(http: HttpClient, rootUrl: string, params: CreateVisit$Params, context?: HttpContext): Observable<StrictHttpResponse<VisitResponse>> {
   const rb = new RequestBuilder(rootUrl, createVisit.PATH, 'post');
   if (params) {
     rb.path('realestateid', params.realestateid, {});
@@ -28,8 +28,7 @@ export function createVisit(http: HttpClient, rootUrl: string, params: CreateVis
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<{
-      }>;
+      return r as StrictHttpResponse<VisitResponse>;
     })
   );
 }

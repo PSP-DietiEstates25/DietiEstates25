@@ -32,8 +32,7 @@ export class DetailControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createDetail$Response(params: CreateDetail$Params, context?: HttpContext): Observable<StrictHttpResponse<{
-}>> {
+  createDetail$Response(params: CreateDetail$Params, context?: HttpContext): Observable<StrictHttpResponse<DetailResponse>> {
     return createDetail(this.http, this.rootUrl, params, context);
   }
 
@@ -43,12 +42,9 @@ export class DetailControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createDetail(params: CreateDetail$Params, context?: HttpContext): Observable<{
-}> {
+  createDetail(params: CreateDetail$Params, context?: HttpContext): Observable<DetailResponse> {
     return this.createDetail$Response(params, context).pipe(
-      map((r: StrictHttpResponse<{
-}>): {
-} => r.body)
+      map((r: StrictHttpResponse<DetailResponse>): DetailResponse => r.body)
     );
   }
 

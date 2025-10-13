@@ -32,8 +32,7 @@ export class CadastralDataControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createCadastralData$Response(params: CreateCadastralData$Params, context?: HttpContext): Observable<StrictHttpResponse<{
-}>> {
+  createCadastralData$Response(params: CreateCadastralData$Params, context?: HttpContext): Observable<StrictHttpResponse<CadastralDataResponse>> {
     return createCadastralData(this.http, this.rootUrl, params, context);
   }
 
@@ -43,12 +42,9 @@ export class CadastralDataControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  createCadastralData(params: CreateCadastralData$Params, context?: HttpContext): Observable<{
-}> {
+  createCadastralData(params: CreateCadastralData$Params, context?: HttpContext): Observable<CadastralDataResponse> {
     return this.createCadastralData$Response(params, context).pipe(
-      map((r: StrictHttpResponse<{
-}>): {
-} => r.body)
+      map((r: StrictHttpResponse<CadastralDataResponse>): CadastralDataResponse => r.body)
     );
   }
 
