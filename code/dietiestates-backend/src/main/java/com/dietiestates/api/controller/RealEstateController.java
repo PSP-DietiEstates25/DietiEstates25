@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.RealEstateRequest;
@@ -28,7 +29,6 @@ public class RealEstateController {
 	private static Logger logger = Logger.getLogger(RealEstateController.class.getName());
 	private final RealEstateFinder realEstateFinder;
 
-
 	@PostMapping
 	public ResponseEntity<RealEstateResponse> createRealEstate(
 			@RequestBody RealEstateRequest request) {
@@ -36,11 +36,24 @@ public class RealEstateController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(realEstate);
 	}
 
-	@GetMapping
-	public ResponseEntity<List<RealEstateResponse>> getAllRealEstates() {
+	@GetMapping("/realestates")
+	public ResponseEntity<List<RealEstateResponse>> getRealEstates(
+			@RequestParam(required = false) String agentEmail) {
 		var all = realEstateFinder.getAllRealEstates();
-		var response = realEstateSerivce.createRealEstatesResponse(all);
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+
+		var filtered = (agentEmail == null || agentEmail.isBlank())
+				? all
+				: all.stream()
+						.filter(re -> re.getEstateAgent() != null
+								&& re.getEstateAgent().getSecurityAccountDecorator() != null
+								&& agentEmail.equalsIgnoreCase(
+										re.getEstateAgent()
+												.getSecurityAccountDecorator()
+												.getAccountEmail()))
+						.toList();
+
+		var response = realEstateSerivce.createRealEstatesResponse(filtered);
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/{realestateid}")
