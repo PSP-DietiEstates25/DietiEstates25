@@ -53,6 +53,7 @@ public class RealEstateController {
 						.toList();
 
 		var response = realEstateSerivce.createRealEstatesResponse(filtered);
+
 		return ResponseEntity.ok(response);
 	}
 

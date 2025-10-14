@@ -283,23 +283,35 @@ export class AgentDashboardFacade {
   // ADS
   loadAds(): Observable<void> {
     this.adsLoading.set(true);
-    return this.call$<any[]>(this.estateApi, [
-      'getRealEstates',
-      'getAllRealEstates',
-      'listRealEstates',
-      'findAll',
-      'getAll',
-    ]).pipe(
-      map((list) => (list ?? []).map((re) => this.toAdVM(re))),
-      tap((v) => this.ads.set(v)),
-      catchError((e) => {
-        console.error('[Facade] loadAds error', e);
-        this.ads.set([]);
-        return of(void 0);
-      }),
-      finalize(() => this.adsLoading.set(false)),
-      map(() => void 0)
-    );
+    const myEmail = this.getCurrentEmail();
+
+    return this.estateApi
+      .getAllRealEstates({ agentEmail: myEmail ?? undefined })
+      .pipe(
+        map((list) => (list ?? []).map((re) => this.toAdVM(re))),
+        tap((vm) => this.ads.set(vm)),
+        catchError((e) => {
+          console.error('[Facade] loadAds error', e);
+          this.ads.set([]);
+          return of(void 0);
+        }),
+        finalize(() => this.adsLoading.set(false)),
+        map(() => void 0)
+      );
+  }
+
+  getCurrentEmail(): string | null {
+    const raw = (this as any).token ?? localStorage.getItem('token') ?? null;
+    if (!raw) return null;
+
+    const t = raw.startsWith('Bearer ') ? raw.slice(7) : raw;
+
+    try {
+      const payload = JSON.parse(atob(t.split('.')[1] || ''));
+      return payload?.sub ?? payload?.email ?? payload?.username ?? null;
+    } catch {
+      return null;
+    }
   }
 
   // OFFERS
