@@ -16,6 +16,10 @@ spring:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
+security:
+   cors:
+      allowed-origin: "http://localhost:4200"
+
 server:
   servlet:
     context-path: /api/v1
