@@ -8,9 +8,6 @@ public enum BusinessErrorCodes {
 	
 	//AUTH ERRORS
     NO_CODE(0, HttpStatus.NOT_IMPLEMENTED, "No code"),
-    ACCOUNT_LOCKED(302, HttpStatus.FORBIDDEN, "User account is locked"),
-    ACCOUNT_DISABLED(303, HttpStatus.FORBIDDEN, "User account is disabled"),
-    BAD_CREDENTIALS(304, HttpStatus.BAD_REQUEST, "Login and / or Password is incorrect"),
     
     //NOT FOUND ERRORS
     NOT_FOUND(5555, HttpStatus.NOT_FOUND),
