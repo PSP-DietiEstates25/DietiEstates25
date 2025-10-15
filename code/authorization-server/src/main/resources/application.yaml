@@ -1,9 +1,9 @@
 spring:
   application:
-    name: authentication-server
+    name: authorization-server
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/dietiestates_authentication_server
+    url: jdbc:postgresql://localhost:5432/dietiestates_authorization_server
     username: dietiestates
     password: dietiestates
     driver-class-name: org.postgresql.Driver
@@ -20,11 +20,10 @@ spring:
 
 security:
   cors:
-    allowed-origin: http://localhost:4200
+    allowed-origin: http://localhost:4200/**
 
 server:
-  servlet:
-    context-path: /api/v1
+  port: 9090
 
 logging:
   level:

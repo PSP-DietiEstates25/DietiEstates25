@@ -1,14 +1,14 @@
 services:
-  postgres_backend:
+  postgres_dietiestates_resource:
     container_name: postgres_dietiestates_resource
     image: postgres:latest
     environment:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_DB: dietiestates_resource_server
       PGDATA: /var/lib/postgresql/dietiestates_resource
     volumes:
-      - postgres_backend:/var/lib/postgresql/dietiestates_resource
+      - postgres_dietiestates_resource:/var/lib/postgresql/dietiestates_resource
     ports:
       - 5432:5432
     networks:
@@ -20,5 +20,5 @@ networks:
     driver: bridge
 
 volumes:
-  postgres_backend:
+  postgres_dietiestates_resource:
     driver: local
