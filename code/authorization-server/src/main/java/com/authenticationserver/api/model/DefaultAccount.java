@@ -1,4 +1,4 @@
-package com.dietiestates.api.model;
+package com.authenticationserver.api.model;
 
 import java.time.LocalDateTime;
 
@@ -9,11 +9,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,17 +25,19 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor
-@EqualsAndHashCode
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Role {
+public class DefaultAccount implements Account {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer id;
+	private Long id;
 	
-	@Column(unique = true)
-	private String name;
+	@Column(unique = true, nullable = false)
+	private String email;
+	
+	@Column(nullable = false)
+	private String password;
 	
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
@@ -43,10 +47,42 @@ public class Role {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 	
+	@ManyToOne
+	@JoinColumn(
+			nullable = false,
+			name = "role_name",
+			foreignKey = @ForeignKey(name = "DEFAULT_ACCOUNT_ROLE_FK")
+			)
+	private Role role;
+	
 	@Builder(builderMethodName = "builder")
-	public Role(
-			String name
+	public DefaultAccount(
+			String email,
+			String password,
+			Role role
 			) {
-		this.name = name;
+		this.email = email;
+		this.password = password;
+		this.role = role;
+	}
+	
+	@Override
+	public Long getAccountId() {
+		return id;
+	}
+	
+	@Override
+	public String getAccountPassword() {
+		return password;
+	}
+
+	@Override
+	public String getAccountEmail() {
+		return email;
+	}
+	
+	@Override
+	public Role getAccountRole() {
+		return role;
 	}
 }

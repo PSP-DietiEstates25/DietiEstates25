@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/dietiestates
+    url: jdbc:postgresql://localhost:5432/dietiestates-resource-server
     username: dietiestates
     password: dietiestates
     driver-class-name: org.postgresql.Driver

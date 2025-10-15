@@ -4,8 +4,10 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthenticationControllerService } from '../../services/services/authentication-controller.service';
 import { AuthenticationRequest } from '../../services/models/authentication-request';
 
-import { generate32ByteChallenge } from '../../services/fn/generate32ByteChallengeFn';
-import { validateChallenge } from '../../services/fn/validateChallengeFn';
+import { AuthGoogleService } from '../../services/services/auth/google/auth-google.service';
+
+import { generate32ByteChallenge } from '../../services/services/auth/generate32ByteChallengeFn';
+import { validateChallenge } from '../../services/services/auth/validateChallengeFn';
 
 @Component({
   selector: 'app-login',
@@ -17,6 +19,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private api = inject(AuthenticationControllerService);
   private router = inject(Router);
+  private googleAuthService = inject(AuthGoogleService);
 
   loading = signal(false);
   errorMsg = signal<string | null>(null);
@@ -83,6 +86,10 @@ export class LoginComponent {
         this.loading.set(false);
       },
     });
+  }
+
+  signInWithGoogle() {
+    this.googleAuthService.login();
   }
 }
 

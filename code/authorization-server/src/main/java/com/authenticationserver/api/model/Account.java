@@ -1,11 +1,11 @@
-package com.dietiestates.api.model;
+package com.authenticationserver.api.model;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-public interface Account extends Authenticable {
+public interface Account {
 	Long getAccountId();
 	String getAccountEmail();
+	String getAccountPassword();
 	Role getAccountRole();
 	LocalDateTime getCreatedDate();
 	LocalDateTime getLastModifiedDate();

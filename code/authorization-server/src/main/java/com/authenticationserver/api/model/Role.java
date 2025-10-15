@@ -1,10 +1,12 @@
-package com.dietiestates.api.model;
+package com.authenticationserver.api.model;
 
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.authenticationserver.api.enums.RoleName;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,7 +35,7 @@ public class Role {
 	private Integer id;
 	
 	@Column(unique = true)
-	private String name;
+	private RoleName name;
 	
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
@@ -47,6 +49,6 @@ public class Role {
 	public Role(
 			String name
 			) {
-		this.name = name;
+		this.name = RoleName.valueOf(name);
 	}
 }

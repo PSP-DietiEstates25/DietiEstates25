@@ -1,0 +1,31 @@
+spring:
+   application:
+      name: "authorization-server"
+   datasource:
+      url: jdbc:postgresql://localhost:5432/dietiestates-authorization-server
+      username: dietiestates
+      password: dietiestates
+      driver-class-name: org.postgres.Driver
+   jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  servlet:
+    context-path: /api/v1
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.transaction: DEBUG
+    org.springframework.orm.jpa: DEBUG
+
+
+secretKey: "22"
