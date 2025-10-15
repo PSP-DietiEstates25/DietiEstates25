@@ -4,6 +4,9 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthenticationControllerService } from '../../services/services/authentication-controller.service';
 import { AuthenticationRequest } from '../../services/models/authentication-request';
 
+import { generate32ByteChallenge } from '../../services/fn/generate32ByteChallengeFn';
+import { validateChallenge } from '../../services/fn/validateChallengeFn';
+
 @Component({
   selector: 'app-login',
   standalone: true,
