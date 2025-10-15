@@ -1,12 +1,14 @@
 spring:
-   application:
-      name: "authorization-server"
-   datasource:
-      url: jdbc:postgresql://localhost:5432/dietiestates-authorization-server
-      username: dietiestates
-      password: dietiestates
-      driver-class-name: org.postgres.Driver
-   jpa:
+  application:
+    name: authentication-server
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dietiestates_authentication_server
+    username: dietiestates
+    password: dietiestates
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
@@ -17,8 +19,8 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
 security:
-   cors:
-      allowed-origin: "http://localhost:4200"
+  cors:
+    allowed-origin: http://localhost:4200
 
 server:
   servlet:
@@ -30,6 +32,5 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     org.springframework.transaction: DEBUG
     org.springframework.orm.jpa: DEBUG
-
 
 secretKey: "22"

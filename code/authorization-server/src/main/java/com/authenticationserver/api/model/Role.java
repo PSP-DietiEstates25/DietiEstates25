@@ -11,6 +11,8 @@ import com.authenticationserver.api.enums.RoleName;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,7 +36,8 @@ public class Role {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 	
-	@Column(unique = true)
+	@Enumerated(EnumType.STRING)
+    @Column(unique = true, nullable = false)
 	private RoleName name;
 	
 	@CreatedDate

@@ -1,11 +1,14 @@
 package com.authenticationserver.api.mapperImpl;
 
+import org.springframework.stereotype.Component;
+
 import com.authenticationserver.api.dto.request.AccountRequest;
 import com.authenticationserver.api.dto.response.AccountResponse;
 import com.authenticationserver.api.mapper.AccountMapper;
 import com.authenticationserver.api.model.Account;
 import com.authenticationserver.api.spec.AccountSpec;
 
+@Component
 public class AccountMapperImpl implements AccountMapper {
 
 	@Override

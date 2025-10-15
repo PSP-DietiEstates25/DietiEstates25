@@ -30,7 +30,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private final AccountMapper accountMapper;
 	
 	private final PasswordEncoder passwordEncoder;
-	private final AuthenticationManager authenticationManager;
+	//private final AuthenticationManager authenticationManager;
 	
 	@Override
 	public AccountResponse register(AccountRequest request) throws RoleNotFoundException {
