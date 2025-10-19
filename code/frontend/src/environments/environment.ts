@@ -3,5 +3,16 @@ export const environment = {
     production: true,
     apiBaseUrl: 'http://localhost:8080',
     apiKeyParam: "apiKey=",
-    geoapifyAPIKey: "secretKey"
+    geoapifyAPIKey: "secretKey",
+
+    googleRedirectUri: "",
+    googleClientId: "",
+    googleToken: "",
+    googleLink: "",
+
+    githubRedirectUri: "",
+    githubClientId: "",
+
+    facebookRedirectUri: "",
+    facebookClientId: "",
 };

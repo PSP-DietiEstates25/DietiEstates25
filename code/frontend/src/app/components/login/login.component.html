@@ -42,10 +42,31 @@
     <a class="link_style" routerLink="/auth/register">Registrati</a>
   </p>
 
-  <div>
+  <div class="flex flex-col justify-center items-center p-4">
+
+    <div>
+      <a href="https://accounts.google.com/o/oauth2/v2/auth?redirect_uri={redirect_uri}&response_type=code&client_id={client_id}&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&access_type=offline">
+        Sign in with Google
+      </a>
       <button class="" (click)="signInWithGoogle()">
-    <img src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png" alt="Google" class="google-icon" />
-    Sign in with Google
-  </button>
+        <img src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png" alt="Google" class="google-icon" />
+        Google
+      </button>
+    </div>
+
+    <div>
+      <button class="" (click)="signInWithGithub()">
+        <img src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png" alt="Github" class="github-icon" />
+        Github
+      </button>
+    </div>
+
+    <div>
+      <button class="" (click)="signInWithFacebook()">
+        <img src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png" alt="Facebook" class="facebook-icon" />
+        Facebook
+      </button>
+    </div>
+
   </div>
 </section>

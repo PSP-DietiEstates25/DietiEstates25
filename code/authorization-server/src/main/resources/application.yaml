@@ -18,10 +18,6 @@ spring:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
-security:
-  cors:
-    allowed-origin: http://localhost:4200/**
-
 server:
   port: 9090
 
@@ -32,4 +28,4 @@ logging:
     org.springframework.transaction: DEBUG
     org.springframework.orm.jpa: DEBUG
 
-secretKey: "22"
+defaultAdminEmail: admin@admin.com

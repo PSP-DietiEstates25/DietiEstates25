@@ -59,7 +59,7 @@ public class SecurityConfig {
 		OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
 		http.cors(Customizer.withDefaults());
 		http.getConfigurer(OAuth2AuthorizationServerConfigurer.class).oidc(Customizer.withDefaults());
-		http.exceptionHandling((e) -> e.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("http://localhost:4200/auth/login")));
+		http.exceptionHandling((e) -> e.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")));
 		
 		return http.build();
 	}
@@ -68,10 +68,16 @@ public class SecurityConfig {
 	@Order(2)
 	public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 	
-		http.formLogin(Customizer.withDefaults());
+		http.formLogin(form -> form.loginPage("/login")
+				.permitAll()
+		);
 		//http.sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http.authorizeHttpRequests(
-				c -> c.anyRequest().authenticated()
+				//c -> c.anyRequest().authenticated()
+				c -> c.requestMatchers("/main.css")
+						.permitAll()
+						.anyRequest()
+						.authenticated()
 				);
 		return http.build();
 	}
@@ -95,11 +101,11 @@ public class SecurityConfig {
 	public RegisteredClientRepository registeredClientRepository() {
 		RegisteredClient registeredClient = RegisteredClient
 				.withId(UUID.randomUUID().toString())
-				.clientId("angularspa")
+				.clientId("client")
 				.clientSecret("secret")
 				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-				.redirectUri("http://localhost:4200/search")
+				.redirectUri("https://www.manning.com/authorized")
 				.scope(OidcScopes.OPENID)
 				.build();
 		
@@ -133,6 +139,7 @@ public class SecurityConfig {
 		return AuthorizationServerSettings.builder().build();
 	}
 	
+	/*
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
@@ -158,6 +165,7 @@ public class SecurityConfig {
 	    return source;
 	}
 	
+	*/
 	/*
 	private final AuthenticationProvider authenticationProvider;
 

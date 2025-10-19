@@ -91,6 +91,14 @@ export class LoginComponent {
   signInWithGoogle() {
     this.googleAuthService.login();
   }
+
+  signInWithGithub(){
+
+  }
+
+  signInWithFacebook(){
+
+  }
 }
 
 function safeDecodeJwt(token: string | null): any | null {
