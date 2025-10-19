@@ -19,7 +19,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
 server:
-  port: 9090
+  port: 8080
 
 logging:
   level:
@@ -29,3 +29,4 @@ logging:
     org.springframework.orm.jpa: DEBUG
 
 defaultAdminEmail: admin@admin.com
+redirectUri: http://localhost:9090/login/oauth2/code/
