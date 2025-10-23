@@ -10,14 +10,6 @@ export const routes: Routes = [
   {
     path: 'auth',
     children: [
-      { path: '', redirectTo: 'login', pathMatch: 'full' },
-      {
-        path: 'login',
-        loadComponent: () =>
-          import('../app/components/login/login.component').then(
-            (m) => m.LoginComponent
-          ),
-      },
       {
         path: 'register',
         loadComponent: () =>

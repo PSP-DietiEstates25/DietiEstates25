@@ -1,0 +1,60 @@
+<section class="container mx-auto px-4 py-8 max-w-lg">
+  <h1 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">Accedi</h1>
+  <form
+    [formGroup]="loginForm"
+    (ngSubmit)="onSubmit($event)"
+    action="/auth/login/process"
+    method="post"
+    class="space-y-4"
+    >
+    <div>
+      <label class="block text-sm mb-1 dark:text-slate-200">Email</label>
+      <input
+        type="email"
+        formControlName="email"
+        name="username"
+        class="input_main"
+        placeholder="you@example.com"
+      />
+      @if(submitted && loginForm.controls.email.errors){
+        @if(loginForm.controls.email.errors['required']){
+          <p class="text-sm text-red-600 mt-1">The email is required</p>
+        }
+        @if(loginForm.controls.email.errors['minlength']){
+          <p class="text-sm text-red-600 mt-1">The email must be at least 5 characters</p>
+        }
+      }
+    </div>
+
+    <div>
+      <label class="block text-sm mb-1 dark:text-slate-200">Password</label>
+      <input
+        type="password"
+        formControlName="password"
+        name="password"
+        class="input_main"
+        placeholder=""
+      />
+      @if(submitted && loginForm.controls.password.errors){
+        @if(loginForm.controls.password.errors['required']){
+          <p class="form_error">The password is required</p>
+        }
+        @if(loginForm.controls.password.errors['minlength']){
+          <p class="form_error">The password must be at least 5 characters</p>
+        }
+        @if(loginForm.controls.password.errors['maxlength']){
+          <p class="form_error">The password must be maximum 15 characters</p>
+        }
+      }
+    </div>
+
+    <button class="btn_primary w-full" type="submit">
+      Accedi
+    </button>
+  </form>
+
+  <p class="mt-4 text-sm dark:text-slate-300">
+    Non hai un account?
+    <a class="link_style" routerLink="/auth/register">Registrati</a>
+  </p>
+</section>

@@ -14,21 +14,21 @@ body {
 @layer components {
   .link_style {
     @apply cursor-pointer hover:scale-105 rounded-xl px-3 py-2 border-2 border-transparent
-hover:border-2 hover:border-amber-600 hover:bg-gray-100 hover:text-gray-900
-dark:hover:border-blue-600 dark:hover:bg-blue-200 dark:text-white
-font-semibold;
+            hover:border-2 hover:border-amber-600 hover:bg-gray-100 hover:text-gray-900
+            dark:hover:border-blue-600 dark:hover:bg-blue-200 dark:text-white
+            font-semibold;
   }
 
   .link_menu_style {
     @apply cursor-pointer hover:text-amber-500 font-semibold
-dark:text-white text-black;
+            dark:text-white text-black;
   }
 
   .logout_button_style {
     @apply cursor-pointer hover:scale-105 rounded-xl px-3 py-2 border-2 border-transparent
-hover:border-2 hover:border-amber-600 hover:bg-gray-100 hover:text-gray-900
-dark:hover:border-blue-600 dark:hover:bg-blue-200 dark:text-white
-font-semibold;
+            hover:border-2 hover:border-amber-600 hover:bg-gray-100 hover:text-gray-900
+            dark:hover:border-blue-600 dark:hover:bg-blue-200 dark:text-white
+            font-semibold;
   }
 
   .input_main {

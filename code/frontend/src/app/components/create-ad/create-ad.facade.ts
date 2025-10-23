@@ -16,13 +16,13 @@ import {
   DetailControllerService as DetSvc,
   UtilityControllerService as UtlSvc,
   RealEstateControllerService as ReSvc,
-} from '../../services/services';
+} from '../../services/resource_server/services';
 
-import { GeographicalPositionRequest } from '../../services/models/geographical-position-request';
-import { CadastralDataRequest } from '../../services/models/cadastral-data-request';
-import { DetailRequest } from '../../services/models/detail-request';
-import { UtilityRequest } from '../../services/models/utility-request';
-import { RealEstateRequest } from '../../services/models/real-estate-request';
+import { GeographicalPositionRequest } from '../../services/resource_server/models';
+import { CadastralDataRequest } from '../../services/resource_server/models';
+import { DetailRequest } from '../../services/resource_server/models';
+import { UtilityRequest } from '../../services/resource_server/models';
+import { RealEstateRequest } from '../../services/resource_server/models';
 
 export type Category = 'SALE' | 'RENT';
 

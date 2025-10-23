@@ -1,12 +1,12 @@
 import { Injectable, signal, inject } from '@angular/core';
-import { SearchControllerService } from '../../services/services/search-controller.service';
-import { SearchRequest } from '../../services/models/search-request';
-import { RealEstateResponse } from '../../services/models/real-estate-response';
-import { CadastralFilterControllerService } from '../../services/services/cadastral-filter-controller.service';
-import { CadastralFilterRequest } from '../../services/models/cadastral-filter-request';
+import { SearchControllerService } from '../../services/resource_server/services';
+import { SearchRequest } from '../../services/resource_server/models';
+import { RealEstateResponse } from '../../services/resource_server/models';
+import { CadastralFilterControllerService } from '../../services/resource_server/services';
+import { CadastralFilterRequest } from '../../services/resource_server/models';
 
 import { of, switchMap } from 'rxjs';
-import { DetailControllerService } from '../../services/services/detail-controller.service';
+import { DetailControllerService } from '../../services/resource_server/services';
 
 export type Category = 'SALE' | 'RENT';
 

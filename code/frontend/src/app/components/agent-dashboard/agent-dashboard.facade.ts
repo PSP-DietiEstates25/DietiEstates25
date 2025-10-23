@@ -3,7 +3,7 @@ import {
   RealEstateControllerService,
   VisitControllerService,
   OfferControllerService,
-} from '../../services/services';
+} from '../../services/resource_server/services';
 import { Observable, of, EMPTY, concat, defer } from 'rxjs';
 import {
   map,

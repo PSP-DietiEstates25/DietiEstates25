@@ -7,7 +7,7 @@
   <div class="mb-4 text-red-600">{{ errorMsg() }}</div>
   }
 
-  <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
+  <form [formGroup]="registerForm" (ngSubmit)="submit()" class="space-y-4">
 
     <div>
       <label class="block text-sm mb-1 dark:text-slate-200">Email</label>
@@ -17,7 +17,7 @@
         class="input_main"
         placeholder="you@example.com"
       />
-      @if (form.controls.email.touched && form.controls.email.invalid) {
+      @if (registerForm.controls.email.touched && registerForm.controls.email.invalid) {
       <p class="text-sm text-red-600 mt-1">Email non valida</p>
       }
     </div>
@@ -30,8 +30,8 @@
         class="input_main"
         placeholder="••••••••"
       />
-      @if (form.controls.passwords.controls.password.touched &&
-      form.controls.passwords.controls.password.invalid) {
+      @if (registerForm.controls.passwords.controls.password.touched &&
+      registerForm.controls.passwords.controls.password.invalid) {
       <p class="text-sm text-red-600 mt-1">Minimo 6 caratteri</p>
       }
 
@@ -44,8 +44,8 @@
         class="input_main"
         placeholder="••••••••"
       />
-      @if (form.controls.passwords.errors?.['mismatch'] &&
-      form.controls.passwords.touched) {
+      @if (registerForm.controls.passwords.errors?.['mismatch'] &&
+      registerForm.controls.passwords.touched) {
       <p class="text-sm text-red-600 mt-1">Le password non coincidono</p>
       }
     </div>

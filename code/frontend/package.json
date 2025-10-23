@@ -3,11 +3,12 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --port 4200",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "api-gen": "ng-openapi-gen --input ./src/openapi/openapi.json --output ./src/app/services"
+    "api-gen-resource": "ng-openapi-gen --input ./src/openapi_resource_server/openapi.json --output ./src/app/resource_server",
+    "api-gen-auth": "ng-openapi-gen --input ./src/openapi_authorization_server/openapi.json --output ./src/app/services/authorization_server"
   },
   "private": true,
   "dependencies": {
@@ -40,7 +41,7 @@
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "@angular/build": "^20.2.1",
+    "@angular/build": "^20.1.6",
     "@angular/cli": "^20.2.1",
     "@angular/compiler-cli": "^20.2.1",
     "@types/jasmine": "~5.1.0",

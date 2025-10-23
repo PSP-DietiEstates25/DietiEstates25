@@ -7,8 +7,8 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthenticationControllerService } from '../../services/services/authentication-controller.service';
-import { AuthenticationRequest } from '../../services/models/authentication-request';
+import { RegisterControllerService } from '../../services/authorization_server/services';
+import { RegisterRequest } from '../../services/authorization_server/models';
 
 function matchPassword(group: AbstractControl): ValidationErrors | null {
   const p = group.get('password')?.value;
@@ -23,16 +23,17 @@ function matchPassword(group: AbstractControl): ValidationErrors | null {
   templateUrl: './register.component.html',
 })
 export class RegisterComponent {
-  private fb = inject(FormBuilder);
-  private api = inject(AuthenticationControllerService);
+
+  private formBuilder = inject(FormBuilder);
+  private registerService = inject(RegisterControllerService);
   private router = inject(Router);
 
   loading = signal(false);
   errorMsg = signal<string | null>(null);
 
-  form = this.fb.nonNullable.group({
+  registerForm = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    passwords: this.fb.nonNullable.group(
+    passwords: this.formBuilder.nonNullable.group(
       {
         password: ['', Validators.required],
         confirm: ['', Validators.required],
@@ -42,28 +43,29 @@ export class RegisterComponent {
   });
 
   submit() {
-    if (this.form.invalid) {
-      if (this.form.get('passwords')?.errors?.['mismatch']) {
+    if (this.registerForm.invalid) {
+      if (this.registerForm.get('passwords')?.errors?.['mismatch']) {
         this.errorMsg.set('Le password non coincidono');
       }
-      this.form.markAllAsTouched();
+      this.registerForm.markAllAsTouched();
       return;
     }
 
     this.loading.set(true);
     this.errorMsg.set(null);
 
-    const raw = this.form.getRawValue();
+    const raw = this.registerForm.getRawValue();
     const email = raw.email.trim();
     const password = raw.passwords.password.trim();
+    const role = 'USER';
 
-    const body: AuthenticationRequest = { email, password };
+    const body: RegisterRequest = { email, password, role };
 
-    this.api.register({ body }).subscribe({
+    this.registerService.register({ body }).subscribe({
       next: () => {
         localStorage.setItem('userEmail', email);
         this.loading.set(false);
-        this.router.navigateByUrl('/auth/login');
+        this.router.navigateByUrl('/');
       },
       error: (err) => {
         this.errorMsg.set(err?.error?.message || 'Registrazione non riuscita');

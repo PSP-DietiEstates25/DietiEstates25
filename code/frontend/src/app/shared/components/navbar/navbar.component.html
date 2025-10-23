@@ -50,9 +50,16 @@
           class="flex items-center gap-4 pl-2 border-l border-gray-300 dark:border-slate-700"
         >
           @if (!isAuthenticated) {
-          <a class="link_style" routerLink="/auth" (click)="closeMenu()"
-            >Accedi / Registrati</a
-          >
+          <li>
+            <a class="link_style" routerLink="/auth/register" (click)="closeMenu()">
+              Registrati
+            </a>
+          </li>
+          <li>
+          <a class="link_style" (click)="onClickLogin()">
+            Accedi
+            </a>
+        </li>
           } @else {
           <button class="logout_button_style" (click)="logout()">Logout</button>
           }
@@ -95,7 +102,12 @@
         @if (!isAuthenticated) {
         <li>
           <a class="link_style" routerLink="/auth" (click)="closeMenu()"
-            >Accedi / Registrati</a
+            >Registrati</a
+          >
+        </li>
+        <li>
+          <a class="link_style" (click)="onClickLogin()"
+            >Accedi</a
           >
         </li>
         } @else {

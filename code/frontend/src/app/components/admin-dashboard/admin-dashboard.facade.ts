@@ -2,10 +2,10 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { EstateAgentAuthenticationControllerService } from '../../services/services/estate-agent-authentication-controller.service';
-import { StafferRequest } from '../../services/models/staffer-request';
-import { EstateAgent } from '../../services/models/estate-agent';
-import { AdminAuthenticationControllerService } from '../../services/services';
+import { EstateAgentAuthenticationControllerService } from '../../services/resource_server/services';
+import { StafferRequest } from '../../services/resource_server/models';
+import { EstateAgent } from '../../services/resource_server/models';
+import { AdminAuthenticationControllerService } from '../../services/resource_server/services';
 
 export interface AdminAd {
   id: number;
