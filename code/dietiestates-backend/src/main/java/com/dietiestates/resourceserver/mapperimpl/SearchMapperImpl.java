@@ -1,0 +1,42 @@
+package com.dietiestates.resourceserver.mapperimpl;
+
+import org.springframework.stereotype.Component;
+
+import com.dietiestates.resourceserver.dto.request.SearchRequest;
+import com.dietiestates.resourceserver.dto.response.SearchResponse;
+import com.dietiestates.resourceserver.mapper.SearchMapper;
+import com.dietiestates.resourceserver.model.Search;
+import com.dietiestates.resourceserver.spec.SearchSpec;
+
+import lombok.RequiredArgsConstructor;
+
+@Component
+@RequiredArgsConstructor
+public class SearchMapperImpl implements SearchMapper {
+	
+	@Override
+	public SearchSpec toSpec(SearchRequest request) {
+		return SearchSpec.builder()
+				.category(request.getCategory())
+				.size(request.getSize())
+				.page(request.getPage())
+				.userEmail(request.getUserEmail())
+				.cadastralFilterId(request.getCadastralFilterId())
+				.detailId(request.getDetailId())
+				.build();
+	}
+	
+	@Override
+	public SearchResponse fromEntity(Search search) {
+		return SearchResponse.builder()
+				.id(search.getId())
+				.createdDate(search.getCreatedDate())
+				.lastModifiedDate(search.getLastModifiedDate())
+				.size(search.getSize())
+				.page(search.getPage())
+				.detailId(search.getDetail().getId())
+				.cadastralFilterId(search.getCadastralFilter().getId())
+				.userEmail(search.getUser().getSecurityAccountDecorator().getAccountEmail())
+				.build();
+	}
+}
