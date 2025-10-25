@@ -1,6 +1,27 @@
+server:
+  port: 9443
+  ssl:
+    bundle: authorization-server
+    client-auth: want
+
 spring:
   application:
     name: authorization-server
+  ssl:
+    bundle:
+      jks:
+        demo-authorizationserver:
+          key:
+            alias: authorization-server-sample
+            password: password
+          keystore:
+            location: classpath:keystore.p12
+            password: password
+            type: PKCS12
+          truststore:
+            location: classpath:keystore.p12
+            password: password
+            type: PKCS12
   datasource:
     url: jdbc:postgresql://localhost:5432/dietiestates_authorization_server
     username: dietiestates
@@ -15,6 +36,28 @@ spring:
         format_sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+  security:
+    oauth2:
+      client:
+        registration:
+          google-idp:
+            provider: google
+            client-id: 817273458156-ljdvlbv3bl3ekjhm3m98fo40am16j5hf.apps.googleusercontent.com
+            client-secret: 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
+            scope: openid, https://www.googleapis.com/auth/userinfo.profile, https://www.googleapis.com/auth/userinfo.email
+            client-name: Sign in with Google
+          github-idp:
+            provider: github
+            client-id: Ov23linKVInaiBsIezOM
+            client-secret: ef0669c73ab5433a3afff298bd6db896fac2ee01
+            scope: user:email, read:user
+            client-name: Sign in with GitHub
+        provider:
+          google:
+            issuer-uri: https://accounts.google.com
+            user-name-attribute: email
+          github:
+            user-name-attribute: login
 
 logging:
   level:
@@ -25,14 +68,11 @@ logging:
 
 loginUrl: "/auth/login"
 registerUrl: "/auth/register"
-
 loginProcessingUrl: "/auth/login/process"
-
 allowedOrigin: "http://localhost:4200"
-
 clientId: "DietiEstates25"
 redirectUri: "http://localhost:4200/"
 postLogoutRedirectUri: "http://localhost:4200/"
 
-superAdminEmail: ""
-superAdminPassword: ""
+superAdminEmail: "admin@admin.com"
+superAdminPassword: "adminpassword"

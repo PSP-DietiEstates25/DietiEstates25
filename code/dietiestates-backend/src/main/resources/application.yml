@@ -9,7 +9,7 @@ springdoc:
   default-produces-media-type: application/json
 
 server:
-  port: 7070
+  port: 8091
   servlet:
     context-path: /api/v1
 
