@@ -110,4 +110,3 @@ public class SecurityAccount implements UserDetails, Principal, Serializable {
         return Boolean.TRUE.equals(enabled);
     }
 }
-

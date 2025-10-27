@@ -32,17 +32,7 @@
               >{{ link.label }}</a
             >
           </li>
-          } @if (role === 'AGENT') {
-          <li>
-            <a
-              class="link_style"
-              routerLink="/agent"
-              routerLinkActive="text-amber-600"
-              (click)="closeMenu()"
-              >Area Agente</a
-            >
-          </li>
-          }
+          } 
         </ul>
 
         <!-- Auth area -->
@@ -50,18 +40,22 @@
           class="flex items-center gap-4 pl-2 border-l border-gray-300 dark:border-slate-700"
         >
           @if (!isAuthenticated) {
-          <li>
-            <a class="link_style" routerLink="/auth/register" (click)="closeMenu()">
-              Registrati
-            </a>
-          </li>
-          <li>
-          <a class="link_style" (click)="onClickLogin()">
-            Accedi
-            </a>
-        </li>
+
+            <li>
+              <a class="link_style" routerLink="/auth/register" (click)="closeMenu()">
+                Registrati
+              </a>
+            </li>
+            <li>
+            <a class="link_style" (click)="onClickLogin()">
+              Accedi
+              </a>
+            </li>
+
           } @else {
-          <button class="logout_button_style" (click)="logout()">Logout</button>
+
+            <h1>Welcome {{email}}</h1>
+            <button class="logout_button_style" (click)="logout()">Logout</button>
           }
         </div>
       </div>
@@ -87,12 +81,6 @@
             [routerLink]="link.path"
             (click)="closeMenu()"
             >{{ link.label }}</a
-          >
-        </li>
-        } @if (role === 'AGENT') {
-        <li>
-          <a class="link_style" routerLink="/agent" (click)="closeMenu()"
-            >Area Agente</a
           >
         </li>
         }

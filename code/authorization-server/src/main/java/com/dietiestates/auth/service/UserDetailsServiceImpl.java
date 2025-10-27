@@ -1,5 +1,6 @@
 package com.dietiestates.auth.service;
 
+import com.dietiestates.auth.finder.DefaultAccountFinder;
 import com.dietiestates.auth.repository.DefaultAccountRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,13 +16,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final DefaultAccountRepository defaultAccountRepository;
+    private final DefaultAccountFinder defaultAccountFinder;
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        var account = defaultAccountRepository.findByEmail(email).get();
+        var account = defaultAccountFinder.getDefaultAccountByEmail(email);
 
         return SecurityAccount.builder()
                 .defaultAccount(account)

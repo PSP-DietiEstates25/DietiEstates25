@@ -10,22 +10,25 @@ import com.dietiestates.auth.model.DefaultAccount;
 import com.dietiestates.auth.model.Role;
 import com.dietiestates.auth.repository.DefaultAccountRepository;
 import com.dietiestates.auth.repository.RoleRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public final class UserRepositoryOAuth2UserHandler implements Consumer<OAuth2User> {
+public class UserRepositoryOAuth2UserHandler implements Consumer<OAuth2User> {
 
     private final DefaultAccountRepository defaultAccountRepository;
     private final RoleRepository roleRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
+    @Transactional
     public void accept(OAuth2User user) {
         if (this.defaultAccountRepository.findByEmail(user.getAttribute("email")).isEmpty()) {
             

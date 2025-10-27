@@ -1,9 +1,9 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, effect, inject, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../../vecchioService/auth/auth.service';
 import { MenuToggleComponent } from '../../buttons/menu_toggle/menu-toggle.component';
-import { OAuthService } from 'angular-oauth2-oidc';
+import { environment } from '../../../../environments/environment';
+import { AutentServiceService } from '../../../autent.service.service';
 
 interface NavLink {
   label: string;
@@ -17,14 +17,12 @@ interface NavLink {
   styleUrls: ['./navbar.component.scss'],
   imports: [CommonModule, RouterLink, RouterLinkActive, MenuToggleComponent],
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
 
-  private oauthService = inject(OAuthService);
-
+  private autent = inject(AutentServiceService);
   isMenuOpen = false;
   isAuthenticated = false;
-  role: 'ADMIN' | 'AGENT' | 'CLIENT' | null = null;
-  displayName = '';
+  email = '';
 
   // link base
   navLinks: NavLink[] = [
@@ -33,23 +31,10 @@ export class NavbarComponent {
     { label: 'Mappa', path: '/map' },
   ];
 
-  private auth = inject(AuthService);
   private router = inject(Router);
 
-  constructor() {
-    effect(() => {
-      const state = this.auth.authState();
-      this.isAuthenticated = !!state.isAuthenticated;
-      const email = state.email;
-    });
-
-    effect(() => {
-      try {
-        this.role = this.auth.role ? this.auth.role() : null;
-      } catch {
-        this.role = null;
-      }
-    });
+  ngOnInit(): void {
+    this.getUserInfo();
   }
 
   toggleMenu() {
@@ -62,21 +47,45 @@ export class NavbarComponent {
 
   onClickLogin(){
     this.closeMenu();
-    this.oauthService.initCodeFlow();
+    // The Backend is configured to trigger login when unauthenticated
+    window.location.href =
+    `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`;
   }
 
   onClickRegister(){}
 
+  /* VECCHIO LOGOUT
   logout() {
     this.auth.logout();
     this.closeMenu();
     clearStorage();
     this.router.navigateByUrl('/auth');
   }
-}
+  */
 
-function clearStorage() {
-  localStorage.removeItem('userEmail');
-  localStorage.removeItem('userRole');
-  localStorage.removeItem('isAuthenticated');
+  logout(): void {
+    this.closeMenu();
+    this.autent.logout()
+      .subscribe(() => {
+        this.isAuthenticated = false;
+        this.email = '';
+        this.router.navigateByUrl('/')
+      });
+  }
+
+  getUserInfo(): void {
+  this.autent.getUserInfo().subscribe({
+    next: (userInfo) => {
+      this.isAuthenticated = true;
+      this.email = userInfo.email ?? userInfo.preferred_username ?? userInfo.sub ?? '';
+    },
+    error: (err) => {
+      if (err?.status === 401) {
+        this.isAuthenticated = false;
+        this.email = '';
+        return;
+      }
+    }
+  });
+}
 }

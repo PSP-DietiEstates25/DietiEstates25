@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.dietiestates.auth.federation.FederatedIdentityIdTokenCustomizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,6 +52,7 @@ public class AuthorizationServerConfig {
     private String loginUrl;
 
     @Bean
+    @Order(1)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
 
         OAuth2AuthorizationServerConfigurer authorizationServerConfigurer =
@@ -79,21 +81,26 @@ public class AuthorizationServerConfig {
 
     @Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtTokenCustomizer() {
+        var federated = new FederatedIdentityIdTokenCustomizer();
         return (context) -> {
-            if (OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {
-                context.getClaims()
-                        .claims(claims -> {
-                            Set<String> roles = AuthorityUtils.authorityListToSet(context
-                                            .getPrincipal()
-                                            .getAuthorities())
+            // Aggiungi i ruoli nell'ACCESS_TOKEN
+            if (org.springframework.security.oauth2.server.authorization.OAuth2TokenType.ACCESS_TOKEN
+                    .equals(context.getTokenType())) {
+                context.getClaims().claims(claims -> {
+                    var roles = org.springframework.security.core.authority.AuthorityUtils
+                            .authorityListToSet(context.getPrincipal().getAuthorities())
                             .stream()
                             .map(c -> c.replaceFirst("^ROLE_", ""))
-                            .collect(Collectors.collectingAndThen(
-                                    Collectors.toSet(),
-                                    Collections::unmodifiableSet));
-
+                            .collect(java.util.stream.Collectors.collectingAndThen(
+                                    java.util.stream.Collectors.toSet(),
+                                    java.util.Collections::unmodifiableSet));
                     claims.put("role", roles);
                 });
+            }
+            // Propaga le claim dell'IdP nell'ID_TOKEN
+            if (org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames.ID_TOKEN
+                    .equals(context.getTokenType().getValue())) {
+                federated.customize(context);
             }
         };
     }
@@ -124,6 +131,7 @@ public class AuthorizationServerConfig {
 
     @Bean
     public AuthorizationServerSettings authorizationServerSettings() {
-        return AuthorizationServerSettings.builder().build();
+        return AuthorizationServerSettings.builder()
+                .build();
     }
 }

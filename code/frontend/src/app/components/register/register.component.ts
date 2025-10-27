@@ -7,8 +7,10 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { RegisterControllerService } from '../../services/authorization_server/services';
 import { RegisterRequest } from '../../services/authorization_server/models';
+import { AutentServiceService } from '../../autent.service.service';
+import { environment } from '../../../environments/environment';
+import { firstValueFrom } from 'rxjs';
 
 function matchPassword(group: AbstractControl): ValidationErrors | null {
   const p = group.get('password')?.value;
@@ -25,7 +27,7 @@ function matchPassword(group: AbstractControl): ValidationErrors | null {
 export class RegisterComponent {
 
   private formBuilder = inject(FormBuilder);
-  private registerService = inject(RegisterControllerService);
+  private autentService = inject(AutentServiceService);
   private router = inject(Router);
 
   loading = signal(false);
@@ -42,12 +44,10 @@ export class RegisterComponent {
     ),
   });
 
-  submit() {
+  async submit(): Promise<void> {
     if (this.registerForm.invalid) {
-      if (this.registerForm.get('passwords')?.errors?.['mismatch']) {
-        this.errorMsg.set('Le password non coincidono');
-      }
       this.registerForm.markAllAsTouched();
+      this.errorMsg.set(this.registerForm.get('passwords')?.errors?.['mismatch'] ? 'Le password non coincidono' : null);
       return;
     }
 
@@ -57,20 +57,20 @@ export class RegisterComponent {
     const raw = this.registerForm.getRawValue();
     const email = raw.email.trim();
     const password = raw.passwords.password.trim();
-    const role = 'USER';
+    const body = { email, password, role: 'USER' } as RegisterRequest;
 
-    const body: RegisterRequest = { email, password, role };
+    try {
+      await firstValueFrom(this.autentService.getCsrf());
+      await firstValueFrom(this.autentService.register(body));
 
-    this.registerService.register({ body }).subscribe({
-      next: () => {
-        localStorage.setItem('userEmail', email);
-        this.loading.set(false);
-        this.router.navigateByUrl('/');
-      },
-      error: (err) => {
-        this.errorMsg.set(err?.error?.message || 'Registrazione non riuscita');
-        this.loading.set(false);
-      },
-    });
-  }
+      // opzionale: attendi il redirect del router, oppure vai al flusso OIDC
+      window.location.href =
+        `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`
+        
+    } catch (err: any) {
+      this.errorMsg.set(err?.error?.message || 'Registrazione non riuscita');
+    } finally {
+      this.loading.set(false);
+    }
+}
 }

@@ -10,7 +10,7 @@ services:
     volumes:
       - postgres_dietiestates_resource:/var/lib/postgresql/dietiestates_resource
     ports:
-      - 5432:5432
+      - 5433:5432
     networks:
       - spring-backend
     restart: unless-stopped

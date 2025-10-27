@@ -1,0 +1,189 @@
+server:
+  port: 8080
+  servlet:
+    session:
+      cookie:
+        name: BFFSESSION
+        http-only: true
+        secure: false
+        same-site: LAX
+
+logging:
+  level:
+    root: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+
+spring:
+  application:
+    name: backend-for-frontend
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dietiestates_bff_server
+    username: dietiestates
+    password: dietiestates
+    driver-class-name: org.postgresql.Driver
+  session:
+    store-type: jdbc
+    jdbc:
+      initialize-schema: always
+  security:
+    oauth2:
+      client:
+        registration:
+          messaging-client-oidc:
+            provider: spring
+            client-id: dietiestates
+            client-secret: secret
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://localhost:8080/login/oauth2/code/{registrationId}"
+            scope: openid,profile
+            client-name: messaging-client-oidc
+          messaging-client-authorization-code:
+            provider: spring
+            client-id: dietiestates
+            client-secret: secret
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://localhost:8080/authorized"
+            scope: message.read,message.write
+            client-name: messaging-client-authorization-code
+        provider:
+          spring:
+            issuer-uri: https://localhost:9443
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            # AUTH SERVER /auth/login
+            - id: auth_server_userinfo
+              uri: https://localhost:9443
+              predicates:
+                - Path=/userinfo
+              filters:
+                - TokenRelay=
+
+            # /auth/register
+            - id: auth_server_register_account
+              uri: https://localhost:9443
+              predicates:
+                - Path=/auth/register
+
+            # RESOURCE SERVER
+            # /auth/users
+            - id: resource_server_register_user
+              uri: http://localhost:8090
+              predicates:
+                - Path=api/v1/users
+              filters:
+                - RelayTokenIfExists=messaging-client-authorization-code
+
+            #/auth/admins
+            - id: resource_server_register_admin
+              uri: http://localhost:8090
+              predicates:
+                - Path=/auth/admins
+              filters:
+                - RelayTokenIfExists=messaging-client-authorization-code
+
+            #/auth/estateagents
+            - id: resource_server_register_estate_agents
+              uri: http://localhost:8090
+              predicates:
+                - Path=/auth/estateagents
+              filters:
+                - RelayTokenIfExists=messaging-client-authorization-code
+
+            # /realestates
+            - id: resource_server_real_estates
+              uri: http://localhost:8090
+              predicates:
+                - Path=/realestates
+              filters:
+                - RelayTokenIfExists=messaging-client-authorization-code
+
+            # /searches
+            - id: resource_server_searches
+              uri: http://localhost:8090
+              predicates:
+                - Path=/searches
+              filters:
+                - RelayTokenIfExists=messaging-client-authorization-code
+
+            # /detais
+            - id: resource_server_details
+              uri: http://localhost:8090
+              predicates:
+                - Path=/details
+              filters:
+                - RelayTokenIfExists=messaging-client-authorization-code
+
+            # /geographicalpositions
+            - id: resource_server_geographical_positions
+              uri: http://localhost:8090
+              predicates:
+                - Path=/geographicalpositions
+              filters:
+                - RelayTokenIfExists=messaging-client-authorization-code
+
+            # /utilities
+            - id: resource_server_utilities
+              uri: http://localhost:8090
+              predicates:
+                - Path=/utilities
+              filters:
+                - RelayTokenIfExists=messaging-client-authorization-code
+
+            #/cadastraldata
+            - id: resource_server_cadastral_data
+              uri: http://localhost:8090
+              predicates:
+                - Path=/cadastraldata
+              filters:
+                - RelayTokenIfExists=messaging-client-authorization-code
+
+            #/cadastralfilters
+            - id: resource_server_cadastral_filters
+              uri: http://localhost:8090
+              predicates:
+                - Path=/cadastralfilters
+              filters:
+                - RelayTokenIfExists=messaging-client-authorization-code
+
+            #/realestates/{realestateid}/offers
+            - id: resource_server_realestate_offers
+              uri: http://localhost:8090
+              predicates:
+                - Path=/realestates/{realestateid}/offers
+              filters:
+                - RelayTokenIfExists=messaging-client-authorization-code
+
+            #/realestates/{realestateid}/visits
+            - id: resource_server_realestate_visits
+              uri: http://localhost:8090
+              predicates:
+                - Path=/realestates/{realestateid}/visits
+              filters:
+                - RelayTokenIfExists=messaging-client-authorization-code
+
+            #/notificationcategories
+            - id: resource_server_notification_categories
+              uri: http://localhost:8090
+              predicates:
+                - Path=/notificationcategories
+              filters:
+                - RelayTokenIfExists=messaging-client-authorization-code
+
+            #/notificationcategories/{name}/notification
+            - id: resource_server_notification_categories_notification
+              uri: http://localhost:8090
+              predicates:
+                - Path=/notificationcategories/{name}/notifications
+              filters:
+                - RelayTokenIfExists=messaging-client-authorization-code
+app:
+  base-uri: http://localhost:4200
+
+

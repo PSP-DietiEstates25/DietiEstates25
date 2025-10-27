@@ -9,24 +9,26 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.auth.dto.request.RegisterRequest;
-import com.dietiestates.auth.dto.response.AccountResponse;
-import com.dietiestates.auth.service.AuthenticationService;
+import com.dietiestates.auth.dto.response.RegisterResponse;
+import com.dietiestates.auth.service.RegisterService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import javax.management.relation.RoleNotFoundException;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class RegisterController {
 
-    private final AuthenticationService authenticationService;
+    private final RegisterService registerService;
 
     @PostMapping("/register")
-    public ResponseEntity<AccountResponse> register(
+    public ResponseEntity<RegisterResponse> register(
             @RequestBody @Valid RegisterRequest request
-    ) throws RoleNotFoundException{
-        var account = authenticationService.register(request);
+    ) throws RoleNotFoundException {
+        var account = registerService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(account);
     }
 }

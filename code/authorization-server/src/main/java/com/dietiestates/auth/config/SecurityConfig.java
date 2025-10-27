@@ -1,9 +1,13 @@
 package com.dietiestates.auth.config;
 
 import com.dietiestates.auth.federation.FederatedIdentityAuthenticationSuccessHandler;
+import com.dietiestates.auth.federation.UserRepositoryOAuth2UserHandler;
+import com.dietiestates.auth.repository.JpaRegisteredClientRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,13 +16,21 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import java.util.function.Consumer;
 
 @Configuration
 public class SecurityConfig {
@@ -33,44 +45,49 @@ public class SecurityConfig {
     private String loginProcessingUrl;
 
     @Bean
-    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    @Order(2)
+    public SecurityFilterChain defaultSecurityFilterChain(
+            HttpSecurity http,
+            AuthenticationSuccessHandler userRepositoryOAuth2UserHandler
+    ) throws Exception {
+
+        var csrfRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        var csrfHandler = new CsrfTokenRequestAttributeHandler();
+        csrfHandler.setCsrfRequestAttributeName(null);
+
         http
                 .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.ignoringRequestMatchers(
-                        (RequestMatcher) req -> "POST".equalsIgnoreCase(req.getMethod()) && req.getRequestURI().endsWith(registerUrl),
-                        (RequestMatcher) req -> "POST".equalsIgnoreCase(req.getMethod()) && req.getRequestURI().endsWith(loginProcessingUrl)
-                ))
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(csrfRepository)
+                        .csrfTokenRequestHandler(csrfHandler)
+                )
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(HttpMethod.POST, registerUrl).permitAll()
                         .requestMatchers(loginProcessingUrl).permitAll()
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/.well-known/**").permitAll()
+                        .requestMatchers("/auth/**", "/.well-known/**").permitAll()
+                        //federazione Google
+                        .requestMatchers("/oauth2/authorization/**", "/login/oauth2/**").permitAll()
+                        //swagger
                         .requestMatchers(
-                                "/v2/api-docs",
-                                "/v3/api-docs",
-                                "/v3/api-docs/**",
-                                "/swagger-resources",
-                                "/swagger-resources/**",
-                                "/configuration/ui",
-                                "/configuration/security",
-                                "/swagger-ui/**",
-                                "/webjars/**",
-                                "/swagger-ui.html"
+                                "/v2/api-docs","/v3/api-docs","/v3/api-docs/**",
+                                "/swagger-resources","/swagger-resources/**",
+                                "/configuration/ui","/configuration/security",
+                                "/swagger-ui/**","/webjars/**","/swagger-ui.html"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(form ->
-                        form
-                            .loginPage(loginUrl)
-                            .loginProcessingUrl(loginProcessingUrl)
-                            .permitAll()
+                .formLogin(form -> form
+                        .loginPage(loginUrl)
+                        .loginProcessingUrl(loginProcessingUrl)
+                        .usernameParameter("username")
+                        .passwordParameter("password")
+                        .permitAll()
                 )
-                .oauth2Login(oauth2Login ->
-                        oauth2Login
-                                .loginPage(loginUrl)
-                                //.successHandler(authenticationSuccessHandler())
-                );
-                /*
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage(loginUrl)
+                        .successHandler(userRepositoryOAuth2UserHandler)
+                )
+                .oauth2Client(Customizer.withDefaults()) // <— necessario per /oauth2/authorization/google
                 .exceptionHandling(ex -> ex
                         .defaultAuthenticationEntryPointFor(
                                 new LoginUrlAuthenticationEntryPoint(loginUrl),
@@ -81,19 +98,24 @@ public class SecurityConfig {
                                 new MediaTypeRequestMatcher(MediaType.APPLICATION_JSON)
                         )
                 );
-                */
 
         return http.build();
     }
 
+
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean
-    private AuthenticationSuccessHandler authenticationSuccessHandler() {
-        return new FederatedIdentityAuthenticationSuccessHandler();
+    public AuthenticationSuccessHandler authenticationSuccessHandler(
+            UserRepositoryOAuth2UserHandler userRepositoryOAuth2UserHandler
+    ) {
+
+        var federation = new FederatedIdentityAuthenticationSuccessHandler();
+        federation.setOAuth2UserHandler(userRepositoryOAuth2UserHandler);
+        return federation;
     }
 
     @Bean

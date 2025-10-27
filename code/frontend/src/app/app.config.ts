@@ -6,15 +6,14 @@ import {
   withFetch,
 } from '@angular/common/http';
 import { jwtInterceptor } from './core/jwt.interceptor';
+import { xsrfInterceptor } from './xsrf.interceptor';
 
 import { routes } from './app.routes';
-import { provideOAuthClient } from 'angular-oauth2-oidc';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(withFetch(), withInterceptors([jwtInterceptor])),
-    provideOAuthClient()
+    provideHttpClient(withFetch(), withInterceptors([jwtInterceptor, xsrfInterceptor])),
   ],
 };
