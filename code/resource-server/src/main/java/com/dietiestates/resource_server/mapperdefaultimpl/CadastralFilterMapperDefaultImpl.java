@@ -1,0 +1,50 @@
+package com.dietiestates.resource_server.mapperdefaultimpl;
+
+import com.dietiestates.resource_server.dto.request.CadastralFilterRequest;
+import com.dietiestates.resource_server.dto.response.CadastralFilterResponse;
+import com.dietiestates.resource_server.mapper.CadastralFilterMapper;
+import com.dietiestates.resource_server.model.CadastralFilter;
+import com.dietiestates.resource_server.spec.CadastralFilterSpec;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+@Component
+@RequiredArgsConstructor
+public class CadastralFilterMapperDefaultImpl implements CadastralFilterMapper {
+	
+	@Override
+	public CadastralFilterSpec toSpec(CadastralFilterRequest request) {
+		return CadastralFilterSpec.builder()
+				.minPrice(request.getMinPrice())
+				.maxPrice(request.getMaxPrice())
+				.minSquareMeters(request.getMinSquareMeters())
+				.maxSquareMeters(request.getMaxSquareMeters())
+				.minEnergyClass(request.getMinEnergyClass())
+				.maxEnergyClass(request.getMaxEnergyClass())
+				.minRooms(request.getMinRooms())
+				.maxRooms(request.getMaxRooms())
+				.minFloor(request.getMinFloor())
+				.maxFloor(request.getMaxFloor())
+				.build();
+	}
+	
+	@Override
+	public CadastralFilterResponse fromEntity(CadastralFilter cadastralFilter) {
+		return CadastralFilterResponse.builder()
+				.id(cadastralFilter.getId())
+				.createdDate(cadastralFilter.getCreatedDate())
+				.lastModifiedDate(cadastralFilter.getLastModifiedDate())
+				.minPrice(cadastralFilter.getPriceRange().getMinPrice())
+				.maxPrice(cadastralFilter.getPriceRange().getMaxPrice())
+				.minSquareMeters(cadastralFilter.getSquareMetersRange().getMinSquareMeters())
+				.maxSquareMeters(cadastralFilter.getSquareMetersRange().getMaxSquareMeters())
+				.minEnergyClass(cadastralFilter.getEnergyClassRange().getMinEnergyClass())
+				.maxEnergyClass(cadastralFilter.getEnergyClassRange().getMaxEnergyClass())
+				.minRooms(cadastralFilter.getRoomsRange().getMinRooms())
+				.maxRooms(cadastralFilter.getRoomsRange().getMaxRooms())
+				.minFloor(cadastralFilter.getFloorRange().getMinFloor())
+				.maxFloor(cadastralFilter.getFloorRange().getMaxFloor())
+				.searchId(cadastralFilter.getSearch().getId())
+				.build();
+	}
+}

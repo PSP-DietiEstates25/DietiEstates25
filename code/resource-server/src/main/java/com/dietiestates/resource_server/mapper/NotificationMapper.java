@@ -1,0 +1,13 @@
+package com.dietiestates.resource_server.mapper;
+
+import com.dietiestates.resource_server.dto.request.NotificationRequest;
+import com.dietiestates.resource_server.dto.response.NotificationResponse;
+import com.dietiestates.resource_server.model.Notification;
+import com.dietiestates.resource_server.spec.NotificationSpec;
+
+public interface NotificationMapper {
+
+	NotificationSpec toSpec(NotificationRequest request);
+	
+	NotificationResponse fromEntity(Notification notification);
+}
