@@ -27,6 +27,14 @@ spring:
     store-type: jdbc
     jdbc:
       initialize-schema: always
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update   # oppure 'validate' in prod
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
   security:
     oauth2:
       client:

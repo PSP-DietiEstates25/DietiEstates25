@@ -39,7 +39,7 @@ dependencies {
 
     // Sessione persistente su Postgres
     implementation 'org.springframework.session:spring-session-jdbc'
-    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-session-jdbc:4.0.0-M2'
     runtimeOnly   'org.postgresql:postgresql'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
