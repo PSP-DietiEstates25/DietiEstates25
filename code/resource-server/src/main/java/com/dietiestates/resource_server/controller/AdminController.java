@@ -36,4 +36,5 @@ public class AdminController {
         var admin = adminService.getAdminById(adminid);
         return ResponseEntity.status(HttpStatus.OK).body(admin);
     }
+
 }

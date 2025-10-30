@@ -29,7 +29,7 @@ public class EstateAgentMapperDefaultImpl implements EstateAgentMapper {
 				.id(estateAgent.getId())
 				.email(estateAgent.getEmail())
 				.adminEmail(estateAgent.getAdmin().getEmail())
-				.createdRealEstates(realEstateMapper.createRealEsatatesResponse(estateAgent.getRealEstates()))
+				.createdRealEstates(realEstateMapper.createRealEstatesResponse(estateAgent.getRealEstates()))
 				.build();
 	}
 }

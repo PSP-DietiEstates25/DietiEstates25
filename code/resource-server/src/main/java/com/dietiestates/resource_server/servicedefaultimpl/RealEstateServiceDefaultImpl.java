@@ -2,7 +2,9 @@ package com.dietiestates.resource_server.servicedefaultimpl;
 
 import com.dietiestates.resource_server.dto.request.RealEstateRequest;
 import com.dietiestates.resource_server.dto.response.RealEstateResponse;
+import com.dietiestates.resource_server.enums.AdCategory;
 import com.dietiestates.resource_server.factory.RealEstateFactory;
+import com.dietiestates.resource_server.filter.RealEstateFilter;
 import com.dietiestates.resource_server.finder.CadastralDataFinder;
 import com.dietiestates.resource_server.finder.DetailFinder;
 import com.dietiestates.resource_server.finder.EstateAgentFinder;
@@ -10,11 +12,19 @@ import com.dietiestates.resource_server.finder.RealEstateFinder;
 import com.dietiestates.resource_server.mapper.RealEstateMapper;
 import com.dietiestates.resource_server.model.*;
 import com.dietiestates.resource_server.repository.RealEstateRepository;
+import com.dietiestates.resource_server.service.NotificationService;
 import com.dietiestates.resource_server.service.RealEstateService;
+import com.dietiestates.resource_server.service.SearchRealEstateService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -29,100 +39,76 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
 	private final EstateAgentFinder estateAgentFinder;
 	private final CadastralDataFinder cadastralDataFinder;
 	private final DetailFinder detailFinder;
+    private final SearchRealEstateService searchRealEstateService;
+    private final NotificationService notificationService;
 	
 	@Override
 	public RealEstateResponse createRealEstate(RealEstateRequest request) {
-		
+
 		var realEstateSpec = realEstateMapper.toSpec(request);
 		
 		var estateAgent = estateAgentFinder.getEstateAgentByEmail(realEstateSpec.getEstateAgentEmail());
 		var cadastralData = cadastralDataFinder.getCadastralDataById(realEstateSpec.getCadastralDataId());
 		var detail = detailFinder.getDetailById(realEstateSpec.getDetailId());
 		
-		var realEstate = realEstateFactory.createRealEstateFromSpec(realEstateSpec, estateAgent, cadastralData, detail);
+		var realEstate = realEstateFactory.createRealEstateFromSpec(
+                realEstateSpec,
+                estateAgent,
+                cadastralData,
+                detail
+        );
+        var searchesToNotify = searchRealEstateService.createRealEstateSearchesLink(realEstate);
 		realEstateRepository.save(realEstate);
-		
+
+        notificationService.createNotificationsAfterRealEstateCreation(searchesToNotify);
+
 		return realEstateMapper.fromEntity(realEstate);
 	}
-	
-	@Override
-	public List<RealEstateResponse> createRealEstatesResponse(List<RealEstate> realEstates) {
-		
-		var response = new ArrayList<RealEstateResponse>();
-		
-		realEstates.forEach(realEstate -> {
-			var realEstateResponse = realEstateMapper.fromEntity(realEstate);
-			response.add(realEstateResponse);
-		});
-		
-		return response;
-	}
-	
+
+
 	@Override
 	public RealEstateResponse getRealEstateById(Long id) {
+
 		var realEstate = realEstateFinder.getRealEstateById(id);
 		return realEstateMapper.fromEntity(realEstate);
 	}
-	
-	@Override
-	public List<RealEstate> getRealEstatesBySearchFilter(Search search){
-		
-		var allRealEstates = realEstateFinder.getAllRealEstates();
-		
-		var realEstatesByGeographicalPosition = getRealEstatesByGeographicalPosition(search.getDetail().getGeographicalPosition(), allRealEstates);
-		var realEstatesByUtility = getRealEstatesByUtility(search.getDetail().getUtility(), realEstatesByGeographicalPosition);
-		var realEstatesByCadastralFilter = getRealEstatesByCadastralFilter(search.getCadastralFilter(), realEstatesByUtility);
-		
-		return realEstatesByCadastralFilter;
-	}
 
-	@Override
-	public List<RealEstate> getRealEstatesByGeographicalPosition(GeographicalPosition geographicalPosition, List<RealEstate> realEstates){
-		var realEstatesByGeographicalPosition = new ArrayList<RealEstate>();
-		realEstates.forEach(realEstate -> {
-			var realEstateGeographicalPosition = realEstate.getDetail().getGeographicalPosition();
-			if(
-					realEstateGeographicalPosition.getCity().equals(geographicalPosition.getCity()) &&
-					realEstateGeographicalPosition.getMunicipality().equals(geographicalPosition.getMunicipality())
-				)
-				realEstatesByGeographicalPosition.add(realEstate);
-		});
-		
-		return realEstatesByGeographicalPosition;
-	}
-	
-	@Override
-	public List<RealEstate> getRealEstatesByUtility(Utility utility, List<RealEstate> realEstates){
-		var realEstatesByUtility = new ArrayList<RealEstate>();
-		realEstates.forEach(realEstate -> {
-			var realEstateUtility = realEstate.getDetail().getUtility();
-			if(
-					realEstateUtility.getHasAirConditioning().equals(utility.getHasAirConditioning()) &&
-					realEstateUtility.getHasDoorman().equals(utility.getHasDoorman()) &&
-					realEstateUtility.getHasElevator().equals(utility.getHasElevator())
-				)
-				realEstatesByUtility.add(realEstate);
-		});
-		
-		return realEstatesByUtility;
-	}
-	
-	@Override
-	public List<RealEstate> getRealEstatesByCadastralFilter(CadastralFilter cadastralFilter,  List<RealEstate> realEstates){
-		var cadastralFilterRealEstates = new ArrayList<RealEstate>();
-		realEstates.forEach(realEstate -> {
-			var realEstateCadastralData = realEstate.getCadastralData();
-			if(
-					cadastralFilter.getPriceRange().contains(realEstateCadastralData.getPrice()) &&
-					cadastralFilter.getSquareMetersRange().contains(realEstateCadastralData.getSquareMeters()) &&
-					cadastralFilter.getEnergyClassRange().contains(realEstateCadastralData.getEnergyClass().getOrder()) &&
-					cadastralFilter.getRoomsRange().contains(realEstateCadastralData.getRooms()) &&
-					cadastralFilter.getFloorRange().contains(realEstateCadastralData.getFloor())
-				)
-				cadastralFilterRealEstates.add(realEstate);
-		});
-		
-		return cadastralFilterRealEstates;
-	}
+    @Override
+    public Page<RealEstateResponse> getPagedRealEstates(Integer page, Integer size) {
 
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        var realEstates = realEstateRepository.findAll(pageable);
+        return realEstateMapper.createPagedRealEstatesResponse(realEstates);
+    }
+
+    @Override
+    @Transactional
+    public RealEstateResponse updateRealEstate(Long id, RealEstateRequest request) {
+
+        var realEstateSpec = realEstateMapper.toSpec(request);
+        var realEstateToUpdate = realEstateFinder.getRealEstateById(id);
+
+        var estateAgent = estateAgentFinder.getEstateAgentByEmail(realEstateSpec.getEstateAgentEmail());
+        var cadastralData = cadastralDataFinder.getCadastralDataById(realEstateSpec.getCadastralDataId());
+        var detail = detailFinder.getDetailById(realEstateSpec.getDetailId());
+
+        realEstateToUpdate.setCategory(
+                AdCategory.valueOf(realEstateSpec.getCategory())
+        );
+        realEstateToUpdate.setImages(Arrays.asList(realEstateSpec.getImages()));
+        realEstateToUpdate.setDescription(realEstateSpec.getDescription());
+        realEstateToUpdate.setEstateAgent(estateAgent);
+        realEstateToUpdate.setCadastralData(cadastralData);
+        realEstateToUpdate.setDetail(detail);
+
+        realEstateRepository.save(realEstateToUpdate);
+        return realEstateMapper.fromEntity(realEstateToUpdate);
+    }
+
+    @Override
+    @Transactional
+    public void deleteRealEstate(Long realEstateId) {
+        var entity = realEstateFinder.getRealEstateById(realEstateId);
+        realEstateRepository.delete(entity);
+    }
 }

@@ -18,6 +18,9 @@ public class UtilityMapperDefaultImpl implements UtilityMapper {
 				.hasAirConditioning(request.getHasAirConditioning())
 				.hasDoorman(request.getHasDoorman())
 				.hasElevator(request.getHasElevator())
+                .nearSchool(request.getNearSchool())
+                .nearPublicTransport(request.getNearPublicTransport())
+                .nearPark(request.getNearPark())
 				.build();
 	}
 
@@ -30,6 +33,9 @@ public class UtilityMapperDefaultImpl implements UtilityMapper {
 				.hasAirConditioning(utility.getHasAirConditioning())
 				.hasDoorman(utility.getHasDoorman())
 				.hasElevator(utility.getHasElevator())
+                .nearSchool(utility.getNearSchool())
+                .nearPublicTransport(utility.getNearPublicTransport())
+                .nearPark(utility.getNearPark())
 				.detailId(utility.getDetail() != null ? utility.getDetail().getId() : null)
 				.build();
 	}

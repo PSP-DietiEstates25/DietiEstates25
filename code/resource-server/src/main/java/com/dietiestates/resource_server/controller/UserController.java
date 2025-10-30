@@ -20,7 +20,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponse> registerAdmin(
+    public ResponseEntity<UserResponse> registerUser(
             @RequestBody UserRequest request
     ) throws RoleNotFoundException {
 

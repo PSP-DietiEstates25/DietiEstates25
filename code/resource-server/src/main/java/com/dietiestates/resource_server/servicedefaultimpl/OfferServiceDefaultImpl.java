@@ -1,15 +1,30 @@
 package com.dietiestates.resource_server.servicedefaultimpl;
 
+import com.dietiestates.resource_server.dto.request.NotificationRequest;
 import com.dietiestates.resource_server.dto.request.OfferRequest;
 import com.dietiestates.resource_server.dto.response.OfferResponse;
+import com.dietiestates.resource_server.enums.NotificationCategoryType;
+import com.dietiestates.resource_server.enums.ProposalCategory;
+import com.dietiestates.resource_server.enums.ProposalStatus;
 import com.dietiestates.resource_server.factory.OfferFactory;
 import com.dietiestates.resource_server.finder.OfferFinder;
 import com.dietiestates.resource_server.finder.RealEstateFinder;
 import com.dietiestates.resource_server.finder.UserFinder;
 import com.dietiestates.resource_server.mapper.OfferMapper;
+import com.dietiestates.resource_server.model.Notification;
+import com.dietiestates.resource_server.model.Offer;
 import com.dietiestates.resource_server.repository.OfferRepository;
+import com.dietiestates.resource_server.service.NotificationService;
 import com.dietiestates.resource_server.service.OfferService;
+import com.dietiestates.resource_server.spec.OfferSpec;
+import com.dietiestates.resource_server.verifier.OfferVerifier;
+import com.dietiestates.resource_server.verifier.RealEstateVerifier;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,10 +35,32 @@ public class OfferServiceDefaultImpl implements OfferService {
 	private final OfferFactory offerFactory;
 	private final OfferFinder offerFinder;
 	private final OfferMapper offerMapper;
+    private final OfferVerifier offerVerifier;
 	
 	private final UserFinder userFinder;
 	private final RealEstateFinder realEstateFinder;
-	
+    private final NotificationService notificationService;
+
+	@Override
+	public OfferResponse createOffer(OfferRequest request, Long realEstateId, Authentication authentication) {
+
+		var offerSpec = offerMapper.toSpec(request);
+        chooseOfferCategory(offerSpec, authentication);
+
+		var user = userFinder.getUserByEmail(offerSpec.getUserEmail());
+		var realEstate = realEstateFinder.getRealEstateById(realEstateId);
+
+        Offer counteredOffer = null;
+        if(offerSpec.getCategory().equals(ProposalCategory.COUNTER_OFFER.toString())){
+            counteredOffer = offerFinder.getOfferById(offerSpec.getCounteredOfferId());
+        }
+
+		var offer = offerFactory.createOfferFromSpec(offerSpec, user, realEstate, counteredOffer);
+		offerRepository.save(offer);
+
+		return offerMapper.fromEntity(offer);
+	}
+    /*
 	@Override
 	public OfferResponse createOffer(OfferRequest request, Long realEstateId) {
 		
@@ -37,6 +74,7 @@ public class OfferServiceDefaultImpl implements OfferService {
 		
 		return offerMapper.fromEntity(offer);
 	}
+	*/
 	
 	@Override
 	public OfferResponse getOfferById(Long realEstateId, Long offerId) {
@@ -46,89 +84,61 @@ public class OfferServiceDefaultImpl implements OfferService {
 		
 		return offerMapper.fromEntity(offer);
 	}
-	/*
-    private final OfferRepository offerRepo;
-    private final RealEstateAdRepository realEstateRepo;
-    private final UserRepository userRepo;
-    private final NotificationService notificationService;
 
-    @Transactional
-    public Offer propose(String requesterEmail, Long adId, OfferProposalRequest req) {
-        User requester = userRepo.findByEmail(requesterEmail)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + requesterEmail));
+    @Override
+    public Page<OfferResponse> getPagedRealEstateOffers(Long realEstateId, Integer page, Integer size) {
 
-        // Consenti solo CLIENT
-        boolean isAgent = requester.getRoles().stream().anyMatch(r -> "AGENT".equalsIgnoreCase(r.getName()));
-        boolean isAdmin = requester.getRoles().stream().anyMatch(r -> "ADMIN".equalsIgnoreCase(r.getName()));
-        if (isAgent || isAdmin) {
-            throw new AccessDeniedException("Solo i CLIENT possono proporre offerte.");
-        }
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        var realEstateOffers = offerRepository.findByRealEstateId(realEstateId, pageable);
 
-        RealEstate ad = realEstateRepo.findById(adId)
-                .orElseThrow(() -> new IllegalArgumentException("Real estate not found: " + adId));
-
-        User agent = ad.getEstateAgent();
-        if (agent == null) {
-            throw new IllegalStateException("Annuncio senza agente associato.");
-        }
-
-        if (req.getAmount() == null || req.getAmount().signum() <= 0) {
-            throw new IllegalArgumentException("Amount must be > 0");
-        }
-
-        Offer offer = Offer.builder()
-                .realEstate(ad)
-                .user(requester)
-                .estateAgent(agent)
-                .amount(req.getAmount())
-                .build();
-
-        Offer saved = offerRepo.save(offer);
-
-        // notifica all’agente
-        notificationService.push(
-                agent.getEmail(),
-                NotificationCategoryType.OFFER,
-                "Nuova offerta ricevuta",
-                "Hai ricevuto una nuova offerta di " + req.getAmount() + " € per \"" + ad.getAddress() + "\".",
-                ad.getId());
-
-        return saved;
+        return offerMapper.createPagedOffersResponse(realEstateOffers);
     }
 
-    @Transactional(readOnly = true)
-    public List<Offer> listForEstate(String requesterEmail, Long adId, Integer page, Integer size) {
-        User requester = userRepo.findByEmail(requesterEmail)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + requesterEmail));
+    @Override
+    public OfferResponse updateOfferStatus(OfferRequest request, Long realEstateId, Long offerId) {
 
-        RealEstate ad = realEstateRepo.findById(adId)
-                .orElseThrow(() -> new IllegalArgumentException("Real estate not found: " + adId));
+        offerVerifier.checkOfferExists(offerId);
+        offerVerifier.checkOfferOwnedByRealEstate(offerId, realEstateId);
 
-        boolean isAdmin = requester.getRoles().stream().anyMatch(r -> "ADMIN".equalsIgnoreCase(r.getName()));
-        boolean isAgent = requester.getRoles().stream().anyMatch(r -> "AGENT".equalsIgnoreCase(r.getName()));
+        var offerSpec = offerMapper.toSpec(request);
+        var offerToUpdate = offerFinder.getOfferByRealEstate(offerId, realEstateId);
+        offerToUpdate.setProposalStatus(ProposalStatus.valueOf(offerSpec.getStatus()));
 
-        // se è AGENT deve essere il proprietario dell'annuncio
-        if (isAgent && !isAdmin) {
-            if (ad.getEstateAgent() == null || !ad.getEstateAgent().getId().equals(requester.getId())) {
-                throw new AccessDeniedException(
-                        "Non puoi visualizzare le offerte di un annuncio che non ti appartiene.");
-            }
+        createOfferNotification(offerToUpdate);
+
+        offerRepository.save(offerToUpdate);
+        return offerMapper.fromEntity(offerToUpdate);
+    }
+
+    public void createOfferNotification(Offer offer){
+
+        String message = null;
+
+        if (offer.getProposalCategory().equals(ProposalCategory.OFFER)){
+            if (offer.getProposalStatus().equals(ProposalStatus.ACCEPTED))
+                message = "Offer accepted";
+            else if (offer.getProposalStatus().equals(ProposalStatus.REJECTED))
+                message = "Offer rejected";
+        } else if (offer.getProposalCategory().equals(ProposalCategory.COUNTER_OFFER)){
+            message = "Offer countered";
         }
 
-        // ADMIN vede tutto
-        Pageable pageable = PageRequest.of(safePage(page), safeSize(size));
-        return offerRepo
-                .findByEstateAgent_EmailAndRealEstate_IdOrderByCreatedDateDesc(
-                        ad.getEstateAgent().getEmail(), adId, pageable)
-                .getContent();
+        notificationService.createNotification(
+                NotificationCategoryType.OFFER.toString(),
+                NotificationRequest.builder()
+                        .message(message)
+                        .userEmail(offer.getUser().getEmail())
+                        .build()
+        );
     }
 
-    private int safePage(Integer p) {
-        return (p != null && p >= 0) ? p : 0;
+    @Override
+    public void chooseOfferCategory(OfferSpec offerSpec, Authentication authentication){
+        if(authentication.getAuthorities().contains("SCOPE_ESTATE_AGENT")) {
+            offerSpec.setCategory(ProposalCategory.COUNTER_OFFER.toString());
+        }
+        else if(authentication.getAuthorities().contains("SCOPE_USER"))
+            offerSpec.setCategory(ProposalCategory.OFFER.toString());
     }
 
-    private int safeSize(Integer s) {
-        return (s != null && s > 0) ? s : 12;
-    }
-    */
 }

@@ -11,5 +11,7 @@ public interface SearchRepository extends
 	CrudRepository<Search, Long>,
 	PagingAndSortingRepository<Search, Long>{
 
+    boolean existsById(Long id);
+
 	List<Search> findByUser(String userEmail, Pageable pageable);
 }

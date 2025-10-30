@@ -2,12 +2,7 @@ package com.dietiestates.resource_server.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.dietiestates.resource_server.dto.request.DetailRequest;
 import com.dietiestates.resource_server.dto.response.DetailResponse;
@@ -36,6 +31,16 @@ public class DetailController {
     ){
         var detail = detailService.getDetailById(detailid);
         return ResponseEntity.status(HttpStatus.OK).body(detail);
+    }
+
+    @PutMapping("/{detailid}")
+    public ResponseEntity<DetailResponse> updateDetail(
+            @PathVariable Long detailid,
+            @RequestBody DetailRequest request
+    ) {
+
+        detailService.updateDetail(detailid, request);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 }
 

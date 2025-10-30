@@ -20,6 +20,9 @@ public class UtilityFactoryDefaultImpl implements UtilityFactory {
                 .hasAirConditioning(spec.getHasAirConditioning())
                 .hasDoorman(spec.getHasDoorman())
                 .hasElevator(spec.getHasElevator())
+                .nearPark(spec.getNearPark())
+                .nearSchool(spec.getNearSchool())
+                .nearPublicTransport(spec.getNearPublicTransport())
                 .build();
     }
 

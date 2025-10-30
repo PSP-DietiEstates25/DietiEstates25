@@ -7,5 +7,9 @@ import java.util.Optional;
 
 public interface AdminRepository extends CrudRepository<Admin, Long> {
 
+    boolean existsById(Long id);
+
+    boolean existsByEmail(String email);
+
 	Optional<Admin> findByEmail(String email);
 }

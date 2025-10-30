@@ -10,8 +10,5 @@ import java.util.List;
 public interface SearchService {
 
 	List<RealEstateResponse> createSearch(SearchRequest request);
-	
-	void createSearchRealEstate(Search search, List<RealEstate> searchRealEstates);
-	
-	List<RealEstate> getSearchedRealEstates(Search search);
+
 }

@@ -1,6 +1,9 @@
 package com.dietiestates.resource_server.repository;
 
+import com.dietiestates.resource_server.enums.NotificationCategoryType;
 import com.dietiestates.resource_server.model.Notification;
+import com.dietiestates.resource_server.model.NotificationCategory;
+import com.dietiestates.resource_server.model.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -11,7 +14,14 @@ public interface NotificationRepository extends
 	CrudRepository<Notification, Long>,
 	PagingAndSortingRepository<Notification, Long> {
 
+    boolean existsById(Long id);
+
+    boolean existsByIdAndNotificationCategoryName(Long id, NotificationCategoryType notificationCategoryName);
+
 	List<Notification> findAllByUser(String userEmail, Pageable pageable);
+
+    List<Notification> findByUserAndNotificationCategory(User user, NotificationCategory notificationCategory);
+
 	/*
     Page<Notification> findByUser_EmailOrderByCreatedAtDesc(String email, Pageable pageable);
 

@@ -14,23 +14,5 @@ public interface RealEstateFinder {
 	RealEstate getRealEstateById(Long id)
 			throws RealEstateNotFoundException;
 	
-	/* DA METTERE IN RealEstateServiceImpl e interfaccia
-	List<RealEstate> getRealEstatesBySearchFilters(Search search);
-	
-	List<RealEstate> getFilteredRealEstatesByGeographicalPosition(
-			GeographicalPosition geographicalPosition,
-			List<RealEstate> realEstates
-			);
-	
-	List<RealEstate> getFilteredRealEstatesByUtility(
-			Utility utility,
-			List<RealEstate> realEstates
-			);
-	
-	List<RealEstate> getFilteredRealEstatesByCadastralFilter(
-			CadastralFilter cadastralFilter,
-			List<RealEstate> realEstates);
-	*/
-	
 	List<RealEstate> getAllRealEstates();
 }

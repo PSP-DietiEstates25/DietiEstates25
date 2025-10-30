@@ -7,6 +7,8 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface NotificationCategoryRepository extends CrudRepository<NotificationCategory, Long> {
+
+    boolean existsById(Long id);
 	
 	Optional<NotificationCategory> findByName(NotificationCategoryType name);
 

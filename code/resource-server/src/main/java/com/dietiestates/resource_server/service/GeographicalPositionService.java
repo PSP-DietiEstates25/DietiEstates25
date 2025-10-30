@@ -8,4 +8,6 @@ public interface GeographicalPositionService {
 	GeographicalPositionResponse createGeographicalPosition(GeographicalPositionRequest request);
 	
 	GeographicalPositionResponse getGeographicalPositionById(Long geographicalPositionId);
+
+    void updateGeographicalPosition(Long geographicalPositionId, GeographicalPositionRequest request);
 }

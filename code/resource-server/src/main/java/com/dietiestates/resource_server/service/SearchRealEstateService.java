@@ -9,6 +9,14 @@ import java.util.List;
 public interface SearchRealEstateService {
 
 	void createSearchRealEstate(Search search, List<RealEstate> realEstates);
-	
-	SearchRealEstate of(Search search, RealEstate realEstate);
+
+    void createRealEstateSearch(RealEstate realEstate, List<Search> searches);
+
+    List<RealEstate> getSearchedRealEstates(Search search);
+
+    List<Search> createRealEstateSearchesLink(RealEstate realEstate);
+
+    List<Search> getSearchesByRealEstateFilter(RealEstate realEstate);
+
+    List<RealEstate> getRealEstatesBySearchFilter(Search search);
 }

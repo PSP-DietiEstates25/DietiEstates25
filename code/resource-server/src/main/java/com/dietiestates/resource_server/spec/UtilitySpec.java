@@ -12,4 +12,7 @@ public class UtilitySpec {
 	private Boolean hasAirConditioning;
 	private Boolean hasDoorman;
 	private Boolean hasElevator;
+    private Boolean nearSchool;
+    private Boolean nearPublicTransport;
+    private Boolean nearPark;
 }

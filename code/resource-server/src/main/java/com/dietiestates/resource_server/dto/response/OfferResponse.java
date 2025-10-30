@@ -14,6 +14,7 @@ import lombok.ToString;
 public class OfferResponse extends ProposalResponse {
 
     private BigDecimal amount;
+    private Long counteredOfferId;
 
     @Builder(builderMethodName = "offerResponseBuilder")
     public OfferResponse(
@@ -24,7 +25,8 @@ public class OfferResponse extends ProposalResponse {
             String status,
             String userEmail,
             Long realEstateId,
-            BigDecimal amount
+            BigDecimal amount,
+            Long counteredOfferId
     ) {
         super(
                 id,
@@ -36,5 +38,6 @@ public class OfferResponse extends ProposalResponse {
                 realEstateId
         );
         this.amount = amount;
+        this.counteredOfferId = counteredOfferId;
     }
 }

@@ -2,6 +2,7 @@ package com.dietiestates.resource_server.dto.request;
 
 import java.math.BigDecimal;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
@@ -19,6 +20,9 @@ public class OfferRequest extends ProposalRequest {
     @NotBlank(message = "Amount is mandatory")
     @Positive(message = "Amount must be a positive number")
     private BigDecimal amount;
+
+    @Nullable
+    private Long counteredOfferId;
 
     @Builder(builderMethodName = "offerDtoBuilder")
     public OfferRequest(

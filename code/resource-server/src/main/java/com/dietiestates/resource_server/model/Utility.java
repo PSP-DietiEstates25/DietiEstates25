@@ -30,6 +30,15 @@ public class Utility {
 
 	@Column(nullable = false)
 	private Boolean hasElevator;
+
+    @Column(nullable = false)
+    private Boolean nearSchool;
+
+    @Column(nullable = false)
+    private Boolean nearPublicTransport;
+
+    @Column(nullable = false)
+    private Boolean nearPark;
 	
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
@@ -46,11 +55,17 @@ public class Utility {
 	public Utility(
 			Boolean hasElevator,
 			Boolean hasDoorman,
-			Boolean hasAirConditioning
+			Boolean hasAirConditioning,
+            Boolean nearSchool,
+            Boolean nearPublicTransport,
+            Boolean nearPark
 			) {
 		this.hasElevator = hasElevator;
 		this.hasDoorman = hasDoorman;
 		this.hasAirConditioning = hasAirConditioning;
+        this.nearSchool = nearSchool;
+        this.nearPublicTransport = nearPublicTransport;
+        this.nearPark = nearPark;
 	}
 
 }

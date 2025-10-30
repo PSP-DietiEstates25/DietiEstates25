@@ -10,6 +10,7 @@ public interface OfferFactory {
     Offer createOfferFromSpec(
             OfferSpec spec,
             User user,
-            RealEstate realEstate
+            RealEstate realEstate,
+            Offer counteredOffer
     );
 }

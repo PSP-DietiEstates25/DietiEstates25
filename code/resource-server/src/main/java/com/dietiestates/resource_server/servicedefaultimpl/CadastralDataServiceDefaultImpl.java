@@ -2,6 +2,7 @@ package com.dietiestates.resource_server.servicedefaultimpl;
 
 import com.dietiestates.resource_server.dto.request.CadastralDataRequest;
 import com.dietiestates.resource_server.dto.response.CadastralDataResponse;
+import com.dietiestates.resource_server.enums.EnergyClass;
 import com.dietiestates.resource_server.factory.CadastralDataFactory;
 import com.dietiestates.resource_server.finder.CadastralDataFinder;
 import com.dietiestates.resource_server.mapper.CadastralDataMapper;
@@ -35,7 +36,19 @@ public class CadastralDataServiceDefaultImpl implements CadastralDataService {
 	public CadastralDataResponse getCadastralDataById(Long cadastralDataId) {
 		
 		var cadastralData = cadastralDataFinder.getCadastralDataById(cadastralDataId);
-		
 		return cadastralDataMapper.fromEntity(cadastralData);
 	}
+
+    @Override
+    public void updateCadastralData(Long cadastralDataId, CadastralDataRequest request) {
+
+        var cadastralDataToUpdate = cadastralDataFinder.getCadastralDataById(cadastralDataId);
+        cadastralDataToUpdate.setPrice(request.getPrice());
+        cadastralDataToUpdate.setRooms(request.getRooms());
+        cadastralDataToUpdate.setFloor(request.getFloor());
+        cadastralDataToUpdate.setEnergyClass(EnergyClass.valueOf(request.getEnergyClass().toUpperCase()));
+        cadastralDataToUpdate.setSquareMeters(request.getSquareMeters());
+
+        cadastralDataRepository.save(cadastralDataToUpdate);
+    }
 }

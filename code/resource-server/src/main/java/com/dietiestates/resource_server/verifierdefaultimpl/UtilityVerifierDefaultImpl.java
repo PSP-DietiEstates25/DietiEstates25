@@ -9,10 +9,4 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UtilityVerifierDefaultImpl implements UtilityVerifier {
 
-	@Override
-	public void checkUtilityOwnedByDetail(Long utilityDetailId, Long detailId) throws UtilityNotOwnedByDetailException {
-		if(!utilityDetailId.equals(detailId))
-			throw new UtilityNotOwnedByDetailException();
-	}
-
 }

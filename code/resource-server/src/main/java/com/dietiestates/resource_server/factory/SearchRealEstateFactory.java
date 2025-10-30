@@ -8,5 +8,5 @@ import com.dietiestates.resource_server.model.SearchRealEstate;
 
 public interface SearchRealEstateFactory {
 
-    SearchRealEstate createSearchRealEstate(Search search, List<RealEstate> realEstates);
+    SearchRealEstate createSearchRealEstate(Search search, RealEstate realEstate);
 }

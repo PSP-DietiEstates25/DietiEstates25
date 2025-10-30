@@ -32,5 +32,4 @@ public class Admin extends Staffer {
 		staffers.add(staffer);
 		staffer.setAdmin(this);
 	}
-
 }

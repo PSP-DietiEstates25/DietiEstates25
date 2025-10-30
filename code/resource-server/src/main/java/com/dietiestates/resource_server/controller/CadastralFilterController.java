@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/cadastralfilters")
 @RequiredArgsConstructor
-public class CadastralFilterController {
+public class    CadastralFilterController {
 
     private final CadastralFilterService cadastralFilterService;
 

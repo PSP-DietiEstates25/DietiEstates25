@@ -9,6 +9,7 @@ import com.dietiestates.resource_server.repository.GeographicalPositionRepositor
 import com.dietiestates.resource_server.service.GeographicalPositionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -38,5 +39,19 @@ public class GeographicalPositionServiceDefaultImpl implements GeographicalPosit
 		
 		return geographicalPositionMapper.fromEntity(geographicalPosition);
 	}
-	
+
+    @Override
+    @Transactional
+    public void updateGeographicalPosition(Long id, GeographicalPositionRequest request) {
+
+        var geographicalPositionToUpdate = geographicalPositionFinder.getGeographicalPositionById(id);
+        geographicalPositionToUpdate.setAddress(request.getAddress());
+        geographicalPositionToUpdate.setCity(request.getCity());
+        geographicalPositionToUpdate.setMunicipality(request.getMunicipality());
+        geographicalPositionToUpdate.setLatitude(request.getLatitude());
+        geographicalPositionToUpdate.setLongitude(request.getLongitude());
+        geographicalPositionToUpdate.setRadius(request.getRadius());
+
+        geographicalPositionRepository.save(geographicalPositionToUpdate);
+    }
 }

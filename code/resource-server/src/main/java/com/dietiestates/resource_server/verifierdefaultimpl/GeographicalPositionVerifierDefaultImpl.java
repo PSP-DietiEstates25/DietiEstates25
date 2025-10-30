@@ -9,13 +9,4 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class GeographicalPositionVerifierDefaultImpl implements GeographicalPositionVerifier {
 
-	public void checkGeographicalPositionOwnedByDetail(
-			Long geographicalPositionDetailId,
-			Long detailId
-			)
-		throws GeographicalPositionNotOwnedByDetailException {
-		
-		if(!geographicalPositionDetailId.equals(detailId))
-			throw new GeographicalPositionNotOwnedByDetailException();
-	}
 }

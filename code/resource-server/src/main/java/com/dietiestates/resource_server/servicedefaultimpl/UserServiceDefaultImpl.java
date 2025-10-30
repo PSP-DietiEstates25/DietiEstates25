@@ -33,6 +33,7 @@ public class UserServiceDefaultImpl implements UserService {
 		var userRole = roleFinder.getByRoleName("ROLE_USER");
 		
 		var user = userFactory.createUserFromSpec(userSpec.getEmail());
+
 		userRepository.save(user);
 
         return userMapper.fromEntity(user);

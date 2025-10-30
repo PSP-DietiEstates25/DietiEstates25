@@ -24,4 +24,13 @@ public class UtilityRequest {
 
     @NotNull(message = "Elevator is mandatory")
     private Boolean hasElevator;
+
+    @NotNull(message = "Near school is mandatory")
+    private Boolean nearSchool;
+
+    @NotNull(message = "Near public transport is mandatory")
+    private Boolean nearPublicTransport;
+
+    @NotNull(message = "Near park is mandatory")
+    private Boolean nearPark;
 }

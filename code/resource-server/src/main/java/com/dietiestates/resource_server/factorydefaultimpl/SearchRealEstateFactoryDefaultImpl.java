@@ -16,9 +16,10 @@ import lombok.RequiredArgsConstructor;
 public class SearchRealEstateFactoryDefaultImpl implements SearchRealEstateFactory {
 
     @Override
-    public SearchRealEstate createSearchRealEstate(Search search, List<RealEstate> realEstates) {
-        // TODO Auto-generated method stub
-        return null;
+    public SearchRealEstate createSearchRealEstate(Search search, RealEstate realEstate) {
+        return SearchRealEstate.builder()
+                .realEstate(realEstate)
+                .search(search)
+                .build();
     }
-
 }

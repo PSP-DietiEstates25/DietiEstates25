@@ -8,4 +8,6 @@ public interface CadastralDataService {
 	CadastralDataResponse createCadastralData(CadastralDataRequest request);
 	
 	CadastralDataResponse getCadastralDataById(Long cadastralDataId);
+
+    void updateCadastralData(Long cadastralDataId, CadastralDataRequest request);
 }

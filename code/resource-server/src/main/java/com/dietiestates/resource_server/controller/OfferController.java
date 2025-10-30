@@ -1,19 +1,25 @@
 package com.dietiestates.resource_server.controller;
 
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.dietiestates.resource_server.dto.request.OfferRequest;
 import com.dietiestates.resource_server.dto.response.OfferResponse;
 import com.dietiestates.resource_server.service.OfferService;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/realestates/{realestateid}/offers")
@@ -26,39 +32,56 @@ public class OfferController {
     @PostMapping
     public ResponseEntity<OfferResponse> createOffer(
             @RequestBody OfferRequest request,
-            @PathVariable Long realestateid
+            @PathVariable Long realestateid,
+            Authentication authentication
     ){
-        var offer = offerService.createOffer(request, realestateid);
+
+        var offer = offerService.createOffer(request, realestateid, authentication);
         return ResponseEntity.status(HttpStatus.CREATED).body(offer);
     }
-	/*
-    private final OfferService offerService;
 
-    @PostMapping
-    @PreAuthorize("hasAuthority('CLIENT') and !hasAnyAuthority('AGENT','ADMIN')")
-    public ResponseEntity<Offer> propose(
-            @PathVariable Long realestateId,
-            @Valid @RequestBody OfferProposalRequest payload,
-            Authentication authentication) {
+    @GetMapping("/{offerid}")
+    public ResponseEntity<OfferResponse> getOfferById(
+            @PathVariable("realestateid") Long realEstateId,
+            @PathVariable Long offerid
+    ) {
 
-        String email = authentication.getName();
-        Offer offer = offerService.propose(email, realestateId, payload);
-
-        // in uscita ritorna direttamente l'ENTITY, con ResponseEntity parametrici
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(offer);
+        var offer = offerService.getOfferById(realEstateId, offerid);
+        return ResponseEntity.status(HttpStatus.OK).body(offer);
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('AGENT','ADMIN')")
-    public ResponseEntity<List<Offer>> listForEstate(
-            @PathVariable Long adId,
+    public ResponseEntity<Page<OfferResponse>> getPagedRealEstateOffers(
+            @PathVariable Long realestateid,
             @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "12") Integer size,
-            Authentication authentication) {
+            @RequestParam(required = false, defaultValue = "12") Integer size
+    ) {
 
-        String email = authentication.getName();
-        List<Offer> offers = offerService.listForEstate(email, adId, page, size);
-        return ResponseEntity.ok(offers);
+        var offers = offerService.getPagedRealEstateOffers(realestateid, page, size);
+        return ResponseEntity.status(HttpStatus.OK).body(offers);
+    }
+
+    @PatchMapping("/{offerid}")
+    @PreAuthorize("hasAuthority('ESTATE_AGENT')")
+    public ResponseEntity<OfferResponse> updateOfferStatus(
+            @RequestBody OfferRequest request,
+            @PathVariable Long realestateid,
+            @PathVariable Long offerid
+    ) {
+
+        var offer = offerService.updateOfferStatus(request, realestateid, offerid);
+        return ResponseEntity.status(HttpStatus.OK).body(offer);
+    }
+
+    /* La logica della creazione di una contro offerta è spostata nella logica di creazione di un offerta, in base alla authority presa
+    @PostMapping("{id}/counter")
+    @PreAuthorize("hasAuthority('ESTATE_AGENT')")
+    public ResponseEntity<OfferResponse> counter(
+            @PathVariable("realestateid") Long realEstateId,
+            @PathVariable("id") Long id,
+            @Valid @RequestBody CounterOfferRequest body,
+            Authentication auth) {
+        return ResponseEntity.ok(offerService.counterOffer(id, body, auth));
     }
     */
 }

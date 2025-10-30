@@ -6,7 +6,8 @@ import lombok.Getter;
 
 public enum ProposalCategory {
     OFFER(0),
-    VISIT(1);
+    COUNTER_OFFER(1),
+    VISIT(2);
 
     @Getter
     private final int order;

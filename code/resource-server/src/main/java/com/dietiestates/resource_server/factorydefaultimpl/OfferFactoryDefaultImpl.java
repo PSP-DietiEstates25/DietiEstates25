@@ -18,7 +18,8 @@ public class OfferFactoryDefaultImpl implements OfferFactory {
     public Offer createOfferFromSpec(
             OfferSpec spec,
             User user,
-            RealEstate realEstate
+            RealEstate realEstate,
+            Offer counteredOffer
     ) {
         return Offer.builder()
                 .category(spec.getCategory())
@@ -26,6 +27,7 @@ public class OfferFactoryDefaultImpl implements OfferFactory {
                 .user(user)
                 .realEstate(realEstate)
                 .amount(spec.getAmount())
+                .counteredOffer(counteredOffer)
                 .build();
     }
 

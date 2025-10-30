@@ -8,4 +8,6 @@ public interface DetailService {
 	DetailResponse createDetail(DetailRequest request);
 	
 	DetailResponse getDetailById(Long detailId);
+
+    void updateDetail(Long detailId, DetailRequest requeust);
 }

@@ -13,6 +13,8 @@ import com.dietiestates.resource_server.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
+
 @Service
 @RequiredArgsConstructor
 public class AdminServiceDefaultImpl implements AdminService {
@@ -42,5 +44,6 @@ public class AdminServiceDefaultImpl implements AdminService {
         var admin = adminFinder.getAdminById(adminId);
         return adminMapper.fromEntity(admin);
     }
+
 }
 

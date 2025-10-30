@@ -6,7 +6,11 @@ import com.dietiestates.resource_server.mapper.VisitMapper;
 import com.dietiestates.resource_server.model.Visit;
 import com.dietiestates.resource_server.spec.VisitSpec;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -37,4 +41,19 @@ public class VisitMapperDefaultImpl implements VisitMapper {
 				.time(visit.getTime())
 				.build();
 	}
+
+    @Override
+    public List<VisitResponse> createVisitsResponse(List<Visit> visits) {
+        var visitsResponse = new ArrayList<VisitResponse>();
+        visits.forEach((visit) -> {
+            visitsResponse.add(this.fromEntity(visit));
+        });
+
+        return visitsResponse;
+    }
+
+    @Override
+    public Page<VisitResponse> createPagedVisitsResponse(Page<Visit> visits) {
+        return visits.map(this::fromEntity);
+    }
 }

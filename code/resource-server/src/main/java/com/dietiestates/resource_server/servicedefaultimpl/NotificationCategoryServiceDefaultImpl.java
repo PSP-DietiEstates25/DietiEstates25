@@ -2,6 +2,7 @@ package com.dietiestates.resource_server.servicedefaultimpl;
 
 import com.dietiestates.resource_server.dto.request.NotificationCategoryRequest;
 import com.dietiestates.resource_server.dto.response.NotificationCategoryResponse;
+import com.dietiestates.resource_server.enums.NotificationCategoryType;
 import com.dietiestates.resource_server.factory.NotificationCategoryFactory;
 import com.dietiestates.resource_server.finder.NotificationCategoryFinder;
 import com.dietiestates.resource_server.mapper.NotificationCategoryMapper;
@@ -36,4 +37,14 @@ public class NotificationCategoryServiceDefaultImpl implements NotificationCateg
 		var notificationCategory = notificationCategoryFinder.getNotificationCategoryByName(notificationCategoryName);
 		return notificationCategoryMapper.fromEntity(notificationCategory);
 	}
+
+    @Override
+    public void updateNotificationCategory(String notificationCategoryName, NotificationCategoryRequest request) {
+
+        var notificationCategoryToUpdate = notificationCategoryFinder.getNotificationCategoryByName(notificationCategoryName);
+        notificationCategoryToUpdate.setName(NotificationCategoryType.valueOf(request.getName()));
+        notificationCategoryToUpdate.setIsActive(request.getIsActive());
+
+        notificationCategoryRepository.save(notificationCategoryToUpdate);
+    }
 }

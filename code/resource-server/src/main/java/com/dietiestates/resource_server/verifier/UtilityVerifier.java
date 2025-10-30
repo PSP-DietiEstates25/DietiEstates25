@@ -4,6 +4,4 @@ import com.dietiestates.resource_server.exception.notowned.UtilityNotOwnedByDeta
 
 public interface UtilityVerifier {
 
-	void checkUtilityOwnedByDetail(Long utilityDetailId, Long detailId)
-		throws UtilityNotOwnedByDetailException;
 }

@@ -1,11 +1,14 @@
 package com.dietiestates.resource_server.mapperdefaultimpl;
 
 import com.dietiestates.resource_server.dto.request.RealEstateRequest;
+import com.dietiestates.resource_server.dto.response.OfferResponse;
 import com.dietiestates.resource_server.dto.response.RealEstateResponse;
 import com.dietiestates.resource_server.mapper.RealEstateMapper;
+import com.dietiestates.resource_server.model.Offer;
 import com.dietiestates.resource_server.model.RealEstate;
 import com.dietiestates.resource_server.spec.RealEstateSpec;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -50,15 +53,19 @@ public class RealEstateMapperDefaultImpl implements RealEstateMapper {
 				.build();
 	}
 
-	@Override
-	public List<RealEstateResponse> createRealEsatatesResponse(List<RealEstate> realEstates) {
+    @Override
+    public Page<RealEstateResponse> createPagedRealEstatesResponse(Page<RealEstate> realEstates) {
+        return  realEstates.map(this::fromEntity);
+    }
 
-		var response = new ArrayList<RealEstateResponse>();
-		realEstates.forEach(realEstate -> {
-			var realEstateResponse = fromEntity(realEstate);
-			response.add(realEstateResponse);
-		});
+    @Override
+    public List<RealEstateResponse> createRealEstatesResponse(List<RealEstate> realEstates) {
+        var response = new ArrayList<RealEstateResponse>();
 
-		return response;
-	}
+        realEstates.forEach(realEstate -> {
+            response.add(fromEntity(realEstate));
+        });
+
+        return response;
+    }
 }

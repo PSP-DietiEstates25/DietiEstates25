@@ -9,6 +9,7 @@ import com.dietiestates.resource_server.repository.UtilityRepository;
 import com.dietiestates.resource_server.service.UtilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,10 +25,9 @@ public class UtilityServiceDefaultImpl implements UtilityService {
 	public UtilityResponse createUtility(UtilityRequest request) {
 		
 		var utilitySpec = utilityMapper.toSpec(request);
-		
 		var utility = utilityFactory.createUtilityFromSpec(utilitySpec);
+
 		utilityRepository.save(utility);
-		
 		return utilityMapper.fromEntity(utility);
 	}
 	
@@ -35,7 +35,24 @@ public class UtilityServiceDefaultImpl implements UtilityService {
 	public UtilityResponse getUtilityById(Long utilityId) {
 		
 		var utility = utilityFinder.getUtilityById(utilityId);
-		
 		return utilityMapper.fromEntity(utility);
 	}
+
+    @Override
+    @Transactional
+    public UtilityResponse updateUtility(Long id, UtilityRequest request) {
+
+        var utilitySpec = utilityMapper.toSpec(request);
+
+        var utilityToUpdate = utilityFinder.getUtilityById(id);
+        utilityToUpdate.setHasElevator(utilitySpec.getHasElevator());
+        utilityToUpdate.setHasDoorman(utilitySpec.getHasDoorman());
+        utilityToUpdate.setHasAirConditioning(utilitySpec.getHasAirConditioning());
+        utilityToUpdate.setNearPark(utilitySpec.getNearPark());
+        utilityToUpdate.setNearPublicTransport(utilitySpec.getNearPublicTransport());
+        utilityToUpdate.setNearSchool(utilitySpec.getNearSchool());
+
+        utilityRepository.save(utilityToUpdate);
+        return utilityMapper.fromEntity(utilityToUpdate);
+    }
 }

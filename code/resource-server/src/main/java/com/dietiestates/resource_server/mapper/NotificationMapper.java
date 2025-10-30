@@ -5,9 +5,13 @@ import com.dietiestates.resource_server.dto.response.NotificationResponse;
 import com.dietiestates.resource_server.model.Notification;
 import com.dietiestates.resource_server.spec.NotificationSpec;
 
+import java.util.List;
+
 public interface NotificationMapper {
 
 	NotificationSpec toSpec(NotificationRequest request);
 	
 	NotificationResponse fromEntity(Notification notification);
+
+    List<NotificationResponse> createNotificationsResponse(List<Notification> notifications);
 }

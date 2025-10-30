@@ -8,4 +8,6 @@ public interface NotificationCategoryService {
 	NotificationCategoryResponse createNotificationCategory(NotificationCategoryRequest request);
 	
 	NotificationCategoryResponse getNotificationCategoryByName(String notificationCategoryName);
+
+    void updateNotificationCategory(String notificationCategoryName, NotificationCategoryRequest request);
 }

@@ -7,6 +7,7 @@ import com.dietiestates.resource_server.finder.CadastralFilterFinder;
 import com.dietiestates.resource_server.finder.DetailFinder;
 import com.dietiestates.resource_server.finder.SearchFinder;
 import com.dietiestates.resource_server.finder.UserFinder;
+import com.dietiestates.resource_server.mapper.RealEstateMapper;
 import com.dietiestates.resource_server.mapper.SearchMapper;
 import com.dietiestates.resource_server.model.RealEstate;
 import com.dietiestates.resource_server.model.Search;
@@ -23,8 +24,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class SearchServiceDefaultImpl implements SearchService {
-	
-	private final RealEstateService realEstateService;
+
+    private final RealEstateService realEstateService;
 	private final CadastralFilterService cadastralFilterService;
 	
 	private final SearchRepository searchRepository;
@@ -35,6 +36,7 @@ public class SearchServiceDefaultImpl implements SearchService {
 	private final UserFinder userFinder;
 	private final CadastralFilterFinder cadastralFilterFinder;
 	private final DetailFinder detailFinder;
+    private final RealEstateMapper realEstateMapper;
 	
 	private final SearchRealEstateService searchRealEstateService;
 	
@@ -48,25 +50,9 @@ public class SearchServiceDefaultImpl implements SearchService {
 	    var detail = detailFinder.getDetailById(searchSpec.getDetailId());
 	    
 	    var search = searchFactory.createSearchFromSpec(searchSpec, user, cadastralFilter, detail);	    
-	    var searchedRealEstates = this.getSearchedRealEstates(search);
+	    var searchedRealEstates = searchRealEstateService.getSearchedRealEstates(search);
 	    
 	    search = searchRepository.save(search);
-		return realEstateService.createRealEstatesResponse(searchedRealEstates);
+		return realEstateMapper.createRealEstatesResponse(searchedRealEstates);
 	}
-	
-	@Override
-	public void createSearchRealEstate(Search search, List<RealEstate> searchRealEstates) {
-		if(!searchRealEstates.isEmpty())
-			searchRealEstateService.createSearchRealEstate(search, searchRealEstates);
-	}
-	
-	@Override
-	public List<RealEstate> getSearchedRealEstates(Search search) {
-		
-		var searchedRealEstates = realEstateService.getRealEstatesBySearchFilter(search);
-		
-		this.createSearchRealEstate(search, searchedRealEstates);
-		return searchedRealEstates;
-	}
-
 }
