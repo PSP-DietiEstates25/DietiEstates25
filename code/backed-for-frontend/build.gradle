@@ -10,7 +10,7 @@ description = 'DietiEstates25 backend for frontend'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+		languageVersion = JavaLanguageVersion.of(24)
 	}
 }
 
