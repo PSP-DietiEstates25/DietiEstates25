@@ -83,11 +83,10 @@ public class AuthorizationServerConfig {
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtTokenCustomizer() {
         var federated = new FederatedIdentityIdTokenCustomizer();
         return (context) -> {
-            // Aggiungi i ruoli nell'ACCESS_TOKEN
-            if (org.springframework.security.oauth2.server.authorization.OAuth2TokenType.ACCESS_TOKEN
+            if (OAuth2TokenType.ACCESS_TOKEN
                     .equals(context.getTokenType())) {
                 context.getClaims().claims(claims -> {
-                    var roles = org.springframework.security.core.authority.AuthorityUtils
+                    var roles = AuthorityUtils
                             .authorityListToSet(context.getPrincipal().getAuthorities())
                             .stream()
                             .map(c -> c.replaceFirst("^ROLE_", ""))
@@ -97,7 +96,6 @@ public class AuthorizationServerConfig {
                     claims.put("role", roles);
                 });
             }
-            // Propaga le claim dell'IdP nell'ID_TOKEN
             if (org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames.ID_TOKEN
                     .equals(context.getTokenType().getValue())) {
                 federated.customize(context);
@@ -132,6 +130,7 @@ public class AuthorizationServerConfig {
     @Bean
     public AuthorizationServerSettings authorizationServerSettings() {
         return AuthorizationServerSettings.builder()
+                .issuer("https://localhost:9443")
                 .build();
     }
 }

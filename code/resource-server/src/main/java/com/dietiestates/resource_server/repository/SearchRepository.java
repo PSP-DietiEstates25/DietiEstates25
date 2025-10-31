@@ -1,6 +1,7 @@
 package com.dietiestates.resource_server.repository;
 
 import com.dietiestates.resource_server.model.Search;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -13,5 +14,5 @@ public interface SearchRepository extends
 
     boolean existsById(Long id);
 
-	List<Search> findByUser(String userEmail, Pageable pageable);
+	Page<Search> findByUser(String userEmail, Pageable pageable);
 }

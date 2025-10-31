@@ -70,7 +70,7 @@ public class VisitServiceDefaultImpl implements VisitService {
     ) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        var visits = visitRepository.findByRealEstateId(realEstateId);
+        var visits = visitRepository.findByRealEstateId(realEstateId, pageable);
         return visitMapper.createPagedVisitsResponse(visits);
     }
 

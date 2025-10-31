@@ -50,21 +50,21 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/", "/error", "/actuator/health", "/csrf-token").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
-                                "/auth/**",
-                                "/v2/api-docs",
-                                "/v3/api-docs",
-                                "/v3/api-docs/**",
-                                "/swagger-resources",
-                                "/swagger-resources/**",
-                                "/configuration/ui",
-                                "/configuration/security",
-                                "/swagger-ui/**",
-                                "/webjars/**",
-                                "/swagger-ui.html"
+                                "/api/v1/swagger-ui/**",
+                                "/api/v1/swagger-ui.html",
+                                "/api/v1/v3/api-docs/**",
+                                "/api/v1/openapi.json",
+                                "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/openapi.json"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf
+                        .ignoringRequestMatchers(
+                                "/api/v1/swagger-ui/**",
+                                "/api/v1/v3/api-docs/**",
+                                "/api/v1/openapi.json",
+                                "/swagger-ui/**", "/v3/api-docs/**", "/openapi.json"
+                        )
                         .csrfTokenRepository(cookieCsrfTokenRepository)
                         .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler))
                 .cors(cors -> cors.configurationSource(request -> {

@@ -17,7 +17,7 @@ public interface VisitRepository extends
 
     boolean existsByIdAndRealEstateId(Long id, Long realEstateId);
 
-    Page<Visit> findByRealEstateId(Long realEstateId);
+    Page<Visit> findByRealEstateId(Long realEstateId, Pageable pageable);
 
     Visit findByIdAndRealEstateId(Long id, Long realEstateId);
 
