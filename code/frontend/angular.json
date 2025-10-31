@@ -20,20 +20,18 @@
             "outputPath": "dist/dietiestates25-frontend",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/assets",
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "node_modules/leaflet/dist/images",
+                "output": "assets/leaflet/"
               }
             ],
             "styles": [
-
               "src/styles.scss",
 
               "node_modules/@geoapify/geocoder-autocomplete/styles/round-borders.css"
@@ -56,7 +54,6 @@
               ],
               "outputHashing": "all",
               "namedChunks": true
-              
             },
             "development": {
               "optimization": false,
@@ -90,19 +87,17 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/assets",
-            {
-              "glob": "**/*",
-              "input": "public"
-            }
-          ], 
+              {
+                "glob": "**/*",
+                "input": "node_modules/leaflet/dist/images",
+                "output": "assets/leaflet/"
+              }
+            ],
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss",

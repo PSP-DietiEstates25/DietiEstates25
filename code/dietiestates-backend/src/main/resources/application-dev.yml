@@ -26,3 +26,6 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     org.springframework.transaction: DEBUG
     org.springframework.orm.jpa: DEBUG
+
+geoapify:
+  api-key: b2995e88f8dd471e82a2d20b82846412

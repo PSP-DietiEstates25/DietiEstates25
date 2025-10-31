@@ -1,4 +1,4 @@
-export type AppRole = 'CLIENT' | 'AGENT' | 'ADMIN';
+export type AppRole = 'CLIENT' | 'ESTATE_AGENT' | 'ADMIN';
 
 export function mapBackendRoleToApp(role?: string | null): AppRole | null {
   if (!role) return null;
@@ -6,7 +6,7 @@ export function mapBackendRoleToApp(role?: string | null): AppRole | null {
     case 'user':
       return 'CLIENT';
     case 'estate_agent':
-      return 'AGENT';
+      return 'ESTATE_AGENT';
     case 'admin':
       return 'ADMIN';
     default:

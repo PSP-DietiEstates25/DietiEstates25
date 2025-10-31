@@ -1,4 +1,4 @@
 export enum AdCategory {
-    Sale = "Sale",
-    Rent = "Rent"
+    Sale = "SALE",
+    Rent = "RENT"
 }

@@ -1,7 +1,6 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SearchService } from '../../../vecchioService/search.service';
 
 @Component({
   selector: 'app-search-bar',
@@ -12,16 +11,15 @@ import { SearchService } from '../../../vecchioService/search.service';
 })
 export class SearchBarComponent {
   placeholder = input<string>('Città, indirizzo');
-  private search = inject(SearchService);
 
-  get q() {
-    return this.search.q();
-  }
+  search = output<string>();
+
+  q = '';
+
   onInput(v: string) {
-    this.search.setQuery(v);
+    this.q = v;
   }
   onSubmit() {
-    this.search.goToSearch();
+    this.search.emit(this.q?.trim() ?? '');
   }
-    
 }

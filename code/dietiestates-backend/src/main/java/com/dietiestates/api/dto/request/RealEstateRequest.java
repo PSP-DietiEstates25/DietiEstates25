@@ -1,5 +1,7 @@
 package com.dietiestates.api.dto.request;
 
+import java.util.List;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -19,25 +21,24 @@ public class RealEstateRequest {
 	@NotEmpty(message = "Category is mandatory")
 	@NotBlank(message = "Category is mandatory")
 	private String category;
-	
+
 	@NotEmpty(message = "Images are mandatory")
-	@NotBlank(message = "Images are mandatory")
-	private String[] images;
-	
+	private List<String> images;
+
 	@NotEmpty(message = "Description is mandatory")
 	@NotBlank(message = "Description is mandatory")
 	@Size(min = 1, message = "Description must be at least 1 character long")
 	@Size(max = 200, message = "Description must be a maximum of 200 characters long")
 	private String description;
-	
+
 	@NotEmpty(message = "Estate agente email is mandatory")
 	@NotBlank(message = "Estate agent email is mandatory")
 	@Email
 	private String estateAgentEmail;
-	
+
 	@Positive(message = "Cadastral data id must be a positive number")
 	private Long cadastralDataId;
-	
+
 	@Positive(message = "Detail id must be a positive number")
 	private Long detailId;
 }

@@ -1,5 +1,7 @@
 package com.dietiestates.api.serviceImpl;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.api.dto.request.NotificationRequest;
@@ -10,9 +12,12 @@ import com.dietiestates.api.finder.NotificationCategoryFinder;
 import com.dietiestates.api.finder.NotificationFinder;
 import com.dietiestates.api.finder.UserFinder;
 import com.dietiestates.api.mapper.NotificationMapper;
+import com.dietiestates.api.repository.DefaultAccountRepository;
 import com.dietiestates.api.repository.NotificationRepository;
+import com.dietiestates.api.repository.UserRepository;
 import com.dietiestates.api.service.NotificationService;
 import com.dietiestates.api.verifier.NotificationVerifier;
+import com.dietiestates.api.enums.NotificationCategoryType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,147 +30,76 @@ public class NotificationServiceImpl implements NotificationService {
 	private final NotificationFinder notificationFinder;
 	private final NotificationVerifier notificationVerifier;
 	private final NotificationMapper notificationMapper;
-	
+
+	private final DefaultAccountRepository defaultAccountRepository;
+	private final UserRepository userRepository;
 	private final UserFinder userFinder;
 	private final NotificationCategoryFinder notificationCategoryFinder;
-	
+
 	@Override
 	public NotificationResponse createNotification(
 			String notificationCategoryName,
-			NotificationRequest request
-			) {
-		
+			NotificationRequest request) {
+
 		var notificationSpec = notificationMapper.toSpec(request);
-		
-		var notificationCategory = notificationCategoryFinder.getNotificationCategoryByName(notificationCategoryName.toUpperCase());
+
+		var notificationCategory = notificationCategoryFinder
+				.getNotificationCategoryByName(notificationCategoryName.toUpperCase());
 		var user = userFinder.getUserByEmail(notificationSpec.getUserEmail());
-	
+
 		var notification = notificationFactory.createNotificationFromSpec(notificationSpec, notificationCategory, user);
 		notificationRepository.save(notification);
-		
+
 		return notificationMapper.fromEntity(notification);
 	}
-	
+
 	@Override
 	public NotificationResponse getNotificationById(
 			String notificationCategoryName,
-			Long notificationId
-			)
-					throws NotificationNotOwnedByNotificationCategoryException {
+			Long notificationId)
+			throws NotificationNotOwnedByNotificationCategoryException {
 		var notificationCategory = notificationCategoryFinder.getNotificationCategoryByName(notificationCategoryName);
 		var notification = notificationFinder.getNotificationById(notificationId);
-		
-		notificationVerifier.checkNotificationOwnedByNotificationCategory(notification.getNotificationCategory().getId(), notificationCategory.getId());
-		
+
+		notificationVerifier.checkNotificationOwnedByNotificationCategory(
+				notification.getNotificationCategory().getId(), notificationCategory.getId());
+
 		return notificationMapper.fromEntity(notification);
 	}
-	
-	/*
-	private final NotificationRepository notifRepo;
-	private final UserRepository userRepo;
-	private final NotificationPreferenceService prefService;
 
-	//crea e consegna una notifica se la categoria è abilitata per l'utente.
-	@Transactional
-	public NotificationResponse push(String userEmail, NotificationCategoryType category, String title, String message,
-			Long adId) {
-		if (!prefService.isEnabled(userEmail, category)) {
-			// preferenza disattivata -> non creare la notifica
-			return null;
-		}
+	@Override
+	public Page<NotificationResponse> listMyNotifications(String principalName, int page, int size) {
+		var pageable = PageRequest.of(Math.max(0, page), Math.max(1, size));
 
-		User user = userRepo.findByEmail(userEmail)
-				.orElseThrow(() -> new IllegalArgumentException("User not found: " + userEmail));
+		var account = defaultAccountRepository.findByEmail(principalName)
+				.or(() -> defaultAccountRepository.findByEmail(principalName))
+				.orElseThrow(() -> new IllegalArgumentException("Account not found for principal: " + principalName));
 
-		Notification entity = Notification.builder()
-				.category(category)
-				.title(title)
-				.message(message)
-				.adId(adId)
-				.user(user)
-				.readFlag(false)
-				.createdAt(Instant.now())
-				.build();
+		var user = userRepository.findBySecurityAccountDecorator_Id(account.getId())
+				.orElseThrow(() -> new IllegalStateException("User not found for accountId: " + account.getId()));
 
-		Notification saved = notifRepo.save(entity);
-
-		return NotificationResponse.builder()
-				.id(saved.getId())
-				.category(saved.getCategory().name())
-				.title(saved.getTitle())
-				.message(saved.getMessage())
-				.adId(saved.getAdId())
-				.read(saved.getReadFlag())
-				.createdAt(saved.getCreatedAt())
-				.build();
+		var pageEntities = notificationRepository.findByUser_IdOrderByCreatedDateDesc(user.getId(), pageable);
+		return pageEntities.map(notificationMapper::fromEntity);
 	}
 
-	//lista notifiche dell'utente (tutte o solo non-letto) con paginazione.
-	@Transactional(readOnly = true)
-	public List<NotificationResponse> listMine(String email, boolean unreadOnly, Integer page, Integer size) {
-		Pageable pageable = PageRequest.of(safePage(page), safeSize(size));
-		var pageObj = unreadOnly
-				? notifRepo.findByUser_EmailAndReadFlagFalseOrderByCreatedAtDesc(email, pageable)
-				: notifRepo.findByUser_EmailOrderByCreatedAtDesc(email, pageable);
+	@Override
+	public Page<NotificationResponse> listMyNotifications(
+			String principalName,
+			String notificationCategoryName,
+			int page,
+			int size) {
+		var pageable = PageRequest.of(Math.max(0, page), Math.max(1, size));
 
-		return pageObj.map(n -> NotificationResponse.builder()
-				.id(n.getId())
-				.category(n.getCategory().name())
-				.title(n.getTitle())
-				.message(n.getMessage())
-				.adId(n.getAdId())
-				.read(n.getReadFlag())
-				.createdAt(n.getCreatedAt())
-				.build())
-				.getContent();
-	}
+		var account = defaultAccountRepository.findByEmail(principalName)
+				.orElseThrow(() -> new IllegalArgumentException("Account not found for principal: " + principalName));
 
-	//segna una notifica come letta.
-	@Transactional
-	public void markRead(String email, Long id) {
-		Notification n = notifRepo.findById(id)
-				.filter(ent -> ent.getUser().getEmail().equals(email))
-				.orElseThrow(() -> new IllegalArgumentException("Notification not found: " + id));
-		n.setReadFlag(true);
-		notifRepo.save(n);
-	}
+		var user = userRepository.findBySecurityAccountDecorator_Id(account.getId())
+				.orElseThrow(() -> new IllegalStateException("User not found for accountId: " + account.getId()));
 
-	//segna tutte come lette (batch).
-	@Transactional
-	public void markAllRead(String email) {
-		int page = 0;
-		List<Notification> batch;
-		do {
-			batch = notifRepo.findByUser_EmailAndReadFlagFalseOrderByCreatedAtDesc(email, PageRequest.of(page, 100))
-					.getContent();
-			for (var n : batch) {
-				n.setReadFlag(true);
-			}
-			notifRepo.saveAll(batch);
-			page++;
-		} while (!batch.isEmpty());
-	}
+		var cat = NotificationCategoryType.valueOf(notificationCategoryName.toUpperCase());
+		var pageEntities = notificationRepository
+				.findByUser_IdAndNotificationCategory_NameOrderByCreatedDateDesc(user.getId(), cat, pageable);
 
-	@Transactional
-	public void delete(String email, Long id) {
-		if (!notifRepo.existsByIdAndUser_Email(id, email)) {
-			throw new IllegalArgumentException("Notification not found: " + id);
-		}
-		notifRepo.deleteByIdAndUser_Email(id, email);
+		return pageEntities.map(notificationMapper::fromEntity);
 	}
-
-	//contatore non letti.
-	@Transactional(readOnly = true)
-	public long unreadCount(String email) {
-		return notifRepo.countByUser_EmailAndReadFlagFalse(email);
-	}
-
-	private int safePage(Integer p) {
-		return (p != null && p >= 0) ? p : 0;
-	}
-
-	private int safeSize(Integer s) {
-		return (s != null && s > 0) ? s : 12;
-	}
-	*/
 }

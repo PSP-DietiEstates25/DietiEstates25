@@ -16,36 +16,13 @@ import { CreateGeographicalPosition$Params } from '../fn/geographical-position-c
 import { GeographicalPositionResponse } from '../models/geographical-position-response';
 import { getGeographicalPositionById } from '../fn/geographical-position-controller/get-geographical-position-by-id';
 import { GetGeographicalPositionById$Params } from '../fn/geographical-position-controller/get-geographical-position-by-id';
+import { updateGeographicalPosition } from '../fn/geographical-position-controller/update-geographical-position';
+import { UpdateGeographicalPosition$Params } from '../fn/geographical-position-controller/update-geographical-position';
 
 @Injectable({ providedIn: 'root' })
 export class GeographicalPositionControllerService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
-  }
-
-  /** Path part for operation `createGeographicalPosition()` */
-  static readonly CreateGeographicalPositionPath = '/geographicalpositions';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `createGeographicalPosition()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  createGeographicalPosition$Response(params: CreateGeographicalPosition$Params, context?: HttpContext): Observable<StrictHttpResponse<GeographicalPositionResponse>> {
-    return createGeographicalPosition(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `createGeographicalPosition$Response()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  createGeographicalPosition(params: CreateGeographicalPosition$Params, context?: HttpContext): Observable<GeographicalPositionResponse> {
-    return this.createGeographicalPosition$Response(params, context).pipe(
-      map((r: StrictHttpResponse<GeographicalPositionResponse>): GeographicalPositionResponse => r.body)
-    );
   }
 
   /** Path part for operation `getGeographicalPositionById()` */
@@ -69,6 +46,56 @@ export class GeographicalPositionControllerService extends BaseService {
    */
   getGeographicalPositionById(params: GetGeographicalPositionById$Params, context?: HttpContext): Observable<GeographicalPositionResponse> {
     return this.getGeographicalPositionById$Response(params, context).pipe(
+      map((r: StrictHttpResponse<GeographicalPositionResponse>): GeographicalPositionResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `updateGeographicalPosition()` */
+  static readonly UpdateGeographicalPositionPath = '/geographicalpositions/{geographicalpositionid}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `updateGeographicalPosition()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updateGeographicalPosition$Response(params: UpdateGeographicalPosition$Params, context?: HttpContext): Observable<StrictHttpResponse<GeographicalPositionResponse>> {
+    return updateGeographicalPosition(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `updateGeographicalPosition$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updateGeographicalPosition(params: UpdateGeographicalPosition$Params, context?: HttpContext): Observable<GeographicalPositionResponse> {
+    return this.updateGeographicalPosition$Response(params, context).pipe(
+      map((r: StrictHttpResponse<GeographicalPositionResponse>): GeographicalPositionResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `createGeographicalPosition()` */
+  static readonly CreateGeographicalPositionPath = '/geographicalpositions';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `createGeographicalPosition()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createGeographicalPosition$Response(params: CreateGeographicalPosition$Params, context?: HttpContext): Observable<StrictHttpResponse<GeographicalPositionResponse>> {
+    return createGeographicalPosition(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `createGeographicalPosition$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createGeographicalPosition(params: CreateGeographicalPosition$Params, context?: HttpContext): Observable<GeographicalPositionResponse> {
+    return this.createGeographicalPosition$Response(params, context).pipe(
       map((r: StrictHttpResponse<GeographicalPositionResponse>): GeographicalPositionResponse => r.body)
     );
   }

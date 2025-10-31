@@ -12,6 +12,8 @@ import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
 import { AuthenticationResponse } from '../models/authentication-response';
+import { changePassword } from '../fn/admin-authentication-controller/change-password';
+import { ChangePassword$Params } from '../fn/admin-authentication-controller/change-password';
 import { login2 } from '../fn/admin-authentication-controller/login-2';
 import { Login2$Params } from '../fn/admin-authentication-controller/login-2';
 import { register2 } from '../fn/admin-authentication-controller/register-2';
@@ -98,6 +100,31 @@ export class AdminAuthenticationControllerService extends BaseService {
   login2(params: Login2$Params, context?: HttpContext): Observable<AuthenticationResponse> {
     return this.login2$Response(params, context).pipe(
       map((r: StrictHttpResponse<AuthenticationResponse>): AuthenticationResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `changePassword()` */
+  static readonly ChangePasswordPath = '/auth/admins/password';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `changePassword()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  changePassword$Response(params: ChangePassword$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return changePassword(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `changePassword$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  changePassword(params: ChangePassword$Params, context?: HttpContext): Observable<void> {
+    return this.changePassword$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 

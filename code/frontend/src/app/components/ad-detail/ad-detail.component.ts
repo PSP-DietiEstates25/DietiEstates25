@@ -1,36 +1,82 @@
-import { Component, inject, computed } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AdDetailFacade } from './ad-detail.facade';
 import { OfferFormComponent } from '../offer/offer-form.component';
 import { VisitFormComponent } from '../visit/visit-form.component';
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, DatePipe } from '@angular/common';
+import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
+import { HttpClient } from '@angular/common/http';
+
+const isHttp = (s: string) => /^https?:\/\//i.test(s);
+const isData = (s: string) => /^data:/i.test(s);
+const looksJpeg = (b64: string) => b64.startsWith('/9j/');
+const looksPng = (b64: string) => b64.startsWith('iVBOR');
 
 @Component({
   selector: 'app-ad-detail',
   standalone: true,
-  imports: [RouterLink, OfferFormComponent, VisitFormComponent, DecimalPipe],
+  imports: [
+    OfferFormComponent,
+    VisitFormComponent,
+    DecimalPipe,
+    NavbarComponent,
+    DatePipe,
+  ],
   templateUrl: './ad-detail.component.html',
 })
 export class AdDetailComponent {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private facade = inject(AdDetailFacade);
+  private http = inject(HttpClient);
 
-  // re-export signals al template
   loading = this.facade.loading;
   error = this.facade.error;
   ad = this.facade.vm;
   mainImage = this.facade.mainImage;
 
+  myOffers = this.facade.myOffers;
+  myOffersLoading = this.facade.myOffersLoading;
+
+  blobUrl?: string;
+
+  toSrc = (raw?: string | null): string | null => {
+    if (!raw) return null;
+
+    if (isHttp(raw) || isData(raw)) return raw;
+
+    if (raw.startsWith('?') || raw.length < 20) return null;
+
+    const mime = looksJpeg(raw)
+      ? 'image/jpeg'
+      : looksPng(raw)
+      ? 'image/png'
+      : 'image/*';
+    return `data:${mime};base64,${raw}`;
+  };
+
+  auth: {
+    getEmail: () => string | null;
+    isAuthenticated: () => boolean;
+  } = {
+    getEmail: () =>
+      localStorage.getItem('userEmail') || localStorage.getItem('auth.email'),
+    isAuthenticated: () =>
+      !!localStorage.getItem('token') ||
+      !!localStorage.getItem('auth.token') ||
+      !!localStorage.getItem('accessToken'),
+  };
+
   constructor() {
-    const param =
+    const idParam =
       this.route.snapshot.paramMap.get('detailId') ??
       this.route.snapshot.paramMap.get('id');
-    const detailId = Number(param);
-    // se hai userEmail/category dal contesto auth/rotta, passali qui:
-    this.facade.loadByDetailId(detailId, {
-      userEmail: 'guest@public.local',
-      // category: 'SALE'
-    });
+
+    const detailId = idParam != null ? Number(idParam) : NaN;
+
+    const userEmail = this.auth.getEmail() ?? undefined;
+
+    this.facade.loadByRealEstateId(detailId, { userEmail });
   }
 
   setMain(src: string) {
@@ -38,11 +84,46 @@ export class AdDetailComponent {
   }
 
   isLogged() {
-    // collegamento ad auth state vero
-    if (localStorage.getItem('user')) {
-      return true;
-    }
+    return !!this.auth.isAuthenticated?.();
+  }
 
-    return false;
+  goLogin() {
+    this.router.navigateByUrl('/auth/login');
+  }
+
+  onOfferSuccess() {
+    const email = this.auth.getEmail();
+    const current = this.ad();
+    if (email && current?.realEstateId != null) {
+      this.facade.loadMyOffers(email, current.realEstateId);
+    }
+  }
+
+  onVisitSuccess() {}
+
+  loadImageBlob(url: string) {
+    this.http.get(url, { responseType: 'blob' }).subscribe({
+      next: (blob) => {
+        if (this.blobUrl) URL.revokeObjectURL(this.blobUrl);
+        this.blobUrl = URL.createObjectURL(blob);
+      },
+      error: () => {
+        if (this.blobUrl) URL.revokeObjectURL(this.blobUrl);
+        this.blobUrl = undefined;
+      },
+    });
+  }
+
+  mapTag(t?: string): string {
+    switch (t) {
+      case 'NEAR_SCHOOLS':
+        return 'Vicino a scuole';
+      case 'NEAR_PARKS':
+        return 'Vicino a parchi';
+      case 'NEAR_PUBLIC_TRANSPORT':
+        return 'Vicina a trasporto pubblico';
+      default:
+        return t ?? '';
+    }
   }
 }

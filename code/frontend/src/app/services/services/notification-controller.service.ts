@@ -15,7 +15,10 @@ import { createNotification } from '../fn/notification-controller/create-notific
 import { CreateNotification$Params } from '../fn/notification-controller/create-notification';
 import { getNotificationById } from '../fn/notification-controller/get-notification-by-id';
 import { GetNotificationById$Params } from '../fn/notification-controller/get-notification-by-id';
+import { listMine } from '../fn/notification-controller/list-mine';
+import { ListMine$Params } from '../fn/notification-controller/list-mine';
 import { NotificationResponse } from '../models/notification-response';
+import { PageNotificationResponse } from '../models/page-notification-response';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationControllerService extends BaseService {
@@ -70,6 +73,31 @@ export class NotificationControllerService extends BaseService {
   getNotificationById(params: GetNotificationById$Params, context?: HttpContext): Observable<NotificationResponse> {
     return this.getNotificationById$Response(params, context).pipe(
       map((r: StrictHttpResponse<NotificationResponse>): NotificationResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `listMine()` */
+  static readonly ListMinePath = '/notificationcategories/{notificationcategoryname}/notifications/me';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `listMine()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  listMine$Response(params: ListMine$Params, context?: HttpContext): Observable<StrictHttpResponse<PageNotificationResponse>> {
+    return listMine(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `listMine$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  listMine(params: ListMine$Params, context?: HttpContext): Observable<PageNotificationResponse> {
+    return this.listMine$Response(params, context).pipe(
+      map((r: StrictHttpResponse<PageNotificationResponse>): PageNotificationResponse => r.body)
     );
   }
 

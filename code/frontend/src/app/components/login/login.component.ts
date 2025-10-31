@@ -47,7 +47,7 @@ export class LoginComponent {
           : [];
 
         const roleFromAuthorities = authorities.includes('ESTATE_AGENT')
-          ? 'AGENT'
+          ? 'ESTATE_AGENT'
           : authorities.includes('ADMIN')
           ? 'ADMIN'
           : authorities.includes('CLIENT')
@@ -58,12 +58,12 @@ export class LoginComponent {
 
         const effectiveRole = roleFromAuthorities as
           | 'ADMIN'
-          | 'AGENT'
+          | 'ESTATE_AGENT'
           | 'CLIENT'
           | '';
 
         switch (effectiveRole) {
-          case 'AGENT':
+          case 'ESTATE_AGENT':
             this.router.navigateByUrl('/agent');
             break;
           case 'ADMIN':

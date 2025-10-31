@@ -32,4 +32,4 @@ export function mine(http: HttpClient, rootUrl: string, params?: Mine$Params, co
   );
 }
 
-mine.PATH = '/api/ads/dashboard';
+mine.PATH = '/ads/dashboard';

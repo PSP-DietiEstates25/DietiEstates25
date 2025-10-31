@@ -1,0 +1,63 @@
+<app-navbar></app-navbar>
+<div class="p-4 space-y-5">
+  <h1 class="text-2xl font-semibold">Notifiche</h1>
+
+  <!-- Preferenze -->
+  <section class="space-y-2">
+    <h2 class="text-lg font-medium">Preferenze per categoria</h2>
+
+    <ul class="grid gap-2">
+      @for (p of vm.prefs(); track p.category) {
+      <li
+        class="flex items-center justify-between rounded-xl border border-neutral-700/50 bg-neutral-800/40 px-4 py-2"
+      >
+        <span class="font-medium">{{ p.category }}</span>
+
+        <!-- Switch Tailwind -->
+        <label class="relative inline-flex cursor-pointer items-center">
+          <input
+            type="checkbox"
+            class="peer sr-only"
+            [checked]="p.enabled"
+            (change)="onToggle(p.category, $event)"
+          />
+          <div
+            class="h-6 w-11 rounded-full bg-neutral-500 transition peer-checked:bg-emerald-500"
+          ></div>
+          <div
+            class="absolute start-0.5 top-0.5 h-5 w-5 rounded-full bg-white transition peer-checked:translate-x-5"
+          ></div>
+        </label>
+      </li>
+      }
+    </ul>
+  </section>
+
+  <!-- Lista -->
+  <section class="space-y-2">
+    <div class="flex items-baseline gap-2">
+      <h2 class="text-lg font-medium">Le tue notifiche</h2>
+      @if (vm.loading()) {
+      <span class="text-sm text-neutral-400">Caricamento…</span>
+      }
+    </div>
+
+    @if (vm.filtered().length > 0) {
+    <ul class="grid gap-2">
+      @for (n of vm.filtered(); track n.id) {
+      <li class="rounded-xl border border-neutral-700/50 bg-neutral-800/40 p-3">
+        <div class="flex items-center justify-between text-xs text-neutral-400">
+          <span class="rounded-full border border-neutral-700 px-2 py-0.5">{{
+            n.category
+          }}</span>
+          <span>{{ n.createdDate | date : "short" }}</span>
+        </div>
+        <div class="mt-1 text-sm">{{ n.message }}</div>
+      </li>
+      }
+    </ul>
+    } @if (vm.loading()) {
+    <div class="text-sm text-neutral-400">Carico altre notifiche…</div>
+    }
+  </section>
+</div>

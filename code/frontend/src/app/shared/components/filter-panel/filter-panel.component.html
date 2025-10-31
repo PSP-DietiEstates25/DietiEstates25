@@ -1,87 +1,252 @@
-<details
-  class="rounded-2xl border dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 backdrop-blur p-4"
+<section
+  class="rounded-2xl border bg-blue-800 border-blue-800 p-4 md:p-5 shadow-sm dark:bg-blue-900/10 dark:border-blue-700"
 >
-  <summary class="cursor-pointer select-none font-semibold">
-    Filtri avanzati
-  </summary>
-
-  <div class="mt-4 grid md:grid-cols-3 sm:grid-cols-2 gap-4">
-    <div>
-      <label class="block text-sm mb-1 dark:text-slate-200"
-        >Prezzo min (€)</label
+  <header class="mb-4 flex items-center justify-between">
+    <h2 class="text-lg font-semibold text-blue-900 dark:text-blue-100">
+      Filtri
+    </h2>
+    <div class="flex items-center gap-2">
+      <button
+        class="rounded-xl px-3 py-1.5 text-sm text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+        type="button"
+        [disabled]="facade.loading()"
+        (click)="apply()"
       >
-      <input
-        type="number"
-        [(ngModel)]="priceMin"
-        class="input_main"
-        placeholder="0"
-      />
+        Applica
+      </button>
     </div>
-    <div>
-      <label class="block text-sm mb-1 dark:text-slate-200"
-        >Prezzo max (€)</label
+  </header>
+
+  @if (facade.error()) {
+  <p
+    class="mb-3 rounded-xl bg-red-50 text-red-700 px-3 py-2 text-sm dark:bg-red-900/30 dark:text-red-200"
+  >
+    {{ facade.error() }}
+  </p>
+  } @if (facade.loading()) {
+  <p
+    class="mb-3 rounded-xl bg-blue-100 text-blue-900 px-3 py-2 text-sm dark:bg-blue-800/50 dark:text-blue-100"
+  >
+    Caricamento…
+  </p>
+  }
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <!-- POSIZIONE -->
+    <div
+      class="rounded-xl border border-blue-500 bg-white/90 p-3 dark:bg-blue-900/20 dark:border-blue-700"
+    >
+      <h3 class="mb-2 font-medium text-blue-900 dark:text-blue-100">
+        Posizione
+      </h3>
+      <div class="grid grid-cols-2 gap-2 text-sm">
+        <label class="text-xs text-blue-950 dark:text-blue-100"
+          >Città
+          <input
+            class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-100"
+            [ngModel]="geo().city"
+            (ngModelChange)="setGeo('city', $event)"
+          />
+        </label>
+        <label class="text-xs text-blue-950 dark:text-blue-100"
+          >Comune
+          <input
+            class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-100"
+            [ngModel]="geo().municipality"
+            (ngModelChange)="setGeo('municipality', $event)"
+          />
+        </label>
+        <label class="col-span-2 text-xs text-blue-950 dark:text-blue-100"
+          >Indirizzo
+          <input
+            class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-100"
+            [ngModel]="geo().address"
+            (ngModelChange)="setGeo('address', $event)"
+          />
+        </label>
+      </div>
+    </div>
+
+    <!-- UTILITÀ -->
+    <div
+      class="rounded-xl border border-blue-200 bg-white/90 p-3 dark:bg-blue-900/20 dark:border-blue-700"
+    >
+      <h3 class="mb-2 font-medium text-blue-900 dark:text-blue-100">Utilità</h3>
+      <div class="space-y-2 text-sm text-blue-950 dark:text-blue-100">
+        <label class="flex items-center gap-2">
+          <input
+            type="checkbox"
+            class="size-4"
+            [ngModel]="uti().hasElevator"
+            (ngModelChange)="setUti('hasElevator', $event)"
+          />
+          Ascensore
+        </label>
+        <label class="flex items-center gap-2">
+          <input
+            type="checkbox"
+            class="size-4"
+            [ngModel]="uti().hasDoorman"
+            (ngModelChange)="setUti('hasDoorman', $event)"
+          />
+          Portiere
+        </label>
+        <label class="flex items-center gap-2">
+          <input
+            type="checkbox"
+            class="size-4"
+            [ngModel]="uti().hasAirConditioning"
+            (ngModelChange)="setUti('hasAirConditioning', $event)"
+          />
+          Aria condizionata
+        </label>
+      </div>
+    </div>
+
+    <!-- CATASTALI -->
+    <div
+      class="rounded-xl border border-blue-200 bg-white/90 p-3 dark:bg-blue-900/20 dark:border-blue-700"
+    >
+      <h3 class="mb-2 font-medium text-blue-900 dark:text-blue-100">
+        Filtri catastali
+      </h3>
+      <div
+        class="grid grid-cols-2 gap-2 text-xs text-blue-950 dark:text-blue-100"
       >
-      <input
-        type="number"
-        [(ngModel)]="priceMax"
-        class="input_main"
-        placeholder="500000"
-      />
-    </div>
-    <div>
-      <label class="block text-sm mb-1 dark:text-slate-200">Stanze</label>
-      <input
-        type="number"
-        min="1"
-        [(ngModel)]="rooms"
-        class="input_main"
-        placeholder="3"
-      />
-    </div>
-    <div>
-      <label class="block text-sm mb-1 dark:text-slate-200">Tipologia</label>
-      <select class="input_main" [(ngModel)]="type">
-        <option value="">Qualsiasi</option>
-        @for (t of types; track t) {
-        <option [value]="t">{{ t }}</option>
-        }
-      </select>
-    </div>
-    <div>
-      <label class="block text-sm mb-1 dark:text-slate-200">Mq min</label>
-      <input
-        type="number"
-        min="0"
-        [(ngModel)]="sizeMin"
-        class="input_main"
-        placeholder="50"
-      />
-    </div>
-    <div>
-      <label class="block text-sm mb-1 dark:text-slate-200">Mq max</label>
-      <input
-        type="number"
-        min="0"
-        [(ngModel)]="sizeMax"
-        class="input_main"
-        placeholder="120"
-      />
+        <label
+          >Prezzo min
+          <input
+            type="number"
+            min="1"
+            class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-100"
+            [ngModel]="cf().minPrice"
+            (ngModelChange)="setCf('minPrice', $event)"
+          />
+        </label>
+        <label
+          >Prezzo max
+          <input
+            type="number"
+            min="1"
+            class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-100"
+            [ngModel]="cf().maxPrice"
+            (ngModelChange)="setCf('maxPrice', $event)"
+          />
+        </label>
+
+        <label
+          >MQ min
+          <input
+            type="number"
+            min="1"
+            class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-100"
+            [ngModel]="cf().minSquareMeters"
+            (ngModelChange)="setCf('minSquareMeters', $event)"
+          />
+        </label>
+        <label
+          >MQ max
+          <input
+            type="number"
+            min="1"
+            class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-100"
+            [ngModel]="cf().maxSquareMeters"
+            (ngModelChange)="setCf('maxSquareMeters', $event)"
+          />
+        </label>
+
+        <label
+          >Classe en. min
+          <select
+            class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-100"
+            [ngModel]="cf().minEnergyClass"
+            (ngModelChange)="setCf('minEnergyClass', $event)"
+          >
+            <option [ngValue]="1">A4</option>
+            <option [ngValue]="2">A3</option>
+            <option [ngValue]="3">A2</option>
+            <option [ngValue]="4">A1</option>
+            <option [ngValue]="5">B</option>
+            <option [ngValue]="6">C</option>
+            <option [ngValue]="7">D</option>
+            <option [ngValue]="8">E</option>
+            <option [ngValue]="9">F</option>
+            <option [ngValue]="10">G</option>
+          </select>
+        </label>
+
+        <label
+          >Classe en. max
+          <select
+            class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-100"
+            [ngModel]="cf().maxEnergyClass"
+            (ngModelChange)="setCf('maxEnergyClass', $event)"
+          >
+            <option [ngValue]="1">A4</option>
+            <option [ngValue]="2">A3</option>
+            <option [ngValue]="3">A2</option>
+            <option [ngValue]="4">A1</option>
+            <option [ngValue]="5">B</option>
+            <option [ngValue]="6">C</option>
+            <option [ngValue]="7">D</option>
+            <option [ngValue]="8">E</option>
+            <option [ngValue]="9">F</option>
+            <option [ngValue]="10">G</option>
+          </select>
+        </label>
+
+        <label
+          >Stanze min
+          <input
+            type="number"
+            min="1"
+            class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-100"
+            [ngModel]="cf().minRooms"
+            (ngModelChange)="setCf('minRooms', $event)"
+          />
+        </label>
+        <label
+          >Stanze max
+          <input
+            type="number"
+            min="1"
+            class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-100"
+            [ngModel]="cf().maxRooms"
+            (ngModelChange)="setCf('maxRooms', $event)"
+          />
+        </label>
+
+        <label
+          >Piano min
+          <input
+            type="number"
+            min="1"
+            class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-100"
+            [ngModel]="cf().minFloor"
+            (ngModelChange)="setCf('minFloor', $event)"
+          />
+        </label>
+        <label
+          >Piano max
+          <input
+            type="number"
+            min="1"
+            class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-700 dark:bg-blue-900/30 dark:text-blue-100"
+            [ngModel]="cf().maxFloor"
+            (ngModelChange)="setCf('maxFloor', $event)"
+          />
+        </label>
+      </div>
     </div>
   </div>
 
-  <div class="mt-4 flex flex-wrap items-center gap-4">
-    <div class="ml-auto">
-      <label class="block text-sm mb-1 dark:text-slate-200">Ordina per</label>
-      <select class="input_main" [(ngModel)]="orderBy">
-        @for (o of orders; track o.value) {
-        <option [value]="o.value">{{ o.label }}</option>
-        }
-      </select>
-    </div>
-  </div>
-
-  <div class="mt-4 flex gap-2">
-    <button class="btn_primary" (click)="apply()">Applica filtri</button>
-    <button class="btn_ghost" (click)="clear()">Pulisci</button>
-  </div>
-</details>
+  <footer class="mt-4 flex flex-wrap items-center gap-3">
+    <select
+      class="rounded-lg border border-blue-200 px-2 py-1.5 bg-white dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-100"
+      [(ngModel)]="category"
+    >
+      <option value="SALE">Vendita</option>
+      <option value="RENT">Affitto</option>
+    </select>
+  </footer>
+</section>

@@ -94,7 +94,7 @@ public class Search {
 			CadastralFilter cadastralFilter,
 			Detail detail
 			) {
-		this.category = AdCategory.valueOf(category);
+		this.category = AdCategory.valueOf(category.trim().toUpperCase());
 		this.size = size;
 		this.page = page;
 		this.user = user;

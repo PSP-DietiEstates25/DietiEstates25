@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CreateAdFacade, Category } from './create-ad.facade';
 
 @Component({
@@ -10,6 +10,7 @@ import { CreateAdFacade, Category } from './create-ad.facade';
   templateUrl: './step-basics.component.html',
 })
 export class StepBasicsComponent implements OnInit {
+  private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
   private facade = inject(CreateAdFacade);
   private router = inject(Router);
@@ -30,6 +31,6 @@ export class StepBasicsComponent implements OnInit {
       return;
     }
     this.facade.setBasics(this.form.getRawValue());
-    this.router.navigate(['/agent/ads/new/details']);
+    this.router.navigate(['../details'], { relativeTo: this.route });
   }
 }

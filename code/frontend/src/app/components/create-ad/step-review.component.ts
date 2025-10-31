@@ -1,5 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { CreateAdFacade } from './create-ad.facade';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-step-review',
@@ -9,17 +10,13 @@ import { CreateAdFacade } from './create-ad.facade';
 export class StepReviewComponent {
   facade = inject(CreateAdFacade);
   canPublish = computed(() => this.facade.allValid());
+  private router = inject(Router); 
 
   publish() {
     this.facade.createAd();
   }
 
-  onCancel() {
-    if (this.facade.loading()) return;
-    const ok = confirm(
-      'Annullare la creazione dell’annuncio? I dati non salvati andranno persi.'
-    );
-    if (!ok) return;
-    this.facade.cancel();
+  cancel() {
+    this.router.navigate(['/agent']);
   }
 }

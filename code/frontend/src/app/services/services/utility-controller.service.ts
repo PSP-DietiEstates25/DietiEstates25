@@ -15,37 +15,14 @@ import { createUtility } from '../fn/utility-controller/create-utility';
 import { CreateUtility$Params } from '../fn/utility-controller/create-utility';
 import { getUtilityById } from '../fn/utility-controller/get-utility-by-id';
 import { GetUtilityById$Params } from '../fn/utility-controller/get-utility-by-id';
+import { updateUtility } from '../fn/utility-controller/update-utility';
+import { UpdateUtility$Params } from '../fn/utility-controller/update-utility';
 import { UtilityResponse } from '../models/utility-response';
 
 @Injectable({ providedIn: 'root' })
 export class UtilityControllerService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
-  }
-
-  /** Path part for operation `createUtility()` */
-  static readonly CreateUtilityPath = '/utilities';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `createUtility()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  createUtility$Response(params: CreateUtility$Params, context?: HttpContext): Observable<StrictHttpResponse<UtilityResponse>> {
-    return createUtility(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `createUtility$Response()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  createUtility(params: CreateUtility$Params, context?: HttpContext): Observable<UtilityResponse> {
-    return this.createUtility$Response(params, context).pipe(
-      map((r: StrictHttpResponse<UtilityResponse>): UtilityResponse => r.body)
-    );
   }
 
   /** Path part for operation `getUtilityById()` */
@@ -69,6 +46,56 @@ export class UtilityControllerService extends BaseService {
    */
   getUtilityById(params: GetUtilityById$Params, context?: HttpContext): Observable<UtilityResponse> {
     return this.getUtilityById$Response(params, context).pipe(
+      map((r: StrictHttpResponse<UtilityResponse>): UtilityResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `updateUtility()` */
+  static readonly UpdateUtilityPath = '/utilities/{utilityid}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `updateUtility()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updateUtility$Response(params: UpdateUtility$Params, context?: HttpContext): Observable<StrictHttpResponse<UtilityResponse>> {
+    return updateUtility(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `updateUtility$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updateUtility(params: UpdateUtility$Params, context?: HttpContext): Observable<UtilityResponse> {
+    return this.updateUtility$Response(params, context).pipe(
+      map((r: StrictHttpResponse<UtilityResponse>): UtilityResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `createUtility()` */
+  static readonly CreateUtilityPath = '/utilities';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `createUtility()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createUtility$Response(params: CreateUtility$Params, context?: HttpContext): Observable<StrictHttpResponse<UtilityResponse>> {
+    return createUtility(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `createUtility$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createUtility(params: CreateUtility$Params, context?: HttpContext): Observable<UtilityResponse> {
+    return this.createUtility$Response(params, context).pipe(
       map((r: StrictHttpResponse<UtilityResponse>): UtilityResponse => r.body)
     );
   }

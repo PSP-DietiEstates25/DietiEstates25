@@ -1,0 +1,64 @@
+package com.dietiestates.resource_server.model;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+@EqualsAndHashCode
+@NoArgsConstructor
+@ToString
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+public class Detail {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+	
+	@CreatedDate
+	@Column(nullable = false, updatable = false)
+	private LocalDateTime createdDate;
+	
+	@LastModifiedDate
+	@Column(insertable = false)
+	private LocalDateTime lastModifiedDate;
+	
+	@OneToOne
+	@JoinColumn(
+			nullable = false,
+			name = "geographical_position_id",
+			foreignKey = @ForeignKey(name = "DETAIL_GEOGRAPHICAL_POSITION_ID_FK"))
+	private GeographicalPosition geographicalPosition;
+	
+	@OneToOne
+	@JoinColumn(
+			nullable = false,
+			name = "utility_id",
+			foreignKey = @ForeignKey(name = "DETAIL_UTILITY_ID_FK"))
+	private Utility utility;
+	
+	@Builder(builderMethodName = "builder")
+	public Detail(
+			GeographicalPosition geographicalPosition,
+			Utility utility
+			){
+		setGeographicalPosition(geographicalPosition);
+		setUtility(utility);
+	}
+	
+	public void setGeographicalPosition(GeographicalPosition geographicalPosition) {
+		this.geographicalPosition = geographicalPosition;
+		geographicalPosition.setDetail(this);
+	}
+	
+	public void setUtility(Utility utility) {
+		this.utility = utility;
+		utility.setDetail(this);
+	}
+}

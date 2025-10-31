@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CreateAdFacade } from './create-ad.facade';
 
 @Component({
@@ -13,6 +13,7 @@ export class StepCadastralComponent implements OnInit {
   private fb = inject(FormBuilder);
   private facade = inject(CreateAdFacade);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   form = this.fb.nonNullable.group({
     price: [null as number | null, [Validators.required, Validators.min(0)]],
@@ -36,6 +37,6 @@ export class StepCadastralComponent implements OnInit {
       return;
     }
     this.facade.setCadastral(this.form.getRawValue() as any);
-    this.router.navigate(['/agent/ads/new/photos']);
+    this.router.navigate(['../photos'], { relativeTo: this.route });
   }
 }

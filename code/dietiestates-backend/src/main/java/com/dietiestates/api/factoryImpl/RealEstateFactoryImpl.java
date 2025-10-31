@@ -20,11 +20,10 @@ public class RealEstateFactoryImpl implements RealEstateFactory {
 			RealEstateSpec spec,
 			EstateAgent estateAgent,
 			CadastralData cadastralData,
-			Detail detail
-			) {
+			Detail detail) {
 		return RealEstate.builder()
 				.category(spec.getCategory())
-				.images(spec.getImages())
+				.images(spec.getImages() != null ? spec.getImages() : null)
 				.description(spec.getDescription())
 				.estateAgent(estateAgent)
 				.cadastralData(cadastralData)

@@ -8,7 +8,7 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { RealEstateAdResponse } from '../../models/real-estate-ad-response';
+import { RealEstateResponse } from '../../models/real-estate-response';
 
 export interface Search$Params {
   category?: 'SALE' | 'RENT';
@@ -21,7 +21,7 @@ export interface Search$Params {
   size?: number;
 }
 
-export function search(http: HttpClient, rootUrl: string, params?: Search$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<RealEstateAdResponse>>> {
+export function search(http: HttpClient, rootUrl: string, params?: Search$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<RealEstateResponse>>> {
   const rb = new RequestBuilder(rootUrl, search.PATH, 'get');
   if (params) {
     rb.query('category', params.category, {});
@@ -39,9 +39,9 @@ export function search(http: HttpClient, rootUrl: string, params?: Search$Params
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<RealEstateAdResponse>>;
+      return r as StrictHttpResponse<Array<RealEstateResponse>>;
     })
   );
 }
 
-search.PATH = '/api/ads/search';
+search.PATH = '/searches';

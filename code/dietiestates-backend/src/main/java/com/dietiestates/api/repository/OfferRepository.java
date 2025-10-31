@@ -14,6 +14,8 @@ public interface OfferRepository extends
 	
 	List<Offer> findByUser(String userEmail, Pageable pageable);
 	List<Offer> findByRealEstate(Long realEstateId, Pageable pageable);
+    List<Offer> findByRealEstateId(Long realEstateId, Pageable pageable);
+
 	/*
     Page<Offer> findByEstateAgent_EmailAndRealEstate_IdOrderByCreatedDateDesc(
             String estateAgentEmail,

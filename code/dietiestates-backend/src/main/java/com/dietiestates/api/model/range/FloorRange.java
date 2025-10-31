@@ -16,10 +16,10 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-//@EqualsAndHashCode
+// @EqualsAndHashCode
 @Embeddable
 public class FloorRange {
-	
+
 	@Column(nullable = false, name = "min_floor")
 	private Integer minFloor;
 
@@ -27,13 +27,13 @@ public class FloorRange {
 	private Integer maxFloor;
 
 	public Boolean contains(Integer floor) {
-		
-		if (floor != null && this.minFloor != null && this.maxFloor != null) {
-			
-			if(this.minFloor.compareTo(floor) <= 0 && floor.compareTo(this.maxFloor) <= 0)
-				return true;
-			else return false;
-			
-		} else return false;
+		if (floor == null)
+			return false;
+		if (this.minFloor != null && floor < this.minFloor)
+			return false;
+		if (this.maxFloor != null && floor > this.maxFloor)
+			return false;
+		return true;
 	}
+
 }

@@ -10,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.dietiestates.api.enums.AdCategory;
+import com.dietiestates.api.enums.ProximityTag;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
@@ -56,6 +57,12 @@ public class RealEstate {
     @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     @Lob
     private List<String> images = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "real_estate_proximity_tag", joinColumns = @JoinColumn(name = "real_estate_id"), foreignKey = @ForeignKey(name = "RE_PROXTAG_REALESTATE_ID_FK"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tag", nullable = false)
+    private List<ProximityTag> proximityTags = new ArrayList<>();
 
     @Column(nullable = false)
     private String description;
@@ -115,6 +122,14 @@ public class RealEstate {
     public void setCadastralData(CadastralData cadastralData) {
         this.cadastralData = cadastralData;
         cadastralData.setRealEstate(this);
+    }
+
+    public List<ProximityTag> getProximityTags() {
+        return proximityTags;
+    }
+
+    public void setProximityTags(List<ProximityTag> tags) {
+        this.proximityTags = tags;
     }
 
 }

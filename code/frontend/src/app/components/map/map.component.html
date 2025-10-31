@@ -1,9 +1,9 @@
-
-<!-- map.component.html -->
 <div class="absolute w-full h-full">
   <div #map id="map" class="absolute inset-0"></div>
-  @if(!this.isEditable()){
-    <div #autocomplete class="absolute top-4 left-4 md:w-120 sm:w-70 z-[1000]
-            bg-gray-50 text-black rounded-md shadow-lg p-1"></div>
+  @if(!isEditable()){
+  <div
+    #autocomplete
+    class="absolute top-4 left-4 md:w-120 sm:w-70 z-[1000] bg-gray-50 text-black rounded-md shadow-lg p-1"
+  ></div>
   }
 </div>

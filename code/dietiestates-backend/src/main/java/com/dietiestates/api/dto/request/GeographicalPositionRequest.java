@@ -20,11 +20,11 @@ import lombok.ToString;
 @ToString
 @Builder
 public class GeographicalPositionRequest {
-	
+
 	@NotEmpty(message = "City is mandatory")
 	@NotBlank(message = "City is mandatory")
 	private String city;
-	
+
 	@NotEmpty(message = "Municipality is mandatory")
 	@NotBlank(message = "Municipality is mandatory")
 	private String municipality;
@@ -34,15 +34,15 @@ public class GeographicalPositionRequest {
 	@Size(min = 1, message = "Address must be a maximum of 100 characters long")
 	@Size(max = 100, message = "Address must be at least 1 character long")
 	private String address;
-	
+
 	@NotNull(message = "Latitude is mandatory")
 	@Min(value = -180)
 	private Double latitude;
-	
+
 	@NotNull(message = "Longitude is mandatory")
 	@Min(value = -90)
 	private Double longitude;
-	
+
 	@Positive(message = "Radius must be a positive number")
 	private Integer radius;
 }

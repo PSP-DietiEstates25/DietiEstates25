@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class OfferMapperImpl implements OfferMapper {
-	
+
 	@Override
 	public OfferSpec toSpec(OfferRequest request) {
 		return OfferSpec.offerSpecBuilder()
@@ -23,7 +23,7 @@ public class OfferMapperImpl implements OfferMapper {
 				.amount(request.getAmount())
 				.build();
 	}
-	
+
 	@Override
 	public OfferResponse fromEntity(Offer offer) {
 		return OfferResponse.offerResponseBuilder()
@@ -36,5 +36,10 @@ public class OfferMapperImpl implements OfferMapper {
 				.realEstateId(offer.getRealEstate().getId())
 				.amount(offer.getAmount())
 				.build();
+	}
+
+	@Override
+	public OfferResponse toResponse(Offer offer) {
+		return fromEntity(offer);
 	}
 }

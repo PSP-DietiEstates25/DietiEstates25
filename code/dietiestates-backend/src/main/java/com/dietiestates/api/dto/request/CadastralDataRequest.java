@@ -3,41 +3,39 @@ package com.dietiestates.api.dto.request;
 import java.math.BigDecimal;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
 @Builder
 public class CadastralDataRequest {
-	
-	@NotEmpty(message = "Price is mandatory")
-	@NotBlank(message = "Price is mandatory")
+
+	@NotNull(message = "Price is mandatory")
 	@Positive(message = "Price must be a positive number")
 	private BigDecimal price;
-	
-	@NotEmpty(message = "Size is mandatory")
-	@NotBlank(message = "Size is mandatory")
-	@Positive(message = "Size must be a positive number")
+
+	@NotNull(message = "Square meters is mandatory")
+	@Positive(message = "Square meters must be a positive number")
 	private Integer squareMeters;
 
-	@NotEmpty(message = "Energy class is mandatory")
 	@NotBlank(message = "Energy class is mandatory")
-	@Positive(message = "Size must be a positive number")
 	private String energyClass;
-	
-	@NotEmpty(message = "Rooms number is mandatory")
-	@NotBlank(message = "Rooms number is mandatory")
+
+	@NotNull(message = "Rooms number is mandatory")
 	@Positive(message = "Rooms must be a positive number")
 	private Integer rooms;
-	
-	@NotEmpty(message = "Floor is mandatory")
-	@NotBlank(message = "Floor is mandatory")
+
+	@NotNull(message = "Floor is mandatory")
 	@Positive(message = "Floor must be a positive number")
 	private Integer floor;
 }

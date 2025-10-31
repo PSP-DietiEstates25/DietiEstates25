@@ -1,12 +1,16 @@
 package com.dietiestates.api.controller;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.api.dto.request.NotificationRequest;
@@ -21,84 +25,33 @@ import lombok.RequiredArgsConstructor;
 public class NotificationController {
 
 	private final NotificationService notificationService;
-	
+
 	@PostMapping
 	public ResponseEntity<NotificationResponse> createNotification(
 			@PathVariable String notificationcategoryname,
-			@RequestBody NotificationRequest request
-			){
+			@RequestBody NotificationRequest request) {
 		var notification = notificationService.createNotification(notificationcategoryname, request);
 		return ResponseEntity.status(HttpStatus.CREATED).body(notification);
 	}
-	
+
 	@GetMapping("/{notificationid}")
 	public ResponseEntity<NotificationResponse> getNotificationById(
 			@PathVariable String notificationcategoryname,
-			@PathVariable Long notificationid
-			) {
+			@PathVariable Long notificationid) {
 		var notification = notificationService.getNotificationById(notificationcategoryname, notificationid);
 		return ResponseEntity.status(HttpStatus.OK).body(notification);
 	}
-	//private final NotificationService notifService;
-	//private final NotificationPreferenceService prefService;
 
-	/*
-	@GetMapping
+	@GetMapping("/me")
 	@PreAuthorize("isAuthenticated()")
-	public List<NotificationResponse> listMine(
-			Authentication auth,
-			@RequestParam(defaultValue = "false") boolean unreadOnly,
-			@RequestParam(defaultValue = "0") Integer page,
-			@RequestParam(defaultValue = "12") Integer size) {
-		return notifService.listMine(auth.getName(), unreadOnly, page, size);
-	}
+	public ResponseEntity<Page<NotificationResponse>> listMine(
+			Authentication authentication,
+			@PathVariable("notificationcategoryname") String notificationcategoryname,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "12") int size) {
 
-	@GetMapping("/unread-count")
-	@PreAuthorize("isAuthenticated()")
-	public long unreadCount(Authentication auth) {
-		return notifService.unreadCount(auth.getName());
+		var principalName = authentication.getName();
+		var res = notificationService.listMyNotifications(principalName, notificationcategoryname, page, size);
+		return ResponseEntity.ok(res);
 	}
-
-	@PatchMapping("/{id}/read")
-	@PreAuthorize("isAuthenticated()")
-	public void markRead(Authentication auth, @PathVariable Long id) {
-		notifService.markRead(auth.getName(), id);
-	}
-
-	@PatchMapping("/read-all")
-	@PreAuthorize("isAuthenticated()")
-	public void markAllRead(Authentication auth) {
-		notifService.markAllRead(auth.getName());
-	}
-
-	@DeleteMapping("/{id}")
-	@PreAuthorize("isAuthenticated()")
-	public void delete(Authentication auth, @PathVariable Long id) {
-		notifService.delete(auth.getName(), id);
-	}
-
-	@GetMapping("/preferences")
-	@PreAuthorize("isAuthenticated()")
-	public List<NotificationPreferenceResponse> listPreferences(Authentication auth) {
-		return prefService.listMine(auth.getName());
-	}
-
-	@PatchMapping("/preferences/{category}")
-	@PreAuthorize("isAuthenticated()")
-	public NotificationPreferenceResponse toggle(
-			Authentication auth,
-			@PathVariable String category,
-			@RequestParam boolean enabled) {
-		NotificationCategoryType cat = NotificationCategoryType.valueOf(category.toUpperCase());
-		return prefService.set(auth.getName(), cat, enabled);
-	}
-
-	@PutMapping("/preferences")
-	@PreAuthorize("isAuthenticated()")
-	public List<NotificationPreferenceResponse> bulk(
-			Authentication auth,
-			@Valid @RequestBody UpdateNotificationPreferencesRequest req) {
-		return prefService.bulkUpdate(auth.getName(), req);
-	}
-	*/
 }

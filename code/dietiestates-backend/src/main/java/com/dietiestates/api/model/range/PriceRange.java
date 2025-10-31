@@ -18,24 +18,24 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-//@EqualsAndHashCode
+// @EqualsAndHashCode
 @Embeddable
 public class PriceRange {
 
 	@Column(nullable = false, name = "min_price")
 	private BigDecimal minPrice;
-	
+
 	@Column(nullable = false, name = "max_price")
 	private BigDecimal maxPrice;
-	
+
 	public Boolean contains(BigDecimal price) {
-		
-		if(price != null && this.minPrice != null && this.maxPrice != null) {
-			
-			if(this.minPrice.compareTo(price) <= 0 && price.compareTo(this.maxPrice) <= 0)
-				return true;
-			else return false;
-		
-		} else return false;
+		if (price == null)
+			return false; 
+		if (this.minPrice != null && price.compareTo(this.minPrice) < 0)
+			return false;
+		if (this.maxPrice != null && price.compareTo(this.maxPrice) > 0)
+			return false;
+		return true;
 	}
+
 }

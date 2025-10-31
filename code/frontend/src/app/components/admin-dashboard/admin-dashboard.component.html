@@ -13,12 +13,17 @@
         {{ t.label }}
       </button>
       }
+
+      <a class="btn_ghost cursor-pointer" routerLink="/admin/change-password">
+        Impostazioni
+      </a>
+
       <button class="btn_ghost cursor-pointer" (click)="logout()">
         Logout
       </button>
     </nav>
   </header>
-  
+
   <!-- ADS TAB -->
   @if (active() === 'ads') {
   <section>
@@ -137,21 +142,6 @@
   <!-- USERS TAB -->
   @if (active() === 'users') {
   <section>
-    <div class="mb-4 flex flex-wrap items-end gap-3">
-      <div>
-        <label for="role" class="block text-sm mb-1">Ruolo</label>
-        <select
-          id="role"
-          class="input_main w-44"
-          [ngModel]="roleFilter()"
-          (ngModelChange)="roleFilter.set($event); loadUsers()"
-        >
-          <option value="">Tutti</option>
-          <option value="AGENT">Agenti</option>
-          <option value="ADMIN">Admin</option>
-        </select>
-      </div>
-    </div>
 
     <div class="grid lg:grid-cols-2 gap-4">
       <article class="rounded-2xl border dark:border-slate-700 p-4">
@@ -190,39 +180,6 @@
         </form>
       </article>
 
-      <article class="rounded-2xl border dark:border-slate-700 p-4">
-        <h3 class="font-semibold mb-3">Utenti</h3>
-        @if (usersLoading()) {
-        <div class="py-6 text-center">Caricamento…</div>
-        } @else {
-        <div class="divide-y dark:divide-slate-700">
-          @for (u of users(); track u.id) {
-          <div class="py-3 flex items-center gap-3">
-            <div class="flex-1">
-              <div class="text-xs text-slate-500">
-                Creato {{ u.createdAt | date : "short" }}
-              </div>
-            </div>
-            <select
-              class="input_main w-36"
-              [ngModel]="u.role"
-              (ngModelChange)="changeRole(u, $event)"
-            >
-              <option value="AGENT">Agente</option>
-              <option value="ADMIN">Admin</option>
-            </select>
-            <button class="btn_ghost cursor-pointer" (click)="toggleUser(u)">
-              {{ u.active ? "Disabilita" : "Abilita" }}
-            </button>
-          </div>
-          } @empty {
-          <div class="py-6 text-center text-slate-600 dark:text-slate-300">
-            Nessun utente
-          </div>
-          }
-        </div>
-        }
-      </article>
     </div>
   </section>
   }

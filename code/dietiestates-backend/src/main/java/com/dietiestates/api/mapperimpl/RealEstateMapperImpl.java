@@ -20,13 +20,13 @@ public class RealEstateMapperImpl implements RealEstateMapper {
 	@Override
 	public RealEstateSpec toSpec(RealEstateRequest request) {
 		return RealEstateSpec.builder()
-				.category(request.getCategory())
-				.images(request.getImages())
-				.description(request.getDescription())
-				.estateAgentEmail(request.getEstateAgentEmail())
-				.cadastralDataId(request.getCadastralDataId())
-				.detailId(request.getDetailId())
-				.build();
+    .category(request.getCategory())
+    .images(request.getImages() != null ? request.getImages().toArray(String[]::new) : null)
+    .description(request.getDescription())
+    .estateAgentEmail(request.getEstateAgentEmail())
+    .cadastralDataId(request.getCadastralDataId())
+    .detailId(request.getDetailId())
+    .build();
 	}
 
 	@Override
@@ -49,6 +49,9 @@ public class RealEstateMapperImpl implements RealEstateMapper {
 										: null)
 				.detailId(realEstate.getDetail() != null ? realEstate.getDetail().getId() : null)
 				.cadastralDataId(realEstate.getCadastralData() != null ? realEstate.getCadastralData().getId() : null)
+				.proximityTags(realEstate.getProximityTags() != null
+						? realEstate.getProximityTags().stream().map(Enum::name).toArray(String[]::new)
+						: null)
 				.build();
 	}
 

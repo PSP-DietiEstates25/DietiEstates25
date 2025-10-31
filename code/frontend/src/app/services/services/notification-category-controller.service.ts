@@ -16,36 +16,13 @@ import { CreateNotificationCategory$Params } from '../fn/notification-category-c
 import { getNotificationCategoryByName } from '../fn/notification-category-controller/get-notification-category-by-name';
 import { GetNotificationCategoryByName$Params } from '../fn/notification-category-controller/get-notification-category-by-name';
 import { NotificationCategoryResponse } from '../models/notification-category-response';
+import { updateIsActive } from '../fn/notification-category-controller/update-is-active';
+import { UpdateIsActive$Params } from '../fn/notification-category-controller/update-is-active';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationCategoryControllerService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
-  }
-
-  /** Path part for operation `createNotificationCategory()` */
-  static readonly CreateNotificationCategoryPath = '/notificationcategories';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `createNotificationCategory()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  createNotificationCategory$Response(params: CreateNotificationCategory$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationCategoryResponse>> {
-    return createNotificationCategory(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `createNotificationCategory$Response()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  createNotificationCategory(params: CreateNotificationCategory$Params, context?: HttpContext): Observable<NotificationCategoryResponse> {
-    return this.createNotificationCategory$Response(params, context).pipe(
-      map((r: StrictHttpResponse<NotificationCategoryResponse>): NotificationCategoryResponse => r.body)
-    );
   }
 
   /** Path part for operation `getNotificationCategoryByName()` */
@@ -69,6 +46,56 @@ export class NotificationCategoryControllerService extends BaseService {
    */
   getNotificationCategoryByName(params: GetNotificationCategoryByName$Params, context?: HttpContext): Observable<NotificationCategoryResponse> {
     return this.getNotificationCategoryByName$Response(params, context).pipe(
+      map((r: StrictHttpResponse<NotificationCategoryResponse>): NotificationCategoryResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `updateIsActive()` */
+  static readonly UpdateIsActivePath = '/notificationcategories/{notificationcategoryname}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `updateIsActive()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updateIsActive$Response(params: UpdateIsActive$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationCategoryResponse>> {
+    return updateIsActive(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `updateIsActive$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updateIsActive(params: UpdateIsActive$Params, context?: HttpContext): Observable<NotificationCategoryResponse> {
+    return this.updateIsActive$Response(params, context).pipe(
+      map((r: StrictHttpResponse<NotificationCategoryResponse>): NotificationCategoryResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `createNotificationCategory()` */
+  static readonly CreateNotificationCategoryPath = '/notificationcategories';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `createNotificationCategory()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createNotificationCategory$Response(params: CreateNotificationCategory$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationCategoryResponse>> {
+    return createNotificationCategory(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `createNotificationCategory$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createNotificationCategory(params: CreateNotificationCategory$Params, context?: HttpContext): Observable<NotificationCategoryResponse> {
+    return this.createNotificationCategory$Response(params, context).pipe(
       map((r: StrictHttpResponse<NotificationCategoryResponse>): NotificationCategoryResponse => r.body)
     );
   }

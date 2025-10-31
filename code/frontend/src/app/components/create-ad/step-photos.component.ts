@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CreateAdFacade } from './create-ad.facade';
 
 @Component({
@@ -8,6 +8,7 @@ import { CreateAdFacade } from './create-ad.facade';
   templateUrl: './step-photos.component.html',
 })
 export class StepPhotosComponent {
+  private route = inject(ActivatedRoute);
   private facade = inject(CreateAdFacade);
   private router = inject(Router);
 
@@ -25,9 +26,15 @@ export class StepPhotosComponent {
     const input = event.target as HTMLInputElement;
     const files = Array.from(input.files ?? []);
     if (!files.length) return;
-    this.facade.addImages(files); 
-    this.rebuildPreviews(); 
-    input.value = ''; 
+
+    if (typeof (this.facade as any).addImages === 'function') {
+      (this.facade as any).addImages(files);
+    } else {
+      for (const f of files) this.facade.addImages(files);
+    }
+
+    this.rebuildPreviews();
+    input.value = '';
   }
 
   remove(i: number) {
@@ -36,7 +43,7 @@ export class StepPhotosComponent {
   }
 
   next() {
-    this.router.navigate(['/agent/ads/new/review']);
+    this.router.navigate(['../review'], { relativeTo: this.route });
   }
 
   private rebuildPreviews() {

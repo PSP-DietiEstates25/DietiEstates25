@@ -16,36 +16,13 @@ import { createCadastralData } from '../fn/cadastral-data-controller/create-cada
 import { CreateCadastralData$Params } from '../fn/cadastral-data-controller/create-cadastral-data';
 import { getCadastralDataById } from '../fn/cadastral-data-controller/get-cadastral-data-by-id';
 import { GetCadastralDataById$Params } from '../fn/cadastral-data-controller/get-cadastral-data-by-id';
+import { updateCadastralData } from '../fn/cadastral-data-controller/update-cadastral-data';
+import { UpdateCadastralData$Params } from '../fn/cadastral-data-controller/update-cadastral-data';
 
 @Injectable({ providedIn: 'root' })
 export class CadastralDataControllerService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
-  }
-
-  /** Path part for operation `createCadastralData()` */
-  static readonly CreateCadastralDataPath = '/cadastraldata';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `createCadastralData()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  createCadastralData$Response(params: CreateCadastralData$Params, context?: HttpContext): Observable<StrictHttpResponse<CadastralDataResponse>> {
-    return createCadastralData(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `createCadastralData$Response()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  createCadastralData(params: CreateCadastralData$Params, context?: HttpContext): Observable<CadastralDataResponse> {
-    return this.createCadastralData$Response(params, context).pipe(
-      map((r: StrictHttpResponse<CadastralDataResponse>): CadastralDataResponse => r.body)
-    );
   }
 
   /** Path part for operation `getCadastralDataById()` */
@@ -69,6 +46,56 @@ export class CadastralDataControllerService extends BaseService {
    */
   getCadastralDataById(params: GetCadastralDataById$Params, context?: HttpContext): Observable<CadastralDataResponse> {
     return this.getCadastralDataById$Response(params, context).pipe(
+      map((r: StrictHttpResponse<CadastralDataResponse>): CadastralDataResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `updateCadastralData()` */
+  static readonly UpdateCadastralDataPath = '/cadastraldata/{cadastraldataid}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `updateCadastralData()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updateCadastralData$Response(params: UpdateCadastralData$Params, context?: HttpContext): Observable<StrictHttpResponse<CadastralDataResponse>> {
+    return updateCadastralData(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `updateCadastralData$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updateCadastralData(params: UpdateCadastralData$Params, context?: HttpContext): Observable<CadastralDataResponse> {
+    return this.updateCadastralData$Response(params, context).pipe(
+      map((r: StrictHttpResponse<CadastralDataResponse>): CadastralDataResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `createCadastralData()` */
+  static readonly CreateCadastralDataPath = '/cadastraldata';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `createCadastralData()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createCadastralData$Response(params: CreateCadastralData$Params, context?: HttpContext): Observable<StrictHttpResponse<CadastralDataResponse>> {
+    return createCadastralData(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `createCadastralData$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createCadastralData(params: CreateCadastralData$Params, context?: HttpContext): Observable<CadastralDataResponse> {
+    return this.createCadastralData$Response(params, context).pipe(
       map((r: StrictHttpResponse<CadastralDataResponse>): CadastralDataResponse => r.body)
     );
   }

@@ -38,7 +38,7 @@ public abstract class AccountDecorator implements Account {
 	}
 
 	@Override
-	public Role getAccountRole() {
+	public String getAccountRole() {
 		return defaultAccount.getAccountRole();
 	}
 	

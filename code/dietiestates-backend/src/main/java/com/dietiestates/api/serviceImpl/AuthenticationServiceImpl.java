@@ -2,7 +2,7 @@ package com.dietiestates.api.serviceImpl;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +17,7 @@ import com.dietiestates.api.mapper.UserMapper;
 import com.dietiestates.api.model.SecurityAccountDecorator;
 import com.dietiestates.api.repository.DefaultAccountRepository;
 import com.dietiestates.api.repository.UserRepository;
+import com.dietiestates.api.security.JwtService;
 import com.dietiestates.api.service.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;
@@ -46,7 +47,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	public void register(AuthenticationRequest request) throws RoleNotFoundException {
 		
 		var authenticationSpec = userMapper.toSpec(request);
-		var userRole = roleFinder.getByRoleName("ROLE_USER");
+		var userRole = roleFinder.getByRoleName("USER");
 		
 		var defaultAccount = defaultAccountFactory.createAccountFromSpec(authenticationSpec, passwordEncoder, userRole);
 		var securityAccountDecorator = secutiryAccountDecoratorFactory.createSecurityAccountDecoratorFromSpec(defaultAccount);
@@ -57,9 +58,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 	
 	@Override
-	public AuthenticationResponse login(Authentication authentication) {
+	public AuthenticationResponse login(AuthenticationRequest request) {
 		
-		var user = ((SecurityAccountDecorator)authentication.getPrincipal());
+		var auth = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(
+					request.getEmail(),
+					request.getPassword()
+				)
+		);
+		
+		var user = ((SecurityAccountDecorator)auth.getPrincipal());
 		var token = jwtService.generateToken(user);
 		
 		return AuthenticationResponse

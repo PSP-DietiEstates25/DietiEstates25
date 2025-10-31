@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CreateAdFacade } from './create-ad.facade';
 import { MapComponent } from '../map/map.component';
 
@@ -11,6 +11,7 @@ import { MapComponent } from '../map/map.component';
   templateUrl: './step-details.component.html',
 })
 export class StepDetailsComponent implements OnInit {
+  private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
   private facade = inject(CreateAdFacade);
   private router = inject(Router);
@@ -53,6 +54,6 @@ export class StepDetailsComponent implements OnInit {
     }
     this.facade.setUtilities(this.utilitiesForm.getRawValue());
     this.facade.setPosition(this.positionForm.getRawValue());
-    this.router.navigate(['/agent/ads/new/cadastral']);
+    this.router.navigate(['../cadastral'], { relativeTo: this.route });
   }
 }

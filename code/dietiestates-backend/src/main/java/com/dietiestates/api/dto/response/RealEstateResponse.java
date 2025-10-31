@@ -22,4 +22,5 @@ public class RealEstateResponse {
 	private String estateAgentEmail;
 	private Long detailId;
 	private Long cadastralDataId;
+	private String[] proximityTags;
 }

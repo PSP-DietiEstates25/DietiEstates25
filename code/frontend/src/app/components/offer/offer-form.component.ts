@@ -1,56 +1,67 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { OfferControllerService } from '../../services/services/offer-controller.service';
-import { OfferRequest } from '../../services/models/offer-request';
-
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { OfferControllerService } from '../../services/services';
+import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'app-offer-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './offer-form.component.html',
 })
 export class OfferFormComponent {
   private fb = inject(FormBuilder);
-  private api = inject(OfferControllerService);
-
-  @Input({ required: true }) adId!: number;
+  private offerApi = inject(OfferControllerService);
+  @Input() realEstateId!: number;
   @Input() isLoggedIn = false;
-
-  @Output() loginRequired = new EventEmitter<void>();
+  @Input() auth?: { getEmail: () => string | null };
   @Output() success = new EventEmitter<void>();
-
+  @Output() loginRequired = new EventEmitter<void>();
   loading = false;
-  ok: string | null = null;
-  err: string | null = null;
-
-  form = this.fb.nonNullable.group({
-    amount: [null as number | null, [Validators.required, Validators.min(1)]],
+  ok = '';
+  err = '';
+  form = this.fb.group({
+    amount: [null, [Validators.required, Validators.min(1)]],
   });
+  async submitOffer() {
+    this.ok = '';
+    this.err = '';
 
-  submit() {
     if (!this.isLoggedIn) {
       this.loginRequired.emit();
       return;
     }
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    const email = this.auth?.getEmail();
+    if (!email) {
+      this.err = 'Non riesco a leggere la tua email. Rifai login.';
+      return;
+    }
 
     this.loading = true;
-    this.ok = this.err = null;
+    try {
+      const body = {
+        category: 'OFFER',
+        status: 'PENDING',
+        userEmail: email,
+        amount: Number(this.form.value.amount),
+      };
 
-    const body: OfferRequest = {
-      amount: this.form.value.amount!,
-      category: 'SALE',
-      status: 'PENDING',
-      userEmail: 'guest@public.local',
-    };
+      await firstValueFrom(
+        this.offerApi.createOffer({ realestateid: this.realEstateId, body })
+      );
 
-    this.api.createOffer({ realestateid: this.adId, body }).subscribe({
-      next: () => (this.ok = 'Offerta inviata!'),
-      error: () => (this.err = 'Errore durante l’invio dell’offerta.'),
-      complete: () => {
-        this.loading = false;
-        if (this.ok) this.success.emit();
-      },
-    });
+      this.ok = 'Offerta inviata!';
+      this.success.emit();
+      this.form.reset();
+    } catch (e: any) {
+      this.err = e?.error?.message ?? 'Errore durante l’invio dell’offerta.';
+    } finally {
+      this.loading = false;
+    }
   }
 }

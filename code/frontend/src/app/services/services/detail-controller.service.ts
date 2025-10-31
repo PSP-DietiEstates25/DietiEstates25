@@ -16,36 +16,13 @@ import { CreateDetail$Params } from '../fn/detail-controller/create-detail';
 import { DetailResponse } from '../models/detail-response';
 import { getDetailById } from '../fn/detail-controller/get-detail-by-id';
 import { GetDetailById$Params } from '../fn/detail-controller/get-detail-by-id';
+import { updateDetail } from '../fn/detail-controller/update-detail';
+import { UpdateDetail$Params } from '../fn/detail-controller/update-detail';
 
 @Injectable({ providedIn: 'root' })
 export class DetailControllerService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
-  }
-
-  /** Path part for operation `createDetail()` */
-  static readonly CreateDetailPath = '/details';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `createDetail()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  createDetail$Response(params: CreateDetail$Params, context?: HttpContext): Observable<StrictHttpResponse<DetailResponse>> {
-    return createDetail(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `createDetail$Response()` instead.
-   *
-   * This method sends `application/json` and handles request body of type `application/json`.
-   */
-  createDetail(params: CreateDetail$Params, context?: HttpContext): Observable<DetailResponse> {
-    return this.createDetail$Response(params, context).pipe(
-      map((r: StrictHttpResponse<DetailResponse>): DetailResponse => r.body)
-    );
   }
 
   /** Path part for operation `getDetailById()` */
@@ -69,6 +46,56 @@ export class DetailControllerService extends BaseService {
    */
   getDetailById(params: GetDetailById$Params, context?: HttpContext): Observable<DetailResponse> {
     return this.getDetailById$Response(params, context).pipe(
+      map((r: StrictHttpResponse<DetailResponse>): DetailResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `updateDetail()` */
+  static readonly UpdateDetailPath = '/details/{detailid}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `updateDetail()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updateDetail$Response(params: UpdateDetail$Params, context?: HttpContext): Observable<StrictHttpResponse<DetailResponse>> {
+    return updateDetail(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `updateDetail$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updateDetail(params: UpdateDetail$Params, context?: HttpContext): Observable<DetailResponse> {
+    return this.updateDetail$Response(params, context).pipe(
+      map((r: StrictHttpResponse<DetailResponse>): DetailResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `createDetail()` */
+  static readonly CreateDetailPath = '/details';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `createDetail()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createDetail$Response(params: CreateDetail$Params, context?: HttpContext): Observable<StrictHttpResponse<DetailResponse>> {
+    return createDetail(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `createDetail$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createDetail(params: CreateDetail$Params, context?: HttpContext): Observable<DetailResponse> {
+    return this.createDetail$Response(params, context).pipe(
       map((r: StrictHttpResponse<DetailResponse>): DetailResponse => r.body)
     );
   }

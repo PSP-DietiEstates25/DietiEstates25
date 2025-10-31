@@ -14,6 +14,7 @@ public interface VisitRepository extends
 
 	List<Visit> findByUser(String userEmail, Pageable pageable);
 	List<Visit> findByRealEstate(Long realEstateId, Pageable pageable);
+  List<Visit> findByRealEstateId(Long realEstateId, Pageable pageable);
 	
 	/*
 

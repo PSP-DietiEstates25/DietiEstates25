@@ -13,11 +13,15 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { createRealEstate } from '../fn/real-estate-controller/create-real-estate';
 import { CreateRealEstate$Params } from '../fn/real-estate-controller/create-real-estate';
-import { getAllRealEstates } from '../fn/real-estate-controller/get-all-real-estates';
-import { GetAllRealEstates$Params } from '../fn/real-estate-controller/get-all-real-estates';
+import { deleteRealEstate } from '../fn/real-estate-controller/delete-real-estate';
+import { DeleteRealEstate$Params } from '../fn/real-estate-controller/delete-real-estate';
 import { getRealEstateById } from '../fn/real-estate-controller/get-real-estate-by-id';
 import { GetRealEstateById$Params } from '../fn/real-estate-controller/get-real-estate-by-id';
+import { listAllRealEstates } from '../fn/real-estate-controller/list-all-real-estates';
+import { ListAllRealEstates$Params } from '../fn/real-estate-controller/list-all-real-estates';
 import { RealEstateResponse } from '../models/real-estate-response';
+import { updateRealEstate } from '../fn/real-estate-controller/update-real-estate';
+import { UpdateRealEstate$Params } from '../fn/real-estate-controller/update-real-estate';
 
 @Injectable({ providedIn: 'root' })
 export class RealEstateControllerService extends BaseService {
@@ -25,27 +29,102 @@ export class RealEstateControllerService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `getAllRealEstates()` */
-  static readonly GetAllRealEstatesPath = '/realestates';
+  /** Path part for operation `getRealEstateById()` */
+  static readonly GetRealEstateByIdPath = '/realestates/{realestateid}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getAllRealEstates()` instead.
+   * To access only the response body, use `getRealEstateById()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAllRealEstates$Response(params?: GetAllRealEstates$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<RealEstateResponse>>> {
-    return getAllRealEstates(this.http, this.rootUrl, params, context);
+  getRealEstateById$Response(params: GetRealEstateById$Params, context?: HttpContext): Observable<StrictHttpResponse<RealEstateResponse>> {
+    return getRealEstateById(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getAllRealEstates$Response()` instead.
+   * To access the full response (for headers, for example), `getRealEstateById$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAllRealEstates(params?: GetAllRealEstates$Params, context?: HttpContext): Observable<Array<RealEstateResponse>> {
-    return this.getAllRealEstates$Response(params, context).pipe(
+  getRealEstateById(params: GetRealEstateById$Params, context?: HttpContext): Observable<RealEstateResponse> {
+    return this.getRealEstateById$Response(params, context).pipe(
+      map((r: StrictHttpResponse<RealEstateResponse>): RealEstateResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `updateRealEstate()` */
+  static readonly UpdateRealEstatePath = '/realestates/{realestateid}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `updateRealEstate()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updateRealEstate$Response(params: UpdateRealEstate$Params, context?: HttpContext): Observable<StrictHttpResponse<RealEstateResponse>> {
+    return updateRealEstate(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `updateRealEstate$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updateRealEstate(params: UpdateRealEstate$Params, context?: HttpContext): Observable<RealEstateResponse> {
+    return this.updateRealEstate$Response(params, context).pipe(
+      map((r: StrictHttpResponse<RealEstateResponse>): RealEstateResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `deleteRealEstate()` */
+  static readonly DeleteRealEstatePath = '/realestates/{realestateid}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteRealEstate()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  deleteRealEstate$Response(params: DeleteRealEstate$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return deleteRealEstate(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `deleteRealEstate$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  deleteRealEstate(params: DeleteRealEstate$Params, context?: HttpContext): Observable<void> {
+    return this.deleteRealEstate$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `listAllRealEstates()` */
+  static readonly ListAllRealEstatesPath = '/realestates';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `listAllRealEstates()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  listAllRealEstates$Response(params?: ListAllRealEstates$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<RealEstateResponse>>> {
+    return listAllRealEstates(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `listAllRealEstates$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  listAllRealEstates(params?: ListAllRealEstates$Params, context?: HttpContext): Observable<Array<RealEstateResponse>> {
+    return this.listAllRealEstates$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<RealEstateResponse>>): Array<RealEstateResponse> => r.body)
     );
   }
@@ -71,31 +150,6 @@ export class RealEstateControllerService extends BaseService {
    */
   createRealEstate(params: CreateRealEstate$Params, context?: HttpContext): Observable<RealEstateResponse> {
     return this.createRealEstate$Response(params, context).pipe(
-      map((r: StrictHttpResponse<RealEstateResponse>): RealEstateResponse => r.body)
-    );
-  }
-
-  /** Path part for operation `getRealEstateById()` */
-  static readonly GetRealEstateByIdPath = '/realestates/{realestateid}';
-
-  /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getRealEstateById()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  getRealEstateById$Response(params: GetRealEstateById$Params, context?: HttpContext): Observable<StrictHttpResponse<RealEstateResponse>> {
-    return getRealEstateById(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getRealEstateById$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  getRealEstateById(params: GetRealEstateById$Params, context?: HttpContext): Observable<RealEstateResponse> {
-    return this.getRealEstateById$Response(params, context).pipe(
       map((r: StrictHttpResponse<RealEstateResponse>): RealEstateResponse => r.body)
     );
   }

@@ -15,24 +15,24 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-//@EqualsAndHashCode
+// @EqualsAndHashCode
 @Embeddable
 public class RoomsRange {
 
 	@Column(nullable = false, name = "min_rooms")
 	private Integer minRooms;
-	
+
 	@Column(nullable = false, name = "max_rooms")
 	private Integer maxRooms;
 
 	public Boolean contains(Integer rooms) {
-		
-		if(rooms != null && this.minRooms != null && this.maxRooms != null) {
-			
-			if(this.minRooms.compareTo(rooms) <= 0 && rooms.compareTo(this.maxRooms) <= 0)
-				return true;
-			else return false;
-			
-		} else return false;
+		if (rooms == null)
+			return false;
+		if (this.minRooms != null && rooms < this.minRooms)
+			return false;
+		if (this.maxRooms != null && rooms > this.maxRooms)
+			return false;
+		return true;
 	}
+
 }

@@ -8,6 +8,8 @@ import com.dietiestates.api.spec.VisitSpec;
 public interface VisitMapper {
 
 	VisitSpec toSpec(VisitRequest request);
-	
+
 	VisitResponse fromEntity(Visit visit);
+
+	VisitResponse toResponse(Visit visit);
 }

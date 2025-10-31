@@ -89,8 +89,8 @@ public class DefaultAccount implements Account {
 	}
 	
 	@Override
-	public Role getAccountRole() {
-		return role;
+	public String getAccountRole() {
+		return role.getName();
 	}
 
 	@Override

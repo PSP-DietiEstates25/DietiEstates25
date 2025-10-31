@@ -6,6 +6,8 @@ import com.dietiestates.api.dto.response.DetailResponse;
 public interface DetailService {
 
 	DetailResponse createDetail(DetailRequest request);
-	
+
 	DetailResponse getDetailById(Long detailId);
+
+	DetailResponse updateDetail(Long id, DetailRequest request);
 }

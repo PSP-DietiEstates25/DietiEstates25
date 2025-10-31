@@ -8,6 +8,8 @@ import com.dietiestates.api.spec.OfferSpec;
 public interface OfferMapper {
 
 	OfferSpec toSpec(OfferRequest request);
-	
+
 	OfferResponse fromEntity(Offer offer);
+
+	OfferResponse toResponse(Offer offer);
 }

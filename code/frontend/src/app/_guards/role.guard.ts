@@ -1,24 +1,24 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { AuthService } from '../vecchioService/auth/auth.service';
-import { take, map } from 'rxjs/operators';
+import { AuthStore, Role } from './auth.store';
 
 export function roleGuard(
-  allowed: Array<'CLIENT' | 'AGENT' | 'ADMIN'>,
-  redirectIfDenied = '/'
+  allowed: Role[],
+  redirectIfDenied: string = '/auth'
 ): CanActivateFn {
   return () => {
-    const auth = inject(AuthService);
     const router = inject(Router);
+    const auth = inject(AuthStore);
 
-    return auth.userRole$.pipe(
-      take(1),
-      map((role: 'CLIENT' | 'AGENT' | 'ADMIN' | null) => {
-        const ok = role !== null && allowed.includes(role);
-        if (ok) return true;
-        router.navigate([redirectIfDenied]);
-        return false;
-      })
-    );
+    const role = auth.role();
+    const ok = !!role && allowed.includes(role);
+
+    if (ok) return true;
+
+    if (!auth.isAuthenticated()) 
+      return router.createUrlTree(['/auth']);
+    
+    router.navigate([redirectIfDenied]);
+    return false;
   };
 }

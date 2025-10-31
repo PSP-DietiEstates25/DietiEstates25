@@ -20,22 +20,31 @@ public class NotificationCategoryServiceImpl implements NotificationCategoryServ
 	private final NotificationCategoryFactory notificationCategoryFactory;
 	private final NotificationCategoryFinder notificationCategoryFinder;
 	private final NotificationCategoryMapper notificationCategoryMapper;
-	
+
 	@Override
 	public NotificationCategoryResponse createNotificationCategory(NotificationCategoryRequest request) {
-		
+
 		var notificationCategorySpec = notificationCategoryMapper.toSpec(request);
-		
-		var notificationCategory = notificationCategoryFactory.createNotificationCategoryFromSpec(notificationCategorySpec);
+
+		var notificationCategory = notificationCategoryFactory
+				.createNotificationCategoryFromSpec(notificationCategorySpec);
 		notificationCategoryRepository.save(notificationCategory);
-		
+
 		return notificationCategoryMapper.fromEntity(notificationCategory);
 	}
-	
+
 	@Override
 	public NotificationCategoryResponse getNotificationCategoryByName(String notificationCategoryName) {
-		
+
 		var notificationCategory = notificationCategoryFinder.getNotificationCategoryByName(notificationCategoryName);
 		return notificationCategoryMapper.fromEntity(notificationCategory);
+	}
+
+	@Override
+	public NotificationCategoryResponse updateNotificationCategoryIsActive(String name, Boolean isActive) {
+		var entity = notificationCategoryFinder.getNotificationCategoryByName(name);
+		entity.setIsActive(Boolean.TRUE.equals(isActive)); 
+		notificationCategoryRepository.save(entity);
+		return notificationCategoryMapper.fromEntity(entity);
 	}
 }

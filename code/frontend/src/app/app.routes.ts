@@ -4,7 +4,9 @@ import { HomeComponent } from './components/home/home.component';
 import { AgentDashboardComponent } from './components/agent-dashboard/agent-dashboard.component';
 import { roleGuard } from './_guards/role.guard';
 import { SearchPageComponent } from './components/search/search-page.component';
-import { MapComponent } from './components/map/map.component';
+import { CreateAdFacade } from './components/create-ad/create-ad.facade';
+import { EditAdFacade } from './components/edit-ad/edit-ad.facade';
+import { EditLayoutComponent } from './components/edit-ad/edit-layout.component';
 
 export const routes: Routes = [
   {
@@ -29,38 +31,11 @@ export const routes: Routes = [
   },
 
   {
-    path: 'map',
-    title: 'Mappa di prova',
-    component: MapComponent, // 👈 nuova route attiva
-  },
-
-  {
     path: '',
     component: HomeComponent,
     //canActivate: [ roleGuard(['CLIENT']) ],
   },
-  /*
-  {
-    path: 'history',
-    loadComponent: () =>
-      import('./components/history/history.component').then(
-        (m) => m.HistoryComponent
-      ),
-  },
-  {
-    path: 'offer',
-    loadComponent: () =>
-      import('./components/offer-list/offer-list.component').then(
-        (m) => m.OfferListComponent
-      ),
-  },
-  {
-    path: 'map',
-    title: 'Mappa di prova',
-    component: MapComponent,
-  },
-  
-  */
+
   {
     path: 'search',
     component: SearchPageComponent,
@@ -122,6 +97,53 @@ export const routes: Routes = [
           },
         ],
       },
+
+      {
+        path: 'ads/:realestateId/edit',
+        component: EditLayoutComponent,
+        providers: [
+          EditAdFacade,
+          { provide: CreateAdFacade, useExisting: EditAdFacade },
+        ],
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: 'basics' },
+          {
+            path: 'basics',
+            loadComponent: () =>
+              import('./components/create-ad/step-basics.component').then(
+                (m) => m.StepBasicsComponent
+              ),
+          },
+          {
+            path: 'details',
+            loadComponent: () =>
+              import('./components/create-ad/step-details.component').then(
+                (m) => m.StepDetailsComponent
+              ),
+          },
+          {
+            path: 'cadastral',
+            loadComponent: () =>
+              import('./components/create-ad/step-cadastral.component').then(
+                (m) => m.StepCadastralComponent
+              ),
+          },
+          {
+            path: 'photos',
+            loadComponent: () =>
+              import('./components/create-ad/step-photos.component').then(
+                (m) => m.StepPhotosComponent
+              ),
+          },
+          {
+            path: 'review',
+            loadComponent: () =>
+              import('./components/create-ad/step-review.component').then(
+                (m) => m.StepReviewComponent
+              ),
+          },
+        ],
+      },
     ],
   },
 
@@ -136,6 +158,33 @@ export const routes: Routes = [
             (m) => m.AdminDashboardComponent
           ),
       },
+
+      {
+        path: 'change-password',
+        // canActivate: [roleGuard],
+        data: { roles: ['ADMIN'] },
+        loadComponent: () =>
+          import(
+            './components/admin-account/admin-change-password.component'
+          ).then((m) => m.AdminChangePasswordComponent),
+      },
     ],
+  },
+
+  {
+    path: 'ad/:id',
+    loadComponent: () =>
+      import('./components/ad-detail/ad-detail.component').then(
+        (m) => m.AdDetailComponent
+      ),
+  },
+
+  {
+    path: 'notifications',
+    loadComponent: () =>
+      import('./components/notifications/notifications-page.component').then(
+        (m) => m.NotificationsPageComponent
+      ),
+    canActivate: [],
   },
 ];

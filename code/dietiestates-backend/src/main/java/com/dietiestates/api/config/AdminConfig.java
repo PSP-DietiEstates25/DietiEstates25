@@ -47,35 +47,5 @@ public class AdminConfig {
 			adminRepository.save(admin);
 		}
 	}
-	/*
-	@Bean
-	public InitializingBean initializeSuperAdmin(
-			RoleRepository roleRepository,
-			DefaultAccountRepository defaultAccountRepository,
-			AdminRepository adminRepository,
-			PasswordEncoder passwordEncoder
-			) {
-		return () -> {
-			if(defaultAccountRepository.findByEmail("admin@admin.com").isEmpty()) {
 
-				var defaultAccount = DefaultAccount.builder()
-						.email("admin@admin.com")
-						.password(passwordEncoder.encode("adminpassword"))
-						.role(roleRepository.findByName("ADMIN").get())
-						.build();
-				var securityAccountDecorator = SecurityAccountDecorator.builder()
-						.defaultAccount(defaultAccount)
-						.enabled(true)
-						.locked(false)
-						.build();
-				var admin = new Admin();
-				admin.setSecurityAccountDecorator(defaultAccount);
-				admin.setAdmin(admin);
-				
-				defaultAccountRepository.save(defaultAccount);
-				adminRepository.save(admin);
-			};
-		};
-	}
-	*/
 }

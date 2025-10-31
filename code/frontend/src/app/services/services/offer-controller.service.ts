@@ -11,14 +11,49 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { accept1 } from '../fn/offer-controller/accept-1';
+import { Accept1$Params } from '../fn/offer-controller/accept-1';
+import { counter } from '../fn/offer-controller/counter';
+import { Counter$Params } from '../fn/offer-controller/counter';
 import { createOffer } from '../fn/offer-controller/create-offer';
 import { CreateOffer$Params } from '../fn/offer-controller/create-offer';
+import { getOfferById } from '../fn/offer-controller/get-offer-by-id';
+import { GetOfferById$Params } from '../fn/offer-controller/get-offer-by-id';
+import { listOffersForRealEstate } from '../fn/offer-controller/list-offers-for-real-estate';
+import { ListOffersForRealEstate$Params } from '../fn/offer-controller/list-offers-for-real-estate';
 import { OfferResponse } from '../models/offer-response';
+import { reject1 } from '../fn/offer-controller/reject-1';
+import { Reject1$Params } from '../fn/offer-controller/reject-1';
 
 @Injectable({ providedIn: 'root' })
 export class OfferControllerService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
+  }
+
+  /** Path part for operation `listOffersForRealEstate()` */
+  static readonly ListOffersForRealEstatePath = '/realestates/{realestateid}/offers';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `listOffersForRealEstate()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  listOffersForRealEstate$Response(params: ListOffersForRealEstate$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<OfferResponse>>> {
+    return listOffersForRealEstate(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `listOffersForRealEstate$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  listOffersForRealEstate(params: ListOffersForRealEstate$Params, context?: HttpContext): Observable<Array<OfferResponse>> {
+    return this.listOffersForRealEstate$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<OfferResponse>>): Array<OfferResponse> => r.body)
+    );
   }
 
   /** Path part for operation `createOffer()` */
@@ -42,6 +77,106 @@ export class OfferControllerService extends BaseService {
    */
   createOffer(params: CreateOffer$Params, context?: HttpContext): Observable<OfferResponse> {
     return this.createOffer$Response(params, context).pipe(
+      map((r: StrictHttpResponse<OfferResponse>): OfferResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `counter()` */
+  static readonly CounterPath = '/realestates/{realestateid}/offers/{id}/counter';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `counter()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  counter$Response(params: Counter$Params, context?: HttpContext): Observable<StrictHttpResponse<OfferResponse>> {
+    return counter(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `counter$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  counter(params: Counter$Params, context?: HttpContext): Observable<OfferResponse> {
+    return this.counter$Response(params, context).pipe(
+      map((r: StrictHttpResponse<OfferResponse>): OfferResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `reject1()` */
+  static readonly Reject1Path = '/realestates/{realestateid}/offers/{id}/reject';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `reject1()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  reject1$Response(params: Reject1$Params, context?: HttpContext): Observable<StrictHttpResponse<OfferResponse>> {
+    return reject1(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `reject1$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  reject1(params: Reject1$Params, context?: HttpContext): Observable<OfferResponse> {
+    return this.reject1$Response(params, context).pipe(
+      map((r: StrictHttpResponse<OfferResponse>): OfferResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `accept1()` */
+  static readonly Accept1Path = '/realestates/{realestateid}/offers/{id}/accept';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `accept1()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  accept1$Response(params: Accept1$Params, context?: HttpContext): Observable<StrictHttpResponse<OfferResponse>> {
+    return accept1(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `accept1$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  accept1(params: Accept1$Params, context?: HttpContext): Observable<OfferResponse> {
+    return this.accept1$Response(params, context).pipe(
+      map((r: StrictHttpResponse<OfferResponse>): OfferResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `getOfferById()` */
+  static readonly GetOfferByIdPath = '/realestates/{realestateid}/offers/{offerId}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getOfferById()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getOfferById$Response(params: GetOfferById$Params, context?: HttpContext): Observable<StrictHttpResponse<OfferResponse>> {
+    return getOfferById(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getOfferById$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getOfferById(params: GetOfferById$Params, context?: HttpContext): Observable<OfferResponse> {
+    return this.getOfferById$Response(params, context).pipe(
       map((r: StrictHttpResponse<OfferResponse>): OfferResponse => r.body)
     );
   }

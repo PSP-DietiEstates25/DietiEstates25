@@ -4,6 +4,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.dietiestates.api.dto.request.ChangePasswordRequest;
 import com.dietiestates.api.dto.request.StafferRequest;
 import com.dietiestates.api.exception.notfound.RoleNotFoundException;
 import com.dietiestates.api.factory.AccountFactory;
@@ -16,14 +17,18 @@ import com.dietiestates.api.finder.RoleFinder;
 import com.dietiestates.api.finder.UserFinder;
 import com.dietiestates.api.mapper.AdminMapper;
 import com.dietiestates.api.mapper.UserMapper;
+import com.dietiestates.api.model.DefaultAccount;
 import com.dietiestates.api.repository.AdminRepository;
 import com.dietiestates.api.repository.DefaultAccountRepository;
 import com.dietiestates.api.repository.UserRepository;
+import com.dietiestates.api.security.JwtService;
 import com.dietiestates.api.service.AdminAuthenticationService;
+
+import jakarta.transaction.Transactional;
 
 @Service("adminAuthenticationServiceImpl")
 public class AdminAuthenticationServiceImpl extends AuthenticationServiceImpl implements AdminAuthenticationService {
-	
+
 	private final AdminRepository adminRepository;
 	private final AdminFactory adminFactory;
 	private final AdminFinder adminFinder;
@@ -45,28 +50,45 @@ public class AdminAuthenticationServiceImpl extends AuthenticationServiceImpl im
 			EstateAgentFinder estateAgentFinder,
 			AdminFinder adminFinder,
 			AdminMapper adminMapper,
-			AdminFactory adminFactory
-			) {
-		super(defaultAccountFactory, secutiryAccountDecoratorFactory, defaultAccountRepository, roleFinder, userRepository, userMapper, authenticationFactory, passwordEncoder, authenticationManager, jwtService);
+			AdminFactory adminFactory) {
+		super(defaultAccountFactory, secutiryAccountDecoratorFactory, defaultAccountRepository, roleFinder,
+				userRepository, userMapper, authenticationFactory, passwordEncoder, authenticationManager, jwtService);
 		this.adminRepository = adminRepository;
 		this.adminFinder = adminFinder;
 		this.adminMapper = adminMapper;
 		this.adminFactory = adminFactory;
 	}
-	
+
 	@Override
+	@Transactional
 	public void register(StafferRequest request) throws RoleNotFoundException {
-		
+
 		var stafferSpec = adminMapper.toSpec(request);
-		var adminRole = roleFinder.getByRoleName("ROLE_ADMIN");
+		var adminRole = roleFinder.getByRoleName("ADMIN");
 		var adminCreator = adminFinder.getAdminByEmail(stafferSpec.getAdminEmail());
-		
+
 		var defaultAccount = defaultAccountFactory.createAccountFromSpec(stafferSpec, passwordEncoder, adminRole);
-		var securityAccountDecorator = secutiryAccountDecoratorFactory.createSecurityAccountDecoratorFromSpec(defaultAccount);
-		
+		var securityAccountDecorator = secutiryAccountDecoratorFactory
+				.createSecurityAccountDecoratorFromSpec(defaultAccount);
+
 		var admin = adminFactory.createAdminFromSpec(defaultAccount, adminCreator);
 		defaultAccountRepository.save(defaultAccount);
 		adminRepository.save(admin);
 	}
-}
 
+	@Override
+	@Transactional
+	public void changeOwnPassword(String email, ChangePasswordRequest req) {
+		DefaultAccount acc = defaultAccountRepository.findByEmail(email)
+				.orElseThrow(() -> new IllegalArgumentException("Account non trovato"));
+
+		if (!passwordEncoder.matches(req.getOldPassword(), acc.getAccountPassword())) {
+			throw new IllegalArgumentException("Password corrente errata");
+		}
+
+		acc.setPassword(passwordEncoder.encode(req.getNewPassword()));
+		defaultAccountRepository.save(acc);
+
+		// tokenRepository.revokeAllFor(acc.getId());
+	}
+}

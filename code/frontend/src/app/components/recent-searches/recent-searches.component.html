@@ -1,0 +1,71 @@
+<div class="space-y-2">
+  <div class="flex items-center justify-between">
+    <h3 class="text-sm font-semibold">Ricerche salvate</h3>
+    @if (total()) {
+    <div class="flex items-center gap-2">
+      <span class="text-xs text-gray-500"
+        >{{ start() + 1 }}–{{ math.min(start() + pageSize, total()) }} /
+        {{ total() }}</span
+      >
+      <button type="button" class="text-xs underline" (click)="clearAll()">
+        Svuota
+      </button>
+    </div>
+    }
+  </div>
+
+  @if (!total()) {
+  <div class="text-xs text-gray-500">Nessuna ricerca salvata.</div>
+  } @else {
+  <div class="flex items-stretch gap-2">
+    <button
+      type="button"
+      class="px-2 text-xs border rounded disabled:opacity-50"
+      (click)="prev()"
+      [disabled]="!canPrev()"
+    >
+      ‹
+    </button>
+
+    <ul class="flex-1 grid grid-cols-1 gap-2">
+      @for (s of visible(); track s.id) {
+      <li class="p-2 border rounded">
+        <div class="flex items-center justify-between gap-2">
+          <div class="min-w-0">
+            <div class="text-sm font-medium truncate">{{ s.label }}</div>
+            <div class="text-xs text-gray-500 truncate">
+              {{ s.category }} • {{ s.when | date : "short" }}
+            </div>
+          </div>
+          <div class="shrink-0 flex items-center gap-2">
+            <button
+              type="button"
+              class="text-xs px-2 py-1 border rounded"
+              (click)="replay(s)"
+            >
+              Riesegui
+            </button>
+            <button
+              type="button"
+              class="text-xs px-2 py-1 border rounded"
+              (click)="remove(s)"
+            >
+              Rimuovi
+            </button>
+          </div>
+        </div>
+      </li>
+      }
+    </ul>
+
+    <button
+      type="button"
+      class="px-2 text-xs border rounded disabled:opacity-50"
+      (click)="next()"
+      [disabled]="!canNext()"
+    >
+      ›
+    </button>
+  </div>
+  }
+</div>

@@ -1,102 +1,121 @@
-import { Component, inject, signal } from '@angular/core';
+// search-page.component.ts
+import { Component, inject, signal, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { HttpBackend, HttpClient } from '@angular/common/http';
+
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { SearchBarComponent } from '../../shared/components/search-bar/search-bar.component';
-import { ReactiveFormsModule } from '@angular/forms';
-import { Category, SearchFacade } from './search.facade';
-import { FormsModule } from '@angular/forms';
-import { DecimalPipe } from '@angular/common';
+import { ResultsMapComponent } from '../resultsMap/results-map.component';
+import { FilterPanelComponent } from '../../shared/components/filter-panel/filter-panel.component';
+import { RecentSearchesComponent } from '../recent-searches/recent-searches.component';
+
+import { SearchFacade } from './search.facade';
+
+const isHttp = (s: string) => /^https?:\/\//i.test(s);
+const isData = (s: string) => /^data:/i.test(s);
+const looksJpeg = (b64: string) => b64?.startsWith('/9j/');
+const looksPng = (b64: string) => b64?.startsWith('iVBOR');
 
 @Component({
   selector: 'app-search-page',
   standalone: true,
   imports: [
-    ReactiveFormsModule,
+    CommonModule,
+    RouterLink,
     NavbarComponent,
     SearchBarComponent,
-    FormsModule,
-    DecimalPipe,
+    ResultsMapComponent,
+    FilterPanelComponent,
+    RecentSearchesComponent,
   ],
   templateUrl: './search-page.component.html',
 })
-export class SearchPageComponent {
-  private facade = inject(SearchFacade);
+export class SearchPageComponent implements OnDestroy {
+  facade = inject(SearchFacade);
 
-  loading = this.facade.loading;
-  error = this.facade.error;
-  results = this.facade.results;
+  private handler = inject(HttpBackend);
+  private httpNoInter = new HttpClient(this.handler);
 
-  priceMin = 0;
-  priceMax = 1_000_000;
-  rooms = 0;
-  type: Category = 'SALE';
-  propertyType: string = '';
-  sizeMin = 0;
-  sizeMax = 1_000;
-  orderBy = 'RECENT';
+  private blobCache = new Map<string, string>();
+  private pending = new Set<string>(); 
 
-  page = 1;
-  size = 12;
-  detailId: number | null = 1;
-  searchText: string = '';
+  readonly placeholder = '/assets/placeholder.jpg';
 
-  apply(): void {
-    console.log('[SearchPage] apply clicked', {
-      detailId: this.detailId,
-      page: this.page,
-    });
+  imgSrc(raw?: string | null): string | null {
+    if (!raw) return null;
 
-    if (this.detailId == null) {
-      this.error.set('Seleziona i dettagli (detailId) prima di cercare.');
-      return;
+    if (isHttp(raw)) {
+      const cached = this.blobCache.get(raw);
+      if (cached) return cached;
+
+      if (!this.pending.has(raw)) {
+        this.pending.add(raw);
+        this.httpNoInter
+          .get(raw, { responseType: 'blob', withCredentials: false })
+          .subscribe({
+            next: (blob) => {
+              const obj = URL.createObjectURL(blob);
+              this.blobCache.set(raw, obj);
+              this.pending.delete(raw);
+            },
+            error: () => {
+              this.pending.delete(raw);
+            },
+          });
+      }
+      return this.placeholder;
     }
 
-    const safePage = Math.max(1, this.page);
-    const safeSize = Math.max(1, this.size);
+    if (isData(raw)) return raw;
 
-    this.facade.search({
-      category: this.type,
-      detailId: this.detailId,
-      page: safePage,
-      size: safeSize,
-
-      minPrice: this.priceMin,
-      maxPrice: this.priceMax,
-      minRooms: this.rooms,
-      maxRooms: this.rooms > 0 ? this.rooms : 10,
-      sizeMin: this.sizeMin,
-      sizeMax: this.sizeMax,
-
-      orderBy: this.orderBy,
-      type: this.propertyType,
-
-      text: this.searchText,
-    });
+    if (raw.startsWith('?') || raw.length < 20) return null;
+    const mime = looksJpeg(raw)
+      ? 'image/jpeg'
+      : looksPng(raw)
+      ? 'image/png'
+      : 'image/*';
+    return `data:${mime};base64,${raw}`;
   }
 
-  clear(): void {
-    this.priceMin = 0;
-    this.priceMax = 1_000_000;
-    this.rooms = 0;
-    this.type = 'SALE';
-    this.sizeMin = 0;
-    this.sizeMax = 1_000;
-    this.orderBy = 'RECENT';
-    this.page = 1;
-    this.size = 12;
-    this.detailId = null;
-    this.searchText = '';
-    this.apply();
+  ngOnDestroy(): void {
+    for (const url of this.blobCache.values()) URL.revokeObjectURL(url);
+    this.blobCache.clear();
+    this.pending.clear();
   }
 
-  onSearch(ev: unknown) {
-    const text =
-      typeof ev === 'string'
-        ? ev
-        : (ev as any)?.target?.value ?? (ev as any)?.detail ?? '';
-
-    this.searchText = text;
-    this.apply();
+  ngOnInit() {
+    this.facade
+      .runFullSearch({
+        category: 'SALE',
+        page: 1,
+        size: 12,
+        userEmail: '',
+        geo: {
+          address: '',
+          city: '',
+          latitude: 0,
+          longitude: 0,
+          municipality: '',
+        },
+        uti: {
+          hasAirConditioning: false,
+          hasDoorman: false,
+          hasElevator: false,
+        },
+        cf: {
+          maxPrice: 0,
+          minPrice: 0,
+          minRooms: 0,
+          maxRooms: 0,
+          maxEnergyClass: 0,
+          minEnergyClass: 0,
+          maxSquareMeters: 0,
+          minSquareMeters: 0,
+          maxFloor: 0,
+          minFloor: 0,
+        },
+      })
+      .subscribe();
   }
-
-  title = signal('Risultati ricerca');
 }

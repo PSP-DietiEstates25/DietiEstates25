@@ -1,0 +1,87 @@
+server:
+  port: 9443
+  ssl:
+    bundle: authorization-server
+    client-auth: want
+
+spring:
+  application:
+    name: authorization-server
+  ssl:
+    bundle:
+      jks:
+        authorization-server:
+          key:
+            alias: authorization-server
+            password: password
+          keystore:
+            location: classpath:keystore.p12
+            password: password
+            type: PKCS12
+          truststore:
+            location: classpath:truststore.p12
+            password: password
+            type: PKCS12
+  datasource:
+    url: jdbc:postgresql://localhost:5431/dietiestates_authorization_server
+    username: dietiestates
+    password: dietiestates
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  security:
+    oauth2:
+      client:
+        registration:
+          google-idp:
+            provider: google
+            client-id: 817273458156-ljdvlbv3bl3ekjhm3m98fo40am16j5hf.apps.googleusercontent.com
+            client-secret: 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
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: openid, https://www.googleapis.com/auth/userinfo.profile, https://www.googleapis.com/auth/userinfo.email
+            client-name: Sign in with Google
+          github-idp:
+            provider: github
+            client-id: Ov23linKVInaiBsIezOM
+            client-secret: ef0669c73ab5433a3afff298bd6db896fac2ee01
+            scope: user:email, read:user
+            client-name: Sign in with GitHub
+        provider:
+          google:
+            issuer-uri: https://accounts.google.com
+            user-name-attribute: email
+          github:
+            user-name-attribute: login
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.transaction: DEBUG
+    org.springframework.orm.jpa: DEBUG
+    org.springframework.security: DEBUG
+
+loginUrl: "/auth/login"
+registerUrl: "/auth/register"
+loginProcessingUrl: "/auth/login/process"
+
+allowedOrigin: "http://localhost:4200"
+
+clientId: "dietiestates"
+clientSecret: "secret"
+redirectUriOidc: "http://localhost:8080/login/oauth2/code/messaging-client-oidc"
+redirectUri: "http://localhost:8080/authorized"
+postLogoutRedirectUri: "http://localhost:4200/"
+
+superAdminEmail: "admin@admin.com"
+superAdminPassword: "adminpassword"

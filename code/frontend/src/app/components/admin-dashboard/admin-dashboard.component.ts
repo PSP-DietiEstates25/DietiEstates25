@@ -12,12 +12,12 @@ import {
   AdminUser,
   Role,
 } from './admin-dashboard.facade';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './admin-dashboard.component.html',
 })
 export class AdminDashboardComponent {
@@ -57,7 +57,7 @@ export class AdminDashboardComponent {
   setTab(t: 'ads' | 'users') {
     this.active.set(t);
     if (t === 'ads') this.loadAds();
-    else this.loadUsers();
+    else this.createUser();
   }
 
   loadAds() {
@@ -100,14 +100,6 @@ export class AdminDashboardComponent {
     this.api.deleteAd(a.id).subscribe({ next: (_) => this.loadAds() });
   }
 
-  loadUsers() {
-    this.usersLoading.set(true);
-    this.api.listUsers(this.roleFilter() || undefined).subscribe({
-      next: (list) => this.users.set(list || []),
-      error: (_) => this.users.set([]),
-      complete: () => this.usersLoading.set(false),
-    });
-  }
   createUser() {
     if (this.createForm.invalid) {
       this.createForm.markAllAsTouched();
@@ -120,20 +112,8 @@ export class AdminDashboardComponent {
           role: 'AGENT',
           password: '',
         });
-        this.loadUsers();
       },
     });
-  }
-  toggleUser(u: AdminUser) {
-    this.api
-      .updateUser(u.id, { active: !u.active })
-      .subscribe({ next: (_) => this.loadUsers() });
-  }
-  changeRole(u: AdminUser, role: Role) {
-    if (u.role === role) return;
-    this.api
-      .updateUser(u.id, { role })
-      .subscribe({ next: (_) => this.loadUsers() });
   }
 
   logout() {

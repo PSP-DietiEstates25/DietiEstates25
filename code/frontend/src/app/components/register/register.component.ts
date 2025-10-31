@@ -7,8 +7,10 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthenticationControllerService } from '../../services/services/authentication-controller.service';
-import { AuthenticationRequest } from '../../services/models/authentication-request';
+import { RegisterRequest } from '../../services_server/authorization_server/models';
+import { AutentServiceService } from '../../autent.service.service';
+import { environment } from '../../../environments/environment';
+import { firstValueFrom } from 'rxjs';
 
 function matchPassword(group: AbstractControl): ValidationErrors | null {
   const p = group.get('password')?.value;
@@ -23,16 +25,16 @@ function matchPassword(group: AbstractControl): ValidationErrors | null {
   templateUrl: './register.component.html',
 })
 export class RegisterComponent {
-  private fb = inject(FormBuilder);
-  private api = inject(AuthenticationControllerService);
+  private formBuilder = inject(FormBuilder);
+  private autentService = inject(AutentServiceService);
   private router = inject(Router);
 
   loading = signal(false);
   errorMsg = signal<string | null>(null);
 
-  form = this.fb.nonNullable.group({
+  registerForm = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    passwords: this.fb.nonNullable.group(
+    passwords: this.formBuilder.nonNullable.group(
       {
         password: ['', Validators.required],
         confirm: ['', Validators.required],
@@ -41,34 +43,35 @@ export class RegisterComponent {
     ),
   });
 
-  submit() {
-    if (this.form.invalid) {
-      if (this.form.get('passwords')?.errors?.['mismatch']) {
-        this.errorMsg.set('Le password non coincidono');
-      }
-      this.form.markAllAsTouched();
+  async submit(): Promise<void> {
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
+      this.errorMsg.set(
+        this.registerForm.get('passwords')?.errors?.['mismatch']
+          ? 'Le password non coincidono'
+          : null
+      );
       return;
     }
 
     this.loading.set(true);
     this.errorMsg.set(null);
 
-    const raw = this.form.getRawValue();
+    const raw = this.registerForm.getRawValue();
     const email = raw.email.trim();
     const password = raw.passwords.password.trim();
+    const body = { email, password, role: 'USER' } as RegisterRequest;
 
-    const body: AuthenticationRequest = { email, password };
+    try {
+      await firstValueFrom(this.autentService.getCsrf());
+      await firstValueFrom(this.autentService.register(body));
 
-    this.api.register({ body }).subscribe({
-      next: () => {
-        localStorage.setItem('userEmail', email);
-        this.loading.set(false);
-        this.router.navigateByUrl('/auth/login');
-      },
-      error: (err) => {
-        this.errorMsg.set(err?.error?.message || 'Registrazione non riuscita');
-        this.loading.set(false);
-      },
-    });
+      // opzionale: attendi il redirect del router, oppure vai al flusso OIDC
+      window.location.href = `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`;
+    } catch (err: any) {
+      this.errorMsg.set(err?.error?.message || 'Registrazione non riuscita');
+    } finally {
+      this.loading.set(false);
+    }
   }
 }

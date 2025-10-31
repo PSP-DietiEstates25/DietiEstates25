@@ -1,7 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { CreateAdFacade } from '../create-ad/create-ad.facade';
+import { switchMap } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AgentDashboardFacade,
   VisitVM,
@@ -17,6 +20,20 @@ import {
 export class AgentDashboardComponent {
   private router = inject(Router);
   private facade = inject(AgentDashboardFacade);
+  private destroyRef = inject(DestroyRef);
+  createAdFacade = inject(CreateAdFacade);
+
+  ngOnInit(): void {
+    this.facade.loadAds().subscribe();
+
+    // ricarica quando viene pubblicato un nuovo annuncio
+    this.createAdFacade.published$
+      .pipe(
+        switchMap(() => this.facade.loadAds()),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
+  }
 
   // Tabs
   tabs: Array<{ key: 'visits' | 'ads' | 'offers'; label: string }> = [
@@ -37,6 +54,11 @@ export class AgentDashboardComponent {
   offers = this.facade.offers;
   offersLoading = this.facade.offersLoading;
   offerFilter = this.facade.offerFilter;
+
+  addOfferForId = this.facade.addOfferForId;
+  addOfferAmount = this.facade.addOfferAmount;
+  addOfferEmail = this.facade.addOfferEmail;
+  addOfferLoading = this.facade.addOfferLoading;
 
   // Counter-offer (stessi nomi)
   counterId = this.facade.counterId;
@@ -76,6 +98,19 @@ export class AgentDashboardComponent {
     this.router.navigate(['/agent/ads/new']);
   }
 
+  deleteAd(adId: number) {
+    this.facade.deleteAd(adId).subscribe();
+  }
+
+  renameAd(adId: number) {
+    const description = prompt('Nuova descrizione?');
+    if (description && description.trim()) {
+      this.facade
+        .updateAd(adId, { description: description.trim() })
+        .subscribe();
+    }
+  }
+
   // OFFERS
   loadOffers() {
     this.facade.loadOffers().subscribe();
@@ -85,6 +120,15 @@ export class AgentDashboardComponent {
   }
   declineOffer(o: OfferVM) {
     this.facade.declineOffer(o).subscribe();
+  }
+  startAddOfferFor(adId: number) {
+    this.facade.startAddOfferFor(adId);
+  }
+  cancelAddOffer() {
+    this.facade.cancelAddOffer();
+  }
+  submitExternalOffer() {
+    this.facade.createExternalOffer().subscribe();
   }
 
   // Counter-offer

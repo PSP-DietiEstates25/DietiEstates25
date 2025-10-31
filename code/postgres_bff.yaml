@@ -1,0 +1,24 @@
+services:
+  postgres_dietiestates_bff:
+    container_name: postgres_dietiestates_bff
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: dietiestates_bff_server
+      PGDATA: /var/lib/postgresql/dietiestates_bff
+    volumes:
+      - postgres_dietiestates_bff:/var/lib/postgresql/dietiestates_bff
+    ports:
+      - 5432:5432
+    networks:
+      - spring-backend
+    restart: unless-stopped
+
+networks:
+  spring-backend:
+    driver: bridge
+
+volumes:
+  postgres_dietiestates_bff:
+    driver: local

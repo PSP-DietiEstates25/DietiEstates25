@@ -8,7 +8,7 @@ import {
   toArray,
   finalize,
 } from 'rxjs/operators';
-import { EMPTY, of, from, Observable } from 'rxjs';
+import { EMPTY, of, from, Observable, Subject } from 'rxjs';
 
 import {
   GeographicalPositionControllerService as GeoSvc,
@@ -62,7 +62,9 @@ export class CreateAdFacade {
   private utl = inject(UtlSvc);
   private re = inject(ReSvc);
   private router = inject(Router);
+  private publishedSubject = new Subject<number>();
 
+  published$ = this.publishedSubject.asObservable();
   basics = signal<BasicsDraft | null>(null);
   utilities = signal<UtilitiesDraft | null>(null);
   position = signal<PositionDraft | null>(null);
@@ -105,21 +107,6 @@ export class CreateAdFacade {
     const arr = [...(this.images() ?? [])];
     arr.splice(index, 1);
     this.images.set(arr);
-  }
-
-  resetDraft() {
-    this.basics.set(null);
-    this.utilities.set(null);
-    this.position.set(null);
-    this.cadastral.set(null);
-    this.images.set([]);
-    this.error.set(null);
-    this.loading.set(false);
-  }
-
-  cancel() {
-    this.resetDraft();
-    this.router.navigateByUrl('/agent');
   }
 
   createAd() {
@@ -258,8 +245,7 @@ export class CreateAdFacade {
         finalize(() => this.loading.set(false))
       )
       .subscribe((realEstateId: number) => {
-        // Arrivi qui solo se tutto OK
-        this.resetDraft();
+        this.publishedSubject.next(realEstateId);
         this.router.navigateByUrl('/agent');
       });
   }
@@ -316,5 +302,9 @@ export class CreateAdFacade {
       if (m) return Number(m[1]);
     }
     return null;
+  }
+
+  private logBody(tag: string, resp: any) {
+    console.log(tag, resp?.body ?? resp);
   }
 }

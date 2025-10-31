@@ -1,5 +1,5 @@
 <h2 class="font-semibold mb-2">Fai un'offerta</h2>
-<form [formGroup]="form" (ngSubmit)="submit()" class="grid gap-2">
+<form [formGroup]="form" (ngSubmit)="submitOffer()" class="grid gap-2">
   <label for="offer-amount" class="text-sm">Importo (€)</label>
   <input
     id="offer-amount"
@@ -8,22 +8,16 @@
     formControlName="amount"
     placeholder="Es. 250000"
   />
-  <label for="offer-message" class="text-sm">Messaggio (opz.)</label>
-  <textarea
-    id="offer-message"
-    rows="3"
-    class="input_main"
-    formControlName="message"
-  ></textarea>
-  <button class="btn_primary" [disabled]="loading">
+  <button type="submit" class="btn_primary" [disabled]="loading">
     {{ loading ? "Invio…" : "Invia offerta" }}
   </button>
 </form>
-<p *ngIf="form.touched && form.invalid" class="text-sm text-red-600 mt-1">
-  Inserisci un importo valido.
-</p>
-<p *ngIf="!isLoggedIn" class="text-xs mt-2">
-  Per inviare un'offerta devi accedere.
-</p>
-<p *ngIf="ok" class="text-green-600 mt-2">{{ ok }}</p>
-<p *ngIf="err" class="text-red-600 mt-2">{{ err }}</p>
+@if (form.touched && form.invalid) {
+<p class="text-sm text-red-600 mt-1">Inserisci un importo valido.</p>
+} @if (!isLoggedIn) {
+<p class="text-xs mt-2">Per inviare un'offerta devi accedere.</p>
+} @if (ok) {
+<p class="text-green-600 mt-2">{{ ok }}</p>
+} @if (err) {
+<p class="text-red-600 mt-2">{{ err }}</p>
+}

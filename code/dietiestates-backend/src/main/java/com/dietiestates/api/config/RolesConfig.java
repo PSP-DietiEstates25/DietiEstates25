@@ -17,21 +17,21 @@ public class RolesConfig {
 	
 	@PostConstruct
 	public void init() {
-		if(roleRepository.findByName("ROLE_USER").isEmpty()) {
+		if(roleRepository.findByName("USER").isEmpty()) {
 			roleRepository.save(
-					Role.builder().name("ROLE_USER").build()
+					Role.builder().name("USER").build()
 					);
 		}
 		
-		if(roleRepository.findByName("ROLE_ADMIN").isEmpty()) {
+		if(roleRepository.findByName("ADMIN").isEmpty()) {
 			roleRepository.save(
-					Role.builder().name("ROLE_ADMIN").build()
+					Role.builder().name("ADMIN").build()
 					);
 		}
 		
-		if(roleRepository.findByName("ROLE_ESTATE_AGENT").isEmpty()) {
+		if(roleRepository.findByName("ESTATE_AGENT").isEmpty()) {
 			roleRepository.save(
-					Role.builder().name("ROLE_ESTATE_AGENT").build()
+					Role.builder().name("ESTATE_AGENT").build()
 					);
 		}
 	}

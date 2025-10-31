@@ -2,6 +2,7 @@ package com.dietiestates.api.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +18,6 @@ public class NotificationCategoryRequest {
 	@NotBlank(message = "Name is mandatory")
 	private String name;
 	
-	@NotEmpty(message = "isActive is mandatory")
-	@NotBlank(message = "isActive is mandatory")
+	@NotNull(message = "isActive is mandatory")
 	private Boolean isActive;
 }

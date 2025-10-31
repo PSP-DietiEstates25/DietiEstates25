@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class CadastralFilterMapperImpl implements CadastralFilterMapper {
-	
+
 	@Override
 	public CadastralFilterSpec toSpec(CadastralFilterRequest request) {
 		return CadastralFilterSpec.builder()
@@ -29,7 +29,7 @@ public class CadastralFilterMapperImpl implements CadastralFilterMapper {
 				.maxFloor(request.getMaxFloor())
 				.build();
 	}
-	
+
 	@Override
 	public CadastralFilterResponse fromEntity(CadastralFilter cadastralFilter) {
 		return CadastralFilterResponse.builder()
@@ -46,7 +46,10 @@ public class CadastralFilterMapperImpl implements CadastralFilterMapper {
 				.maxRooms(cadastralFilter.getRoomsRange().getMaxRooms())
 				.minFloor(cadastralFilter.getFloorRange().getMinFloor())
 				.maxFloor(cadastralFilter.getFloorRange().getMaxFloor())
-				.searchId(cadastralFilter.getSearch().getId())
+				.searchId(
+						cadastralFilter.getSearch() != null
+								? cadastralFilter.getSearch().getId()
+								: null)
 				.build();
 	}
 }

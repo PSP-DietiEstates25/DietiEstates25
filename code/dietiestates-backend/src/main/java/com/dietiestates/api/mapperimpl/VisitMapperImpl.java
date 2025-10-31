@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class VisitMapperImpl implements VisitMapper {
-	
+
 	@Override
 	public VisitSpec toSpec(VisitRequest request) {
 		return VisitSpec.visitSpecBuilder()
@@ -24,7 +24,7 @@ public class VisitMapperImpl implements VisitMapper {
 				.time(request.getTime())
 				.build();
 	}
-	
+
 	@Override
 	public VisitResponse fromEntity(Visit visit) {
 		return VisitResponse.visitResponseBuilder()
@@ -38,5 +38,10 @@ public class VisitMapperImpl implements VisitMapper {
 				.date(visit.getDate())
 				.time(visit.getTime())
 				.build();
+	}
+
+	@Override
+	public VisitResponse toResponse(Visit visit) {
+		return fromEntity(visit);
 	}
 }

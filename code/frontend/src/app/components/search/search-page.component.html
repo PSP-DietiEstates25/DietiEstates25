@@ -1,170 +1,200 @@
 <app-navbar></app-navbar>
 
-<section class="container mx-auto px-4 py-6">
-  <app-search-bar (search)="onSearch($event)"></app-search-bar>
+<main class="mx-auto max-w-7xl p-4 md:p-6 space-y-4">
+  <div class="grid grid-cols-1 lg:grid-cols-[380px,1fr] gap-5">
+    <!-- SIDEBAR: FILTRI -->
+    <app-filter-panel />
 
-  <!-- Banner errori -->
-  @if (error()) {
-  <div
-    class="mt-3 rounded-xl border border-red-400/50 bg-red-50 dark:bg-red-900/20 p-3 text-red-700 dark:text-red-200"
-  >
-    {{ error() }}
-  </div>
-  }
+    <section class="mb-4">
+      <app-recent-searches></app-recent-searches>
+    </section>
 
-  <!-- Filtri avanzati (collassabili) -->
-  <details
-    class="mt-3 rounded-2xl border dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 backdrop-blur p-4"
-    open
-  >
-    <summary class="cursor-pointer select-none font-semibold">
-      Filtri avanzati
-    </summary>
+    <!-- RESULTS -->
+    <section class="space-y-4">
+      <header class="flex items-center justify-between">
+        <h2 class="text-lg font-semibold">Risultati</h2>
+        <div class="flex items-center gap-2">
+          <button
+            class="rounded-xl px-3 py-1.5 text-sm bg-blue-300 hover:bg-blue-500 disabled:opacity-50"
+            (click)="facade.prevPage()"
+            [disabled]="!facade.hasPrev()"
+          >
+            ← Prev
+          </button>
 
-    <div class="mt-4 grid md:grid-cols-3 sm:grid-cols-2 gap-4">
-      <div>
-        <label class="block text-sm mb-1 dark:text-slate-200"
-          >Prezzo min (€)</label
-        >
-        <input
-          type="number"
-          [(ngModel)]="priceMin"
-          class="input_main"
-          placeholder="0"
-        />
+          <button
+            class="rounded-xl px-3 py-1.5 text-sm bg-blue-300 hover:bg-blue-500 disabled:opacity-50"
+            (click)="facade.nextPage()"
+            [disabled]="!facade.hasNext()"
+          >
+            Next →
+          </button>
+        </div>
+      </header>
+
+      @if (facade.error()) {
+      <p class="rounded-xl bg-red-50 text-red-700 px-3 py-2 text-sm">
+        {{ facade.error() }}
+      </p>
+      } @if (facade.loading()) {
+      <div class="rounded-2xl border border-black/10 p-4 animate-pulse">
+        <div class="h-4 w-2/5 bg-gray-200 rounded mb-2"></div>
+        <div class="h-4 w-3/5 bg-gray-200 rounded"></div>
       </div>
+      } @if (!facade.loading() && facade.cards().length === 0) {
+      <div class="space-y-3">
+        <p class="text-sm text-gray-600">
+          Nessun risultato. Prova ad ampliare i filtri.
+        </p>
 
-      <div>
-        <label class="block text-sm mb-1 dark:text-slate-200"
-          >Prezzo max (€)</label
-        >
-        <input
-          type="number"
-          [(ngModel)]="priceMax"
-          class="input_main"
-          placeholder="500000"
-        />
-      </div>
-
-      <div>
-        <label class="block text-sm mb-1 dark:text-slate-200">Stanze</label>
-        <input
-          type="number"
-          min="0"
-          [(ngModel)]="rooms"
-          class="input_main"
-          placeholder="3"
-        />
-      </div>
-
-      <!-- Categoria RENT/SALE -->
-      <div>
-        <label class="block text-sm mb-1 dark:text-slate-200">Categoria</label>
-        <select class="input_main" [(ngModel)]="type">
-          <option value="SALE">Vendita</option>
-          <option value="RENT">Affitto</option>
-        </select>
-      </div>
-
-      <!-- Tipologia immobile -->
-      <div>
-        <label class="block text-sm mb-1 dark:text-slate-200"
-          >Tipologia immobile</label
-        >
-        <select class="input_main" [(ngModel)]="propertyType">
-          <option value="">Qualsiasi</option>
-          <option value="APARTMENT">Appartamento</option>
-          <option value="HOUSE">Casa indipendente</option>
-        </select>
-      </div>
-
-      <div>
-        <label class="block text-sm mb-1 dark:text-slate-200">Mq min</label>
-        <input
-          type="number"
-          min="0"
-          [(ngModel)]="sizeMin"
-          class="input_main"
-          placeholder="50"
-        />
-      </div>
-
-      <div>
-        <label class="block text-sm mb-1 dark:text-slate-200">Mq max</label>
-        <input
-          type="number"
-          min="0"
-          [(ngModel)]="sizeMax"
-          class="input_main"
-          placeholder="120"
-        />
-      </div>
-
-    </div>
-
-    <div class="mt-4 flex flex-wrap items-center gap-4">
-      <div class="ml-auto">
-        <label class="block text-sm mb-1 dark:text-slate-200">Ordina per</label>
-        <select class="input_main" [(ngModel)]="orderBy">
-          <option value="RECENT">Più recenti</option>
-          <option value="PRICE_ASC">Prezzo ↑</option>
-          <option value="PRICE_DESC">Prezzo ↓</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="mt-4 flex gap-2">
-      <button
-        type="button"
-        class="btn_primary"
-        (click)="apply()"
-        [disabled]="loading()"
-      >
-        {{ loading() ? "Cercando…" : "Applica filtri" }}
-      </button>
-      <button type="button" class="btn_ghost" (click)="clear()">Pulisci</button>
-    </div>
-  </details>
-
-  <!-- Riepilogo e risultati -->
-  <div class="mt-4">
-    <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
-      {{ title() }}
-    </h2>
-    <p class="text-sm text-slate-600 dark:text-slate-300 mb-6">
-      {{ results().length }} risultati
-    </p>
-  </div>
-
-  @if (loading()) {
-  <div class="py-12 text-center">Caricamento…</div>
-  } @else {
-  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-    @for (ad of results(); track ad.id) {
-    <article class="rounded-2xl border dark:border-slate-700 overflow-hidden">
-      <img
-        [src]="ad.coverUrl || '/assets/placeholder-house.jpg'"
-        alt="cover"
-        class="w-full aspect-video object-cover"
-      />
-      <div class="p-4">
-        <h3 class="font-semibold text-slate-900 dark:text-white line-clamp-2">
-          {{ ad.title }}
-        </h3>
-        <div
-          class="mt-2 text-sm text-slate-600 dark:text-slate-300 flex justify-between"
-        >
-          <span>{{ ad.city || "—" }}</span>
-          @if (ad.price != null) {
-          <span>€ {{ ad.price | number : "1.0-0" }}</span> }
+        <!-- Annuncio di prova -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+          <article
+            class="rounded-2xl border border-black/10 bg-white p-4 shadow-sm"
+          >
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs uppercase tracking-wide text-gray-500"
+                >SALE</span
+              >
+              <span class="text-xs text-gray-500">#demo</span>
+            </div>
+            <div class="text-sm text-gray-700 space-y-0.5">
+              <div>Titolo: <strong>Annuncio di prova</strong></div>
+              <div>Indirizzo: Via Roma 1</div>
+              <div>Città: Napoli</div>
+              <div>Creato: {{ "2025-01-01T10:00:00" | date : "short" }}</div>
+            </div>
+            <div class="mt-3">
+              <span
+                class="inline-flex items-center gap-1 text-blue-600 text-sm"
+              >
+                Anteprima non cliccabile
+              </span>
+            </div>
+          </article>
         </div>
       </div>
-    </article>
-    } @empty {
-    <div class="py-12 text-center text-slate-600 dark:text-slate-300">
-      Nessun risultato. Modifica i filtri.
-    </div>
-    }
+
+      } @if (facade.cards().length > 0) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+        @for (c of facade.cards(); track c.id) {
+        <article
+          class="group rounded-2xl border border-black/10 overflow-hidden bg-white shadow-sm hover:shadow-lg transition-all duration-200"
+        >
+          <!-- immagine -->
+          <div class="relative aspect-[16/10] bg-gray-100 overflow-hidden">
+            <img
+              [src]="imgSrc(c.images?.[0]) || placeholder"
+              alt="Anteprima immobile"
+              class="h-40 w-full object-cover rounded-xl"
+            />
+            <span
+              class="absolute left-3 top-3 rounded-full bg-blue-600/90 text-white text-xs font-medium px-2 py-1"
+            >
+              {{ c.category || "SALE" }}
+            </span>
+          </div>
+
+          <!-- contenuto -->
+          <div class="p-4 space-y-2">
+            <h3 class="text-base font-semibold text-gray-900">
+              {{ c.title || "Immobile #" + c.id }}
+            </h3>
+            <p class="text-sm text-gray-600 line-clamp-2">
+              {{ c.description || "Nessuna descrizione disponibile." }}
+            </p>
+
+            <!-- meta -->
+            <div
+              class="flex flex-wrap items-center gap-2 text-xs text-gray-500"
+            >
+              <span class="inline-flex items-center gap-1">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  class="opacity-70"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M12 2C8.13 2 5 5.04 5 8.9c0 5.06 6.37 12.35 6.64 12.66c.2.23.52.23.72 0C12.63 21.25 19 13.96 19 8.9C19 5.04 15.87 2 12 2m0 9.9a3 3 0 1 1 0-6a3 3 0 0 1 0 6"
+                  />
+                </svg>
+                {{ c.city || "—" }}
+              </span>
+              <span class="inline-flex items-center gap-1">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  class="opacity-70"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M13 2v2h3v2h-3v2h3v2h-5V2h2M3 13v-2h6v2H3m0 4v-2h9v2H3m0 4v-2h6v2H3Z"
+                  />
+                </svg>
+                ID: {{ c.id }}
+              </span>
+              <span class="inline-flex items-center gap-1">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  class="opacity-70"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M12 8a4 4 0 1 1 0 8a4 4 0 0 1 0-8m0-6a2 2 0 0 1 2 2v1h4a2 2 0 0 1 2 2v2h-2V7h-4v2h-4V7H6v6H4V7a2 2 0 0 1 2-2h4V4a2 2 0 0 1 2-2Z"
+                  />
+                </svg>
+                {{ c.estateAgentEmail || "—" }}
+              </span>
+              <span class="inline-flex items-center gap-1">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  class="opacity-70"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M12 7a1 1 0 0 1 1 1v3h2a1 1 0 1 1 0 2h-3a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1m0-5a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"
+                  />
+                </svg>
+                {{ c.createdDate | date : "short" }}
+              </span>
+            </div>
+
+            <div class="pt-2">
+              <a
+                class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
+                [routerLink]="['/ad', c.id]"
+              >
+                Dettagli
+                <svg width="16" height="16" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="m10 17l5-5l-5-5v10Z" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </article>
+        }
+      </div>
+      }
+
+      <div class="rounded-2xl border border-black/10">
+        <div
+          class="rounded-2xl border border-black/10 h-[520px] overflow-hidden"
+        >
+          <app-results-map
+            class="h-full w-full"
+            [points]="facade.cards()"
+            [selectedId]="null"
+            [center]="{ lat: 40.847, lon: 14.265 }"
+          ></app-results-map>
+        </div>
+      </div>
+    </section>
   </div>
-  }
-</section>
+</main>

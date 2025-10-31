@@ -1,0 +1,59 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.0.0-M2'
+    id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group = 'com.dietiestate'
+version = '0.0.1-SNAPSHOT'
+description = 'DietiEstates25 backend for frontend'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+repositories {
+	mavenCentral()
+    maven { url "https://repo.spring.io/milestone" }
+    maven { url "https://repo.spring.io/snapshot" }
+}
+
+ext {
+    set('springCloudVersion', "2025.1.0-M1")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.cloud:spring-cloud-starter-gateway-server-webmvc'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'
+
+    // Sessione persistente su Postgres
+    implementation 'org.springframework.session:spring-session-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-session-jdbc:4.0.0-M2'
+    runtimeOnly   'org.postgresql:postgresql'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+bootRun {
+    jvmArgs = [
+            "-Djavax.net.ssl.trustStore=${projectDir}/dev-truststore.jks",
+            "-Djavax.net.ssl.trustStorePassword=changeit"
+    ]
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

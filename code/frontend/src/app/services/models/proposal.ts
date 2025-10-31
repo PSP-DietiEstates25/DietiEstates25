@@ -9,7 +9,7 @@ export interface Proposal {
   id?: number;
   lastModifiedDate?: string;
   proposalCategory?: 'OFFER' | 'VISIT';
-  proposalStatus?: 'PENDING' | 'ACCEPTED' | 'REJECTED';
+  proposalStatus?: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'COUNTERED';
   realEstate?: RealEstate;
   user?: User;
 }

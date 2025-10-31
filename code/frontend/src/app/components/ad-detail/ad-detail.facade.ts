@@ -14,6 +14,11 @@ import { GeographicalPositionResponse } from '../../services/models/geographical
 import { CadastralDataResponse } from '../../services/models/cadastral-data-response';
 import { OfferRequest } from '../../services/models/offer-request';
 import { VisitRequest } from '../../services/models/visit-request';
+import {
+  RealEstateControllerService,
+  UtilityControllerService,
+} from '../../services/services';
+import { UtilityResponse } from '../../services/models/utility-response';
 
 export type AdVM = {
   realEstateId: number;
@@ -39,7 +44,23 @@ export type AdVM = {
     address?: string | null;
     municipality?: string | null;
   };
+
+  proximityTags?: ProximityTag[];
+  utilities?: string[];
 };
+
+export type MyOfferVM = {
+  id: number;
+  amount: number;
+  status: 'PENDING' | 'ACCEPTED' | 'DECLINED' | 'COUNTERED' | string;
+  createdAt?: string | null;
+};
+
+export enum ProximityTag {
+  NEAR_SCHOOLS = 'NEAR_SCHOOLS',
+  NEAR_PARKS = 'NEAR_PARKS',
+  NEAR_PUBLIC_TRANSPORT = 'NEAR_PUBLIC_TRANSPORT',
+}
 
 @Injectable({ providedIn: 'root' })
 export class AdDetailFacade {
@@ -49,8 +70,11 @@ export class AdDetailFacade {
   private detailApi = inject(DetailControllerService);
   private geoApi = inject(GeographicalPositionControllerService);
   private cadApi = inject(CadastralDataControllerService);
+  private reApi = inject(RealEstateControllerService);
+
   private offerApi = inject(OfferControllerService);
   private visitApi = inject(VisitControllerService);
+  private utiApi = inject(UtilityControllerService);
 
   // state
   loading = signal<boolean>(false);
@@ -60,21 +84,38 @@ export class AdDetailFacade {
   det = signal<DetailResponse | null>(null);
   cad = signal<CadastralDataResponse | null>(null);
   geo = signal<GeographicalPositionResponse | null>(null);
+  uti = signal<UtilityResponse | null>(null);
 
   mainImage = signal<string | null>(null);
+
+  myOffers = signal<MyOfferVM[]>([]);
+  myOffersLoading = signal<boolean>(false);
 
   vm = computed<AdVM | null>(() => {
     const re = this.re();
     const det = this.det();
     const cad = this.cad();
     const geo = this.geo();
+    const uti = this.uti();
     if (!re || !re.id || !re.detailId) return null;
 
     const images = re.images ?? [];
-    const cover = images[0];
+    const cover = images[0] ?? null;
+
+    // preferisci det → cad → re
+    const price = (re as any)?.price ?? cad?.price ?? null;
+
+    const surface =
+      (det as any)?.surface ??
+      cad?.squareMeters ??
+      (re as any)?.surface ??
+      null;
+
+    const rooms =
+      (det as any)?.rooms ?? cad?.rooms ?? (re as any)?.rooms ?? null;
 
     const city = geo?.city ?? null;
-    const surface = cad?.squareMeters ?? null;
+
     const titleParts = [
       re.category || null,
       city ? `a ${city}` : null,
@@ -82,7 +123,6 @@ export class AdDetailFacade {
     ].filter(Boolean);
     const title = titleParts.length ? titleParts.join(' ') : 'Annuncio';
 
-    // prova a pescare dai vari DTO se presenti (sostituisci con campi tipizzati se li hai)
     const type =
       (re as any)?.type ?? (det as any)?.type ?? (cad as any)?.type ?? null;
     const floor =
@@ -93,38 +133,48 @@ export class AdDetailFacade {
       (re as any)?.energyClass ??
       null;
 
+    const utilities: string[] = (() => {
+      if (!uti) return [];
+      const labels: Record<string, string> = {
+        hasAirConditioning: 'Aria condizionata',
+        hasElevator: 'Ascensore',
+        hasDoorman: 'Portineria',
+      };
+      return Object.entries(uti)
+        .filter(([k, v]) => typeof v === 'boolean' && v === true)
+        .map(([k]) => labels[k] ?? k);
+    })();
+
     return {
       realEstateId: re.id!,
       detailId: re.detailId!,
       title,
-      description: re.description,
-      price: cad?.price ?? null,
+      description: (det as any)?.description ?? re.description ?? null,
+      price,
       city,
       surface,
-      rooms: cad?.rooms ?? null,
-
-      type,
+      rooms,
       floor,
       energyClass,
-
       images,
-      coverUrl: cover,
-      agent: { email: re.estateAgentEmail },
+      coverUrl: cover || undefined,
+      agent: { email: (re as any)?.estateAgentEmail ?? null },
       position: {
         latitude: geo?.latitude,
         longitude: geo?.longitude,
         address: geo?.address,
         municipality: geo?.municipality,
       },
+      proximityTags: (re as any)?.proximityTags ?? undefined,
+      utilities,
     };
   });
 
-  /** Carica tutto a partire dal detailId. */
-  loadByDetailId(
-    detailId: number,
+  loadByRealEstateId(
+    realEstateId: number,
     opts?: { userEmail?: string; category?: 'SALE' | 'RENT' }
   ) {
-    if (!detailId || Number.isNaN(detailId)) {
+    if (!realEstateId || Number.isNaN(realEstateId)) {
       this.error.set('ID annuncio non valido.');
       return;
     }
@@ -135,67 +185,61 @@ export class AdDetailFacade {
     this.re.set(null);
     this.cad.set(null);
     this.geo.set(null);
+    this.uti.set(null);
     this.mainImage.set(null);
 
-    // 1) detail
-    this.detailApi.getDetailById({ detailid: detailId }).subscribe({
-      next: (det) => {
-        this.det.set(det);
+    const userEmail = opts?.userEmail ?? 'guest@public.local';
 
-        // 2) search real estate by detailId (fallback SALE→RENT se non passi category)
-        const baseReq = {
-          detailId,
-          page: 1,
-          size: 1,
-          userEmail: opts?.userEmail ?? 'guest@public.local',
-        };
+    this.reApi.getRealEstateById({ realestateid: realEstateId }).subscribe({
+      next: (re) => {
+        this.re.set(re);
+        this.loadMyOffers(userEmail, re.id!);
+        const imgs = re.images ?? [];
+        this.mainImage.set(imgs[0] ?? null);
 
-        const doAfterRE = (re: RealEstateResponse) => {
-          this.re.set(re);
-          const imgs = re.images ?? [];
-          this.mainImage.set(imgs[0] ?? null);
+        const detailId = re.detailId;
+        if (detailId != null) {
+          this.detailApi.getDetailById({ detailid: detailId }).subscribe({
+            next: (det) => {
+              this.det.set(det);
 
-          if (re.cadastralDataId != null) {
-            this.cadApi
-              .getCadastralDataById({ cadastraldataid: re.cadastralDataId })
-              .subscribe({
-                next: (c) => this.cad.set(c),
-                error: () => {},
-                complete: () => this.loading.set(false),
-              });
-          } else {
-            this.loading.set(false);
-          }
-        };
+              console.log('[DETAIL]', det);
 
-        const searchOnce = (category: 'SALE' | 'RENT', onEmpty: () => void) => {
-          this.searchApi
-            .createSearch({ body: { ...baseReq, category } as any })
-            .subscribe({
-              next: (list) => (list?.length ? doAfterRE(list[0]) : onEmpty()),
-              error: (e) => this.fail(e),
-            });
-        };
+              const utilityId =
+                (det as any)?.utilityId ?? (det as any)?.utility?.id;
+              if (utilityId != null) {
+                this.utiApi.getUtilityById({ utilityid: utilityId }).subscribe({
+                  next: (u) => this.uti.set(u),
+                  error: () => {},
+                });
+              }
 
-        if (opts?.category) {
-          searchOnce(opts.category, () => this.fail('Annuncio non trovato.'));
+              if (det.geographicalPositionId != null) {
+                this.geoApi
+                  .getGeographicalPositionById({
+                    geographicalpositionid: det.geographicalPositionId,
+                  })
+                  .subscribe({
+                    next: (geo) => this.geo.set(geo),
+                    error: () => {},
+                  });
+              }
+
+              if (re.cadastralDataId != null) {
+                this.cadApi
+                  .getCadastralDataById({ cadastraldataid: re.cadastralDataId })
+                  .subscribe({
+                    next: (cad) => this.cad.set(cad),
+                    error: () => {},
+                  });
+              }
+              this.loading.set(false);
+            },
+            error: (e) => this.fail(e),
+          });
         } else {
-          // fallback SALE -> RENT
-          searchOnce('SALE', () =>
-            searchOnce('RENT', () => this.fail('Annuncio non trovato.'))
-          );
-        }
-
-        // 3) geo opzionale
-        if (det.geographicalPositionId != null) {
-          this.geoApi
-            .getGeographicalPositionById({
-              geographicalpositionid: det.geographicalPositionId,
-            })
-            .subscribe({
-              next: (geo) => this.geo.set(geo),
-              error: () => {},
-            });
+          this.loading.set(false);
+          this.error.set('Annuncio non trovato.');
         }
       },
       error: (e) => this.fail(e),
@@ -206,7 +250,6 @@ export class AdDetailFacade {
     this.mainImage.set(src);
   }
 
-  /** Helper per inviare un’offerta */
   submitOffer(amount: number, category: 'SALE' | 'RENT', userEmail: string) {
     const vm = this.vm();
     if (!vm) return;
@@ -219,7 +262,6 @@ export class AdDetailFacade {
     return this.offerApi.createOffer({ realestateid: vm.realEstateId, body });
   }
 
-  /** Helper per prenotare una visita */
   submitVisit(
     date: string,
     time: string,
@@ -244,5 +286,50 @@ export class AdDetailFacade {
       typeof e === 'string' ? e : 'Errore durante il caricamento.'
     );
     this.loading.set(false);
+  }
+
+  private toMyOfferVM(o: any): MyOfferVM {
+    return {
+      id: o?.id ?? 0,
+      amount: o?.amount ?? 0,
+      status: (o?.status ?? 'PENDING') as any,
+      createdAt: o?.createdAt ?? o?.createdDate ?? null,
+    };
+  }
+
+  loadMyOffers(userEmail: string, realEstateId: number) {
+    if (!userEmail || !realEstateId) {
+      this.myOffers.set([]);
+      return;
+    }
+
+    this.myOffersLoading.set(true);
+
+    this.offerApi
+      .listOffersForRealEstate({
+        realestateid: realEstateId,
+        page: 0,
+        size: 100,
+      })
+      .subscribe({
+        next: (list) => {
+          const arr = Array.isArray(list) ? list : [];
+
+          const email = userEmail.toLowerCase();
+          const mine = arr.filter(
+            (o: any) =>
+              (o?.realEstateId ?? o?.estateId ?? o?.ad?.id) === realEstateId &&
+              (o?.userEmail ?? '').toLowerCase() === email
+          );
+
+          this.myOffers.set(mine.map((o) => this.toMyOfferVM(o)));
+          this.myOffersLoading.set(false);
+        },
+        error: (e) => {
+          console.error(e);
+          this.myOffers.set([]);
+          this.myOffersLoading.set(false);
+        },
+      });
   }
 }

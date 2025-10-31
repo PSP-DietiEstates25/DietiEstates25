@@ -1,187 +1,103 @@
 package com.dietiestates.api.serviceImpl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dietiestates.api.dto.request.VisitRequest;
 import com.dietiestates.api.dto.response.VisitResponse;
+import com.dietiestates.api.enums.ProposalStatus;
 import com.dietiestates.api.exception.notowned.VisitNotOwnedByRealEstateException;
 import com.dietiestates.api.factory.VisitFactory;
 import com.dietiestates.api.finder.RealEstateFinder;
 import com.dietiestates.api.finder.UserFinder;
 import com.dietiestates.api.finder.VisitFinder;
 import com.dietiestates.api.mapper.VisitMapper;
+import com.dietiestates.api.model.Visit;
 import com.dietiestates.api.repository.VisitRepository;
 import com.dietiestates.api.service.VisitService;
 import com.dietiestates.api.verifier.VisitVerifier;
+import com.dietiestates.api.service.NotificationService;
+import com.dietiestates.api.dto.request.NotificationRequest;
+
+import org.springframework.security.core.Authentication;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class VisitServiceImpl implements VisitService {
-	
-	private final VisitRepository visitRepository;
-	private final VisitFactory visitFactory;
-	private final VisitFinder visitFinder;
-	private final VisitVerifier visitVerifier;
-	private final VisitMapper visitMapper;
-	
-	private final RealEstateFinder realEstateFinder;
-	private final UserFinder userFinder;
-	
-	@Override
-	public VisitResponse createVisit(VisitRequest request, Long realEstateId) {
-		
-		var visitSpec = visitMapper.toSpec(request);
-		
-		var user = userFinder.getUserByEmail(visitSpec.getUserEmail());
-		var realEstate = realEstateFinder.getRealEstateById(realEstateId);
-		
-		var visit = visitFactory.createVisitFromSpec(visitSpec, user, realEstate);
-		visitRepository.save(visit);
-		
-		return visitMapper.fromEntity(visit);
-	}
 
-	@Override
-	public VisitResponse getVisitById(
-			Long realEstateId,
-			Long visitId
-			)
-			throws VisitNotOwnedByRealEstateException {
-		var realEstate = realEstateFinder.getRealEstateById(realEstateId);
-		var visit = visitFinder.getVisitById(visitId);
-		
-		visitVerifier.checkVisitOwnedByRealEstate(visit.getRealEstate().getId(), realEstate.getId());
-		
-		return visitMapper.fromEntity(visit);
-	}
+    private final VisitRepository visitRepository;
+    private final VisitFactory visitFactory;
+    private final VisitFinder visitFinder;
+    private final VisitVerifier visitVerifier;
+    private final VisitMapper visitMapper;
 
-	/*
-    private final VisitRepository visitRepo;
-    private final RealEstateAdRepository adRepo;
-    private final UserRepository userRepo;
+    private final RealEstateFinder realEstateFinder;
+    private final UserFinder userFinder;
     private final NotificationService notificationService;
 
-    private static final ZoneId DEFAULT_ZONE = ZoneId.of("Europe/Rome");
-    
+    @Override
+    public VisitResponse createVisit(VisitRequest request, Long realEstateId) {
 
-    @Transactional
-    public VisitResponse propose(String requesterEmail, CreateVisitRequest req) {
-        User requester = userRepo.findByEmail(requesterEmail)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + requesterEmail));
+        var visitSpec = visitMapper.toSpec(request);
 
-        RealEstate ad = adRepo.findById(req.adId())
-                .orElseThrow(() -> new IllegalArgumentException("Ad not found: " + req.adId()));
+        var user = userFinder.getUserByEmail(visitSpec.getUserEmail());
+        var realEstate = realEstateFinder.getRealEstateById(realEstateId);
 
-        User agent = ad.getEstateAgent();
+        var visit = visitFactory.createVisitFromSpec(visitSpec, user, realEstate);
+        visitRepository.save(visit);
 
-        ZoneId zone = DEFAULT_ZONE;
-        if (req.timezone() != null && !req.timezone().isBlank()) {
-            try {
-                zone = ZoneId.of(req.timezone());
-            } catch (Exception ignored) {
-            }
-        }
-        LocalDate date = LocalDate.parse(req.date());
-        LocalTime time = LocalTime.of(req.hour(), req.minute());
-        Instant start = ZonedDateTime.of(date, time, zone).toInstant();
+        return visitMapper.fromEntity(visit);
+    }
 
-        boolean busy = visitRepo.existsAgentSlot(
-                agent.getEmail(),
-                start,
-                List.of(VisitStatus.PENDING, VisitStatus.CONFIRMED));
-        if (busy) {
-            throw new IllegalStateException("Selected time slot is already taken for the agent.");
-        }
+    @Override
+    @Transactional(readOnly = true)
+    public VisitResponse getVisitById(
+            Long realEstateId,
+            Long visitId)
+            throws VisitNotOwnedByRealEstateException {
+        var realEstate = realEstateFinder.getRealEstateById(realEstateId);
+        var visit = visitFinder.getVisitById(visitId);
 
-        Visit entity = Visit.builder()
-                .realEstate(ad)
-                .user(requester)
-                .estateAgent(agent)
-                .startAt(start)
-                .status(VisitStatus.PENDING)
-                .build();
+        visitVerifier.checkVisitOwnedByRealEstate(visit.getRealEstate().getId(), realEstate.getId());
 
-        var saved = visitRepo.save(entity);
-
-        notificationService.push(
-                agent.getEmail(),
-                NotificationCategoryType.VISIT,
-                "Nuova richiesta visita",
-                "Hai una nuova richiesta di visita per l'annuncio: " + ad.getAddress(),
-                ad.getId());
-
-        return toResponse(saved);
+        return visitMapper.fromEntity(visit);
     }
 
     @Transactional
-    public VisitResponse confirm(String agentEmail, Long visitId) {
-        Visit v = visitRepo.findById(visitId)
-                .orElseThrow(() -> new IllegalArgumentException("Visit not found: " + visitId));
-        if (!v.getEstateAgent().getEmail().equals(agentEmail)) {
-            throw new AccessDeniedException("Not your visit request.");
-        }
-        if (v.getStatus() != VisitStatus.PENDING) {
-            throw new IllegalStateException("Only PENDING visits can be confirmed.");
-        }
-        v.setStatus(VisitStatus.CONFIRMED);
-        var saved = visitRepo.save(v);
+    public VisitResponse acceptVisit(Long id, Authentication auth) {
+        Visit visit = visitRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Visit not found: " + id));
 
-        notificationService.push(
-                v.getUser().getEmail(),
-                NotificationCategoryType.VISIT,
-                "Visita confermata",
-                "La tua richiesta di visita per \"" + v.getRealEstate().getAddress() + "\" è stata confermata.",
-                v.getRealEstate().getId());
+        visit.setProposalStatus(ProposalStatus.ACCEPTED);
+        var saved = visitRepository.save(visit);
 
-        return toResponse(saved);
+        notificationService.createNotification(
+                "VISIT",
+                NotificationRequest.builder()
+                        .message("Visita accettata")
+                        .userEmail(saved.getUser().getSecurityAccountDecorator().getAccountEmail())
+                        .build());
+
+        return visitMapper.toResponse(saved);
     }
 
     @Transactional
-    public VisitResponse decline(String agentEmail, Long visitId) {
-        Visit v = visitRepo.findById(visitId)
-                .orElseThrow(() -> new IllegalArgumentException("Visit not found: " + visitId));
-        if (!v.getEstateAgent().getEmail().equals(agentEmail)) {
-            throw new AccessDeniedException("Not your visit request.");
-        }
-        if (v.getStatus() != VisitStatus.PENDING) {
-            throw new IllegalStateException("Only PENDING visits can be declined.");
-        }
+    public VisitResponse rejectVisit(Long id, Authentication auth) {
+        Visit visit = visitRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Visit not found: " + id));
 
-        v.setStatus(VisitStatus.DECLINED);
-        var saved = visitRepo.save(v);
+        visit.setProposalStatus(ProposalStatus.REJECTED);
+        var saved = visitRepository.save(visit);
 
-        notificationService.push(
-                v.getUser().getEmail(),
-                NotificationCategoryType.VISIT,
-                "Visita rifiutata",
-                "La tua richiesta di visita per \"" + v.getRealEstate().getAddress() + "\" è stata rifiutata.",
-                v.getRealEstate().getId());
+        notificationService.createNotification(
+                "VISIT",
+                NotificationRequest.builder()
+                        .message("Visita rifiutata")
+                        .userEmail(saved.getUser().getSecurityAccountDecorator().getAccountEmail())
+                        .build());
 
-        return toResponse(saved);
+        return visitMapper.toResponse(saved);
     }
-
-    private VisitResponse toResponse(Visit v) {
-
-        Instant createdAtInstant = null;
-        if (v.getCreatedDate() != null) {
-            createdAtInstant = v.getCreatedDate()
-                    .atZone(DEFAULT_ZONE) // interpreta il LocalDateTime in Europe/Rome
-                    .toInstant();
-        }
-
-        return VisitResponse.builder()
-                .id(v.getId())
-                .adId(v.getRealEstate().getId())
-                .adAddress(v.getRealEstate().getAddress())
-                .requesterEmail(v.getUser().getEmail())
-                .agentEmail(v.getEstateAgent().getEmail())
-                .status(v.getStatus().name())
-                .startAt(v.getStartAt())
-                .createdAt(createdAtInstant)
-                .build();
-    }
-    
-    */
 }
