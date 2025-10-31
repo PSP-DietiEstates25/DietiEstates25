@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import {
   Router,
   NavigationEnd,
@@ -8,15 +8,14 @@ import {
 import { CommonModule } from '@angular/common';
 import { MenuToggleComponent } from '../../buttons/menu_toggle/menu-toggle.component';
 import { NotificationsFacade } from '../../../components/notifications/notifications.facade';
+import { AutentServiceService } from '../../../autent.service.service';
 import { filter } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment.development';
 
-type Role = 'ADMIN' | 'AGENT' | 'CLIENT';
 interface NavLink {
   label: string;
   path: string;
-  showIf?: (ctx: Ctx) => boolean;
 }
-type Ctx = { isAuthenticated: boolean; role: Role | null };
 
 @Component({
   selector: 'app-navbar',
@@ -25,115 +24,73 @@ type Ctx = { isAuthenticated: boolean; role: Role | null };
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
-export class NavbarComponent {
-  isMenuOpen = signal(false);
-
-  isAuthenticated = signal(false);
-  role = signal<Role | null>(null);
-  displayName = signal<string>('');
-
+export class NavbarComponent implements OnInit {
+  private readonly autent = inject(AutentServiceService);
   private readonly router = inject(Router);
   private readonly notifications = inject(NotificationsFacade);
 
+  isMenuOpen = false;
+  isAuthenticated = false;
+  email = '';
+
   readonly notifBadge = computed(() => this.notifications.unreadCount());
 
-  private readonly allLinks: NavLink[] = [
+  readonly allLinks: NavLink[] = [
     { label: 'Home', path: '/' },
     { label: 'Ricerca', path: '/search' },
-    {
-      label: 'Dashboard',
-      path: '/dashboard',
-      showIf: (c) => c.isAuthenticated && !!c.role,
-    },
-    {
-      label: 'Notifiche',
-      path: '/notifications',
-      showIf: (c) => c.isAuthenticated,
-    },
+    { label: 'Notifiche', path: '/notifications' },
   ];
-  readonly navLinks = computed<NavLink[]>(() => {
-    const ctx: Ctx = {
-      isAuthenticated: this.isAuthenticated(),
-      role: this.role(),
-    };
-    return this.allLinks.filter((l) => !l.showIf || l.showIf(ctx));
-  });
 
   constructor() {
     this.notifications.init();
+  }
 
-    this.readAuthFromStorage();
-
-    this.router.events
-      .pipe(filter((e) => e instanceof NavigationEnd))
-      .subscribe(() => this.isMenuOpen.set(false));
-
-    window.addEventListener('storage', (ev) => {
-      if (['access_token', 'userEmail', 'userRole'].includes(ev.key ?? '')) {
-        this.readAuthFromStorage();
-      }
-    });
+  ngOnInit(): void {
+    this.getUserInfo();
   }
 
   toggleMenu() {
-    this.isMenuOpen.update((v) => !v);
+    this.isMenuOpen = !this.isMenuOpen;
   }
+
   closeMenu() {
-    this.isMenuOpen.set(false);
+    this.isMenuOpen = false;
   }
 
-  logout() {
-    this.clearStorage();
-    this.readAuthFromStorage(); 
-    this.router.navigateByUrl('/auth');
+  onClickLogin(): void {
+    this.closeMenu();
+    window.location.href = `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`;
   }
 
+  onClickRegister(): void {}
 
-  private readAuthFromStorage() {
-    const token = localStorage.getItem('access_token') ?? '';
-    const decoded = this.safeDecodeJwt(token);
-    const email = (
-      decoded?.email ??
-      decoded?.sub ??
-      localStorage.getItem('userEmail') ??
-      ''
-    ).toString();
-    const role = (decoded?.role ??
-      localStorage.getItem('userRole') ??
-      null) as Role | null;
-
-    if (token && decoded) {
-      this.isAuthenticated.set(true);
-      this.displayName.set(email || '');
-      this.role.set(role);
-      return;
-    }
-
-    if (email || role) {
-      this.isAuthenticated.set(true);
-      this.displayName.set(email);
-      this.role.set(role);
-      return;
-    }
-
-    this.isAuthenticated.set(false);
-    this.displayName.set('');
-    this.role.set(null);
+  logout(): void {
+    this.closeMenu();
+    this.autent.logout().subscribe(() => {
+      this.isAuthenticated = false;
+      this.email = '';
+      this.router.navigateByUrl('/');
+    });
   }
 
-  private safeDecodeJwt(token: string): any | null {
-    try {
-      if (!token || token.split('.').length !== 3) return null;
-      const payload = token.split('.')[1];
-      const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-      const json = atob(base64);
-      return JSON.parse(json);
-    } catch {
-      return null;
-    }
+  getUserInfo(): void {
+    this.autent.getUserInfo().subscribe({
+      next: (userInfo) => {
+        this.isAuthenticated = true;
+        this.email =
+          userInfo.email ?? userInfo.preferred_username ?? userInfo.sub ?? '';
+      },
+      error: (err) => {
+        if (err?.status === 401) {
+          this.isAuthenticated = false;
+          this.email = '';
+          return;
+        }
+      },
+    });
   }
 
-  private clearStorage() {
+  private clearStorage(): void {
     try {
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
@@ -141,5 +98,9 @@ export class NavbarComponent {
       localStorage.removeItem('userRole');
       localStorage.removeItem('isAuthenticated');
     } catch {}
+  }
+
+  navLinks() {
+    return this.allLinks;
   }
 }
