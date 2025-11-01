@@ -8,16 +8,16 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { OfferResponse } from '../../models/offer-response';
+import { PageVisitResponse } from '../../models/page-visit-response';
 
-export interface ListOffersForRealEstate$Params {
+export interface GetPagedRealEstateVisits$Params {
   realestateid: number;
   page?: number;
   size?: number;
 }
 
-export function listOffersForRealEstate(http: HttpClient, rootUrl: string, params: ListOffersForRealEstate$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<OfferResponse>>> {
-  const rb = new RequestBuilder(rootUrl, listOffersForRealEstate.PATH, 'get');
+export function getPagedRealEstateVisits(http: HttpClient, rootUrl: string, params: GetPagedRealEstateVisits$Params, context?: HttpContext): Observable<StrictHttpResponse<PageVisitResponse>> {
+  const rb = new RequestBuilder(rootUrl, getPagedRealEstateVisits.PATH, 'get');
   if (params) {
     rb.path('realestateid', params.realestateid, {});
     rb.query('page', params.page, {});
@@ -29,9 +29,9 @@ export function listOffersForRealEstate(http: HttpClient, rootUrl: string, param
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<OfferResponse>>;
+      return r as StrictHttpResponse<PageVisitResponse>;
     })
   );
 }
 
-listOffersForRealEstate.PATH = '/realestates/{realestateid}/offers';
+getPagedRealEstateVisits.PATH = '/realestates/{realestateid}/visits';

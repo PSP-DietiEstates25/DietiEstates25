@@ -8,18 +8,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { OfferResponse } from '../../models/offer-response';
+import { EstateAgentResponse } from '../../models/estate-agent-response';
 
-export interface Reject1$Params {
-  realestateid: number;
-  id: number;
+export interface GetEstateAgentById$Params {
 }
 
-export function reject1(http: HttpClient, rootUrl: string, params: Reject1$Params, context?: HttpContext): Observable<StrictHttpResponse<OfferResponse>> {
-  const rb = new RequestBuilder(rootUrl, reject1.PATH, 'patch');
+export function getEstateAgentById(http: HttpClient, rootUrl: string, params?: GetEstateAgentById$Params, context?: HttpContext): Observable<StrictHttpResponse<EstateAgentResponse>> {
+  const rb = new RequestBuilder(rootUrl, getEstateAgentById.PATH, 'get');
   if (params) {
-    rb.path('realestateid', params.realestateid, {});
-    rb.path('id', params.id, {});
   }
 
   return http.request(
@@ -27,9 +23,9 @@ export function reject1(http: HttpClient, rootUrl: string, params: Reject1$Param
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<OfferResponse>;
+      return r as StrictHttpResponse<EstateAgentResponse>;
     })
   );
 }
 
-reject1.PATH = '/realestates/{realestateid}/offers/{id}/reject';
+getEstateAgentById.PATH = '/estateagents/{estataeagentid}';

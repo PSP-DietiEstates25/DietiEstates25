@@ -5,6 +5,7 @@
 export interface OfferRequest {
   amount: number;
   category: string;
+  counteredOfferId?: number;
   status: string;
   userEmail: string;
 }

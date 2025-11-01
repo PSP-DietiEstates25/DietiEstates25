@@ -8,18 +8,18 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { PageNotificationResponse } from '../../models/page-notification-response';
+import { PageOfferResponse } from '../../models/page-offer-response';
 
-export interface ListMine$Params {
-  notificationcategoryname: string;
+export interface GetPagedRealEstateOffers$Params {
+  realestateid: number;
   page?: number;
   size?: number;
 }
 
-export function listMine(http: HttpClient, rootUrl: string, params: ListMine$Params, context?: HttpContext): Observable<StrictHttpResponse<PageNotificationResponse>> {
-  const rb = new RequestBuilder(rootUrl, listMine.PATH, 'get');
+export function getPagedRealEstateOffers(http: HttpClient, rootUrl: string, params: GetPagedRealEstateOffers$Params, context?: HttpContext): Observable<StrictHttpResponse<PageOfferResponse>> {
+  const rb = new RequestBuilder(rootUrl, getPagedRealEstateOffers.PATH, 'get');
   if (params) {
-    rb.path('notificationcategoryname', params.notificationcategoryname, {});
+    rb.path('realestateid', params.realestateid, {});
     rb.query('page', params.page, {});
     rb.query('size', params.size, {});
   }
@@ -29,9 +29,9 @@ export function listMine(http: HttpClient, rootUrl: string, params: ListMine$Par
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<PageNotificationResponse>;
+      return r as StrictHttpResponse<PageOfferResponse>;
     })
   );
 }
 
-listMine.PATH = '/notificationcategories/{notificationcategoryname}/notifications/me';
+getPagedRealEstateOffers.PATH = '/realestates/{realestateid}/offers';

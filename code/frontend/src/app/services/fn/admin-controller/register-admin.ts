@@ -8,20 +8,16 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { CounterOfferRequest } from '../../models/counter-offer-request';
-import { OfferResponse } from '../../models/offer-response';
+import { AdminResponse } from '../../models/admin-response';
+import { StafferRequest } from '../../models/staffer-request';
 
-export interface Counter$Params {
-  realestateid: number;
-  id: number;
-      body: CounterOfferRequest
+export interface RegisterAdmin$Params {
+      body: StafferRequest
 }
 
-export function counter(http: HttpClient, rootUrl: string, params: Counter$Params, context?: HttpContext): Observable<StrictHttpResponse<OfferResponse>> {
-  const rb = new RequestBuilder(rootUrl, counter.PATH, 'post');
+export function registerAdmin(http: HttpClient, rootUrl: string, params: RegisterAdmin$Params, context?: HttpContext): Observable<StrictHttpResponse<AdminResponse>> {
+  const rb = new RequestBuilder(rootUrl, registerAdmin.PATH, 'post');
   if (params) {
-    rb.path('realestateid', params.realestateid, {});
-    rb.path('id', params.id, {});
     rb.body(params.body, 'application/json');
   }
 
@@ -30,9 +26,9 @@ export function counter(http: HttpClient, rootUrl: string, params: Counter$Param
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<OfferResponse>;
+      return r as StrictHttpResponse<AdminResponse>;
     })
   );
 }
 
-counter.PATH = '/realestates/{realestateid}/offers/{id}/counter';
+registerAdmin.PATH = '/admins';

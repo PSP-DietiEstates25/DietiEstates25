@@ -12,14 +12,14 @@ import { OfferResponse } from '../../models/offer-response';
 
 export interface GetOfferById$Params {
   realestateid: number;
-  offerId: number;
+  offerid: number;
 }
 
 export function getOfferById(http: HttpClient, rootUrl: string, params: GetOfferById$Params, context?: HttpContext): Observable<StrictHttpResponse<OfferResponse>> {
   const rb = new RequestBuilder(rootUrl, getOfferById.PATH, 'get');
   if (params) {
     rb.path('realestateid', params.realestateid, {});
-    rb.path('offerId', params.offerId, {});
+    rb.path('offerid', params.offerid, {});
   }
 
   return http.request(
@@ -32,4 +32,4 @@ export function getOfferById(http: HttpClient, rootUrl: string, params: GetOffer
   );
 }
 
-getOfferById.PATH = '/realestates/{realestateid}/offers/{offerId}';
+getOfferById.PATH = '/realestates/{realestateid}/offers/{offerid}';

@@ -5,6 +5,7 @@
 export interface OfferResponse {
   amount?: number;
   category?: string;
+  counteredOfferId?: number;
   createdDate?: string;
   id?: number;
   lastModifiedDate?: string;

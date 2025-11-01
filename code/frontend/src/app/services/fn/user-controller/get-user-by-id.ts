@@ -8,16 +8,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { VisitResponse } from '../../models/visit-response';
+import { UserResponse } from '../../models/user-response';
 
-export interface Accept$Params {
-  id: number;
+export interface GetUserById$Params {
 }
 
-export function accept(http: HttpClient, rootUrl: string, params: Accept$Params, context?: HttpContext): Observable<StrictHttpResponse<VisitResponse>> {
-  const rb = new RequestBuilder(rootUrl, accept.PATH, 'patch');
+export function getUserById(http: HttpClient, rootUrl: string, params?: GetUserById$Params, context?: HttpContext): Observable<StrictHttpResponse<UserResponse>> {
+  const rb = new RequestBuilder(rootUrl, getUserById.PATH, 'get');
   if (params) {
-    rb.path('id', params.id, {});
   }
 
   return http.request(
@@ -25,9 +23,9 @@ export function accept(http: HttpClient, rootUrl: string, params: Accept$Params,
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<VisitResponse>;
+      return r as StrictHttpResponse<UserResponse>;
     })
   );
 }
 
-accept.PATH = '/realestates/{realestateid}/visits/{id}/accept';
+getUserById.PATH = '/users/userid';

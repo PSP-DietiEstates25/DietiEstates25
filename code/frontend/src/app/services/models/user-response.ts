@@ -5,7 +5,7 @@
 import { Notification } from '../models/notification';
 import { Proposal } from '../models/proposal';
 import { Search } from '../models/search';
-export interface User {
+export interface UserResponse {
   createdDate?: string;
   email?: string;
   id?: number;

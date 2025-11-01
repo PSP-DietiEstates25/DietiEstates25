@@ -8,8 +8,8 @@ export interface Proposal {
   createdDate?: string;
   id?: number;
   lastModifiedDate?: string;
-  proposalCategory?: 'OFFER' | 'VISIT';
-  proposalStatus?: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'COUNTERED';
+  proposalCategory?: 'OFFER' | 'COUNTER_OFFER' | 'VISIT';
+  proposalStatus?: 'PENDING' | 'ACCEPTED' | 'REJECTED';
   realEstate?: RealEstate;
   user?: User;
 }

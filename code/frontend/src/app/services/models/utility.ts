@@ -11,4 +11,7 @@ export interface Utility {
   hasElevator?: boolean;
   id?: number;
   lastModifiedDate?: string;
+  nearPark?: boolean;
+  nearPublicTransport?: boolean;
+  nearSchool?: boolean;
 }

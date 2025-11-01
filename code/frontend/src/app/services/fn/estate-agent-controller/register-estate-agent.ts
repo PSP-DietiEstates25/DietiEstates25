@@ -8,18 +8,17 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { VisitResponse } from '../../models/visit-response';
+import { EstateAgentResponse } from '../../models/estate-agent-response';
+import { StafferRequest } from '../../models/staffer-request';
 
-export interface GetVisitById$Params {
-  realestateid: number;
-  visitid: number;
+export interface RegisterEstateAgent$Params {
+      body: StafferRequest
 }
 
-export function getVisitById(http: HttpClient, rootUrl: string, params: GetVisitById$Params, context?: HttpContext): Observable<StrictHttpResponse<VisitResponse>> {
-  const rb = new RequestBuilder(rootUrl, getVisitById.PATH, 'get');
+export function registerEstateAgent(http: HttpClient, rootUrl: string, params: RegisterEstateAgent$Params, context?: HttpContext): Observable<StrictHttpResponse<EstateAgentResponse>> {
+  const rb = new RequestBuilder(rootUrl, registerEstateAgent.PATH, 'post');
   if (params) {
-    rb.path('realestateid', params.realestateid, {});
-    rb.path('visitid', params.visitid, {});
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -27,9 +26,9 @@ export function getVisitById(http: HttpClient, rootUrl: string, params: GetVisit
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<VisitResponse>;
+      return r as StrictHttpResponse<EstateAgentResponse>;
     })
   );
 }
 
-getVisitById.PATH = '/realestates/{realestateid}/visits/{visitid}';
+registerEstateAgent.PATH = '/estateagents';

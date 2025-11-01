@@ -8,18 +8,21 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { OfferRequest } from '../../models/offer-request';
 import { OfferResponse } from '../../models/offer-response';
 
-export interface Accept1$Params {
+export interface UpdateOfferStatus$Params {
   realestateid: number;
-  id: number;
+  offerid: number;
+      body: OfferRequest
 }
 
-export function accept1(http: HttpClient, rootUrl: string, params: Accept1$Params, context?: HttpContext): Observable<StrictHttpResponse<OfferResponse>> {
-  const rb = new RequestBuilder(rootUrl, accept1.PATH, 'patch');
+export function updateOfferStatus(http: HttpClient, rootUrl: string, params: UpdateOfferStatus$Params, context?: HttpContext): Observable<StrictHttpResponse<OfferResponse>> {
+  const rb = new RequestBuilder(rootUrl, updateOfferStatus.PATH, 'patch');
   if (params) {
     rb.path('realestateid', params.realestateid, {});
-    rb.path('id', params.id, {});
+    rb.path('offerid', params.offerid, {});
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -32,4 +35,4 @@ export function accept1(http: HttpClient, rootUrl: string, params: Accept1$Param
   );
 }
 
-accept1.PATH = '/realestates/{realestateid}/offers/{id}/accept';
+updateOfferStatus.PATH = '/realestates/{realestateid}/offers/{offerid}';

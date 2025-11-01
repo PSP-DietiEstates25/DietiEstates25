@@ -6,4 +6,7 @@ export interface UtilityRequest {
   hasAirConditioning: boolean;
   hasDoorman: boolean;
   hasElevator: boolean;
+  nearPark: boolean;
+  nearPublicTransport: boolean;
+  nearSchool: boolean;
 }

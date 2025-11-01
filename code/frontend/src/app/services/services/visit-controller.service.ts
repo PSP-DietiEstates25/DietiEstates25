@@ -11,16 +11,15 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { accept } from '../fn/visit-controller/accept';
-import { Accept$Params } from '../fn/visit-controller/accept';
 import { createVisit } from '../fn/visit-controller/create-visit';
 import { CreateVisit$Params } from '../fn/visit-controller/create-visit';
+import { getPagedRealEstateVisits } from '../fn/visit-controller/get-paged-real-estate-visits';
+import { GetPagedRealEstateVisits$Params } from '../fn/visit-controller/get-paged-real-estate-visits';
 import { getVisitById } from '../fn/visit-controller/get-visit-by-id';
 import { GetVisitById$Params } from '../fn/visit-controller/get-visit-by-id';
-import { listVisitsForRealEstate } from '../fn/visit-controller/list-visits-for-real-estate';
-import { ListVisitsForRealEstate$Params } from '../fn/visit-controller/list-visits-for-real-estate';
-import { reject } from '../fn/visit-controller/reject';
-import { Reject$Params } from '../fn/visit-controller/reject';
+import { PageVisitResponse } from '../models/page-visit-response';
+import { updateVisitStatus } from '../fn/visit-controller/update-visit-status';
+import { UpdateVisitStatus$Params } from '../fn/visit-controller/update-visit-status';
 import { VisitResponse } from '../models/visit-response';
 
 @Injectable({ providedIn: 'root' })
@@ -29,28 +28,28 @@ export class VisitControllerService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `listVisitsForRealEstate()` */
-  static readonly ListVisitsForRealEstatePath = '/realestates/{realestateid}/visits';
+  /** Path part for operation `getPagedRealEstateVisits()` */
+  static readonly GetPagedRealEstateVisitsPath = '/realestates/{realestateid}/visits';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `listVisitsForRealEstate()` instead.
+   * To access only the response body, use `getPagedRealEstateVisits()` instead.
    *
    * This method doesn't expect any request body.
    */
-  listVisitsForRealEstate$Response(params: ListVisitsForRealEstate$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<VisitResponse>>> {
-    return listVisitsForRealEstate(this.http, this.rootUrl, params, context);
+  getPagedRealEstateVisits$Response(params: GetPagedRealEstateVisits$Params, context?: HttpContext): Observable<StrictHttpResponse<PageVisitResponse>> {
+    return getPagedRealEstateVisits(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `listVisitsForRealEstate$Response()` instead.
+   * To access the full response (for headers, for example), `getPagedRealEstateVisits$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  listVisitsForRealEstate(params: ListVisitsForRealEstate$Params, context?: HttpContext): Observable<Array<VisitResponse>> {
-    return this.listVisitsForRealEstate$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<VisitResponse>>): Array<VisitResponse> => r.body)
+  getPagedRealEstateVisits(params: GetPagedRealEstateVisits$Params, context?: HttpContext): Observable<PageVisitResponse> {
+    return this.getPagedRealEstateVisits$Response(params, context).pipe(
+      map((r: StrictHttpResponse<PageVisitResponse>): PageVisitResponse => r.body)
     );
   }
 
@@ -79,74 +78,8 @@ export class VisitControllerService extends BaseService {
     );
   }
 
-  /** Path part for operation `reject()` */
-  static readonly RejectPath = '/realestates/{realestateid}/visits/{id}/reject';
-
-  /**
-   * Reject a visit request.
-   *
-   *
-   *
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `reject()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  reject$Response(params: Reject$Params, context?: HttpContext): Observable<StrictHttpResponse<VisitResponse>> {
-    return reject(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * Reject a visit request.
-   *
-   *
-   *
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `reject$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  reject(params: Reject$Params, context?: HttpContext): Observable<VisitResponse> {
-    return this.reject$Response(params, context).pipe(
-      map((r: StrictHttpResponse<VisitResponse>): VisitResponse => r.body)
-    );
-  }
-
-  /** Path part for operation `accept()` */
-  static readonly AcceptPath = '/realestates/{realestateid}/visits/{id}/accept';
-
-  /**
-   * Accept a visit request.
-   *
-   *
-   *
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `accept()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  accept$Response(params: Accept$Params, context?: HttpContext): Observable<StrictHttpResponse<VisitResponse>> {
-    return accept(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * Accept a visit request.
-   *
-   *
-   *
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `accept$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  accept(params: Accept$Params, context?: HttpContext): Observable<VisitResponse> {
-    return this.accept$Response(params, context).pipe(
-      map((r: StrictHttpResponse<VisitResponse>): VisitResponse => r.body)
-    );
-  }
-
   /** Path part for operation `getVisitById()` */
-  static readonly GetVisitByIdPath = '/realestates/{realestateid}/visits/{visitId}';
+  static readonly GetVisitByIdPath = '/realestates/{realestateid}/visits/{visitid}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -166,6 +99,31 @@ export class VisitControllerService extends BaseService {
    */
   getVisitById(params: GetVisitById$Params, context?: HttpContext): Observable<VisitResponse> {
     return this.getVisitById$Response(params, context).pipe(
+      map((r: StrictHttpResponse<VisitResponse>): VisitResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `updateVisitStatus()` */
+  static readonly UpdateVisitStatusPath = '/realestates/{realestateid}/visits/{visitid}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `updateVisitStatus()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updateVisitStatus$Response(params: UpdateVisitStatus$Params, context?: HttpContext): Observable<StrictHttpResponse<VisitResponse>> {
+    return updateVisitStatus(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `updateVisitStatus$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updateVisitStatus(params: UpdateVisitStatus$Params, context?: HttpContext): Observable<VisitResponse> {
+    return this.updateVisitStatus$Response(params, context).pipe(
       map((r: StrictHttpResponse<VisitResponse>): VisitResponse => r.body)
     );
   }

@@ -8,16 +8,16 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { VisitResponse } from '../../models/visit-response';
+import { AdminResponse } from '../../models/admin-response';
 
-export interface Reject$Params {
-  id: number;
+export interface GetAdminById$Params {
+  adminid: number;
 }
 
-export function reject(http: HttpClient, rootUrl: string, params: Reject$Params, context?: HttpContext): Observable<StrictHttpResponse<VisitResponse>> {
-  const rb = new RequestBuilder(rootUrl, reject.PATH, 'patch');
+export function getAdminById(http: HttpClient, rootUrl: string, params: GetAdminById$Params, context?: HttpContext): Observable<StrictHttpResponse<AdminResponse>> {
+  const rb = new RequestBuilder(rootUrl, getAdminById.PATH, 'get');
   if (params) {
-    rb.path('id', params.id, {});
+    rb.path('adminid', params.adminid, {});
   }
 
   return http.request(
@@ -25,9 +25,9 @@ export function reject(http: HttpClient, rootUrl: string, params: Reject$Params,
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<VisitResponse>;
+      return r as StrictHttpResponse<AdminResponse>;
     })
   );
 }
 
-reject.PATH = '/realestates/{realestateid}/visits/{id}/reject';
+getAdminById.PATH = '/admins/{adminid}';

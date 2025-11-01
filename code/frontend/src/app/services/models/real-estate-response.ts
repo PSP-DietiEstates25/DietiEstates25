@@ -12,5 +12,4 @@ export interface RealEstateResponse {
   id?: number;
   images?: Array<string>;
   lastModifiedDate?: string;
-  proximityTags?: Array<string>;
 }
