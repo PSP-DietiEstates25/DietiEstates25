@@ -43,6 +43,10 @@ export class RegisterComponent {
     ),
   });
 
+  onClickLogin(): void {
+    window.location.href = `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`;
+  }
+
   async submit(): Promise<void> {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
