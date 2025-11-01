@@ -61,7 +61,7 @@ export class FilterPanelComponent {
     const out: any = {
       address,
       city,
-      municipality, 
+      municipality,
     };
 
     const lat = Number(g.latitude);
@@ -81,6 +81,10 @@ export class FilterPanelComponent {
     hasAirConditioning: false,
     hasDoorman: false,
     hasElevator: false,
+
+    nearPark: false,
+    nearPublicTransport: false,
+    nearSchool: false,
   });
 
   cf = signal<CadastralFilterRequest>({

@@ -17,6 +17,7 @@ import {
 
 export type VisitVM = {
   id: number;
+  realEstateId: number;
   adTitle: string;
   requesterName: string;
   requestedAt: string | null;
@@ -135,13 +136,13 @@ export class AgentDashboardFacade {
   // Mappers
   private toVisitVM(v: any): VisitVM {
     const re = v?.realEstate ?? v?.estate ?? null;
-    const reId = v?.realEstateId ?? re?.id ?? null;
+    const reId = v?.realEstateId ?? re?.id ?? 0;
 
     const adTitle =
       v?.adTitle ??
       re?.title ??
       re?.name ??
-      (reId != null ? `Annuncio #${reId}` : 'Annuncio');
+      (reId ? `Annuncio #${reId}` : 'Annuncio');
 
     const user = v?.user ?? v?.requester ?? v?.buyer ?? null;
     const requesterName =
@@ -153,6 +154,7 @@ export class AgentDashboardFacade {
 
     return {
       id: Number(v?.id ?? 0),
+      realEstateId: Number(reId),
       adTitle,
       requesterName,
       requestedAt: v?.requestedAt ?? v?.createdAt ?? v?.createdDate ?? null,
@@ -222,18 +224,24 @@ export class AgentDashboardFacade {
   // VISITS
   loadVisits(): Observable<void> {
     this.visitsLoading.set(true);
-    return this.estateApi.listAllRealEstates().pipe(
-      switchMap((res) => {
-        const estates = res ?? [];
+    return this.estateApi.getPagedRealEstates({ page: 0, size: 100 }).pipe(
+      map((p) => (Array.isArray(p?.content) ? p.content : [])),
+      switchMap((estates) => {
         if (!estates.length) return of([] as VisitVM[]);
-        // una chiamata per ogni annuncio, poi flattiamo
         return forkJoin(
           estates.map((re) =>
             this.visitApi
-              .listVisitsForRealEstate({ realestateid: re.id as number })
+              .getPagedRealEstateVisits({
+                realestateid: re.id as number,
+                page: 0,
+                size: 100,
+              })
               .pipe(
-                catchError(() => of([])), // non bloccare per un annuncio in errore
-                map((visits) => (visits ?? []).map((v) => this.toVisitVM(v)))
+                catchError(() => of({ content: [] } as any)),
+                map((page) =>
+                  Array.isArray(page?.content) ? page.content : []
+                ),
+                map((visits) => visits.map((v: any) => this.toVisitVM(v)))
               )
           )
         ).pipe(map((chunks) => chunks.flat()));
@@ -258,14 +266,20 @@ export class AgentDashboardFacade {
       prev.map((x) => (x.id === v.id ? { ...x, status: 'ACCEPTED' } : x))
     );
 
-    return this.visitApi.accept({ id: v.id }).pipe(
-      switchMap(() => this.loadVisits()),
-      catchError((e) => {
-        console.error('[Facade] approveVisit', e);
-        this.visits.set(prev);
-        return of(void 0);
+    return this.visitApi
+      .updateVisitStatus({
+        realestateid: v.realEstateId,
+        visitid: v.id,
+        body: { status: 'ACCEPTED' } as any,
       })
-    );
+      .pipe(
+        switchMap(() => this.loadVisits()),
+        catchError((e) => {
+          console.error('[Facade] approveVisit', e);
+          this.visits.set(prev);
+          return of(void 0);
+        })
+      );
   }
 
   declineVisit(v: VisitVM): Observable<void> {
@@ -274,20 +288,27 @@ export class AgentDashboardFacade {
       prev.map((x) => (x.id === v.id ? { ...x, status: 'REJECTED' } : x))
     );
 
-    return this.visitApi.reject({ id: v.id }).pipe(
-      switchMap(() => this.loadVisits()),
-      catchError((e) => {
-        console.error('[Facade] declineVisit', e);
-        this.visits.set(prev);
-        return of(void 0);
+    return this.visitApi
+      .updateVisitStatus({
+        realestateid: v.realEstateId,
+        visitid: v.id,
+        body: { status: 'REJECTED' } as any,
       })
-    );
+      .pipe(
+        switchMap(() => this.loadVisits()),
+        catchError((e) => {
+          console.error('[Facade] declineVisit', e);
+          this.visits.set(prev);
+          return of(void 0);
+        })
+      );
   }
 
   // ADS
   loadAds(): Observable<void> {
     this.adsLoading.set(true);
-    return this.estateApi.listAllRealEstates().pipe(
+    return this.estateApi.getPagedRealEstates({ page: 0, size: 100 }).pipe(
+      map((page) => (Array.isArray(page?.content) ? page.content : [])),
       map((list) => (list ?? []).map((re) => this.toAdVM(re))),
       tap((v) => this.ads.set(v)),
       catchError((e) => {
@@ -339,17 +360,26 @@ export class AgentDashboardFacade {
   // OFFERS
   loadOffers(): Observable<void> {
     this.offersLoading.set(true);
-    return this.estateApi.listAllRealEstates().pipe(
-      switchMap((res) => {
-        const estates = res ?? [];
+    return this.estateApi.getPagedRealEstates({ page: 0, size: 100 }).pipe(
+      map((p) => (Array.isArray(p?.content) ? p.content : [])),
+      switchMap((estates) => {
         if (!estates.length) return of([] as OfferVM[]);
         return forkJoin(
           estates.map((re) =>
             this.offerApi
-              .listOffersForRealEstate({ realestateid: re.id as number })
+              .getPagedRealEstateOffers({
+                realestateid: re.id as number,
+                page: 0,
+                size: 100,
+              })
               .pipe(
-                catchError(() => of([])),
-                map((offers) => (offers ?? []).map((o) => this.toOfferVM(o)))
+                catchError(() => of({ content: [] } as any)),
+                map((page) =>
+                  Array.isArray(page?.content) ? page.content : []
+                ),
+                map((offers) =>
+                  offers.map((o: any) => this.toOfferVM(o, re.id as number))
+                )
               )
           )
         ).pipe(map((chunks) => chunks.flat()));
@@ -377,7 +407,11 @@ export class AgentDashboardFacade {
     );
 
     return this.offerApi
-      .accept1({ realestateid: o.realEstateId, id: o.id })
+      .updateOfferStatus({
+        realestateid: o.realEstateId,
+        offerid: o.id,
+        body: { status: 'ACCEPTED' } as any,
+      })
       .pipe(
         switchMap(() => this.loadOffers()),
         catchError((e) => {
@@ -397,7 +431,11 @@ export class AgentDashboardFacade {
     );
 
     return this.offerApi
-      .reject1({ realestateid: o.realEstateId, id: o.id })
+      .updateOfferStatus({
+        realestateid: o.realEstateId,
+        offerid: o.id,
+        body: { status: 'REJECTED' } as any,
+      })
       .pipe(
         switchMap(() => this.loadOffers()),
         catchError((e) => {
@@ -421,6 +459,7 @@ export class AgentDashboardFacade {
     this.addOfferAmount.set(null);
     this.addOfferEmail.set('');
   }
+
   createExternalOffer(): Observable<void> {
     const adId = this.addOfferForId();
     const amount = this.addOfferAmount();
@@ -474,8 +513,17 @@ export class AgentDashboardFacade {
 
     if (!id || !realestateid || !amount || amount <= 0) return of(void 0);
 
+    const prev = this.offers();
+    this.offers.set(
+      prev.map((o) => (o.id === id ? { ...o, status: 'COUNTERED', amount } : o))
+    );
+
     return this.offerApi
-      .counter({ realestateid, id, body: { amount, message } })
+      .updateOfferStatus({
+        realestateid,
+        offerid: id,
+        body: { status: 'COUNTERED', amount, message } as any,
+      })
       .pipe(
         switchMap(() => {
           this.cancelCounter();
@@ -483,6 +531,8 @@ export class AgentDashboardFacade {
         }),
         catchError((e) => {
           console.error('[Facade] sendCounter error', e);
+          // rollback UI se fallisce
+          this.offers.set(prev);
           return of(void 0);
         })
       );

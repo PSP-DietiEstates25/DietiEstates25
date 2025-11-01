@@ -1,7 +1,8 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, finalize, map, tap } from 'rxjs/operators';
-import { AdminAuthenticationControllerService } from '../../services/services';
+import { AdminControllerService } from '../../services/services';
+import { AuthAccountService } from '../../services_server/auth-account.service';
 
 @Injectable({ providedIn: 'root' })
 export class AdminAccountFacade {
@@ -9,7 +10,7 @@ export class AdminAccountFacade {
   ok = signal<string | null>(null);
   err = signal<string | null>(null);
 
-  private api = inject(AdminAuthenticationControllerService);
+  private api = inject(AuthAccountService);
 
   changePassword(
     currentPassword: string,
@@ -20,9 +21,7 @@ export class AdminAccountFacade {
     this.err.set(null);
 
     return this.api
-      .changePassword({
-        body: { oldPassword: currentPassword, newPassword },
-      })
+      .changePassword({ oldPassword: currentPassword, newPassword })
       .pipe(
         tap(() =>
           this.ok.set('Password aggiornata. Effettua di nuovo l’accesso.')
@@ -33,6 +32,8 @@ export class AdminAccountFacade {
             this.err.set('La password corrente non è corretta.');
           } else if (e?.status === 401) {
             this.err.set('Sessione scaduta: accedi di nuovo.');
+          } else if (e?.status === 403) {
+            this.err.set('Non hai i permessi per questa operazione.');
           } else {
             this.err.set('Errore durante l’aggiornamento della password.');
           }

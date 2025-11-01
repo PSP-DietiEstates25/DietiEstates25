@@ -14,6 +14,8 @@ import { GeographicalPositionResponse } from '../../services/models/geographical
 import { CadastralDataResponse } from '../../services/models/cadastral-data-response';
 import { OfferRequest } from '../../services/models/offer-request';
 import { VisitRequest } from '../../services/models/visit-request';
+import { OfferResponse } from '../../services/models/offer-response';
+import { PageOfferResponse } from '../../services/models/page-offer-response';
 import {
   RealEstateControllerService,
   UtilityControllerService,
@@ -288,12 +290,12 @@ export class AdDetailFacade {
     this.loading.set(false);
   }
 
-  private toMyOfferVM(o: any): MyOfferVM {
+  private toMyOfferVM(o: OfferResponse): MyOfferVM {
     return {
-      id: o?.id ?? 0,
-      amount: o?.amount ?? 0,
-      status: (o?.status ?? 'PENDING') as any,
-      createdAt: o?.createdAt ?? o?.createdDate ?? null,
+      id: (o as any)?.id ?? 0,
+      amount: (o as any)?.amount ?? 0,
+      status: ((o as any)?.status ?? 'PENDING') as any,
+      createdAt: (o as any)?.createdAt ?? (o as any)?.createdDate ?? null,
     };
   }
 
@@ -306,23 +308,37 @@ export class AdDetailFacade {
     this.myOffersLoading.set(true);
 
     this.offerApi
-      .listOffersForRealEstate({
+      .getPagedRealEstateOffers({
         realestateid: realEstateId,
         page: 0,
         size: 100,
       })
       .subscribe({
-        next: (list) => {
-          const arr = Array.isArray(list) ? list : [];
+        next: (page: PageOfferResponse) => {
+          const list: OfferResponse[] = Array.isArray(page?.content)
+            ? (page.content as OfferResponse[])
+            : [];
 
           const email = userEmail.toLowerCase();
-          const mine = arr.filter(
-            (o: any) =>
-              (o?.realEstateId ?? o?.estateId ?? o?.ad?.id) === realEstateId &&
-              (o?.userEmail ?? '').toLowerCase() === email
-          );
 
-          this.myOffers.set(mine.map((o) => this.toMyOfferVM(o)));
+          const mine = list.filter((o: OfferResponse) => {
+            const reId =
+              (o as any)?.realEstateId ??
+              (o as any)?.estateId ??
+              (o as any)?.ad?.id ??
+              (o as any)?.realestateId;
+            const ue = (
+              (o as any)?.userEmail ??
+              (o as any)?.buyerEmail ??
+              (o as any)?.clientEmail ??
+              ''
+            ).toLowerCase();
+            return reId === realEstateId && ue === email;
+          });
+
+          this.myOffers.set(
+            mine.map((o: OfferResponse) => this.toMyOfferVM(o))
+          );
           this.myOffersLoading.set(false);
         },
         error: (e) => {

@@ -24,6 +24,7 @@ import {
   DetailRequest,
   RealEstateRequest,
   RealEstateResponse,
+  UtilityRequest,
 } from '../../services/models';
 
 export type Category = 'SALE' | 'RENT';
@@ -35,6 +36,10 @@ export interface UtilitiesDraft {
   hasElevator: boolean;
   hasDoorman: boolean;
   hasAirConditioning: boolean;
+
+  nearPark: boolean;
+  nearPublicTransport: boolean;
+  nearSchool: boolean;
 }
 export interface PositionDraft {
   address: string;
@@ -209,6 +214,10 @@ export class EditAdFacade {
                       hasElevator: !!u.hasElevator,
                       hasDoorman: !!u.hasDoorman,
                       hasAirConditioning: !!u.hasAirConditioning,
+
+                      nearPark: !!u.nearPark,
+                      nearPublicTransport: !!u.nearPublicTransport,
+                      nearSchool: !!u.nearSchool,
                     });
                   }
                   return null;
@@ -342,6 +351,10 @@ export class EditAdFacade {
       hasElevator: util.hasElevator,
       hasDoorman: util.hasDoorman,
       hasAirConditioning: util.hasAirConditioning,
+
+      nearPark: !!util.nearPark,
+      nearPublicTransport: !!util.nearPublicTransport,
+      nearSchool: !!util.nearSchool,
     };
     const gpReq: GeographicalPositionRequest = {
       address: pos.address,

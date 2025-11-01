@@ -90,16 +90,6 @@ export class NavbarComponent implements OnInit {
     });
   }
 
-  private clearStorage(): void {
-    try {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('userEmail');
-      localStorage.removeItem('userRole');
-      localStorage.removeItem('isAuthenticated');
-    } catch {}
-  }
-
   navLinks() {
     return this.allLinks;
   }

@@ -20,6 +20,10 @@ export class StepDetailsComponent implements OnInit {
     hasElevator: [false],
     hasDoorman: [false],
     hasAirConditioning: [false],
+
+    nearPark: [false],
+    nearPublicTransport: [false],
+    nearSchool: [false],
   });
 
   positionForm = this.fb.nonNullable.group({

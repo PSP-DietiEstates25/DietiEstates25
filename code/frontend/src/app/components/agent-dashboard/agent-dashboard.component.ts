@@ -10,6 +10,8 @@ import {
   VisitVM,
   OfferVM,
 } from './agent-dashboard.facade';
+import { AutentServiceService } from '../../autent.service.service';
+import { environment } from '../../../environments/environment.development';
 
 @Component({
   selector: 'app-agent-dashboard',
@@ -21,7 +23,13 @@ export class AgentDashboardComponent {
   private router = inject(Router);
   private facade = inject(AgentDashboardFacade);
   private destroyRef = inject(DestroyRef);
+
+  private readonly autent = inject(AutentServiceService);
+
   createAdFacade = inject(CreateAdFacade);
+
+  isAuthenticated = false;
+  email = '';
 
   ngOnInit(): void {
     this.facade.loadAds().subscribe();
@@ -143,15 +151,11 @@ export class AgentDashboardComponent {
   }
 
   logout() {
-    try {
-      localStorage.removeItem('auth.token');
-      localStorage.removeItem('token');
-      localStorage.removeItem('userEmail');
-      sessionStorage.removeItem('auth.token');
-      sessionStorage.removeItem('token');
-    } finally {
-      this.router.navigateByUrl('auth/login');
-    }
+    this.autent.logout().subscribe(() => {
+      this.isAuthenticated = false;
+      this.email = '';
+      this.router.navigateByUrl(`${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`);
+    });
   }
 }
 

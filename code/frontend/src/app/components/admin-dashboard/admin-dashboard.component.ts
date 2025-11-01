@@ -14,6 +14,9 @@ import {
 } from './admin-dashboard.facade';
 import { Router, RouterLink } from '@angular/router';
 
+import { AutentServiceService } from '../../autent.service.service';
+import { environment } from '../../../environments/environment.development';
+
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
@@ -24,6 +27,11 @@ export class AdminDashboardComponent {
   private api = inject(AdminDashboardFacade);
   private fb = inject(FormBuilder);
   private router = inject(Router);
+
+  private readonly autent = inject(AutentServiceService);
+
+  isAuthenticated = false;
+  email = '';
 
   tabs = [
     { key: 'ads' as const, label: 'Annunci' },
@@ -117,15 +125,13 @@ export class AdminDashboardComponent {
   }
 
   logout() {
-    try {
-      localStorage.removeItem('auth.token');
-      localStorage.removeItem('token');
-      localStorage.removeItem('userEmail');
-      sessionStorage.removeItem('auth.token');
-      sessionStorage.removeItem('token');
-    } finally {
-      this.router.navigateByUrl('auth/login');
-    }
+    this.autent.logout().subscribe(() => {
+      this.isAuthenticated = false;
+      this.email = '';
+      this.router.navigateByUrl(
+        `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`
+      );
+    });
   }
 }
 

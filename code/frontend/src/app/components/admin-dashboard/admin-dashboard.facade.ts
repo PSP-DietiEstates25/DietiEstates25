@@ -4,13 +4,23 @@ import { map, catchError, switchMap } from 'rxjs/operators';
 
 import {
   RealEstateControllerService,
-  EstateAgentAuthenticationControllerService,
-  AdminAuthenticationControllerService,
+  EstateAgentControllerService,
+  AdminControllerService,
 } from '../../services/services';
 
 import { StafferRequest } from '../../services/models/staffer-request';
 import { EstateAgent } from '../../services/models/estate-agent';
 import { RealEstateResponse } from '../../services/models/real-estate-response';
+import { EstateAgentResponse } from '../../services/models/estate-agent-response';
+import { PageRealEstateResponse } from '../../services/models/page-real-estate-response';
+
+import { HttpClient } from '@angular/common/http';
+import { ApiConfiguration } from '../../services/api-configuration';
+import { AuthTokenService } from '../../core/auth-token.service';
+
+import { register as authRegisterFn } from '../../services_server/authorization_server/fn/register-controller/register';
+import { RegisterRequest } from '../../services_server/authorization_server/models/register-request';
+import { AccountResponse } from '../../services_server/authorization_server/models/account-response';
 
 export interface AdminAd {
   id: number;
@@ -39,8 +49,12 @@ export interface ListAdsOpts {
 @Injectable({ providedIn: 'root' })
 export class AdminDashboardFacade {
   private estateApi = inject(RealEstateControllerService);
-  private agentAuth = inject(EstateAgentAuthenticationControllerService);
-  private adminAuth = inject(AdminAuthenticationControllerService);
+  private agentAuth = inject(EstateAgentControllerService);
+  private adminAuth = inject(AdminControllerService);
+
+  private http = inject(HttpClient);
+  private apiConfig = inject(ApiConfiguration);
+  private tokenSvc = inject(AuthTokenService);
 
   // ===== Util =====
   private findAnyJwtFromClientStorage(): string | null {
@@ -87,32 +101,10 @@ export class AdminDashboardFacade {
   }
 
   private getAdminEmailFromJwt(): string | null {
-    const token = this.findAnyJwtFromClientStorage();
-    if (!token) return null;
-    try {
-      const base64Url = token.split('.')[1];
-      if (!base64Url) return null;
-      let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      base64 += '='.repeat((4 - (base64.length % 4)) % 4);
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split('')
-          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-          .join('')
-      );
-      const payload = JSON.parse(jsonPayload) as Record<string, unknown>;
-      const maybeEmail =
-        (payload['email'] as string | undefined) ??
-        (payload['preferred_username'] as string | undefined) ??
-        (payload['upn'] as string | undefined) ??
-        (payload['username'] as string | undefined) ??
-        (typeof payload['sub'] === 'string' && payload['sub'].includes('@')
-          ? (payload['sub'] as string)
-          : undefined);
-      return typeof maybeEmail === 'string' ? maybeEmail : null;
-    } catch {
-      return null;
-    }
+    return (
+      localStorage.getItem('userEmail') ||
+      this.tokenSvc.getEmailFromJwt()
+    );
   }
 
   // ===== ADS =====
@@ -130,28 +122,38 @@ export class AdminDashboardFacade {
       active = arg1.active;
     }
 
-    return this.estateApi.listAllRealEstates().pipe(
-      map((list) => (list ?? []).map(this.toAdminAd)),
-      map((ads) => {
-        const qNorm = (q ?? '').trim().toLowerCase();
-        let res = ads;
-        if (qNorm) {
-          res = res.filter((a) =>
-            [a.title, a.city, String(a.price ?? ''), String(a.id)]
-              .filter(Boolean)
-              .some((v) => String(v).toLowerCase().includes(qNorm))
-          );
-        }
-        if (active !== '' && active !== undefined) {
-          res = res.filter((a) => (a.active ?? null) === (active as boolean));
-        }
-        return res;
-      }),
-      catchError((e) => {
-        console.error('[AdminDashboard] listAds error', e);
-        return of([]);
+    return this.estateApi
+      .getPagedRealEstates({
+        page: 0,
+        size: 100,
       })
-    );
+      .pipe(
+        map((page: PageRealEstateResponse) => {
+          const list = Array.isArray(page?.content)
+            ? (page.content as RealEstateResponse[])
+            : [];
+          return list.map((re) => this.toAdminAd(re));
+        }),
+        map((ads) => {
+          const qNorm = (q ?? '').trim().toLowerCase();
+          let res = ads;
+          if (qNorm) {
+            res = res.filter((a) =>
+              [a.title, a.city, String(a.price ?? ''), String(a.id)]
+                .filter(Boolean)
+                .some((v) => String(v).toLowerCase().includes(qNorm))
+            );
+          }
+          if (active !== '' && active !== undefined) {
+            res = res.filter((a) => (a.active ?? null) === (active as boolean));
+          }
+          return res;
+        }),
+        catchError((e) => {
+          console.error('[AdminDashboard] listAds error', e);
+          return of([]);
+        })
+      );
   }
 
   updateAd(
@@ -189,18 +191,28 @@ export class AdminDashboardFacade {
 
   // ===== USERS =====
 
+  private authRegister(
+    email: string,
+    password: string,
+    role?: Role
+  ): Observable<AccountResponse> {
+    const body: RegisterRequest = {
+      email,
+      password,
+      ...(role ? ({ role } as any) : {}),
+    } as any;
+
+    return authRegisterFn(this.http, this.apiConfig.rootUrl, { body }).pipe(
+      map((resp) => resp.body as AccountResponse)
+    );
+  }
+
   createUser(body: {
     email: string;
     role: Role;
     password: string;
   }): Observable<AdminUser> {
     const { email, role, password } = body;
-
-    if (!password) {
-      return throwError(
-        () => new Error('La password è obbligatoria per la creazione utente.')
-      );
-    }
 
     const adminEmail = this.getAdminEmailFromJwt();
     if (!adminEmail) {
@@ -211,28 +223,48 @@ export class AdminDashboardFacade {
 
     switch (role) {
       case 'AGENT': {
-        const payload: StafferRequest = { adminEmail, email, password };
-        return this.agentAuth.registerEstateAgent({ body: payload }).pipe(
-          map((agent: EstateAgent) => ({
-            id: Number((agent as any).id) || Date.now(),
+        // crea account credenziale su authorization server
+        return this.authRegister(email, password, 'AGENT').pipe(
+          // collega come staffer nel dominio applicativo
+          switchMap(() => {
+            const payload: StafferRequest = { adminEmail, email };
+            return this.agentAuth.registerEstateAgent({ body: payload });
+          }),
+          map((agent: EstateAgentResponse) => ({
+            id: Number((agent as any)?.id) || Date.now(),
             email,
             role: 'AGENT' as const,
             active: true,
-          }))
+          })),
+          catchError((e) => {
+            console.error('[AdminDashboard] createUser(AGENT) error', e);
+            return throwError(() => e);
+          })
         );
       }
+
       case 'ADMIN': {
-        return this.adminAuth
-          .registerAdmin({ body: { adminEmail, email, password } })
-          .pipe(
-            map(() => ({
-              id: Date.now(),
-              email,
-              role: 'ADMIN' as const,
-              active: true,
-            }))
-          );
+        // crea account credenziale su authorization server
+        return this.authRegister(email, password, 'ADMIN').pipe(
+          // registra come admin nel dominio applicativo
+          switchMap(() =>
+            this.adminAuth.registerAdmin({
+              body: { adminEmail, email },
+            })
+          ),
+          map(() => ({
+            id: Date.now(),
+            email,
+            role: 'ADMIN' as const,
+            active: true,
+          })),
+          catchError((e) => {
+            console.error('[AdminDashboard] createUser(ADMIN) error', e);
+            return throwError(() => e);
+          })
+        );
       }
+
       default:
         return throwError(
           () => new Error(`Ruolo non supportato: ${role as string}`)

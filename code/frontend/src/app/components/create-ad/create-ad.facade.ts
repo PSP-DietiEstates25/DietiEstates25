@@ -35,6 +35,10 @@ export interface UtilitiesDraft {
   hasElevator: boolean;
   hasDoorman: boolean;
   hasAirConditioning: boolean;
+
+  nearPark: boolean;
+  nearPublicTransport: boolean;
+  nearSchool: boolean;
 }
 
 export interface PositionDraft {
@@ -133,6 +137,10 @@ export class CreateAdFacade {
       hasAirConditioning: !!util.hasAirConditioning,
       hasDoorman: !!util.hasDoorman,
       hasElevator: !!util.hasElevator,
+
+      nearPark: !!util.nearPark,
+      nearPublicTransport: !!util.nearPublicTransport,
+      nearSchool: !!util.nearSchool,
     };
 
     const gpReq: GeographicalPositionRequest = {

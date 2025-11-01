@@ -38,7 +38,7 @@ export class SearchPageComponent implements OnDestroy {
   private httpNoInter = new HttpClient(this.handler);
 
   private blobCache = new Map<string, string>();
-  private pending = new Set<string>(); 
+  private pending = new Set<string>();
 
   readonly placeholder = '/assets/placeholder.jpg';
 
@@ -102,6 +102,10 @@ export class SearchPageComponent implements OnDestroy {
           hasAirConditioning: false,
           hasDoorman: false,
           hasElevator: false,
+
+          nearPark: false,
+          nearPublicTransport: false,
+          nearSchool: false,
         },
         cf: {
           maxPrice: 0,
