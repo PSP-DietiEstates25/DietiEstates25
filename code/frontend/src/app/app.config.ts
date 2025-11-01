@@ -9,11 +9,12 @@ import { jwtInterceptor } from './core/jwt.interceptor';
 
 import { routes } from './app.routes';
 import { authInterceptor } from './_interceptors/auth/auth.interceptor';
+import { xsrfInterceptor } from './xsrf.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([xsrfInterceptor, authInterceptor])),
   ],
 };

@@ -45,6 +45,25 @@ public class SecurityConfig {
         csrfTokenRequestAttributeHandler.setCsrfRequestAttributeName(null);
 
         http
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers(
+                                "/api/v1/swagger-ui/**",
+                                "/api/v1/v3/api-docs/**",
+                                "/api/v1/openapi.json",
+                                "/swagger-ui/**", "/v3/api-docs/**", "/openapi.json"
+                        )
+                        .csrfTokenRepository(cookieCsrfTokenRepository)
+                        .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
+                )
+                .cors(cors -> cors.configurationSource(request -> {
+                    var c = new org.springframework.web.cors.CorsConfiguration();
+                    c.setAllowedOrigins(List.of("http://localhost:4200"));
+                    c.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+                    c.setAllowedHeaders(List.of("Authorization","Content-Type","X-Requested-With","X-XSRF-TOKEN"));
+                    c.setExposedHeaders(List.of("Set-Cookie"));
+                    c.setAllowCredentials(true);
+                    return c;
+                }))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/", "/error", "/actuator/health", "/csrf-token").permitAll()
@@ -58,24 +77,6 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers(
-                                "/api/v1/swagger-ui/**",
-                                "/api/v1/v3/api-docs/**",
-                                "/api/v1/openapi.json",
-                                "/swagger-ui/**", "/v3/api-docs/**", "/openapi.json"
-                        )
-                        .csrfTokenRepository(cookieCsrfTokenRepository)
-                        .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler))
-                .cors(cors -> cors.configurationSource(request -> {
-                    var c = new org.springframework.web.cors.CorsConfiguration();
-                    c.setAllowedOrigins(List.of("http://localhost:4200"));
-                    c.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
-                    c.setAllowedHeaders(List.of("Authorization","Content-Type","X-Requested-With","X-XSRF-TOKEN"));
-                    c.setExposedHeaders(List.of("Set-Cookie"));
-                    c.setAllowCredentials(true);
-                    return c;
-                }))
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint()))
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(new SimpleUrlAuthenticationSuccessHandler(this.appBaseUri)))

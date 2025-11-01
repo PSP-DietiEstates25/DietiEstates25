@@ -69,7 +69,6 @@ export class RegisterComponent {
     try {
       await firstValueFrom(this.autentService.getCsrf());
       await firstValueFrom(this.autentService.register(body));
-
       // opzionale: attendi il redirect del router, oppure vai al flusso OIDC
       window.location.href = `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`;
     } catch (err: any) {
