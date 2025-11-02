@@ -35,4 +35,12 @@ export class AutentServiceService {
     const url = 'http://localhost:8080/auth/register';
     return this.httpClient.post<string>(url, registerRequest, this.httpOptions);
   }
+
+  changeAdminPassword(changeAdminPasswordRequest: {
+    oldPassword: string,
+    newPassword: string
+  }){
+    const url = 'http:localhost:8080/account/password';
+    return this.httpClient.patch(url, changeAdminPasswordRequest, this.httpOptions);
+  }
 }

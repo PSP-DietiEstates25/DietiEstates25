@@ -16,10 +16,7 @@ import { PageRealEstateResponse } from '../../services/models/page-real-estate-r
 
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration } from '../../services/api-configuration';
-
-import { register as authRegisterFn } from '../../services_server/authorization_server/fn/register-controller/register';
-import { RegisterRequest } from '../../services_server/authorization_server/models/register-request';
-import { AccountResponse } from '../../services_server/authorization_server/models/account-response';
+import { AutentServiceService } from '../../autent.service.service';
 
 export interface AdminAd {
   id: number;
@@ -47,9 +44,12 @@ export interface ListAdsOpts {
 
 @Injectable({ providedIn: 'root' })
 export class AdminDashboardFacade {
-  private estateApi = inject(RealEstateControllerService);
-  private agentAuth = inject(EstateAgentControllerService);
-  private adminAuth = inject(AdminControllerService);
+
+  private resourceServerRealEstateService = inject(RealEstateControllerService);
+  private resourceServerEstateAgentService = inject(EstateAgentControllerService);
+  private resourceServerAdminService = inject(AdminControllerService);
+
+  private authenticationServerAccountService = inject(AutentServiceService);
 
   private http = inject(HttpClient);
   private apiConfig = inject(ApiConfiguration);
@@ -119,7 +119,7 @@ export class AdminDashboardFacade {
       active = arg1.active;
     }
 
-    return this.estateApi
+    return this.resourceServerRealEstateService
       .getPagedRealEstates({
         page: 0,
         size: 100,

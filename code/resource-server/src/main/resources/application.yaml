@@ -10,8 +10,8 @@ springdoc:
 
 server:
   port: 8091
-  servlet:
-    context-path: /api/v1
+  #servlet:
+    #context-path: /api/v1
 
 logging:
   level:

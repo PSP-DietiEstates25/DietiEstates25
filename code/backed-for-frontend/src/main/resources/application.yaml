@@ -85,25 +85,25 @@ spring:
             - id: resource_server_swagger_ui
               uri: http://localhost:8090
               predicates:
-                - Path=/api/v1/swagger-ui/**,/api/v1/swagger-ui.html
+                - Path=/swagger-ui/**,/api/v1/swagger-ui.html
 
             # OpenAPI JSON (springdoc default v3)
             - id: resource_server_openapi_json
               uri: http://localhost:8090
               predicates:
-                - Path=/api/v1/v3/api-docs/**
+                - Path=/v3/api-docs/**
 
             # (Opzionale ma utile) swagger-config usato dalla UI
             - id: resource_server_swagger_config
               uri: http://localhost:8090
               predicates:
-                - Path=/api/v1/v3/api-docs/swagger-config
+                - Path=/v3/api-docs/swagger-config
 
             # /auth/users
             - id: resource_server_register_user
               uri: http://localhost:8090
               predicates:
-                - Path=/api/v1/users
+                - Path=/users
               filters:
                 - RelayTokenIfExists=messaging-client-authorization-code
 
@@ -111,7 +111,7 @@ spring:
             - id: resource_server_register_admin
               uri: http://localhost:8090
               predicates:
-                - Path=/api/v1/admins
+                - Path=/admins
               filters:
                 - RelayTokenIfExists=messaging-client-authorization-code
 
@@ -119,7 +119,7 @@ spring:
             - id: resource_server_register_estate_agents
               uri: http://localhost:8090
               predicates:
-                - Path=/api/v1/estateagents
+                - Path=/estateagents
               filters:
                 - RelayTokenIfExists=messaging-client-authorization-code
 
@@ -162,7 +162,7 @@ spring:
             - id: resource_server_searches
               uri: http://localhost:8090
               predicates:
-                - Path=/api/v1/searches
+                - Path=/searches
               filters:
                 - RelayTokenIfExists=messaging-client-authorization-code
 
@@ -170,7 +170,7 @@ spring:
             - id: resource_server_details
               uri: http://localhost:8090
               predicates:
-                - Path=/api/v1/details
+                - Path=/details
               filters:
                 - RelayTokenIfExists=messaging-client-authorization-code
 
@@ -178,7 +178,7 @@ spring:
             - id: resource_server_geographical_positions
               uri: http://localhost:8090
               predicates:
-                - Path=/api/v1/geographicalpositions
+                - Path=/geographicalpositions
               filters:
                 - RelayTokenIfExists=messaging-client-authorization-code
 
@@ -186,7 +186,7 @@ spring:
             - id: resource_server_utilities
               uri: http://localhost:8090
               predicates:
-                - Path=/api/v1/utilities
+                - Path=/utilities
               filters:
                 - RelayTokenIfExists=messaging-client-authorization-code
 
@@ -194,7 +194,7 @@ spring:
             - id: resource_server_cadastral_data
               uri: http://localhost:8090
               predicates:
-                - Path=/api/v1/cadastraldata
+                - Path=/cadastraldata
               filters:
                 - RelayTokenIfExists=messaging-client-authorization-code
 
@@ -202,7 +202,7 @@ spring:
             - id: resource_server_cadastral_filters
               uri: http://localhost:8090
               predicates:
-                - Path=/api/v1/cadastralfilters
+                - Path=/cadastralfilters
               filters:
                 - RelayTokenIfExists=messaging-client-authorization-code
 
@@ -210,7 +210,7 @@ spring:
             - id: resource_server_realestate_offers
               uri: http://localhost:8090
               predicates:
-                - Path=/api/v1/realestates/{realestateid}/offers
+                - Path=/realestates/{realestateid}/offers
               filters:
                 - RelayTokenIfExists=messaging-client-authorization-code
 
@@ -218,7 +218,7 @@ spring:
             - id: resource_server_realestate_visits
               uri: http://localhost:8090
               predicates:
-                - Path=/api/v1/realestates/{realestateid}/visits
+                - Path=/realestates/{realestateid}/visits
               filters:
                 - RelayTokenIfExists=messaging-client-authorization-code
 
@@ -226,7 +226,7 @@ spring:
             - id: resource_server_notification_categories
               uri: http://localhost:8090
               predicates:
-                - Path=/api/v1/notificationcategories
+                - Path=/notificationcategories
               filters:
                 - RelayTokenIfExists=messaging-client-authorization-code
 
@@ -234,7 +234,7 @@ spring:
             - id: resource_server_notification_categories_notification
               uri: http://localhost:8090
               predicates:
-                - Path=/api/v1/notificationcategories/{name}/notifications
+                - Path=/notificationcategories/{name}/notifications
               filters:
                 - RelayTokenIfExists=messaging-client-authorization-code
 app:

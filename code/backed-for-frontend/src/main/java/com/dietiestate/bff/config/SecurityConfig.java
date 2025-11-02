@@ -69,10 +69,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/", "/error", "/actuator/health", "/csrf-token").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
-                                "/api/v1/swagger-ui/**",
-                                "/api/v1/swagger-ui.html",
-                                "/api/v1/v3/api-docs/**",
-                                "/api/v1/openapi.json",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/openapi.json",
                                 "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/openapi.json"
                         ).permitAll()
                         .anyRequest().authenticated()
