@@ -1,51 +1,56 @@
 <div class="mx-auto w-full max-w-md px-4">
-      <h1 class="mb-3 text-2xl font-bold">Accedi</h1>
+  <h1 class="mb-3 text-2xl font-bold">Accedi</h1>
 
-      <form
-        [formGroup]="loginForm"
-        (ngSubmit)="onSubmit($event)"
-        action="/auth/login/process"
-        method="post"
-        class="grid gap-3 rounded-xl border border-black/10 p-4"
-      >
-        <label class="grid gap-1">
-          <span class="text-sm text-neutral-600">Email</span>
-          <input
-            type="email"
-            name="username"
-            class="rounded-lg border border-black/20 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500/50"
-            formControlName="email" autocomplete="email"/>
-        </label>
+  <form
+    [formGroup]="loginForm"
+    (ngSubmit)="onSubmit($event)"
+    action="/auth/login/process"
+    method="post"
+    class="grid gap-3 rounded-xl border border-black/10 p-4"
+  >
+    <label class="grid gap-1">
+      <span class="text-sm text-neutral-600">Email</span>
+      <input
+        type="email"
+        name="username"
+        class="rounded-lg border border-black/20 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500/50"
+        formControlName="email"
+        autocomplete="email"
+      />
+    </label>
 
-        <label class="grid gap-1">
-          <span class="text-sm text-neutral-600">Password</span>
-          <input
-            type="password"
-            name="password"
-            class="rounded-lg border border-black/20 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500/50"
-            formControlName="password" autocomplete="current-password"/>
-        </label>
+    <label class="grid gap-1">
+      <span class="text-sm text-neutral-600">Password</span>
+      <input
+        type="password"
+        name="password"
+        class="rounded-lg border border-black/20 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500/50"
+        formControlName="password"
+        autocomplete="current-password"
+      />
+    </label>
 
-        <input type="hidden" name="_csrf" [value]="csrfToken()">
+    <input type="hidden" name="_csrf" [value]="csrfToken()" />
 
-        <button
-          type="submit"
-          class="mt-1 inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
-          [disabled]="loginForm.invalid || loading"
-        >
-          Accedi
-        </button>
-      </form>
+    <button
+      type="submit"
+      class="mt-1 inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+      [disabled]="loginForm.invalid || loading"
+    >
+      Accedi
+    </button>
+  </form>
 
-      <p class="mt-4 text-sm dark:text-slate-300">
-        Non hai un account?
-      <a class="link_style" routerLink="/auth/register">Registrati</a>
+  <p class="mt-4 text-sm dark:text-slate-300">
+    Non hai un account?
+    <a class="link_style" (click)="goToRegister()">Registrati</a>
+  </p>
 
-      <div class="my-4 flex items-center gap-3 text-sm text-neutral-500">
-        <div class="h-px flex-1 bg-black/10"></div>
-        <span>oppure</span>
-        <div class="h-px flex-1 bg-black/10"></div>
-      </div>
+  <div class="my-4 flex items-center gap-3 text-sm text-neutral-500">
+    <div class="h-px flex-1 bg-black/10"></div>
+    <span>oppure</span>
+    <div class="h-px flex-1 bg-black/10"></div>
+  </div>
 
-      <app-social-login-buttons></app-social-login-buttons>
-    </div>
+  <app-social-login-buttons></app-social-login-buttons>
+</div>
