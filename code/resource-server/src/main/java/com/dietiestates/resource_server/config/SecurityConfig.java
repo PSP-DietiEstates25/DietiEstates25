@@ -56,6 +56,7 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/openapi.json"
                         ).permitAll()
+                        /*
                         .requestMatchers(
                                 "/auth/estateagent",
                                 "/auth/admins",
@@ -81,7 +82,24 @@ public class SecurityConfig {
                                 "/utilities",
                                 "/notifications"
                         ).hasRole("USER")
-                        .anyRequest().authenticated()
+                        */
+
+                        .requestMatchers(
+                                "/auth/estateagent",
+                                "/auth/admins",
+                                "/auth/realestates",
+                                "/notificationcategories",
+                                "/searches",
+                                "/realestates",
+                                "/offers",
+                                "/visits",
+                                "/cadastraldata",
+                                "/details",
+                                "/geographicalpositions",
+                                "/utilities",
+                                "/notifications"
+                        ).authenticated()
+                        .anyRequest().denyAll()
         );
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

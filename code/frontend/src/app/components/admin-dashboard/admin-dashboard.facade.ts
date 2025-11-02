@@ -16,7 +16,6 @@ import { PageRealEstateResponse } from '../../services/models/page-real-estate-r
 
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration } from '../../services/api-configuration';
-import { AuthTokenService } from '../../core/auth-token.service';
 
 import { register as authRegisterFn } from '../../services_server/authorization_server/fn/register-controller/register';
 import { RegisterRequest } from '../../services_server/authorization_server/models/register-request';
@@ -54,7 +53,6 @@ export class AdminDashboardFacade {
 
   private http = inject(HttpClient);
   private apiConfig = inject(ApiConfiguration);
-  private tokenSvc = inject(AuthTokenService);
 
   // ===== Util =====
   private findAnyJwtFromClientStorage(): string | null {
@@ -102,8 +100,7 @@ export class AdminDashboardFacade {
 
   private getAdminEmailFromJwt(): string | null {
     return (
-      localStorage.getItem('userEmail') ||
-      this.tokenSvc.getEmailFromJwt()
+      localStorage.getItem('userEmail')
     );
   }
 

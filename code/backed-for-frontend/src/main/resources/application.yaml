@@ -72,6 +72,7 @@ spring:
                 - Path=/userinfo
               filters:
                 - TokenRelay=
+                - RemoveRequestHeader=Cookie
 
             # /auth/register
             - id: auth_server_register_account
@@ -123,12 +124,39 @@ spring:
                 - RelayTokenIfExists=messaging-client-authorization-code
 
             # /realestates
-            - id: resource_server_real_estates
+            #POST realestates
+            - id: resource_server_post_real_estate
               uri: http://localhost:8090
               predicates:
-                - Path=/api/v1/realestates
+                - Path=/realestates
+                - Method=POST
               filters:
                 - RelayTokenIfExists=messaging-client-authorization-code
+                - RemoveRequestHeader=Cookie
+
+            #GET realestates?page=1&size=10
+            - id: resource_server_get_paged_real_estates
+              uri: http://localhost:8090
+              predicates:
+                - Path=/realestates
+                - Method=GET
+                - Query=page, /^\d+$/
+                - Query=size, /^\d+$/
+              filters:
+                - RelayTokenIfExists=messaging-client-oidc
+                - RemoveRequestHeader=Cookie
+
+            #GET realestates/{realestateid}
+            #PUT realestates/{realestateid}
+            #DELETE realestates/{realestateid}
+            - id: resource_server_get_put_delete_real_estate
+              uri: http://localhost:8090
+              predicates:
+                - Path=/realestates/{realestateid}
+                - Method=GET,PUT,DELETE
+              filters:
+                - RelayTokenIfExists=messaging-client-oidc
+                - RemoveRequestHeader=Cookie
 
             # /searches
             - id: resource_server_searches

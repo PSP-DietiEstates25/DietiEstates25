@@ -105,6 +105,12 @@ public class SecurityConfig {
         return handler;
     }
 
+    //registrazione funzioni presenti nel gateway filter
+    @Bean
+    public GatewayFilterFunctions.FilterSupplier relayTokenIfExistsSupplier() {
+        return new GatewayFilterFunctions.FilterSupplier();
+    }
+
     private AuthenticationEntryPoint authenticationEntryPoint() {
         AuthenticationEntryPoint loginEntryPoint =
                 new LoginUrlAuthenticationEntryPoint("/oauth2/authorization/messaging-client-oidc");

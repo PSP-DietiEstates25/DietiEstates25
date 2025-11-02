@@ -6,8 +6,9 @@ import {
   withFetch,
 } from '@angular/common/http';
 import { routes } from './app.routes';
-import { xsrfInterceptor } from './xsrf.interceptor';
+import { xsrfInterceptor } from './_interceptors/xsrf/xsrf.interceptor';
 import { authInterceptor } from './_interceptors/auth/auth.interceptor'; 
+import { authCredentials } from './_interceptors/cookie/auth-credentials.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,7 +16,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(
       withFetch(),
-      withInterceptors([xsrfInterceptor, authInterceptor])
+      withInterceptors([xsrfInterceptor, authInterceptor, authCredentials])
     ),
   ],
 };
