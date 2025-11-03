@@ -41,7 +41,7 @@ export class AutentServiceService {
     oldPassword?: string,
     newPassword?: string
   }){
-    const url = 'http:localhost:8080/account/password';
+    const url = 'http://localhost:8080/account/password';
     return this.httpClient.patch(url, changeAdminPasswordRequest, this.httpOptions);
   }
 }
