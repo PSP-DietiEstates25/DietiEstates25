@@ -11,17 +11,12 @@ spring:
     bundle:
       jks:
         authorization-server:
-          key:
-            alias: authorization-server
-            password: password
           keystore:
-            location: classpath:keystore.p12
-            password: password
-            type: PKCS12
-          truststore:
-            location: classpath:truststore.p12
-            password: password
-            type: PKCS12
+            location: "file:/mnt/c/Users/lucap/certs/authorization-server.jks"
+            password: "password"
+          key:
+            alias: "authorization-server"
+            password: "password"
   datasource:
     url: jdbc:postgresql://localhost:5431/dietiestates_authorization_server
     username: dietiestates

@@ -1,0 +1,209 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::             (v4.0.0-M2)
+
+2025-11-03T21:36:29.826+01:00  INFO 20966 --- [authorization-server] [           main] c.d.auth.AuthorizationServerApplication  : Starting AuthorizationServerApplication using Java 25 with PID 20966 (/home/luca/DietiEstates25/code/authorization-server/out/production/classes started by luca in /home/luca/DietiEstates25/code/authorization-server)
+2025-11-03T21:36:29.831+01:00  INFO 20966 --- [authorization-server] [           main] c.d.auth.AuthorizationServerApplication  : No active profile set, falling back to 1 default profile: "default"
+2025-11-03T21:36:30.549+01:00  INFO 20966 --- [authorization-server] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-03T21:36:30.620+01:00  INFO 20966 --- [authorization-server] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 62 ms. Found 5 JPA repository interfaces.
+2025-11-03T21:36:31.289+01:00  INFO 20966 --- [authorization-server] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with ports 9443 (https), 9000 (http)
+2025-11-03T21:36:31.310+01:00  INFO 20966 --- [authorization-server] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-03T21:36:31.310+01:00  INFO 20966 --- [authorization-server] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.10]
+2025-11-03T21:36:31.366+01:00  INFO 20966 --- [authorization-server] [           main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1483 ms
+2025-11-03T21:36:31.563+01:00 DEBUG 20966 --- [authorization-server] [           main] j.LocalContainerEntityManagerFactoryBean : Building JPA container EntityManagerFactory for persistence unit 'default'
+2025-11-03T21:36:31.574+01:00  INFO 20966 --- [authorization-server] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-03T21:36:31.614+01:00  INFO 20966 --- [authorization-server] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 7.1.0.Final
+2025-11-03T21:36:31.634+01:00 DEBUG 20966 --- [authorization-server] [           main] o.s.o.jpa.hibernate.SpringBeanContainer  : Falling back to Hibernate's default producer after bean creation failure for interface org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider': Failed to instantiate [org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider]: Specified class is an interface
+2025-11-03T21:36:32.004+01:00  INFO 20966 --- [authorization-server] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-03T21:36:32.029+01:00  INFO 20966 --- [authorization-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-11-03T21:36:32.179+01:00  INFO 20966 --- [authorization-server] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@4c164f81
+2025-11-03T21:36:32.181+01:00  INFO 20966 --- [authorization-server] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-11-03T21:36:32.205+01:00  WARN 20966 --- [authorization-server] [           main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-03T21:36:32.234+01:00  INFO 20966 --- [authorization-server] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5431/dietiestates_authorization_server]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.0
+	Default catalog/schema: dietiestates_authorization_server/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DatasourceConnectionProviderImpl
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-03T21:36:32.575+01:00 DEBUG 20966 --- [authorization-server] [           main] o.s.o.jpa.hibernate.SpringBeanContainer  : Falling back to Hibernate's default producer after bean creation failure for interface org.hibernate.context.spi.CurrentTenantIdentifierResolver: org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'org.hibernate.context.spi.CurrentTenantIdentifierResolver<?>' available
+2025-11-03T21:36:33.319+01:00  INFO 20966 --- [authorization-server] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-03T21:36:33.458+01:00  INFO 20966 --- [authorization-server] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-03T21:36:33.551+01:00  INFO 20966 --- [authorization-server] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-11-03T21:36:33.780+01:00 DEBUG 20966 --- [authorization-server] [           main] tor$SharedEntityManagerInvocationHandler : Creating new EntityManager for shared EntityManager invocation
+2025-11-03T21:36:34.109+01:00 DEBUG 20966 --- [authorization-server] [           main] org.hibernate.SQL                        : 
+    select
+        r1_0.id,
+        r1_0.created_date,
+        r1_0.last_modified_date,
+        r1_0.name 
+    from
+        role r1_0 
+    where
+        r1_0.name=?
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.created_date,
+        r1_0.last_modified_date,
+        r1_0.name 
+    from
+        role r1_0 
+    where
+        r1_0.name=?
+2025-11-03T21:36:34.131+01:00 DEBUG 20966 --- [authorization-server] [           main] tor$SharedEntityManagerInvocationHandler : Creating new EntityManager for shared EntityManager invocation
+2025-11-03T21:36:34.132+01:00 DEBUG 20966 --- [authorization-server] [           main] org.hibernate.SQL                        : 
+    select
+        r1_0.id,
+        r1_0.created_date,
+        r1_0.last_modified_date,
+        r1_0.name 
+    from
+        role r1_0 
+    where
+        r1_0.name=?
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.created_date,
+        r1_0.last_modified_date,
+        r1_0.name 
+    from
+        role r1_0 
+    where
+        r1_0.name=?
+2025-11-03T21:36:34.135+01:00 DEBUG 20966 --- [authorization-server] [           main] tor$SharedEntityManagerInvocationHandler : Creating new EntityManager for shared EntityManager invocation
+2025-11-03T21:36:34.135+01:00 DEBUG 20966 --- [authorization-server] [           main] org.hibernate.SQL                        : 
+    select
+        r1_0.id,
+        r1_0.created_date,
+        r1_0.last_modified_date,
+        r1_0.name 
+    from
+        role r1_0 
+    where
+        r1_0.name=?
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.created_date,
+        r1_0.last_modified_date,
+        r1_0.name 
+    from
+        role r1_0 
+    where
+        r1_0.name=?
+2025-11-03T21:36:34.140+01:00 DEBUG 20966 --- [authorization-server] [           main] tor$SharedEntityManagerInvocationHandler : Creating new EntityManager for shared EntityManager invocation
+2025-11-03T21:36:34.154+01:00 DEBUG 20966 --- [authorization-server] [           main] org.hibernate.SQL                        : 
+    select
+        da1_0.id,
+        da1_0.created_date,
+        da1_0.email,
+        da1_0.last_modified_date,
+        da1_0.password,
+        da1_0.role_name 
+    from
+        default_account da1_0 
+    where
+        da1_0.email=?
+Hibernate: 
+    select
+        da1_0.id,
+        da1_0.created_date,
+        da1_0.email,
+        da1_0.last_modified_date,
+        da1_0.password,
+        da1_0.role_name 
+    from
+        default_account da1_0 
+    where
+        da1_0.email=?
+2025-11-03T21:36:34.161+01:00 DEBUG 20966 --- [authorization-server] [           main] org.hibernate.SQL                        : 
+    select
+        r1_0.id,
+        r1_0.created_date,
+        r1_0.last_modified_date,
+        r1_0.name 
+    from
+        role r1_0 
+    where
+        r1_0.id=?
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.created_date,
+        r1_0.last_modified_date,
+        r1_0.name 
+    from
+        role r1_0 
+    where
+        r1_0.id=?
+2025-11-03T21:36:34.267+01:00 DEBUG 20966 --- [authorization-server] [           main] o.s.s.jackson2.SecurityJackson2Modules   : Loaded module org.springframework.security.jackson2.CoreJackson2Module, now registering
+2025-11-03T21:36:34.267+01:00 DEBUG 20966 --- [authorization-server] [           main] o.s.s.jackson2.SecurityJackson2Modules   : Loaded module org.springframework.security.web.jackson2.WebJackson2Module, now registering
+2025-11-03T21:36:34.268+01:00 DEBUG 20966 --- [authorization-server] [           main] o.s.s.jackson2.SecurityJackson2Modules   : Loaded module org.springframework.security.web.server.jackson2.WebServerJackson2Module, now registering
+2025-11-03T21:36:34.268+01:00 DEBUG 20966 --- [authorization-server] [           main] o.s.s.jackson2.SecurityJackson2Modules   : Loaded module org.springframework.security.web.jackson2.WebServletJackson2Module, now registering
+2025-11-03T21:36:34.268+01:00 DEBUG 20966 --- [authorization-server] [           main] o.s.s.jackson2.SecurityJackson2Modules   : Loaded module org.springframework.security.oauth2.client.jackson2.OAuth2ClientJackson2Module, now registering
+2025-11-03T21:36:34.269+01:00 DEBUG 20966 --- [authorization-server] [           main] o.s.s.jackson2.SecurityJackson2Modules   : Loaded module com.fasterxml.jackson.datatype.jsr310.JavaTimeModule, now registering
+2025-11-03T21:36:34.543+01:00  WARN 20966 --- [authorization-server] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-03T21:36:35.026+01:00  INFO 20966 --- [authorization-server] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name userDetailsServiceImpl
+2025-11-03T21:36:35.632+01:00 DEBUG 20966 --- [authorization-server] [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer$$Lambda/0x000000003d9c48f8@23a9780b with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, AuthorizationServerContextFilter, HeaderWriterFilter, CorsFilter, CsrfFilter, OidcLogoutEndpointFilter, LogoutFilter, OAuth2AuthorizationServerMetadataEndpointFilter, OAuth2AuthorizationEndpointFilter, OAuth2DeviceVerificationEndpointFilter, OidcProviderConfigurationEndpointFilter, NimbusJwkSetEndpointFilter, OAuth2ClientAuthenticationFilter, BearerTokenAuthenticationFilter, AuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, ExceptionTranslationFilter, AuthorizationFilter, OAuth2TokenEndpointFilter, OAuth2TokenIntrospectionEndpointFilter, OAuth2TokenRevocationEndpointFilter, OAuth2DeviceAuthorizationEndpointFilter, OidcUserInfoEndpointFilter
+2025-11-03T21:36:35.679+01:00 DEBUG 20966 --- [authorization-server] [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, CsrfFilter, LogoutFilter, OAuth2AuthorizationRequestRedirectFilter, OAuth2AuthorizationRequestRedirectFilter, OAuth2LoginAuthenticationFilter, UsernamePasswordAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, OAuth2AuthorizationCodeGrantFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-11-03T21:36:35.865+01:00  WARN 20966 --- [authorization-server] [           main] org.apache.tomcat.util.net.SSLUtilBase   : The JSSE TLS 1.3 implementation does not support post handshake authentication (PHA) and is therefore incompatible with optional certificate authentication
+2025-11-03T21:36:35.914+01:00  INFO 20966 --- [authorization-server] [           main] o.a.t.util.net.NioEndpoint.certificate   : Connector [https-jsse-nio-9443], TLS virtual host [_default_], certificate type [UNDEFINED] configured from keystore [/home/luca/.keystore] using alias [authorization-server] with trust store [null]
+2025-11-03T21:36:35.927+01:00  INFO 20966 --- [authorization-server] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on ports 9443 (https), 9000 (http) with context path '/'
+2025-11-03T21:36:35.932+01:00  INFO 20966 --- [authorization-server] [           main] c.d.auth.AuthorizationServerApplication  : Started AuthorizationServerApplication in 6.585 seconds (process running for 7.078)
+2025-11-03T21:36:35.936+01:00 DEBUG 20966 --- [authorization-server] [           main] tor$SharedEntityManagerInvocationHandler : Creating new EntityManager for shared EntityManager invocation
+2025-11-03T21:36:35.939+01:00 DEBUG 20966 --- [authorization-server] [           main] org.hibernate.SQL                        : 
+    select
+        c1_0.id,
+        c1_0.authorization_grant_types,
+        c1_0.client_authentication_methods,
+        c1_0.client_id,
+        c1_0.client_id_issued_at,
+        c1_0.client_name,
+        c1_0.client_secret,
+        c1_0.client_secret_expires_at,
+        c1_0.client_settings,
+        c1_0.post_logout_redirect_uris,
+        c1_0.redirect_uris,
+        c1_0.scopes,
+        c1_0.token_settings 
+    from
+        oauth2_client c1_0 
+    where
+        c1_0.client_id=?
+Hibernate: 
+    select
+        c1_0.id,
+        c1_0.authorization_grant_types,
+        c1_0.client_authentication_methods,
+        c1_0.client_id,
+        c1_0.client_id_issued_at,
+        c1_0.client_name,
+        c1_0.client_secret,
+        c1_0.client_secret_expires_at,
+        c1_0.client_settings,
+        c1_0.post_logout_redirect_uris,
+        c1_0.redirect_uris,
+        c1_0.scopes,
+        c1_0.token_settings 
+    from
+        oauth2_client c1_0 
+    where
+        c1_0.client_id=?
+2025-11-03T21:37:51.409+01:00  INFO 20966 --- [authorization-server] [ionShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-03T21:37:51.415+01:00  INFO 20966 --- [authorization-server] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2025-11-03T21:37:51.421+01:00  INFO 20966 --- [authorization-server] [ionShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-03T21:37:51.423+01:00  INFO 20966 --- [authorization-server] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-11-03T21:37:51.425+01:00  INFO 20966 --- [authorization-server] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
