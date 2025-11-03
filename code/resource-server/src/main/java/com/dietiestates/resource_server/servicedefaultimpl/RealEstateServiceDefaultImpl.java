@@ -43,11 +43,11 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
     private final NotificationService notificationService;
 	
 	@Override
-	public RealEstateResponse createRealEstate(RealEstateRequest request) {
+	public RealEstateResponse createRealEstate(RealEstateRequest request, String estateAgentEmail) {
 
 		var realEstateSpec = realEstateMapper.toSpec(request);
 		
-		var estateAgent = estateAgentFinder.getEstateAgentByEmail(realEstateSpec.getEstateAgentEmail());
+		var estateAgent = estateAgentFinder.getEstateAgentByEmail(estateAgentEmail);
 		var cadastralData = cadastralDataFinder.getCadastralDataById(realEstateSpec.getCadastralDataId());
 		var detail = detailFinder.getDetailById(realEstateSpec.getDetailId());
 		
@@ -83,12 +83,12 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
 
     @Override
     @Transactional
-    public RealEstateResponse updateRealEstate(Long id, RealEstateRequest request) {
+    public RealEstateResponse updateRealEstate(Long id, RealEstateRequest request, String estateAgentEmail) {
 
         var realEstateSpec = realEstateMapper.toSpec(request);
         var realEstateToUpdate = realEstateFinder.getRealEstateById(id);
 
-        var estateAgent = estateAgentFinder.getEstateAgentByEmail(realEstateSpec.getEstateAgentEmail());
+        var estateAgent = estateAgentFinder.getEstateAgentByEmail(estateAgentEmail);
         var cadastralData = cadastralDataFinder.getCadastralDataById(realEstateSpec.getCadastralDataId());
         var detail = detailFinder.getDetailById(realEstateSpec.getDetailId());
 

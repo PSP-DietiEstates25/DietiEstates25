@@ -17,11 +17,10 @@ public class OfferSpec extends ProposalSpec {
 	public OfferSpec(
 			String category,
 			String status,
-			String userEmail,
 			BigDecimal amount,
             Long counteredOfferId
 			) {
-		super(category, status, userEmail);
+		super(category, status);
 		this.amount = amount;
         this.counteredOfferId = counteredOfferId;
 	}

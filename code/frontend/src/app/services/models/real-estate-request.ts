@@ -7,6 +7,5 @@ export interface RealEstateRequest {
   category: string;
   description: string;
   detailId?: number;
-  estateAgentEmail: string;
   images: Array<string>;
 }

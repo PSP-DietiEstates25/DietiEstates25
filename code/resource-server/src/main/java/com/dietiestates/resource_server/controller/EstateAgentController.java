@@ -6,6 +6,9 @@ import com.dietiestates.resource_server.service.EstateAgentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import com.dietiestates.resource_server.dto.request.StafferRequest;
@@ -19,13 +22,16 @@ public class EstateAgentController {
     private final EstateAgentService estateAgentService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EstateAgentResponse> registerEstateAgent(
-            @RequestBody StafferRequest request
+            @RequestBody StafferRequest request,
+            @AuthenticationPrincipal Jwt jwt
     ) throws RoleNotFoundException {
 
-        var estateAgent = estateAgentService.register(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(estateAgent);
+        var creatorEmail = jwt.getSubject();
 
+        var estateAgent = estateAgentService.register(request, creatorEmail);
+        return ResponseEntity.status(HttpStatus.CREATED).body(estateAgent);
     }
 
     @GetMapping("/{estataeagentid}")

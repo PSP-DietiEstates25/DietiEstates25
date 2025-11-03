@@ -9,13 +9,13 @@ import java.util.List;
 
 public interface RealEstateService {
 
-	RealEstateResponse createRealEstate(RealEstateRequest request);
+	RealEstateResponse createRealEstate(RealEstateRequest request, String estateAgentEmail);
 	
 	RealEstateResponse getRealEstateById(Long id);
 
     Page<RealEstateResponse> getPagedRealEstates(Integer page, Integer size);
 
-    RealEstateResponse updateRealEstate(Long realEstateId, RealEstateRequest request);
+    RealEstateResponse updateRealEstate(Long realEstateId, RealEstateRequest request, String estateAgentEmail);
 
     void deleteRealEstate(Long realEstateId);
 	

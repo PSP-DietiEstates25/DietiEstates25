@@ -7,5 +7,4 @@ export interface VisitRequest {
   date: string;
   status: string;
   time: string;
-  userEmail: string;
 }

@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,9 +27,12 @@ public class SearchController {
 
     @PostMapping()
     public ResponseEntity<List<RealEstateResponse>> createSearch(
-            @RequestBody @Valid SearchRequest request
+            @RequestBody @Valid SearchRequest request,
+            @AuthenticationPrincipal Jwt jwt
     ){
-        var realEstates = searchService.createSearch(request);
+        var userEmail = jwt.getSubject();
+
+        var realEstates = searchService.createSearch(request, userEmail);
         return ResponseEntity.status(HttpStatus.CREATED).body(realEstates);
     }
 }

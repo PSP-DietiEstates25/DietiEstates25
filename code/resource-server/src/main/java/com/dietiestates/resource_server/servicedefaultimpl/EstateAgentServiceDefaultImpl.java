@@ -27,15 +27,14 @@ public class EstateAgentServiceDefaultImpl implements EstateAgentService {
     private final RoleFinder roleFinder;
 
 	@Override
-	public EstateAgentResponse register(StafferRequest request) throws RoleNotFoundException {
+	public EstateAgentResponse register(StafferRequest request, String creatorEmail) throws RoleNotFoundException {
 		
 		var stafferSpec = estateAgentMapper.toSpec(request);
-		var estateAgentRole = roleFinder.getByRoleName("ROLE_ESTATE_AGENT");
-		var adminCreator = adminFinder.getAdminByEmail(stafferSpec.getAdminEmail());
-				
-		var estateAgent = estateAgentFactory.createEstateAgentFromSpec(stafferSpec.getEmail(), adminCreator);
-		estateAgentRepository.save(estateAgent);
 
+		var adminCreator = adminFinder.getAdminByEmail(creatorEmail);
+		var estateAgent = estateAgentFactory.createEstateAgentFromSpec(stafferSpec.getEmail(), adminCreator);
+
+		estateAgentRepository.save(estateAgent);
         return estateAgentMapper.fromEntity(estateAgent);
 	}
 

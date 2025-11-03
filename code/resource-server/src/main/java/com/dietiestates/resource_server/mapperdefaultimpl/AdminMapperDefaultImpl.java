@@ -19,7 +19,6 @@ public class AdminMapperDefaultImpl implements AdminMapper {
 	public StafferSpec toSpec(StafferRequest request) {
 		return StafferSpec.builder()
 				.email(request.getEmail())
-				.adminEmail(request.getAdminEmail())
 				.build();
 	}
 

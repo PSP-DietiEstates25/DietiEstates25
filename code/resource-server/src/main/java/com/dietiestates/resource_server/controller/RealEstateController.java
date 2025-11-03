@@ -7,6 +7,8 @@ import org.jboss.logging.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import com.dietiestates.resource_server.dto.request.RealEstateRequest;
@@ -25,10 +27,13 @@ public class RealEstateController {
 
     @PostMapping
     public ResponseEntity<RealEstateResponse> createRealEstate(
-            @RequestBody RealEstateRequest request
+            @RequestBody RealEstateRequest request,
+            @AuthenticationPrincipal Jwt jwt
     ) {
 
-        var realEstate = realEstateSerivce.createRealEstate(request);
+        var estateAgentEmail = jwt.getSubject();
+
+        var realEstate = realEstateSerivce.createRealEstate(request, estateAgentEmail);
         return ResponseEntity.status(HttpStatus.CREATED).body(realEstate);
     }
 
@@ -63,10 +68,13 @@ public class RealEstateController {
     @PutMapping("/{realestateid}")
     public ResponseEntity<RealEstateResponse> updateRealEstate(
             @PathVariable Long realestateid,
-            @RequestBody @Valid RealEstateRequest request
+            @RequestBody @Valid RealEstateRequest request,
+            @AuthenticationPrincipal Jwt jwt
     ) {
 
-        var realEstate = realEstateSerivce.updateRealEstate(realestateid, request);
+        var estateAgentEmail = jwt.getSubject();
+
+        var realEstate = realEstateSerivce.updateRealEstate(realestateid, request, estateAgentEmail);
         return ResponseEntity.status(HttpStatus.OK).body(realEstate);
     }
 

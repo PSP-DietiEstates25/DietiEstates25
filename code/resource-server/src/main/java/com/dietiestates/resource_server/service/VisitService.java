@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 
 public interface VisitService {
 
-	VisitResponse createVisit(VisitRequest request, Long realEstateId);
+	VisitResponse createVisit(VisitRequest request, Long realEstateId, String userEmail);
 	
 	VisitResponse getVisitById(Long realEstateId, Long visitId) throws VisitNotOwnedByRealEstateException;
 

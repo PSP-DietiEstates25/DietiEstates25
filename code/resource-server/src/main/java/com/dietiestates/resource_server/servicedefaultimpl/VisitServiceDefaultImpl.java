@@ -37,11 +37,11 @@ public class VisitServiceDefaultImpl implements VisitService {
 	private final UserFinder userFinder;
 	
 	@Override
-	public VisitResponse createVisit(VisitRequest request, Long realEstateId) {
+	public VisitResponse createVisit(VisitRequest request, Long realEstateId, String userEmail) throws VisitNotOwnedByRealEstateException {
 		
 		var visitSpec = visitMapper.toSpec(request);
 		
-		var user = userFinder.getUserByEmail(visitSpec.getUserEmail());
+		var user = userFinder.getUserByEmail(userEmail);
 		var realEstate = realEstateFinder.getRealEstateById(realEstateId);
 		
 		var visit = visitFactory.createVisitFromSpec(visitSpec, user, realEstate);

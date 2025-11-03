@@ -8,7 +8,7 @@ import com.dietiestates.resource_server.model.Staffer;
 
 public interface EstateAgentService {
 
-	EstateAgentResponse register(StafferRequest request) throws RoleNotFoundException;
+	EstateAgentResponse register(StafferRequest request, String creatorEmail) throws RoleNotFoundException;
 
     EstateAgentResponse getEstateAgentById(Long estateAgentId) throws EstateAgentNotFoundException;
 }

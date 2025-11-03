@@ -8,5 +8,4 @@ export interface SearchRequest {
   detailId?: number;
   page: number;
   size: number;
-  userEmail: string;
 }

@@ -19,7 +19,6 @@ public class OfferMapperDefaultImpl implements OfferMapper {
 		var offerSpec = OfferSpec.offerSpecBuilder()
 				.category(request.getCategory())
 				.status(request.getStatus())
-				.userEmail(request.getUserEmail())
 				.amount(request.getAmount())
                 .counteredOfferId(
                         request.getCounteredOfferId() != null ? request.getCounteredOfferId() : null

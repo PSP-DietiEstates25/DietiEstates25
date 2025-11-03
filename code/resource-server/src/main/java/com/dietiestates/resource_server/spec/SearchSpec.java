@@ -13,7 +13,6 @@ public class SearchSpec {
 	private String category;
 	private Integer size;
 	private Integer page;
-	private String userEmail;
 	private Long cadastralFilterId;
 	private Long detailId;
 }

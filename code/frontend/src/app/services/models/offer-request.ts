@@ -7,5 +7,4 @@ export interface OfferRequest {
   category: string;
   counteredOfferId?: number;
   status: string;
-  userEmail: string;
 }

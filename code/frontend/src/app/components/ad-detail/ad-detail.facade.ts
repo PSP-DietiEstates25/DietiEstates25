@@ -259,7 +259,6 @@ export class AdDetailFacade {
       amount,
       category,
       status: 'PENDING',
-      userEmail,
     };
     return this.offerApi.createOffer({ realestateid: vm.realEstateId, body });
   }
@@ -277,7 +276,6 @@ export class AdDetailFacade {
       status: 'PENDING',
       date,
       time,
-      userEmail,
     };
     return this.visitApi.createVisit({ realestateid: vm.realEstateId, body });
   }

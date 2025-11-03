@@ -27,15 +27,14 @@ public class AdminServiceDefaultImpl implements AdminService {
 	private final RoleFinder roleFinder;
 
 	@Override
-	public AdminResponse register(StafferRequest request) throws RoleNotFoundException {
+	public AdminResponse register(StafferRequest request, String creatorEmail) throws RoleNotFoundException {
 		
 		var adminSpec = adminMapper.toSpec(request);
-		var adminRole = roleFinder.getByRoleName("ROLE_ADMIN");
-		var adminCreator = adminFinder.getAdminByEmail(adminSpec.getAdminEmail());
-		
-		var admin = adminFactory.createAdminFromSpec(adminSpec.getEmail(), adminCreator);
-		adminRepository.save(admin);
 
+		var adminCreator = adminFinder.getAdminByEmail(creatorEmail);
+		var admin = adminFactory.createAdminFromSpec(adminSpec.getEmail(), adminCreator);
+
+		adminRepository.save(admin);
         return adminMapper.fromEntity(admin);
 	}
 

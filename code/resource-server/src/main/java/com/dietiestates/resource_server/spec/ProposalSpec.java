@@ -13,5 +13,4 @@ public abstract class ProposalSpec {
 
 	private String category;
 	private String status;
-	private String userEmail;
 }

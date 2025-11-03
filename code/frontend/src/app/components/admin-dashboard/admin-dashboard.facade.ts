@@ -257,8 +257,7 @@ export class AdminDashboardFacade {
           // collega come staffer nel dominio applicativo
           switchMap(() => {
             const payload: StafferRequest = { 
-              email: email,
-              adminEmail: "adnim@admin.com"
+              email: email
             };
             return this.resourceServerEstateAgentService.registerEstateAgent({ body: payload });
           }),
@@ -286,8 +285,7 @@ export class AdminDashboardFacade {
           switchMap(() => {
 
             const payload: StafferRequest = { 
-              email: email,
-              adminEmail: "adnim@admin.com"
+              email: email
             };
             return this.resourceServerAdminService.registerAdmin({ body: payload })
           }),

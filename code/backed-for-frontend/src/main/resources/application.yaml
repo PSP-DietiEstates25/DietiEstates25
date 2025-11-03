@@ -99,7 +99,7 @@ spring:
               predicates:
                 - Path=/v3/api-docs/swagger-config
 
-            # /auth/users
+            #/users
             - id: resource_server_register_user
               uri: http://localhost:8090
               predicates:
@@ -107,7 +107,7 @@ spring:
               filters:
                 - RelayTokenIfExists=messaging-client-authorization-code
 
-            #/auth/admins
+            #/admins
             - id: resource_server_register_admin
               uri: http://localhost:8090
               predicates:
@@ -115,7 +115,7 @@ spring:
               filters:
                 - RelayTokenIfExists=messaging-client-authorization-code
 
-            #/auth/estateagents
+            #/estateagents
             - id: resource_server_register_estate_agents
               uri: http://localhost:8090
               predicates:

@@ -42,12 +42,12 @@ public class OfferServiceDefaultImpl implements OfferService {
     private final NotificationService notificationService;
 
 	@Override
-	public OfferResponse createOffer(OfferRequest request, Long realEstateId, Authentication authentication) {
+	public OfferResponse createOffer(OfferRequest request, Long realEstateId, String userEmail, String role) {
 
 		var offerSpec = offerMapper.toSpec(request);
-        chooseOfferCategory(offerSpec, authentication);
+        chooseOfferCategory(offerSpec, role);
 
-		var user = userFinder.getUserByEmail(offerSpec.getUserEmail());
+		var user = userFinder.getUserByEmail(userEmail);
 		var realEstate = realEstateFinder.getRealEstateById(realEstateId);
 
         Offer counteredOffer = null;
@@ -133,11 +133,11 @@ public class OfferServiceDefaultImpl implements OfferService {
     }
 
     @Override
-    public void chooseOfferCategory(OfferSpec offerSpec, Authentication authentication){
-        if(authentication.getAuthorities().contains("SCOPE_ESTATE_AGENT")) {
+    public void chooseOfferCategory(OfferSpec offerSpec, String role){
+        if(role.equals("ESTATE_AGENT")) {
             offerSpec.setCategory(ProposalCategory.COUNTER_OFFER.toString());
         }
-        else if(authentication.getAuthorities().contains("SCOPE_USER"))
+        else if(role.equals("USER"))
             offerSpec.setCategory(ProposalCategory.OFFER.toString());
     }
 

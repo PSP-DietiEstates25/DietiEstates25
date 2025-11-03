@@ -9,7 +9,7 @@ import org.springframework.security.core.Authentication;
 
 public interface OfferService {
 
-	OfferResponse createOffer(OfferRequest request, Long realEstateId, Authentication authentication);
+	OfferResponse createOffer(OfferRequest request, Long realEstateId, String userEmail, String role);
 	
 	OfferResponse getOfferById(Long realEstateId, Long offerId);
 
@@ -17,5 +17,5 @@ public interface OfferService {
 
     OfferResponse updateOfferStatus(OfferRequest request, Long realEstateId, Long offerId);
 
-    void chooseOfferCategory(OfferSpec offerSpec, Authentication authentication);
+    void chooseOfferCategory(OfferSpec offerSpec, String role);
 }

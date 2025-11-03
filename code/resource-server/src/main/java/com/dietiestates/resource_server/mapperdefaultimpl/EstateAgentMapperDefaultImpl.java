@@ -19,7 +19,6 @@ public class EstateAgentMapperDefaultImpl implements EstateAgentMapper {
 	public StafferSpec toSpec(StafferRequest request) {
 		return StafferSpec.builder()
 				.email(request.getEmail())
-				.adminEmail(request.getAdminEmail())
 				.build();
 	}
 	

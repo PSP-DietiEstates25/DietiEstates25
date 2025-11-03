@@ -21,7 +21,6 @@ public class VisitMapperDefaultImpl implements VisitMapper {
 		return VisitSpec.visitSpecBuilder()
 				.category(request.getCategory())
 				.status(request.getStatus())
-				.userEmail(request.getUserEmail())
 				.date(request.getDate())
 				.time(request.getTime())
 				.build();

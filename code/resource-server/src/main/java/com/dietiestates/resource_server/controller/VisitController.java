@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import com.dietiestates.resource_server.dto.request.VisitRequest;
@@ -31,9 +33,12 @@ public class VisitController {
     @PostMapping
     public ResponseEntity<VisitResponse> createVisit(
             @RequestBody VisitRequest request,
-            @PathVariable Long realestateid
+            @PathVariable Long realestateid,
+            @AuthenticationPrincipal Jwt jwt
     ){
-        var visit = visitService.createVisit(request, realestateid);
+        var userEmail = jwt.getSubject();
+
+        var visit = visitService.createVisit(request, realestateid, userEmail);
         return ResponseEntity.status(HttpStatus.OK).body(visit);
     }
 

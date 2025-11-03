@@ -10,6 +10,4 @@ import lombok.*;
 public class StafferSpec {
 
     private String email;
-	private String adminEmail;
-
 }

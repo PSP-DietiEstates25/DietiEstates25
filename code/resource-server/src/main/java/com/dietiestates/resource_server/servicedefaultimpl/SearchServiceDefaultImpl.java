@@ -41,11 +41,11 @@ public class SearchServiceDefaultImpl implements SearchService {
 	private final SearchRealEstateService searchRealEstateService;
 	
 	@Override
-	public List<RealEstateResponse> createSearch(SearchRequest request) {
+	public List<RealEstateResponse> createSearch(SearchRequest request, String userEmail) {
 		
 		var searchSpec = searchMapper.toSpec(request);
 		
-		var user = userFinder.getUserByEmail(searchSpec.getUserEmail());
+		var user = userFinder.getUserByEmail(userEmail);
 	    var cadastralFilter = cadastralFilterFinder.getCadastralFilterById(searchSpec.getCadastralFilterId());
 	    var detail = detailFinder.getDetailById(searchSpec.getDetailId());
 	    

@@ -24,7 +24,6 @@ public class RealEstateMapperDefaultImpl implements RealEstateMapper {
 				.category(request.getCategory())
 				.images(request.getImages())
 				.description(request.getDescription())
-				.estateAgentEmail(request.getEstateAgentEmail())
 				.cadastralDataId(request.getCadastralDataId())
 				.detailId(request.getDetailId())
 				.build();

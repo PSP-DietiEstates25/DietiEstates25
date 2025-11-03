@@ -29,9 +29,9 @@ public class AdminController {
             @AuthenticationPrincipal Jwt jwt
     ) throws RoleNotFoundException {
 
-        var creatorId = jwt.getSubject();
+        var creatorEmail = jwt.getSubject();
 
-        var admin = adminService.register(request);
+        var admin = adminService.register(request, creatorEmail);
         return ResponseEntity.status(HttpStatus.CREATED).body(admin);
     }
 

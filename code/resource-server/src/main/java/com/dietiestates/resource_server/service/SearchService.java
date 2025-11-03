@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface SearchService {
 
-	List<RealEstateResponse> createSearch(SearchRequest request);
+	List<RealEstateResponse> createSearch(SearchRequest request, String userEmail);
 
 }

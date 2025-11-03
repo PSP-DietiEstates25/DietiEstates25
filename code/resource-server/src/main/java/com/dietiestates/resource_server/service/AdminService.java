@@ -9,7 +9,7 @@ import java.security.Principal;
 
 public interface AdminService {
 
-	AdminResponse register(StafferRequest request) throws RoleNotFoundException;
+	AdminResponse register(StafferRequest request, String creatorEmail) throws RoleNotFoundException;
 
     AdminResponse getAdminById(Long adminId) throws AdminNotFoundException;
 }

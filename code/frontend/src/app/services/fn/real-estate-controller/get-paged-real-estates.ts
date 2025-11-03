@@ -15,7 +15,7 @@ export interface GetPagedRealEstates$Params {
   size?: number;
 }
 
-export function   getPagedRealEstates(http: HttpClient, rootUrl: string, params?: GetPagedRealEstates$Params, context?: HttpContext): Observable<StrictHttpResponse<PageRealEstateResponse>> {
+export function getPagedRealEstates(http: HttpClient, rootUrl: string, params?: GetPagedRealEstates$Params, context?: HttpContext): Observable<StrictHttpResponse<PageRealEstateResponse>> {
   const rb = new RequestBuilder(rootUrl, getPagedRealEstates.PATH, 'get');
   if (params) {
     rb.query('page', params.page, {});

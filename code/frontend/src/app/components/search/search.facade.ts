@@ -338,7 +338,6 @@ export class SearchFacade {
       category: requestedCategory,
       page: params.page,
       size: params.size,
-      userEmail: resolvedEmail,
       detailId: this.detailId()!,
       cadastralFilterId: this.cadastralFilterId()!,
     };

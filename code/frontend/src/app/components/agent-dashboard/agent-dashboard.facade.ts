@@ -474,7 +474,6 @@ export class AgentDashboardFacade {
     const body: OfferRequest = {
       amount,
       status: 'PENDING',
-      userEmail: email,
       category: 'OFFER',
     };
 

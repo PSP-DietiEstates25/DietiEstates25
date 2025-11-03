@@ -82,7 +82,7 @@ public class SecurityConfig {
                         .loginPage(loginUrl)
                         .successHandler(userRepositoryOAuth2UserHandler)
                 )
-                .oauth2Client(Customizer.withDefaults()) // <— necessario per /oauth2/authorization/google
+                .oauth2Client(Customizer.withDefaults())
                 .exceptionHandling(ex -> ex
                         .defaultAuthenticationEntryPointFor(
                                 new LoginUrlAuthenticationEntryPoint(loginUrl),

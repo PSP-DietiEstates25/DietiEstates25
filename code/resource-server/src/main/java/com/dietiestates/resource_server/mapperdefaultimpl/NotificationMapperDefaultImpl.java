@@ -19,8 +19,7 @@ public class NotificationMapperDefaultImpl implements NotificationMapper {
 	public NotificationSpec toSpec(NotificationRequest request) {
 		return NotificationSpec.builder()
 				.message(request.getMessage())
-				//.notificationCategoryName(request.getNotificationCategoryName())
-				.userEmail(request.getUserEmail())
+                .userEmail(request.getUserEmail())
 				.build();
 	}
 	
