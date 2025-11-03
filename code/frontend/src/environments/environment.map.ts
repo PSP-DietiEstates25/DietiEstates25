@@ -14,4 +14,4 @@ export const environmentMap = {
     initialLongitude: 14.2487679,
     initialZoom: 10.5,
     initialCanvasContextAttribute: {preserveDrawingBuffer: true},
-}
+};
