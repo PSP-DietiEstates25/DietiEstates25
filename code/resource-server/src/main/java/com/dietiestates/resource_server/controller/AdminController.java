@@ -5,6 +5,9 @@ import com.dietiestates.resource_server.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import com.dietiestates.resource_server.dto.request.StafferRequest;
@@ -20,9 +23,13 @@ public class AdminController {
     private final AdminService adminService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AdminResponse> registerAdmin(
-            @RequestBody StafferRequest request
+            @RequestBody StafferRequest request,
+            @AuthenticationPrincipal Jwt jwt
     ) throws RoleNotFoundException {
+
+        var creatorId = jwt.getSubject();
 
         var admin = adminService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(admin);

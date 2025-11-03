@@ -10,6 +10,5 @@ import lombok.*;
 public class NotificationSpec {
 
 	private String message;
-	//private String notificationCategoryName;
 	private String userEmail;
 }

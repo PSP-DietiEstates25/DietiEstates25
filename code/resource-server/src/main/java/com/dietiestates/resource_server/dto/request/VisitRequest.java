@@ -24,11 +24,10 @@ public class VisitRequest extends ProposalRequest {
     public VisitRequest(
             String category,
             String status,
-            String userEmail,
             String date,
             String time
     ) {
-        super(category, status, userEmail);
+        super(category, status);
         this.date = date;
         this.time = time;
     }

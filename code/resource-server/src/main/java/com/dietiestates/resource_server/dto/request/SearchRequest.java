@@ -32,11 +32,6 @@ public class SearchRequest {
     @Positive(message = "Page must be a positive number")
     private Integer page;
 
-    @NotEmpty(message = "User email is mandatory")
-    @NotBlank(message = "User email is mandatory")
-    @Email
-    private String userEmail;
-
     @Positive(message = "Cadastral filter id must be a positive number")
     private Long cadastralFilterId;
 

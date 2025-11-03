@@ -28,10 +28,9 @@ public class OfferRequest extends ProposalRequest {
     public OfferRequest(
             String category,
             String status,
-            String userEmail,
             BigDecimal amount
     ) {
-        super(category, status, userEmail);
+        super(category, status);
         this.amount = amount;
     }
 }

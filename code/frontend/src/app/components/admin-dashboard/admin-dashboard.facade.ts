@@ -8,15 +8,18 @@ import {
   AdminControllerService,
 } from '../../services/services';
 
-import { StafferRequest } from '../../services/models/staffer-request';
 import { EstateAgent } from '../../services/models/estate-agent';
 import { RealEstateResponse } from '../../services/models/real-estate-response';
-import { EstateAgentResponse } from '../../services/models/estate-agent-response';
 import { PageRealEstateResponse } from '../../services/models/page-real-estate-response';
 
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration } from '../../services/api-configuration';
 import { AutentServiceService } from '../../autent.service.service';
+
+import { StafferRequest } from '../../services/models';
+import { StafferResponse } from '../../services/models';
+import { AdminResponse } from '../../services/models';
+import { EstateAgentResponse } from '../../services/models';
 
 export interface AdminAd {
   id: number;
@@ -40,6 +43,23 @@ export interface AdminUser {
 export interface ListAdsOpts {
   q?: string;
   active?: boolean | '';
+}
+
+//gli account mappano i dto dell'authorization server
+export interface AccountResponse {
+
+  id?: number,
+  email?: string,
+  role?: string,
+  locked?: boolean,
+  active?: boolean
+}
+
+export interface AccountRequest {
+
+  email?: string,
+  password?: string,
+  role?: string
 }
 
 @Injectable({ providedIn: 'root' })
@@ -162,7 +182,7 @@ export class AdminDashboardFacade {
     );
   }
   deleteAd(id: number): Observable<void> {
-    return this.estateApi.deleteRealEstate({ realestateid: id }).pipe(
+    return this.resourceServerRealEstateService.deleteRealEstate({ realestateid: id }).pipe(
       switchMap(() => this.listAds({})),
       catchError((e) => {
         console.error('[AdminDashboard] deleteAd error', e);
@@ -188,44 +208,59 @@ export class AdminDashboardFacade {
 
   // ===== USERS =====
 
+  //crea un account nell'authorization server
   private authRegister(
     email: string,
     password: string,
     role?: Role
   ): Observable<AccountResponse> {
-    const body: RegisterRequest = {
+
+    /*
+    const body: AccountRequest = {
       email,
       password,
       ...(role ? ({ role } as any) : {}),
     } as any;
+    */
+    const body: AccountRequest = {
+      email: email,
+      password: password,
+      role: role
+    };
 
-    return authRegisterFn(this.http, this.apiConfig.rootUrl, { body }).pipe(
+    return this.authenticationServerAccountService.register(body)
+    /*
+    .pipe(
       map((resp) => resp.body as AccountResponse)
     );
+    */
   }
 
+  //crea un account nel resource server
   createUser(body: {
     email: string;
     role: Role;
     password: string;
   }): Observable<AdminUser> {
-    const { email, role, password } = body;
 
-    const adminEmail = this.getAdminEmailFromJwt();
-    if (!adminEmail) {
-      return throwError(
-        () => new Error('adminEmail non reperibile dal token JWT.')
-      );
-    }
+    const {email, role, password} = body;
 
-    switch (role) {
+    switch (body.role) {
       case 'AGENT': {
         // crea account credenziale su authorization server
-        return this.authRegister(email, password, 'AGENT').pipe(
+        return this.authRegister(
+          email,
+          password,
+          'AGENT'
+        )
+        .pipe(
           // collega come staffer nel dominio applicativo
           switchMap(() => {
-            const payload: StafferRequest = { adminEmail, email };
-            return this.agentAuth.registerEstateAgent({ body: payload });
+            const payload: StafferRequest = { 
+              email: email,
+              adminEmail: "adnim@admin.com"
+            };
+            return this.resourceServerEstateAgentService.registerEstateAgent({ body: payload });
           }),
           map((agent: EstateAgentResponse) => ({
             id: Number((agent as any)?.id) || Date.now(),
@@ -242,13 +277,20 @@ export class AdminDashboardFacade {
 
       case 'ADMIN': {
         // crea account credenziale su authorization server
-        return this.authRegister(email, password, 'ADMIN').pipe(
+        return this.authRegister(
+          email,
+          password, 
+          'ADMIN'
+        ).pipe(
           // registra come admin nel dominio applicativo
-          switchMap(() =>
-            this.adminAuth.registerAdmin({
-              body: { adminEmail, email },
-            })
-          ),
+          switchMap(() => {
+
+            const payload: StafferRequest = { 
+              email: email,
+              adminEmail: "adnim@admin.com"
+            };
+            return this.resourceServerAdminService.registerAdmin({ body: payload })
+          }),
           map(() => ({
             id: Date.now(),
             email,

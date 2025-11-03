@@ -21,9 +21,4 @@ public class ProposalRequest {
     @NotEmpty(message = "Status is mandatory")
     @NotBlank(message = "Status is mandatory")
     private String status;
-
-    @NotEmpty(message = "User email is mandatory")
-    @NotBlank(message = "User email is mandatory")
-    @Email(message = "User email is not valid")
-    private String userEmail;
 }

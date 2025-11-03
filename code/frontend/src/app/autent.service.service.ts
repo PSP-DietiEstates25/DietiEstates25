@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AccountResponse } from './components/admin-dashboard/admin-dashboard.facade';
 
 @Injectable({
   providedIn: 'root'
@@ -28,17 +29,17 @@ export class AutentServiceService {
   }
 
   register(registerRequest: {
-    email: string,
-    password: string,
+    email?: string,
+    password?: string,
     role?: string,
   }) {
     const url = 'http://localhost:8080/auth/register';
-    return this.httpClient.post<string>(url, registerRequest, this.httpOptions);
+    return this.httpClient.post<AccountResponse>(url, registerRequest, this.httpOptions);
   }
 
   changeAdminPassword(changeAdminPasswordRequest: {
-    oldPassword: string,
-    newPassword: string
+    oldPassword?: string,
+    newPassword?: string
   }){
     const url = 'http:localhost:8080/account/password';
     return this.httpClient.patch(url, changeAdminPasswordRequest, this.httpOptions);

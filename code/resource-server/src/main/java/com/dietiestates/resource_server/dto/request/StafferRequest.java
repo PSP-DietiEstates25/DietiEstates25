@@ -16,10 +16,5 @@ public class StafferRequest {
     @NotEmpty(message = "Email is mandatory")
     @NotBlank(message = "Email is mandatory")
     private String email;
-
-    @Email(message = "Email is not valid")
-    @NotEmpty(message = "Admin creator email is mandatory")
-    @NotBlank(message = "Admin creator email is mandatory")
-    private String adminEmail;
 }
 

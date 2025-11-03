@@ -26,10 +26,4 @@ public class NotificationRequest {
     @NotBlank(message = "User email id is mandatory")
     @Email
     private String userEmail;
-
-	/*
-	@NotEmpty(message = "Notification category name is mandatory")
-	@NotBlank(message = "Notification category name is mandatory")
-	private String notificationCategoryName;
-	*/
 }

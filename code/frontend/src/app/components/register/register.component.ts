@@ -7,10 +7,10 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { RegisterRequest } from '../../services_server/authorization_server/models';
 import { AutentServiceService } from '../../autent.service.service';
 import { environment } from '../../../environments/environment';
 import { firstValueFrom } from 'rxjs';
+import { AccountRequest } from '../admin-dashboard/admin-dashboard.facade';
 
 function matchPassword(group: AbstractControl): ValidationErrors | null {
   const p = group.get('password')?.value;
@@ -64,7 +64,7 @@ export class RegisterComponent {
     const raw = this.registerForm.getRawValue();
     const email = raw.email.trim();
     const password = raw.passwords.password.trim();
-    const body = { email, password, role: 'USER' } as RegisterRequest;
+    const body = { email, password, role: 'USER' } as AccountRequest;
 
     try {
       await firstValueFrom(this.autentService.getCsrf());

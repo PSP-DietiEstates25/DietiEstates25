@@ -30,11 +30,6 @@ public class RealEstateRequest {
     @Size(max = 200, message = "Description must be a maximum of 200 characters long")
     private String description;
 
-    @NotEmpty(message = "Estate agente email is mandatory")
-    @NotBlank(message = "Estate agent email is mandatory")
-    @Email
-    private String estateAgentEmail;
-
     @Positive(message = "Cadastral data id must be a positive number")
     private Long cadastralDataId;
 
