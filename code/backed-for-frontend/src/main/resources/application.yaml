@@ -105,7 +105,7 @@ spring:
               predicates:
                 - Path=/users
               filters:
-                - RelayTokenIfExists=messaging-client-authorization-code
+                - RelayTokenIfExists=messaging-client-oidc
 
             #/admins
             - id: resource_server_register_admin
@@ -121,7 +121,7 @@ spring:
               predicates:
                 - Path=/estateagents
               filters:
-                - RelayTokenIfExists=messaging-client-authorization-code
+                - RelayTokenIfExists=messaging-client-oidc
 
             # /realestates
             #POST realestates
@@ -131,7 +131,7 @@ spring:
                 - Path=/realestates
                 - Method=POST
               filters:
-                - RelayTokenIfExists=messaging-client-authorization-code
+                - RelayTokenIfExists=messaging-client-oidc
                 - RemoveRequestHeader=Cookie
 
             #GET realestates?page=1&size=10
@@ -164,7 +164,7 @@ spring:
               predicates:
                 - Path=/searches
               filters:
-                - RelayTokenIfExists=messaging-client-authorization-code
+                - RelayTokenIfExists=messaging-client-oidc
 
             # /detais
             - id: resource_server_details
@@ -172,7 +172,7 @@ spring:
               predicates:
                 - Path=/details
               filters:
-                - RelayTokenIfExists=messaging-client-authorization-code
+                - RelayTokenIfExists=messaging-client-oidc
 
             # /geographicalpositions
             - id: resource_server_geographical_positions
@@ -180,7 +180,7 @@ spring:
               predicates:
                 - Path=/geographicalpositions
               filters:
-                - RelayTokenIfExists=messaging-client-authorization-code
+                - RelayTokenIfExists=messaging-client-oidc
 
             # /utilities
             - id: resource_server_utilities
@@ -188,7 +188,7 @@ spring:
               predicates:
                 - Path=/utilities
               filters:
-                - RelayTokenIfExists=messaging-client-authorization-code
+                - RelayTokenIfExists=messaging-client-oidc
 
             #/cadastraldata
             - id: resource_server_cadastral_data
@@ -196,7 +196,7 @@ spring:
               predicates:
                 - Path=/cadastraldata
               filters:
-                - RelayTokenIfExists=messaging-client-authorization-code
+                - RelayTokenIfExists=messaging-client-oidc
 
             #/cadastralfilters
             - id: resource_server_cadastral_filters
@@ -204,7 +204,7 @@ spring:
               predicates:
                 - Path=/cadastralfilters
               filters:
-                - RelayTokenIfExists=messaging-client-authorization-code
+                - RelayTokenIfExists=messaging-client-oidc
 
             #/realestates/{realestateid}/offers
             - id: resource_server_realestate_offers
@@ -212,7 +212,7 @@ spring:
               predicates:
                 - Path=/realestates/{realestateid}/offers
               filters:
-                - RelayTokenIfExists=messaging-client-authorization-code
+                - RelayTokenIfExists=messaging-client-oidc
 
             #/realestates/{realestateid}/visits
             - id: resource_server_realestate_visits
@@ -220,7 +220,7 @@ spring:
               predicates:
                 - Path=/realestates/{realestateid}/visits
               filters:
-                - RelayTokenIfExists=messaging-client-authorization-code
+                - RelayTokenIfExists=messaging-client-oidc
 
             #/notificationcategories
             - id: resource_server_notification_categories
@@ -228,7 +228,7 @@ spring:
               predicates:
                 - Path=/notificationcategories
               filters:
-                - RelayTokenIfExists=messaging-client-authorization-code
+                - RelayTokenIfExists=messaging-client-oidc
 
             #/notificationcategories/{name}/notification
             - id: resource_server_notification_categories_notification
@@ -236,7 +236,7 @@ spring:
               predicates:
                 - Path=/notificationcategories/{name}/notifications
               filters:
-                - RelayTokenIfExists=messaging-client-authorization-code
+                - RelayTokenIfExists=messaging-client-oidc
 app:
   base-uri: http://localhost:4200
 
