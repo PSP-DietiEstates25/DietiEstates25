@@ -140,8 +140,6 @@ spring:
               predicates:
                 - Path=/realestates
                 - Method=GET
-                - Query=page, /^\d+$/
-                - Query=size, /^\d+$/
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
                 - RemoveRequestHeader=Cookie

@@ -88,6 +88,7 @@ public class SecurityConfig {
                                 "/estateagents",
                                 "/admins",
                                 "/realestates",
+                                "/realestates/**",
                                 "/notificationcategories",
                                 "/searches",
                                 "/offers",
