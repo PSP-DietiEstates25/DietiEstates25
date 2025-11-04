@@ -10,13 +10,14 @@ spring:
   ssl:
     bundle:
       jks:
-        authorization-server:
-          keystore:
-            location: "file:/mnt/c/Users/lucap/certs/authorization-server.jks"
-            password: "password"
+        authorization-server: # <-- definizione del bundle con lo stesso nome
           key:
-            alias: "authorization-server"
-            password: "password"
+            alias: as              # alias dentro il keystore (ad es. "as")
+            password: changeit     # password della chiave (se impostata)
+          keystore:
+            location: "/home/luca/certs/apps/as-keystore.p12"  # path valido in WSL
+            type: PKCS12
+            password: changeit
   datasource:
     url: jdbc:postgresql://localhost:5431/dietiestates_authorization_server
     username: dietiestates

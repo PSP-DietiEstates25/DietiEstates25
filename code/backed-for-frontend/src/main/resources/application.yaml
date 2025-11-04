@@ -113,7 +113,7 @@ spring:
               predicates:
                 - Path=/admins
               filters:
-                - RelayTokenIfExists=messaging-client-authorization-code
+                - RelayTokenIfExists=messaging-client-oidc
 
             #/estateagents
             - id: resource_server_register_estate_agents
