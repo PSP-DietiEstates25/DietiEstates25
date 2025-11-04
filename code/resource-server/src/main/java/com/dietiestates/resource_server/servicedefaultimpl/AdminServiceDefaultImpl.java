@@ -24,8 +24,6 @@ public class AdminServiceDefaultImpl implements AdminService {
 	private final AdminFinder adminFinder;
 	private final AdminMapper adminMapper;
 
-	private final RoleFinder roleFinder;
-
 	@Override
 	public AdminResponse register(StafferRequest request, String creatorEmail) throws RoleNotFoundException {
 		

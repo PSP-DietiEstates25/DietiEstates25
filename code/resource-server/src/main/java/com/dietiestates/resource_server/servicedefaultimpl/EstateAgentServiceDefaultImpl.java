@@ -24,8 +24,6 @@ public class EstateAgentServiceDefaultImpl implements EstateAgentService {
 	private final EstateAgentFinder estateAgentFinder;
 	private final EstateAgentMapper estateAgentMapper;
 
-    private final RoleFinder roleFinder;
-
 	@Override
 	public EstateAgentResponse register(StafferRequest request, String creatorEmail) throws RoleNotFoundException {
 		

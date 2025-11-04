@@ -85,7 +85,7 @@ public class SecurityConfig {
                         */
 
                         .requestMatchers(
-                                "/estateagent",
+                                "/estateagents",
                                 "/admins",
                                 "/realestates",
                                 "/notificationcategories",
