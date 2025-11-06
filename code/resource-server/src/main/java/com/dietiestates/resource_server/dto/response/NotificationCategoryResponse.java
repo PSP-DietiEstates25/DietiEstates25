@@ -18,4 +18,5 @@ public class NotificationCategoryResponse {
     private LocalDateTime lastModifiedDate;
     private String name;
     private Boolean isActive;
+    private String userEmail;
 }

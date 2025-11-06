@@ -20,4 +20,8 @@ public class NotificationCategoryRequest {
     @NotEmpty(message = "isActive is mandatory")
     @NotBlank(message = "isActive is mandatory")
     private Boolean isActive;
+
+    @NotEmpty(message = "User email is mandatory")
+    @NotBlank(message = "User email is mandatory")
+    private String userEmail;
 }

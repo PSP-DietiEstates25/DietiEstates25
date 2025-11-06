@@ -215,13 +215,6 @@ export class AdminDashboardFacade {
     role?: Role
   ): Observable<AccountResponse> {
 
-    /*
-    const body: AccountRequest = {
-      email,
-      password,
-      ...(role ? ({ role } as any) : {}),
-    } as any;
-    */
     const body: AccountRequest = {
       email: email,
       password: password,
@@ -229,11 +222,6 @@ export class AdminDashboardFacade {
     };
 
     return this.authenticationServerAccountService.register(body)
-    /*
-    .pipe(
-      map((resp) => resp.body as AccountResponse)
-    );
-    */
   }
 
   //crea un account nel resource server
@@ -283,7 +271,6 @@ export class AdminDashboardFacade {
         ).pipe(
           // registra come admin nel dominio applicativo
           switchMap(() => {
-
             const payload: StafferRequest = { 
               email: email
             };

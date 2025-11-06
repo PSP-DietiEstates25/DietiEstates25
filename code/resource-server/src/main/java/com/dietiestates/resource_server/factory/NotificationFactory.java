@@ -9,8 +9,7 @@ public interface NotificationFactory {
 
     Notification createNotificationFromSpec(
             NotificationSpec spec,
-            NotificationCategory notificationCategory,
-            User user
+            NotificationCategory notificationCategory
     );
 
 }

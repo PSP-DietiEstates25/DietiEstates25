@@ -19,7 +19,6 @@ public class NotificationMapperDefaultImpl implements NotificationMapper {
 	public NotificationSpec toSpec(NotificationRequest request) {
 		return NotificationSpec.builder()
 				.message(request.getMessage())
-                .userEmail(request.getUserEmail())
 				.build();
 	}
 	
@@ -31,7 +30,6 @@ public class NotificationMapperDefaultImpl implements NotificationMapper {
 				.lastModifiedDate(notification.getLastModifiedDate())
 				.message(notification.getMessage())
 				.notificationCategoryId(notification.getNotificationCategory().getId())
-				.userEmail(notification.getUser().getEmail())
 				.build();
 	}
 

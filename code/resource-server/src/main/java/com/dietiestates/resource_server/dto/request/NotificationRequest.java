@@ -21,9 +21,4 @@ public class NotificationRequest {
     @Size(min = 1, message = "Message must be at least 1 character long")
     @Size(max = 50, message = "Message must be maximum 50 characters long")
     private String message;
-
-    @NotEmpty(message = "User email is mandatory")
-    @NotBlank(message = "User email id is mandatory")
-    @Email
-    private String userEmail;
 }

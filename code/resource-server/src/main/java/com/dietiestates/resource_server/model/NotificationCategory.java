@@ -38,17 +38,26 @@ public class NotificationCategory {
 	@LastModifiedDate
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
-	
+
+    @ManyToOne
+    @JoinColumn(
+            nullable = false,
+            name = "user_id",
+            foreignKey = @ForeignKey(name = "NOTIFICATION_CATEGORY_USER_ID_FK"))
+    private User user;
+
 	@OneToMany(mappedBy = "notificationCategory", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<Notification> notifications = new ArrayList<>();
-	
+
 	@Builder(builderMethodName = "builder")
 	public NotificationCategory(
 			String name,
-			Boolean isActive
+			Boolean isActive,
+            User user
 			) {
 		this.name = NotificationCategoryType.valueOf(name);
 		this.isActive = isActive;
+        user.addNotificationCategory(this);
 	}
 	
 	public void addNotification(Notification notification) {

@@ -1,6 +1,6 @@
 package com.dietiestates.resource_server.model;
 
-import com.dietiestates.resource_server.enums.AdCategory;
+import com.dietiestates.resource_server.enums.RealEstateCategory;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -25,7 +25,7 @@ public class Search {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private AdCategory category;
+	private RealEstateCategory category;
 	
 	@Column(nullable = false)
 	private Integer size;
@@ -74,7 +74,7 @@ public class Search {
 			CadastralFilter cadastralFilter,
 			Detail detail
 			) {
-		this.category = AdCategory.valueOf(category);
+		this.category = RealEstateCategory.valueOf(category);
 		this.size = size;
 		this.page = page;
 		this.user = user;

@@ -21,23 +21,29 @@ public class Offer extends Proposal {
 
     @OneToOne
     @JoinColumn(
-            name = "countered_offer_id",
+            name = "counter_of_offer_id",
             nullable = true,
-            foreignKey = @ForeignKey(name = "COUNTERED_OFFER_OFFER_ID")
+            foreignKey = @ForeignKey(name = "OFFER_COUNTER_OF_OFFER_ID")
     )
-    private Offer counteredOffer;
+    private Offer counterOf;
+
+    @OneToOne(mappedBy="counterOf", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Offer counterOffer;
 
 	@Builder(builderMethodName = "builder")
 	public Offer(
-		String category, 
+		String category,
 		String status,
 		User user,
 		RealEstate realEstate,
-		BigDecimal amount,
-        Offer counteredOffer
-			) {
+		BigDecimal amount
+    ) {
 		super(category, status, user, realEstate);
 		this.amount = amount;
-        this.counteredOffer = counteredOffer;
 	}
+
+    public void setConterOf(Offer counteredOffer){
+        this.counterOf = counteredOffer;
+        counteredOffer.setCounterOffer(this);
+    }
 }

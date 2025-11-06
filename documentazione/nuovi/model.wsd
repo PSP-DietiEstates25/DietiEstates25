@@ -63,6 +63,29 @@ class Notification {
   - lastModifiedDate
 }
 
+class Negotiation {
+  - id
+  - createdDate
+  - lastModifiedDate
+}
+
+'Un round contiene massimo una offer ed una counter offer
+class NegotiationRound {
+  -id
+
+}
+
+class Reservation {
+  - id
+  - createdDate
+  - lastModifiedDate
+}
+
+enum NegotiationStatus {
+  OPEN
+  CLOSED
+}
+
 class NotificationCategory {
   - id
   - name
@@ -77,35 +100,20 @@ class Offer {
 
 class RealEstate {
   - id
-  - category: AdCategory
+  - category: RealEstateCategory
   - images
   - description
   - createdDate
   - lastModifiedDate
 }
 
-class Role {
-  - id
-  - name
-  - createdDate
-  - lastModifiedDate
-}
-
 class Search {
   - id
-  - category: AdCategory
+  - category: RealEstateCategory
   - size
   - page
   - createdDate
   - lastModifiedDate
-}
-
-class Token {
-  - id
-  - token
-  - createdDate
-  - lastModifiedDate
-  - validatedAt
 }
 
 class Utility {
@@ -140,18 +148,7 @@ class CadastralFilter {
   - lastModifiedDate
 }
 
-abstract Range<T> {
-  # min: T
-  # max: T
-}
-
-class IntegerRange {
-}
-
-class BigDecimalRange {
-}
-
-enum AdCategory {
+enum RealEstateCategory {
   SALE
   RENT
 }
@@ -170,7 +167,7 @@ enum EnergyClass {
 }
 
 enum NotificationCategoryType {
-  NEW_PROPERTIES 
+  NEW_PROPERTIES
 	PROMOTIONAL
 	VISIT
 	OFFER
@@ -181,22 +178,16 @@ enum ProposalCategory {
   OFFER
 }
 
-enum ProposalStatus {
-  ACCEPTED
-  REJECTED
-  PENDING
-}
-
+'Ereditarietà Proposal'
 Proposal <|-left- Visit
 Proposal <|-left- Offer
 
+'Ereditarietà user'
 User <|-left- Staffer
 
+'Ereditarietà Staffer'
 Staffer <|-- EstateAgent
 Staffer <|-- Admin
-
-Range <|-- IntegerRange : <<bind>> <T::Integer>
-Range <|-- BigDecimalRange : <<bind>> <T::BigDecimal>
 
 'Admin associations'
 Admin "1" -- "0..*" Admin : elige
@@ -210,18 +201,22 @@ Detail <-- "1" Utility
 RealEstate <-down- "1" Detail
 RealEstate " 1  " -right- "0..*" SearchRealEstate : selects
 RealEstate "0..*" -left- "1" EstateAgent : publish
-RealEstate "1" -up- "0..*" Proposal : contains
 RealEstate -down- CadastralData
+RealEstate "1" -left- "0..*" Negotiation: has
 
 'User association'
-User "  1 " -left- "0..*" Proposal : presents
-User "1..*" -up- "1..*" Role
-User "1" <-up- Token
-User " 1  " -right- "0..*" Notification : owns
+User " 1  " -right- "1..*" NotificationCategory : owns
 User "1" -- "0..*" Search : execute
 
+'Estate Agent association'
+EstateAgent "1" -right- "0..*" Negotiation
+
 'Notification association'
-Notification "1..*" -down- "1" NotificationCategory : individuate
+Notification "0..*" -down- "1" NotificationCategory : individuate
+
+'Negotiation association'
+Negotiation "1" -up- "0..*" NegotiationRound
+Negotiation "0..*" -down- "1" User: has
 
 'Search assocation'
 Search <-- "1" Detail

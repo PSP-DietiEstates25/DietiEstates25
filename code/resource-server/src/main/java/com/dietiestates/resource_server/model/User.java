@@ -35,7 +35,7 @@ public class User {
 	private LocalDateTime lastModifiedDate;
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Notification> notifications = new ArrayList<>();
+	private List<NotificationCategory> notificationCategories = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Search> searches = new ArrayList<>();
@@ -48,9 +48,9 @@ public class User {
 		this.email = email;
 	}
 	
-	public void addNotification(Notification notification) {
-		notifications.add(notification);
-		notification.setUser(this);
+	public void addNotificationCategory(NotificationCategory notificationCategory) {
+		notificationCategories.add(notificationCategory);
+        notificationCategory.setUser(this);
 	}
 	
 	public void addSearch(Search search) {

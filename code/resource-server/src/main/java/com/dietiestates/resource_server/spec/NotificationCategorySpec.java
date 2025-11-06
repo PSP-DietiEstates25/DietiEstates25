@@ -11,4 +11,5 @@ public class NotificationCategorySpec {
 
 	private String name;
 	private Boolean isActive;
+    private String userEmail;
 }

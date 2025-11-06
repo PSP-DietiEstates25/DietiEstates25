@@ -5,7 +5,9 @@ import com.dietiestates.resource_server.dto.response.NotificationCategoryRespons
 import com.dietiestates.resource_server.enums.NotificationCategoryType;
 import com.dietiestates.resource_server.factory.NotificationCategoryFactory;
 import com.dietiestates.resource_server.finder.NotificationCategoryFinder;
+import com.dietiestates.resource_server.finder.UserFinder;
 import com.dietiestates.resource_server.mapper.NotificationCategoryMapper;
+import com.dietiestates.resource_server.model.User;
 import com.dietiestates.resource_server.repository.NotificationCategoryRepository;
 import com.dietiestates.resource_server.service.NotificationCategoryService;
 import lombok.RequiredArgsConstructor;
@@ -19,15 +21,18 @@ public class NotificationCategoryServiceDefaultImpl implements NotificationCateg
 	private final NotificationCategoryFactory notificationCategoryFactory;
 	private final NotificationCategoryFinder notificationCategoryFinder;
 	private final NotificationCategoryMapper notificationCategoryMapper;
-	
+
+    private final UserFinder userFinder;
+
 	@Override
 	public NotificationCategoryResponse createNotificationCategory(NotificationCategoryRequest request) {
 		
 		var notificationCategorySpec = notificationCategoryMapper.toSpec(request);
-		
-		var notificationCategory = notificationCategoryFactory.createNotificationCategoryFromSpec(notificationCategorySpec);
+
+        var user = userFinder.getUserByEmail(request.getUserEmail());
+		var notificationCategory = notificationCategoryFactory.createNotificationCategoryFromSpec(notificationCategorySpec, user);
+
 		notificationCategoryRepository.save(notificationCategory);
-		
 		return notificationCategoryMapper.fromEntity(notificationCategory);
 	}
 	

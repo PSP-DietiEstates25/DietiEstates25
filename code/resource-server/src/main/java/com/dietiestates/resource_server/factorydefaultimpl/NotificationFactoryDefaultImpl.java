@@ -17,13 +17,11 @@ public class NotificationFactoryDefaultImpl implements NotificationFactory {
     @Override
     public Notification createNotificationFromSpec(
             NotificationSpec spec,
-            NotificationCategory notificationCategory,
-            User user
+            NotificationCategory notificationCategory
     ) {
         return Notification.builder()
                 .message(spec.getMessage())
                 .notificationCategory(notificationCategory)
-                .user(user)
                 .build();
     }
 

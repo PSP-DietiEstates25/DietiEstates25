@@ -1,6 +1,7 @@
 package com.dietiestates.resource_server.dto.response;
 
 import com.dietiestates.resource_server.model.Notification;
+import com.dietiestates.resource_server.model.NotificationCategory;
 import com.dietiestates.resource_server.model.Proposal;
 import com.dietiestates.resource_server.model.Search;
 import lombok.*;
@@ -20,7 +21,7 @@ public class UserResponse {
     private String email;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
-    private List<Notification> notifications = new ArrayList<>();
+    private List<NotificationCategory> notificationCategories = new ArrayList<>();
     private List<Search> searches = new ArrayList<>();
     private List<Proposal> proposals = new ArrayList<>();
 

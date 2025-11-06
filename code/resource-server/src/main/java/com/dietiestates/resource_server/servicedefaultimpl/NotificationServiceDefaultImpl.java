@@ -41,9 +41,8 @@ public class NotificationServiceDefaultImpl implements NotificationService {
 		var notificationSpec = notificationMapper.toSpec(request);
 		
 		var notificationCategory = notificationCategoryFinder.getNotificationCategoryByName(notificationCategoryName.toUpperCase());
-		var user = userFinder.getUserByEmail(notificationSpec.getUserEmail());
 	
-		var notification = notificationFactory.createNotificationFromSpec(notificationSpec, notificationCategory, user);
+		var notification = notificationFactory.createNotificationFromSpec(notificationSpec, notificationCategory);
 		notificationRepository.save(notification);
 		
 		return notificationMapper.fromEntity(notification);
@@ -54,15 +53,16 @@ public class NotificationServiceDefaultImpl implements NotificationService {
 
         searchesToNotify.forEach(search -> {
 
-            var newPropertiesNotificationCategory = notificationCategoryFinder.getNotificationCategoryByName("NEW_PROPERTIES");
+            var userNewPropertiesNotificationCategory = notificationCategoryFinder.getNotificationCategoryByNameAndUser(
+                    "NEW_PROPERTIES",
+                    search.getUser()
+            );
             var notificationSpec = NotificationSpec.builder()
                     .message("New property available")
-                    .userEmail(search.getUser().getEmail())
                     .build();
             var notification = notificationFactory.createNotificationFromSpec(
                     notificationSpec,
-                    newPropertiesNotificationCategory,
-                    search.getUser()
+                    userNewPropertiesNotificationCategory
             );
 
             notificationRepository.save(notification);

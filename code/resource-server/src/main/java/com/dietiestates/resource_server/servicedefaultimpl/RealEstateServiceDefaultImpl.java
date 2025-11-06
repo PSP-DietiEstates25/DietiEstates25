@@ -2,15 +2,13 @@ package com.dietiestates.resource_server.servicedefaultimpl;
 
 import com.dietiestates.resource_server.dto.request.RealEstateRequest;
 import com.dietiestates.resource_server.dto.response.RealEstateResponse;
-import com.dietiestates.resource_server.enums.AdCategory;
+import com.dietiestates.resource_server.enums.RealEstateCategory;
 import com.dietiestates.resource_server.factory.RealEstateFactory;
-import com.dietiestates.resource_server.filter.RealEstateFilter;
 import com.dietiestates.resource_server.finder.CadastralDataFinder;
 import com.dietiestates.resource_server.finder.DetailFinder;
 import com.dietiestates.resource_server.finder.EstateAgentFinder;
 import com.dietiestates.resource_server.finder.RealEstateFinder;
 import com.dietiestates.resource_server.mapper.RealEstateMapper;
-import com.dietiestates.resource_server.model.*;
 import com.dietiestates.resource_server.repository.RealEstateRepository;
 import com.dietiestates.resource_server.service.NotificationService;
 import com.dietiestates.resource_server.service.RealEstateService;
@@ -23,9 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -93,7 +89,7 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
         var detail = detailFinder.getDetailById(realEstateSpec.getDetailId());
 
         realEstateToUpdate.setCategory(
-                AdCategory.valueOf(realEstateSpec.getCategory())
+                RealEstateCategory.valueOf(realEstateSpec.getCategory())
         );
         realEstateToUpdate.setImages(Arrays.asList(realEstateSpec.getImages()));
         realEstateToUpdate.setDescription(realEstateSpec.getDescription());

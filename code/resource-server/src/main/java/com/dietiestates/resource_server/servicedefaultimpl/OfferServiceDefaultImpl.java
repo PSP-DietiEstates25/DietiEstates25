@@ -60,21 +60,6 @@ public class OfferServiceDefaultImpl implements OfferService {
 
 		return offerMapper.fromEntity(offer);
 	}
-    /*
-	@Override
-	public OfferResponse createOffer(OfferRequest request, Long realEstateId) {
-		
-		var offerSpec = offerMapper.toSpec(request);
-		
-		var user = userFinder.getUserByEmail(offerSpec.getUserEmail());
-		var realEstate = realEstateFinder.getRealEstateById(realEstateId);
-		
-		var offer = offerFactory.createOfferFromSpec(offerSpec, user, realEstate);
-		offerRepository.save(offer);
-		
-		return offerMapper.fromEntity(offer);
-	}
-	*/
 	
 	@Override
 	public OfferResponse getOfferById(Long realEstateId, Long offerId) {
@@ -127,7 +112,6 @@ public class OfferServiceDefaultImpl implements OfferService {
                 NotificationCategoryType.OFFER.toString(),
                 NotificationRequest.builder()
                         .message(message)
-                        .userEmail(offer.getUser().getEmail())
                         .build()
         );
     }

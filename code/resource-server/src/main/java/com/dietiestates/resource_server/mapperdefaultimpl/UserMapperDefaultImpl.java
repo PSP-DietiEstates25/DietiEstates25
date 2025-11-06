@@ -26,7 +26,7 @@ public class UserMapperDefaultImpl implements UserMapper {
                 .email(user.getEmail())
                 .createdDate(user.getCreatedDate())
                 .lastModifiedDate(user.getLastModifiedDate())
-                .notifications(user.getNotifications())
+                .notificationCategories(user.getNotificationCategories())
                 .searches(user.getSearches())
                 .proposals(user.getProposals())
                 .build();

@@ -2,6 +2,7 @@ package com.dietiestates.resource_server.repository;
 
 import com.dietiestates.resource_server.enums.NotificationCategoryType;
 import com.dietiestates.resource_server.model.NotificationCategory;
+import com.dietiestates.resource_server.model.User;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
@@ -12,4 +13,5 @@ public interface NotificationCategoryRepository extends CrudRepository<Notificat
 	
 	Optional<NotificationCategory> findByName(NotificationCategoryType name);
 
+    Optional<NotificationCategory> findByNameAndUser(NotificationCategoryType name, User user);
 }

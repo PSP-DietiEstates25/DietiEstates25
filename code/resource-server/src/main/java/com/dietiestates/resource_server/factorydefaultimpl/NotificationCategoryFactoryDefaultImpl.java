@@ -1,5 +1,6 @@
 package com.dietiestates.resource_server.factorydefaultimpl;
 
+import com.dietiestates.resource_server.model.User;
 import org.springframework.stereotype.Component;
 
 import com.dietiestates.resource_server.factory.NotificationCategoryFactory;
@@ -14,11 +15,13 @@ public class NotificationCategoryFactoryDefaultImpl implements NotificationCateg
 
     @Override
     public NotificationCategory createNotificationCategoryFromSpec(
-            NotificationCategorySpec spec
+            NotificationCategorySpec spec,
+            User user
     ) {
         return NotificationCategory.builder()
                 .name(spec.getName())
                 .isActive(spec.getIsActive())
+                .user(user)
                 .build();
     }
 

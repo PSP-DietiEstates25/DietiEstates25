@@ -38,22 +38,13 @@ public class Notification {
 			name = "notification_category_id",
 			foreignKey = @ForeignKey(name = "NOTIFICATION_NOTIFICATION_CATEGORY_ID_FK"))
 	private NotificationCategory notificationCategory;
-	
-	@ManyToOne
-	@JoinColumn(
-			nullable = false,
-			name = "user_id", 
-			foreignKey = @ForeignKey(name = "NOTIFICATION_USER_ID_FK"))
-	private User user;
 
 	@Builder(builderMethodName = "builder")
 	public Notification(
 			String message,
-			NotificationCategory notificationCategory,
-			User user
+			NotificationCategory notificationCategory
 			) {
 		this.message = message;
 		notificationCategory.addNotification(this);
-		user.addNotification(this);
 	}
 }

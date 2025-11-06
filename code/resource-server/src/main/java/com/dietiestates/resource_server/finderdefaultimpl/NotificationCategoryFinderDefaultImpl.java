@@ -4,6 +4,7 @@ import com.dietiestates.resource_server.enums.NotificationCategoryType;
 import com.dietiestates.resource_server.exception.notfound.NotificationCategoryNotFoundException;
 import com.dietiestates.resource_server.finder.NotificationCategoryFinder;
 import com.dietiestates.resource_server.model.NotificationCategory;
+import com.dietiestates.resource_server.model.User;
 import com.dietiestates.resource_server.repository.NotificationCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -21,5 +22,15 @@ public class NotificationCategoryFinderDefaultImpl implements NotificationCatego
 				NotificationCategoryType.valueOf(name))
 				.orElseThrow(NotificationCategoryNotFoundException::new);
 	}
+
+    @Override
+    public NotificationCategory getNotificationCategoryByNameAndUser(String name, User user)
+            throws NotificationCategoryNotFoundException {
+
+        return notificationCategoryRepository.findByNameAndUser(
+                NotificationCategoryType.valueOf(name),
+                user
+        ).orElseThrow(NotificationCategoryNotFoundException::new);
+    }
 
 }

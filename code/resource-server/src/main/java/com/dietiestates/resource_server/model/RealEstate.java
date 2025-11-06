@@ -1,6 +1,6 @@
 package com.dietiestates.resource_server.model;
 
-import com.dietiestates.resource_server.enums.AdCategory;
+import com.dietiestates.resource_server.enums.RealEstateCategory;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -26,7 +26,7 @@ public class RealEstate {
 
     @Enumerated(EnumType.ORDINAL)
     @Column(nullable = false)
-    private AdCategory category;
+    private RealEstateCategory category;
 
     @ElementCollection
     @CollectionTable(name = "real_estate_image", joinColumns = @JoinColumn(name = "real_estate_id", foreignKey = @ForeignKey(name = "RE_IMAGE_REALESTATE_ID_FK")))
@@ -71,7 +71,7 @@ public class RealEstate {
             EstateAgent estateAgent,
             CadastralData cadastralData,
             Detail detail) {
-        this.category = AdCategory.valueOf(category);
+        this.category = RealEstateCategory.valueOf(category);
         this.images = images != null ? Arrays.asList(images) : new ArrayList<>();
         this.description = description;
         estateAgent.addRealEstate(this);

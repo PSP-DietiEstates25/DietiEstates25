@@ -17,6 +17,7 @@ public class NotificationCategoryMapperDefaultImpl implements NotificationCatego
 		return NotificationCategorySpec.builder()
 				.name(request.getName())
 				.isActive(request.getIsActive())
+                .userEmail(request.getUserEmail())
 				.build();
 	}
 	
@@ -28,6 +29,7 @@ public class NotificationCategoryMapperDefaultImpl implements NotificationCatego
 				.lastModifiedDate(notificationCategory.getLastModifiedDate())
 				.name(notificationCategory.getName().toString())
 				.isActive(notificationCategory.getIsActive())
+                .userEmail(notificationCategory.getUser().getEmail())
 				.build();
 	}
 }
