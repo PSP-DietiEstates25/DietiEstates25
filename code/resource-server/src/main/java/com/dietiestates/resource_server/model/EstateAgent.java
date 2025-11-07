@@ -20,6 +20,9 @@ public class EstateAgent extends Staffer {
 	
 	@OneToMany(mappedBy = "estateAgent", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<RealEstate> realEstates = new ArrayList<>();
+
+    @OneToMany(mappedBy = "estateAgent", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Negotiation> negotiations = new ArrayList<>();
 	
 	@Builder(builderMethodName = "builder")
 	public EstateAgent(String email, Admin admin) {
@@ -30,4 +33,9 @@ public class EstateAgent extends Staffer {
 		realEstates.add(realEstate);
 		realEstate.setEstateAgent(this);
 	}
+
+    public void addNegotiation(Negotiation negotiation){
+        this.negotiations.add(negotiation);
+        negotiation.setEstateAgent(this);
+    }
 }

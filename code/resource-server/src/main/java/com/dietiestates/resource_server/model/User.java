@@ -39,9 +39,9 @@ public class User {
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Search> searches = new ArrayList<>();
-	
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Proposal> proposals = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Negotiation> negotiations = new ArrayList<>();
 	
 	@Builder(builderMethodName = "builder")
 	public User(String email) {
@@ -58,9 +58,9 @@ public class User {
 		search.setUser(this);
 	}
 	
-	public void addProposal(Proposal proposal) {
-		proposals.add(proposal);
-		proposal.setUser(this);
+	public void addNegotiation(Negotiation negotiation) {
+		negotiations.add(negotiation);
+		negotiation.setUser(this);
 	}	
 }
 

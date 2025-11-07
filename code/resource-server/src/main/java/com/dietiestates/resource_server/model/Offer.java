@@ -34,11 +34,10 @@ public class Offer extends Proposal {
 	public Offer(
 		String category,
 		String status,
-		User user,
-		RealEstate realEstate,
+		Negotiation negotiation,
 		BigDecimal amount
     ) {
-		super(category, status, user, realEstate);
+		super(category, status, negotiation);
 		this.amount = amount;
 	}
 

@@ -46,7 +46,7 @@ public class RealEstate {
     private LocalDateTime lastModifiedDate;
 
     @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Proposal> proposals = new ArrayList<>();
+    private List<Negotiation> negotiations = new ArrayList<>();
 
     @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SearchRealEstate> searchRealEstates = new ArrayList<>();
@@ -79,9 +79,9 @@ public class RealEstate {
         this.detail = detail;
     }
 
-    public void addProposal(Proposal proposal) {
-        this.proposals.add(proposal);
-        proposal.setRealEstate(this);
+    public void addNegotiation(Negotiation negotiation) {
+        negotiations.add(negotiation);
+        negotiation.setRealEstate(this);
     }
 
     public void addSearchRealEstate(SearchRealEstate searchRealEstate) {

@@ -26,13 +26,7 @@ public class Search {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private RealEstateCategory category;
-	
-	@Column(nullable = false)
-	private Integer size;
-	
-	@Column(nullable = false)
-	private Integer page;
-	
+
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
 	private LocalDateTime createdDate;
@@ -68,15 +62,11 @@ public class Search {
 	@Builder(builderMethodName = "builder")
 	public Search(
 			String category,
-			Integer size,
-			Integer page,
 			User user,
 			CadastralFilter cadastralFilter,
 			Detail detail
 			) {
 		this.category = RealEstateCategory.valueOf(category);
-		this.size = size;
-		this.page = page;
 		this.user = user;
 		user.addSearch(this);
 		setCadastralFilter(cadastralFilter);

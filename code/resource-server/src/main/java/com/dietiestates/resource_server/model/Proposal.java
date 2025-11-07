@@ -42,27 +42,18 @@ public abstract class Proposal {
 	@ManyToOne
 	@JoinColumn(
 			nullable = false,
-			name = "user_id",
-			foreignKey = @ForeignKey(name = "PROPOSAL_USER_ID_FK"))
-	private User user;
-	
-	@ManyToOne
-	@JoinColumn(
-			nullable = false,
-			name = "real_estate_id",
-			foreignKey = @ForeignKey(name = "PROPOSAL_REAL_ESTATE_ID"))
-	private RealEstate realEstate;
+			name = "negotiation_id",
+			foreignKey = @ForeignKey(name = "PROPOSAL_NEGOTIATION_ID_FK"))
+	private Negotiation negotiation;
 	
 	public Proposal(
 			String proposalCategory,
 			String proposalStatus,
-			User user,
-			RealEstate realEstate
+			Negotiation negotiation
 			) {
 		this.proposalCategory = ProposalCategory.valueOf(proposalCategory);
 		this.proposalStatus = ProposalStatus.valueOf(proposalStatus);
-		user.addProposal(this);
-		realEstate.addProposal(this);
+		negotiation.addProposal(this);
 	}
 
 }

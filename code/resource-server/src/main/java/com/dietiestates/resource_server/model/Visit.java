@@ -30,12 +30,11 @@ public class Visit extends Proposal {
 	public Visit(
 			String category, 
 			String status, 
-			User user,
-			RealEstate realEstate,
+			Negotiation negotiation,
 			LocalDate date,
 			LocalTime time
 	) {
-		super(category, status, user, realEstate);
+		super(category, status, negotiation);
 		this.date = date;
 		this.time = time;
 	}

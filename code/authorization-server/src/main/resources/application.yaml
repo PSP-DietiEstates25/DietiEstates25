@@ -10,12 +10,12 @@ spring:
   ssl:
     bundle:
       jks:
-        authorization-server: # <-- definizione del bundle con lo stesso nome
+        authorization-server:
           key:
-            alias: as              # alias dentro il keystore (ad es. "as")
-            password: changeit     # password della chiave (se impostata)
+            alias: as
+            password: changeit
           keystore:
-            location: "/home/luca/certs/apps/as-keystore.p12"  # path valido in WSL
+            location: "/home/luca/certs/apps/as-keystore.p12"
             type: PKCS12
             password: changeit
   datasource:
