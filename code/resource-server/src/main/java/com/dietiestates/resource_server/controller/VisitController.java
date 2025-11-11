@@ -53,13 +53,30 @@ public class VisitController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<VisitResponse>> getPagedRealEstateVisits(
+    @PreAuthorize("hasAuthority('USER')")
+    public ResponseEntity<Page<VisitResponse>> getPagedUserRealEstateVisits(
             @PathVariable Long realestateid,
             @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "12") Integer size
+            @RequestParam(required = false, defaultValue = "12") Integer size,
+            @AuthenticationPrincipal Jwt jwt
     ) {
+        var userEmail = jwt.getSubject();
 
-        var visits = visitService.getPagedRealEstateVisits(realestateid, page, size);
+        var visits = visitService.getPagedUserRealEstateVisits(realestateid, userEmail, page, size);
+        return ResponseEntity.status(HttpStatus.OK).body(visits);
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAuthority('ESTATE_AGENT')")
+    public ResponseEntity<Page<VisitResponse>> getPagedEstateAgentRealEstateVisits(
+            @PathVariable Long realestateid,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "12") Integer size,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        var estateAgentEmail = jwt.getSubject();
+
+        var visits = visitService.getPagedEstateAgentRealEstateVisits(realestateid, estateAgentEmail, page, size);
         return ResponseEntity.status(HttpStatus.OK).body(visits);
     }
 
@@ -68,8 +85,10 @@ public class VisitController {
     public ResponseEntity<VisitResponse> updateVisitStatus(
             @RequestBody VisitRequest request,
             @PathVariable Long realestateid,
-            @PathVariable Long visitid
+            @PathVariable Long visitid,
+            @AuthenticationPrincipal Jwt jwt
     ) {
+        var estateAgentEmail = jwt.getSubject();
 
         var visit = visitService.updateVisitStatus(request, realestateid, visitid);
         return ResponseEntity.status(HttpStatus.OK).body(visit);

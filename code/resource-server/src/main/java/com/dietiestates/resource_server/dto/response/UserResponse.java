@@ -1,10 +1,8 @@
 package com.dietiestates.resource_server.dto.response;
 
-import com.dietiestates.resource_server.model.Notification;
-import com.dietiestates.resource_server.model.NotificationCategory;
-import com.dietiestates.resource_server.model.Proposal;
-import com.dietiestates.resource_server.model.Search;
+import com.dietiestates.resource_server.model.*;
 import lombok.*;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,8 +19,4 @@ public class UserResponse {
     private String email;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
-    private List<NotificationCategory> notificationCategories = new ArrayList<>();
-    private List<Search> searches = new ArrayList<>();
-    private List<Proposal> proposals = new ArrayList<>();
-
 }

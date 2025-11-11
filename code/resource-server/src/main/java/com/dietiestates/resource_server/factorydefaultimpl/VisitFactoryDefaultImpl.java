@@ -3,6 +3,7 @@ package com.dietiestates.resource_server.factorydefaultimpl;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.dietiestates.resource_server.model.Negotiation;
 import org.springframework.stereotype.Component;
 
 import com.dietiestates.resource_server.factory.VisitFactory;
@@ -20,14 +21,12 @@ public class VisitFactoryDefaultImpl implements VisitFactory {
     @Override
     public Visit createVisitFromSpec(
             VisitSpec spec,
-            User user,
-            RealEstate realEstate
+            Negotiation negotiation
     ) {
         return Visit.builder()
+                .negotiation(negotiation)
                 .category(spec.getCategory())
                 .status(spec.getStatus())
-                .user(user)
-                .realEstate(realEstate)
                 .date(LocalDate.parse(spec.getDate()))
                 .time(LocalTime.parse(spec.getTime()))
                 .build();

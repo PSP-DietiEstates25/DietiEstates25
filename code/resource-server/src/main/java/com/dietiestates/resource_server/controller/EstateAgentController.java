@@ -1,6 +1,5 @@
 package com.dietiestates.resource_server.controller;
 
-import com.dietiestates.resource_server.dto.response.EstateAgentResponse;
 import com.dietiestates.resource_server.exception.notfound.EstateAgentNotFoundException;
 import com.dietiestates.resource_server.service.EstateAgentService;
 import lombok.RequiredArgsConstructor;

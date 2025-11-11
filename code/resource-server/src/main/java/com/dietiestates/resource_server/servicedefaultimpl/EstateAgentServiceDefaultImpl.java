@@ -1,14 +1,11 @@
 package com.dietiestates.resource_server.servicedefaultimpl;
 
 import com.dietiestates.resource_server.dto.request.StafferRequest;
-import com.dietiestates.resource_server.dto.response.EstateAgentResponse;
 import com.dietiestates.resource_server.exception.notfound.EstateAgentNotFoundException;
 import com.dietiestates.resource_server.exception.notfound.RoleNotFoundException;
 import com.dietiestates.resource_server.factory.EstateAgentFactory;
 import com.dietiestates.resource_server.finder.AdminFinder;
 import com.dietiestates.resource_server.finder.EstateAgentFinder;
-import com.dietiestates.resource_server.finder.RoleFinder;
-import com.dietiestates.resource_server.mapper.EstateAgentMapper;
 import com.dietiestates.resource_server.repository.EstateAgentRepository;
 import com.dietiestates.resource_server.service.EstateAgentService;
 import lombok.RequiredArgsConstructor;

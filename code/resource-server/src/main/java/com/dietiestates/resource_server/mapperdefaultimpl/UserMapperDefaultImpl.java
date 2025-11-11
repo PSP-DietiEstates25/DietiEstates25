@@ -2,7 +2,10 @@ package com.dietiestates.resource_server.mapperdefaultimpl;
 
 import com.dietiestates.resource_server.dto.request.UserRequest;
 import com.dietiestates.resource_server.dto.response.UserResponse;
+import com.dietiestates.resource_server.mapper.OfferMapper;
+import com.dietiestates.resource_server.mapper.SearchMapper;
 import com.dietiestates.resource_server.mapper.UserMapper;
+import com.dietiestates.resource_server.mapper.VisitMapper;
 import com.dietiestates.resource_server.model.User;
 import com.dietiestates.resource_server.spec.UserSpec;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +14,10 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class UserMapperDefaultImpl implements UserMapper {
+
+    private final OfferMapper offerMapper;
+    private final VisitMapper visitMapper;
+    private final SearchMapper searchMapper;
 
     @Override
     public UserSpec toSpec(UserRequest request) {
@@ -26,9 +33,6 @@ public class UserMapperDefaultImpl implements UserMapper {
                 .email(user.getEmail())
                 .createdDate(user.getCreatedDate())
                 .lastModifiedDate(user.getLastModifiedDate())
-                .notificationCategories(user.getNotificationCategories())
-                .searches(user.getSearches())
-                .proposals(user.getProposals())
                 .build();
     }
 }

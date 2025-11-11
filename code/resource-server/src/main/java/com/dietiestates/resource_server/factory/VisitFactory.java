@@ -1,5 +1,6 @@
 package com.dietiestates.resource_server.factory;
 
+import com.dietiestates.resource_server.model.Negotiation;
 import com.dietiestates.resource_server.model.RealEstate;
 import com.dietiestates.resource_server.model.User;
 import com.dietiestates.resource_server.model.Visit;
@@ -9,7 +10,6 @@ public interface VisitFactory {
 
     Visit createVisitFromSpec(
             VisitSpec spec,
-            User user,
-            RealEstate realEstate
+            Negotiation negotiation
     );
 }

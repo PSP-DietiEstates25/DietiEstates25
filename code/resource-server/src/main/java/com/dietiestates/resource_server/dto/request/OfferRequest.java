@@ -22,7 +22,7 @@ public class OfferRequest extends ProposalRequest {
     private BigDecimal amount;
 
     @Nullable
-    private Long counteredOfferId;
+    private Long counterOfId;
 
     @Builder(builderMethodName = "offerDtoBuilder")
     public OfferRequest(

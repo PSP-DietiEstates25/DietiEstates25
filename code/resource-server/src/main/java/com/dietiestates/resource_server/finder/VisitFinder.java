@@ -4,7 +4,5 @@ import com.dietiestates.resource_server.exception.notfound.VisitNotFoundExceptio
 import com.dietiestates.resource_server.model.Visit;
 
 public interface VisitFinder {
-
-	Visit getVisitById(Long id)
-			throws VisitNotFoundException;
+	Visit getVisitById(Long id) throws VisitNotFoundException;
 }

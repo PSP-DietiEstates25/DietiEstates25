@@ -4,8 +4,6 @@ import com.dietiestates.resource_server.exception.notfound.OfferNotFoundExceptio
 import com.dietiestates.resource_server.exception.notowned.OfferNotOwnedByRealEstateException;
 
 public interface OfferVerifier {
-
-    void checkOfferExists(Long id) throws OfferNotFoundException;
-
-    void checkOfferOwnedByRealEstate(Long id, Long realEstateId) throws OfferNotOwnedByRealEstateException;
+    void checkOfferExists(Long offerId, Long negotiationId) throws OfferNotFoundException;
+    void checkOfferOwnedByRealEstate(Long offerId, Long realEstateId) throws OfferNotOwnedByRealEstateException;
 }

@@ -11,7 +11,6 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import com.dietiestates.resource_server.dto.request.StafferRequest;
-import com.dietiestates.resource_server.dto.response.AdminResponse;
 
 import javax.management.relation.RoleNotFoundException;
 

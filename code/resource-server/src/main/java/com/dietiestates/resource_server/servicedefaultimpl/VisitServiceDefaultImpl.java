@@ -7,13 +7,16 @@ import com.dietiestates.resource_server.enums.NotificationCategoryType;
 import com.dietiestates.resource_server.enums.ProposalStatus;
 import com.dietiestates.resource_server.exception.notowned.VisitNotOwnedByRealEstateException;
 import com.dietiestates.resource_server.factory.VisitFactory;
-import com.dietiestates.resource_server.finder.RealEstateFinder;
-import com.dietiestates.resource_server.finder.UserFinder;
-import com.dietiestates.resource_server.finder.VisitFinder;
+import com.dietiestates.resource_server.finder.*;
 import com.dietiestates.resource_server.mapper.VisitMapper;
+import com.dietiestates.resource_server.repository.EstateAgentRepository;
+import com.dietiestates.resource_server.repository.UserRepository;
 import com.dietiestates.resource_server.repository.VisitRepository;
+import com.dietiestates.resource_server.service.NegotiationService;
 import com.dietiestates.resource_server.service.NotificationService;
 import com.dietiestates.resource_server.service.VisitService;
+import com.dietiestates.resource_server.spec.NegotiationSpec;
+import com.dietiestates.resource_server.verifier.RealEstateVerifier;
 import com.dietiestates.resource_server.verifier.VisitVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,65 +36,79 @@ public class VisitServiceDefaultImpl implements VisitService {
 	private final VisitMapper visitMapper;
 
     private final NotificationService notificationService;
-	private final RealEstateFinder realEstateFinder;
-	private final UserFinder userFinder;
-	
+    private final NegotiationFinder negotiationFinder;
+    private final NegotiationService negotiationService;
+    private final UserFinder userFinder;
+    private final RealEstateFinder realEstateFinder;
+    private final RealEstateVerifier realEstateVerifier;
+    private final EstateAgentFinder estateAgentFinder;
+
 	@Override
-	public VisitResponse createVisit(VisitRequest request, Long realEstateId, String userEmail) throws VisitNotOwnedByRealEstateException {
-		
+	public VisitResponse createVisit(VisitRequest request, Long realEstateId, String userEmail) {
+
+        var realEstate = realEstateFinder.getRealEstateById(realEstateId);
+
 		var visitSpec = visitMapper.toSpec(request);
-		
-		var user = userFinder.getUserByEmail(userEmail);
-		var realEstate = realEstateFinder.getRealEstateById(realEstateId);
-		
-		var visit = visitFactory.createVisitFromSpec(visitSpec, user, realEstate);
+        var negotiationSpec = NegotiationSpec.builder()
+                .userEmail(userEmail)
+                .estateAgentEmail(realEstate.getEstateAgent().getEmail())
+                .realEstateId(realEstateId)
+                .build();
+
+        var negotiation = negotiationService.setupNegotiation(negotiationSpec);
+		var visit = visitFactory.createVisitFromSpec(visitSpec, negotiation);
+
 		visitRepository.save(visit);
 		
 		return visitMapper.fromEntity(visit);
 	}
 
 	@Override
-	public VisitResponse getVisitById(
-            Long realEstateId,
-            Long visitId
-    ) throws VisitNotOwnedByRealEstateException {
-
+	public VisitResponse getVisitById(Long realEstateId, Long visitId) throws VisitNotOwnedByRealEstateException {
         visitVerifier.checkVisitOwnedByRealEstate(visitId, realEstateId);
-
 		var visit = visitFinder.getVisitById(visitId);
+
 		return visitMapper.fromEntity(visit);
 	}
 
     @Override
-    public Page<VisitResponse> getPagedRealEstateVisits(
-            Long realEstateId,
-            Integer page,
-            Integer size
-    ) {
+    public Page<VisitResponse> getPagedUserRealEstateVisits(Long realEstateId, String userEmail, Integer page, Integer size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        var visits = visitRepository.findByRealEstateId(realEstateId, pageable);
-        return visitMapper.createPagedVisitsResponse(visits);
+        var realEstate =  realEstateFinder.getRealEstateById(realEstateId);
+        var user = userFinder.getUserByEmail(userEmail);
+        var negotiation = negotiationFinder.getNegotiationByUserAndRealEstate(user, realEstate);
+
+        var realEstateVisits = visitRepository.findByNegotiation(negotiation, pageable);
+        return visitMapper.createPagedVisitsResponse(realEstateVisits);
     }
 
     @Override
-    public VisitResponse updateVisitStatus(
-            VisitRequest request,
-            Long realEstateId,
-            Long visitId
-    ) throws VisitNotOwnedByRealEstateException {
+    public Page<VisitResponse> getPagedEstateAgentRealEstateVisits(Long realEstateId, String estateAgentEmail, Integer page, Integer size){
 
-        visitVerifier.checkVisitExists(visitId);
+        realEstateVerifier.checkRealEstateOwnedByEstateAgent(realEstateId, estateAgentEmail);
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        var realEstate = realEstateFinder.getRealEstateById(realEstateId);
+        var estateAgent = estateAgentFinder.getEstateAgentByEmail(estateAgentEmail);
+        var negotiation = negotiationFinder.getNegotiationByEstateAgentAndRealEstate(estateAgent, realEstate);
+
+        var realEstateVisits = visitRepository.findByNegotiation(negotiation, pageable);
+        return visitMapper.createPagedVisitsResponse(realEstateVisits);
+    }
+
+    @Override
+    public VisitResponse updateVisitStatus(VisitRequest request, Long realEstateId, Long visitId) throws VisitNotOwnedByRealEstateException {
+
         visitVerifier.checkVisitOwnedByRealEstate(visitId, realEstateId);
 
         var visitSpec = visitMapper.toSpec(request);
-        var visitToUpdate = visitRepository.findByIdAndRealEstateId(visitId, realEstateId);
+        var visitToUpdate = visitFinder.getVisitById(visitId);
+        var negotiation = visitToUpdate.getNegotiation();
+        var user = negotiation.getUser();
         visitToUpdate.setProposalStatus(ProposalStatus.valueOf(visitSpec.getStatus()));
 
-        createVisitNotification(
-                visitToUpdate.getProposalStatus(),
-                visitToUpdate.getUser().getEmail()
-        );
+        createVisitNotification(visitToUpdate.getProposalStatus(), user.getEmail());
 
         visitRepository.save(visitToUpdate);
         return visitMapper.fromEntity(visitToUpdate);
@@ -109,7 +126,6 @@ public class VisitServiceDefaultImpl implements VisitService {
                 NotificationCategoryType.VISIT.toString(),
                 NotificationRequest.builder()
                         .message(message)
-                        .userEmail(userEmail)
                         .build()
         );
     }

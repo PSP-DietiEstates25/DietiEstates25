@@ -15,18 +15,12 @@ public class OfferMapperDefaultImpl implements OfferMapper {
 	
 	@Override
 	public OfferSpec toSpec(OfferRequest request) {
-
-		var offerSpec = OfferSpec.offerSpecBuilder()
+		return OfferSpec.offerSpecBuilder()
 				.category(request.getCategory())
 				.status(request.getStatus())
 				.amount(request.getAmount())
-                .counteredOfferId(
-                        request.getCounteredOfferId() != null ? request.getCounteredOfferId() : null
-                )
+                .counterOfId(request.getCounterOfId())
 				.build();
-
-        offerSpec.setCounteredOfferId(request.getCounteredOfferId());
-        return offerSpec;
 	}
 	
 	@Override
@@ -37,12 +31,12 @@ public class OfferMapperDefaultImpl implements OfferMapper {
 				.lastModifiedDate(offer.getLastModifiedDate())
 				.category(offer.getProposalCategory().toString())
 				.status(offer.getProposalStatus().toString())
-				.userEmail(offer.getUser().getEmail())
-				.realEstateId(offer.getRealEstate().getId())
+				.userEmail(offer.getNegotiation().getUser().getEmail())
+				.realEstateId(offer.getNegotiation().getRealEstate().getId())
+                .estateAgentEmail(offer.getNegotiation().getEstateAgent().getEmail())
 				.amount(offer.getAmount())
-                .counteredOfferId(
-                        offer.getCounteredOffer() != null ? offer.getCounteredOffer().getId() : null
-                )
+                .counterOfId(offer.getCounterOf().getId())
+                .counterOfferId(offer.getCounterOffer().getId())
 				.build();
 	}
 

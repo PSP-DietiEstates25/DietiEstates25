@@ -23,14 +23,14 @@ public class Offer extends Proposal {
     @JoinColumn(
             name = "counter_of_offer_id",
             nullable = true,
-            foreignKey = @ForeignKey(name = "OFFER_COUNTER_OF_OFFER_ID")
+            foreignKey = @ForeignKey(name = "OFFER_OF_OFFER_ID")
     )
-    private Offer counterOf;
+    private Offer counterOf = null;
 
     @OneToOne(mappedBy="counterOf", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Offer counterOffer;
+    private Offer counterOffer = null;
 
-	@Builder(builderMethodName = "builder")
+	@Builder(builderMethodName = "offerBuilder")
 	public Offer(
 		String category,
 		String status,
@@ -41,8 +41,8 @@ public class Offer extends Proposal {
 		this.amount = amount;
 	}
 
-    public void setConterOf(Offer counteredOffer){
-        this.counterOf = counteredOffer;
-        counteredOffer.setCounterOffer(this);
+    public void setCounterOfOffer(Offer counterOf){
+        this.counterOf = counterOf;
+        counterOf.setCounterOffer(this);
     }
 }

@@ -6,7 +6,10 @@ import com.dietiestates.resource_server.mapper.SearchMapper;
 import com.dietiestates.resource_server.model.Search;
 import com.dietiestates.resource_server.spec.SearchSpec;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -16,8 +19,6 @@ public class SearchMapperDefaultImpl implements SearchMapper {
 	public SearchSpec toSpec(SearchRequest request) {
 		return SearchSpec.builder()
 				.category(request.getCategory())
-				.size(request.getSize())
-				.page(request.getPage())
 				.cadastralFilterId(request.getCadastralFilterId())
 				.detailId(request.getDetailId())
 				.build();
@@ -29,11 +30,14 @@ public class SearchMapperDefaultImpl implements SearchMapper {
 				.id(search.getId())
 				.createdDate(search.getCreatedDate())
 				.lastModifiedDate(search.getLastModifiedDate())
-				.size(search.getSize())
-				.page(search.getPage())
 				.detailId(search.getDetail().getId())
 				.cadastralFilterId(search.getCadastralFilter().getId())
 				.userEmail(search.getUser().getEmail())
 				.build();
 	}
+
+    @Override
+    public Page<SearchResponse> getPagedSearchesResponse(Page<Search> searches){
+        return searches.map(this::fromEntity);
+    }
 }

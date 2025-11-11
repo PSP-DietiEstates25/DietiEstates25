@@ -4,8 +4,6 @@ import com.dietiestates.resource_server.exception.notfound.VisitNotFoundExceptio
 import com.dietiestates.resource_server.exception.notowned.VisitNotOwnedByRealEstateException;
 
 public interface VisitVerifier {
-
-    void checkVisitExists(Long id) throws VisitNotFoundException;
-
+    void checkVisitExists(Long visitId, Long negotiationId) throws VisitNotFoundException;
     void checkVisitOwnedByRealEstate(Long id, Long realEstateId) throws VisitNotOwnedByRealEstateException;
 }

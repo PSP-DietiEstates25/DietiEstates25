@@ -34,8 +34,9 @@ public class VisitMapperDefaultImpl implements VisitMapper {
 				.lastModifiedDate(visit.getLastModifiedDate())
 				.category(visit.getProposalCategory().toString())
 				.status(visit.getProposalStatus().toString())
-				.userEmail(visit.getUser().getEmail())
-				.realEstateId(visit.getRealEstate().getId())
+				.userEmail(visit.getNegotiation().getUser().getEmail())
+				.realEstateId(visit.getNegotiation().getRealEstate().getId())
+                .estateAgentEmail(visit.getNegotiation().getEstateAgent().getEmail())
 				.date(visit.getDate())
 				.time(visit.getTime())
 				.build();

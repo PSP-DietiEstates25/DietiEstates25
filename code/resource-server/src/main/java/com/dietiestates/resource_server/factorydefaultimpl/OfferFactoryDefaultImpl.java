@@ -1,5 +1,6 @@
 package com.dietiestates.resource_server.factorydefaultimpl;
 
+import com.dietiestates.resource_server.model.Negotiation;
 import org.springframework.stereotype.Component;
 
 import com.dietiestates.resource_server.factory.OfferFactory;
@@ -17,17 +18,13 @@ public class OfferFactoryDefaultImpl implements OfferFactory {
     @Override
     public Offer createOfferFromSpec(
             OfferSpec spec,
-            User user,
-            RealEstate realEstate,
-            Offer counteredOffer
+            Negotiation negotiation
     ) {
-        return Offer.builder()
+        return Offer.offerBuilder()
                 .category(spec.getCategory())
                 .status(spec.getStatus())
-                .user(user)
-                .realEstate(realEstate)
+                .negotiation(negotiation)
                 .amount(spec.getAmount())
-                .counteredOffer(counteredOffer)
                 .build();
     }
 

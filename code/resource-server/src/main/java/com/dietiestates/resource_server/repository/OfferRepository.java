@@ -1,5 +1,6 @@
 package com.dietiestates.resource_server.repository;
 
+import com.dietiestates.resource_server.model.Negotiation;
 import com.dietiestates.resource_server.model.Offer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,19 +15,8 @@ public interface OfferRepository extends
 	PagingAndSortingRepository<Offer, Long>{
 
     boolean existsById(Long id);
-
-    boolean existsByIdAndRealEstateId(Long id, Long realEstateId);
-	
-	List<Offer> findByUser(String userEmail, Pageable pageable);
-
-	Page<Offer> findByRealEstateId(Long realEstateId, Pageable pageable);
-
-    Optional<Offer> findByIdAndRealEstateId(Long id, Long realEstateId);
-
-	/*
-    Page<Offer> findByEstateAgent_EmailAndRealEstate_IdOrderByCreatedDateDesc(
-            String estateAgentEmail,
-            Long realEstateId,
-            Pageable pageable);
-    */
+    boolean existsByIdAndNegotiationId(Long id, Long negotiationId);
+    Optional<Offer> findByIdAndNegotiation(Long id, Negotiation negotiation);
+    Optional<Offer> findByNegotiation(Negotiation negotiation);
+    Page<Offer> findByNegotiation(Negotiation negotiation, Pageable pageable);
 }

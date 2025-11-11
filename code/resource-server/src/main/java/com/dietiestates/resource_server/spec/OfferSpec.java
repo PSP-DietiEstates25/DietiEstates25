@@ -11,17 +11,17 @@ import java.math.BigDecimal;
 public class OfferSpec extends ProposalSpec {
 
 	private BigDecimal amount;
-	private Long counteredOfferId;
+	private Long counterOfId;
 
 	@Builder(builderMethodName = "offerSpecBuilder")
 	public OfferSpec(
 			String category,
 			String status,
 			BigDecimal amount,
-            Long counteredOfferId
+            Long counterOfId
 			) {
 		super(category, status);
 		this.amount = amount;
-        this.counteredOfferId = counteredOfferId;
+        this.counterOfId = counterOfId;
 	}
 }

@@ -11,8 +11,6 @@ import lombok.*;
 public class SearchSpec {
 
 	private String category;
-	private Integer size;
-	private Integer page;
 	private Long cadastralFilterId;
 	private Long detailId;
 }

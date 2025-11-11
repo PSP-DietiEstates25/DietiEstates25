@@ -31,6 +31,7 @@ public enum BusinessErrorCodes {
     USER_ROLE_NOT_FOUND(16004, HttpStatus.NOT_FOUND, "User role not found"),
     ROLE_NOT_FOUND(16004, HttpStatus.NOT_FOUND, "Role not found"),
     ACCOUNT_NOT_FOUND(17004, HttpStatus.NOT_FOUND, "Account not found"),
+    NEGOTIATION_NOT_FOUND(18004, HttpStatus.NOT_FOUND, "Negotiation not found"),
 
     //FORBIDDEN ERRORS
     CADASTRAL_DATA_NOT_OWNED_BY_REAL_ESTATE(14003, HttpStatus.FORBIDDEN, "Cadastral data not owned by real estate"),
@@ -40,6 +41,7 @@ public enum BusinessErrorCodes {
     OFFER_NOT_OWNED_BY_REAL_ESTATE(6003, HttpStatus.FORBIDDEN, "Offer not owned by real estate"),
     VISIT_NOT_OWNED_BY_REAL_ESTATE(7003, HttpStatus.FORBIDDEN, "Visit not owned by real estate"),
     NOTIFICATION_NOT_OWNED_BY_NOTIFICATION_CATEGORY(2003, HttpStatus.FORBIDDEN, "Notification not owned by notification category"),
+    REAL_ESTATE_NOT_OWNED_BY_ESTATE_AGENT(9003, HttpStatus.FORBIDDEN, "Real estate not owned by estate agent"),
     ;
 
     @Getter
