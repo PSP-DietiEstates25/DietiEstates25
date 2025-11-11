@@ -33,6 +33,20 @@ public class DetailController {
         return ResponseEntity.status(HttpStatus.OK).body(detail);
     }
 
+    @GetMapping
+    public ResponseEntity<DetailResponse> getRealEstateDetail(
+            @RequestParam Long realestateid
+    ){
+        return null;
+    }
+
+    @GetMapping
+    public ResponseEntity<DetailResponse> getSearchDetail(
+            @RequestParam Long searchid
+    ){
+        return null;
+    }
+
     @PutMapping("/{detailid}")
     public ResponseEntity<DetailResponse> updateDetail(
             @PathVariable Long detailid,

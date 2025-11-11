@@ -6,8 +6,6 @@ import com.dietiestates.resource_server.model.Utility;
 import com.dietiestates.resource_server.spec.UtilitySpec;
 
 public interface UtilityMapper {
-
 	UtilitySpec toSpec(UtilityRequest request);
-	
 	UtilityResponse fromEntity(Utility utility);
 }

@@ -10,9 +10,6 @@ import com.dietiestates.resource_server.model.Search;
 import com.dietiestates.resource_server.model.Utility;
 
 public interface RealEstateFinder {
-
-	RealEstate getRealEstateById(Long id)
-			throws RealEstateNotFoundException;
-	
+	RealEstate getRealEstateById(Long id) throws RealEstateNotFoundException;
 	List<RealEstate> getAllRealEstates();
 }

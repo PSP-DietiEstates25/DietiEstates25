@@ -11,12 +11,8 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface VisitMapper {
-
 	VisitSpec toSpec(VisitRequest request);
-	
 	VisitResponse fromEntity(Visit visit);
-
     List<VisitResponse> createVisitsResponse(List<Visit> visits);
-
     Page<VisitResponse> createPagedVisitsResponse(Page<Visit> visits);
 }

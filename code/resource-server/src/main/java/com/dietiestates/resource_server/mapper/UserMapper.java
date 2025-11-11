@@ -6,8 +6,6 @@ import com.dietiestates.resource_server.model.User;
 import com.dietiestates.resource_server.spec.UserSpec;
 
 public interface UserMapper {
-
 	UserSpec toSpec(UserRequest request);
-
     UserResponse fromEntity(User user);
 }

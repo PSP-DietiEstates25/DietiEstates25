@@ -4,8 +4,5 @@ import com.dietiestates.resource_server.exception.notfound.GeographicalPositionN
 import com.dietiestates.resource_server.model.GeographicalPosition;
 
 public interface GeographicalPositionFinder {
-
-	GeographicalPosition getGeographicalPositionById(Long id)
-			throws GeographicalPositionNotFoundException;
-	
+	GeographicalPosition getGeographicalPositionById(Long id) throws GeographicalPositionNotFoundException;
 }

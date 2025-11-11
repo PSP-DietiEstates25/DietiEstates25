@@ -1,8 +1,10 @@
 package com.dietiestates.resource_server.controller;
 
+import com.dietiestates.resource_server.dto.response.StafferResponse;
 import com.dietiestates.resource_server.exception.notfound.AdminNotFoundException;
 import com.dietiestates.resource_server.service.AdminService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,8 +24,8 @@ public class AdminController {
     private final AdminService adminService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<AdminResponse> registerAdmin(
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<StafferResponse> registerAdmin(
             @RequestBody StafferRequest request,
             @AuthenticationPrincipal Jwt jwt
     ) throws RoleNotFoundException {
@@ -35,7 +37,7 @@ public class AdminController {
     }
 
     @GetMapping("/{adminid}")
-    public ResponseEntity<AdminResponse> getAdminById(
+    public ResponseEntity<StafferResponse> getAdminById(
             @PathVariable Long adminid
     ) throws AdminNotFoundException {
 
@@ -43,4 +45,10 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body(admin);
     }
 
+    @GetMapping
+    public ResponseEntity<Page<StafferResponse>> getCreatedStaffers(
+            @AuthenticationPrincipal Jwt jwt
+    ){
+        return null;
+    }
 }

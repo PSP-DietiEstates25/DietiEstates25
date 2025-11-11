@@ -8,7 +8,5 @@ import com.dietiestates.resource_server.model.Search;
 import java.util.List;
 
 public interface SearchService {
-
 	List<RealEstateResponse> createSearch(SearchRequest request, String userEmail);
-
 }

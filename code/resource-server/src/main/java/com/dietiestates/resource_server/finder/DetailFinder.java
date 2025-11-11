@@ -4,7 +4,5 @@ import com.dietiestates.resource_server.exception.notfound.DetailNotFoundExcepti
 import com.dietiestates.resource_server.model.Detail;
 
 public interface DetailFinder {
-
-	Detail getDetailById(Long id)
-			throws DetailNotFoundException;
+	Detail getDetailById(Long id) throws DetailNotFoundException;
 }

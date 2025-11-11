@@ -6,8 +6,6 @@ import com.dietiestates.resource_server.model.Search;
 import com.dietiestates.resource_server.spec.SearchSpec;
 
 public interface SearchMapper {
-
 	SearchSpec toSpec(SearchRequest request);
-	
 	SearchResponse fromEntity(Search search);
 }

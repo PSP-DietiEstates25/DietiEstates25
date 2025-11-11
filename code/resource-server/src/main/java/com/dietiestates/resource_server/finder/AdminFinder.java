@@ -6,12 +6,6 @@ import com.dietiestates.resource_server.exception.notfound.AdminNotFoundExceptio
 import com.dietiestates.resource_server.model.Admin;
 
 public interface AdminFinder {
-
-	Admin getAdminByEmail(String adminEmail)
-			throws AdminNotFoundException;
-
-    Admin getAdminById(Long id)
-            throws AdminNotFoundException;
-
-	List<Admin> getAllAdmins();
+	Admin getAdminByEmail(String adminEmail) throws AdminNotFoundException;
+    Admin getAdminById(Long id) throws AdminNotFoundException;
 }

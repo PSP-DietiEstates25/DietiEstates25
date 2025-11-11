@@ -71,7 +71,7 @@ public class OfferController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<Page<OfferResponse>> getPagedUserRealEstateOffers(
+    public ResponseEntity<Page<OfferResponse>> getPagedUserOffers(
             @PathVariable Long realestateid,
             @AuthenticationPrincipal Jwt jwt,
             @RequestParam(required = false, defaultValue = "0") Integer page,

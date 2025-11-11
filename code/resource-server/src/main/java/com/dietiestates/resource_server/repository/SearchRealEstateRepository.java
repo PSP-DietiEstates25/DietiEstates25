@@ -5,7 +5,5 @@ import com.dietiestates.resource_server.model.SearchRealEstateKey;
 import org.springframework.data.repository.CrudRepository;
 
 public interface SearchRealEstateRepository extends CrudRepository<SearchRealEstate, SearchRealEstateKey>{
-
     boolean existsById(Long id);
-
 }

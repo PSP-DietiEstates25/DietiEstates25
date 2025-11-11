@@ -8,12 +8,6 @@ import com.dietiestates.resource_server.model.User;
 import java.util.List;
 
 public interface NotificationFinder {
-
-	Notification getNotificationById(Long id)
-			throws NotificationNotFoundException;
-
-    List<Notification> getPrincipalNotifications(
-            User user,
-            NotificationCategory notificationCategory
-    );
+	Notification getNotificationById(Long id) throws NotificationNotFoundException;
+    List<Notification> getPrincipalNotifications(User user, NotificationCategory notificationCategory);
 }

@@ -4,8 +4,5 @@ import com.dietiestates.resource_server.model.Utility;
 import com.dietiestates.resource_server.spec.UtilitySpec;
 
 public interface UtilityFactory {
-
-    Utility createUtilityFromSpec(
-            UtilitySpec spec
-    );
+    Utility createUtilityFromSpec(UtilitySpec spec);
 }

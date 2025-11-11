@@ -7,9 +7,5 @@ import com.dietiestates.resource_server.model.Visit;
 import com.dietiestates.resource_server.spec.VisitSpec;
 
 public interface VisitFactory {
-
-    Visit createVisitFromSpec(
-            VisitSpec spec,
-            Negotiation negotiation
-    );
+    Visit createVisitFromSpec(VisitSpec spec, Negotiation negotiation);
 }

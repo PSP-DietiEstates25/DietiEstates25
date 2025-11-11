@@ -8,7 +8,6 @@ import org.springframework.security.core.Authentication;
 
 
 public interface OfferService {
-
 	OfferResponse createUserOffer(OfferRequest request, Long realEstateId, String userEmail);
     OfferResponse createEstateAgentCounterOffer(OfferRequest request, Long realEstateId, String estateAgentEmail);
     OfferResponse getOfferById(Long realEstateId, Long offerId);

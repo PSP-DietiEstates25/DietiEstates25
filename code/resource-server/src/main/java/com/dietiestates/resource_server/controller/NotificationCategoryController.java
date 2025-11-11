@@ -1,5 +1,6 @@
 package com.dietiestates.resource_server.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,13 @@ public class NotificationCategoryController {
 
         var notificationCategory = notificationCategoryService.getNotificationCategoryByName(notificationcategoryname);
         return ResponseEntity.status(HttpStatus.OK).body(notificationCategory);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<NotificationCategoryResponse>> getUserNotificationCategories(
+            @RequestParam String email
+    ){
+        return null;
     }
 
     @PutMapping("/{notificationcategoryname}")

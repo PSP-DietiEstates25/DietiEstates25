@@ -6,8 +6,6 @@ import com.dietiestates.resource_server.model.CadastralFilter;
 import com.dietiestates.resource_server.spec.CadastralFilterSpec;
 
 public interface CadastralFilterMapper {
-
-	public CadastralFilterSpec toSpec(CadastralFilterRequest request);
-	
-	public CadastralFilterResponse fromEntity(CadastralFilter cadastralFilter);
+    CadastralFilterSpec toSpec(CadastralFilterRequest request);
+    CadastralFilterResponse fromEntity(CadastralFilter cadastralFilter);
 }

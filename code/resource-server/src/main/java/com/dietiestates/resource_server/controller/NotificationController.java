@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
 
 import com.dietiestates.resource_server.dto.request.NotificationRequest;
 import com.dietiestates.resource_server.dto.response.NotificationResponse;
@@ -40,6 +41,13 @@ public class NotificationController {
     ) {
         var notification = notificationService.getNotificationById(notificationcategoryname, notificationid);
         return ResponseEntity.status(HttpStatus.OK).body(notification);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<NotificationResponse>> getNotificationCategoryNotifications(
+            @PathVariable String notificationcategoryname
+    ){
+        return null;
     }
 
     @GetMapping

@@ -6,10 +6,6 @@ import com.dietiestates.resource_server.model.NotificationCategory;
 import com.dietiestates.resource_server.model.User;
 
 public interface NotificationCategoryFinder {
-
-	NotificationCategory getNotificationCategoryByName(String name)
-			throws NotificationCategoryNotFoundException;
-
-    NotificationCategory getNotificationCategoryByNameAndUser(String name, User user)
-            throws NotificationCategoryNotFoundException;
+	NotificationCategory getNotificationCategoryByName(String name) throws NotificationCategoryNotFoundException;
+    NotificationCategory getNotificationCategoryByNameAndUser(String name, User user) throws NotificationCategoryNotFoundException;
 }

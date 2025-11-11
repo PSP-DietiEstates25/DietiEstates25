@@ -4,7 +4,6 @@ import com.dietiestates.resource_server.exception.notfound.RealEstateNotFoundExc
 import com.dietiestates.resource_server.exception.notowned.RealEstateNotOwnedByEstateAgentException;
 
 public interface RealEstateVerifier {
-
     void checkRealEstateExists(Long id) throws RealEstateNotFoundException;
     void checkRealEstateOwnedByEstateAgent(Long realEstateId, String estateAgentEmail) throws RealEstateNotOwnedByEstateAgentException;
 }

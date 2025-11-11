@@ -6,8 +6,6 @@ import com.dietiestates.resource_server.model.NotificationCategory;
 import com.dietiestates.resource_server.spec.NotificationCategorySpec;
 
 public interface NotificationCategoryMapper {
-
 	NotificationCategorySpec toSpec(NotificationCategoryRequest request);
-	
 	NotificationCategoryResponse fromEntity(NotificationCategory notificationCategory);
 }

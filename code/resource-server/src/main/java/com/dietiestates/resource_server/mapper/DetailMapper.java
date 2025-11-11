@@ -6,8 +6,6 @@ import com.dietiestates.resource_server.model.Detail;
 import com.dietiestates.resource_server.spec.DetailSpec;
 
 public interface DetailMapper {
-
 	DetailSpec toSpec(DetailRequest request);
-	
 	DetailResponse fromEntity(Detail detail);
 }

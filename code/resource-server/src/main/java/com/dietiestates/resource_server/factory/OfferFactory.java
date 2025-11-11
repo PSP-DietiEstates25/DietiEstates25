@@ -7,9 +7,5 @@ import com.dietiestates.resource_server.model.User;
 import com.dietiestates.resource_server.spec.OfferSpec;
 
 public interface OfferFactory {
-
-    Offer createOfferFromSpec(
-            OfferSpec spec,
-            Negotiation negotiation
-    );
+    Offer createOfferFromSpec(OfferSpec spec, Negotiation negotiation);
 }

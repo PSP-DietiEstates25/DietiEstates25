@@ -1,5 +1,7 @@
 package com.dietiestates.resource_server.controller;
 
+import com.dietiestates.resource_server.dto.response.DetailResponse;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +35,13 @@ public class UtilityController {
 
         var utility = utilityService.getUtilityById(utilityid);
         return ResponseEntity.status(HttpStatus.OK).body(utility);
+    }
+
+    @GetMapping
+    public ResponseEntity<DetailResponse> getDetailUtility(
+            @RequestParam Long detailid
+    ){
+        return null;
     }
 
     @PutMapping("/{utilityid}")

@@ -5,9 +5,5 @@ import com.dietiestates.resource_server.model.User;
 import com.dietiestates.resource_server.spec.NotificationCategorySpec;
 
 public interface NotificationCategoryFactory {
-
-    NotificationCategory createNotificationCategoryFromSpec(
-            NotificationCategorySpec spec,
-            User user
-    );
+    NotificationCategory createNotificationCategoryFromSpec(NotificationCategorySpec spec, User user);
 }

@@ -6,10 +6,5 @@ import com.dietiestates.resource_server.model.Utility;
 import com.dietiestates.resource_server.spec.DetailSpec;
 
 public interface DetailFactory {
-
-    Detail createDetailFromSpec(
-            DetailSpec spec,
-            GeographicalPosition geographicalPosition,
-            Utility utility
-    );
+    Detail createDetailFromSpec(DetailSpec spec, GeographicalPosition geographicalPosition, Utility utility);
 }

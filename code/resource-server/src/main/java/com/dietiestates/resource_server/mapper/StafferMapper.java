@@ -6,9 +6,6 @@ import com.dietiestates.resource_server.model.Staffer;
 import java.util.List;
 
 public interface StafferMapper {
-
 	StafferResponse fromEntity(Staffer staffer);
-	
 	List<StafferResponse> createStaffersResponse(List<Staffer> staffers);
-
 }

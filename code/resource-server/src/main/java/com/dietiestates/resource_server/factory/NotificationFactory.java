@@ -6,10 +6,5 @@ import com.dietiestates.resource_server.model.User;
 import com.dietiestates.resource_server.spec.NotificationSpec;
 
 public interface NotificationFactory {
-
-    Notification createNotificationFromSpec(
-            NotificationSpec spec,
-            NotificationCategory notificationCategory
-    );
-
+    Notification createNotificationFromSpec(NotificationSpec spec, NotificationCategory notificationCategory);
 }

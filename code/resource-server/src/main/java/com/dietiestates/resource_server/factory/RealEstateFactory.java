@@ -7,12 +7,5 @@ import com.dietiestates.resource_server.model.RealEstate;
 import com.dietiestates.resource_server.spec.RealEstateSpec;
 
 public interface RealEstateFactory {
-
-    RealEstate createRealEstateFromSpec(
-            RealEstateSpec spec,
-            EstateAgent estateAgent,
-            CadastralData cadastralData,
-            Detail detail
-    );
-
+    RealEstate createRealEstateFromSpec(RealEstateSpec spec, EstateAgent estateAgent, CadastralData cadastralData, Detail detail);
 }

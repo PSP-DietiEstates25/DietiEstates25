@@ -6,8 +6,6 @@ import com.dietiestates.resource_server.model.CadastralData;
 import com.dietiestates.resource_server.spec.CadastralDataSpec;
 
 public interface CadastralDataMapper {
-
 	CadastralDataSpec toSpec(CadastralDataRequest request);
-	
 	CadastralDataResponse fromEntity(CadastralData cadastralData);
 }

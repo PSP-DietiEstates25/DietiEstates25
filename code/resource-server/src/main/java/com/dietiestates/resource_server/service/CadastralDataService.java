@@ -4,10 +4,7 @@ import com.dietiestates.resource_server.dto.request.CadastralDataRequest;
 import com.dietiestates.resource_server.dto.response.CadastralDataResponse;
 
 public interface CadastralDataService {
-
 	CadastralDataResponse createCadastralData(CadastralDataRequest request);
-	
 	CadastralDataResponse getCadastralDataById(Long cadastralDataId);
-
     void updateCadastralData(Long cadastralDataId, CadastralDataRequest request);
 }

@@ -6,8 +6,6 @@ import com.dietiestates.resource_server.model.GeographicalPosition;
 import com.dietiestates.resource_server.spec.GeographicalPositionSpec;
 
 public interface GeographicalPositionMapper {
-
 	GeographicalPositionSpec toSpec(GeographicalPositionRequest request);
-	
 	GeographicalPositionResponse fromEntity(GeographicalPosition geographicalPosition);
 }

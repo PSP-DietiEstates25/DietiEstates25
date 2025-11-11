@@ -1,13 +1,9 @@
 package com.dietiestates.resource_server.controller;
 
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.dietiestates.resource_server.dto.request.CadastralFilterRequest;
 import com.dietiestates.resource_server.dto.response.CadastralFilterResponse;
@@ -36,5 +32,12 @@ public class    CadastralFilterController {
     ){
         var cadastralFilter = cadastralFilterService.getCadastralFilterById(cadastralfilterid);
         return ResponseEntity.status(HttpStatus.OK).body(cadastralFilter);
+    }
+
+    @GetMapping
+    public ResponseEntity<CadastralFilterResponse> getRealEstateCadastralFilter(
+            @RequestParam Long realestateid
+    ){
+        return null;
     }
 }

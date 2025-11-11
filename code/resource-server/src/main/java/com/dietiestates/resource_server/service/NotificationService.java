@@ -10,19 +10,8 @@ import java.security.Principal;
 import java.util.List;
 
 public interface NotificationService {
-
-	NotificationResponse createNotification(
-			String notificationCategoryName,
-			NotificationRequest request
-			);
-
+	NotificationResponse createNotification(String notificationCategoryName, NotificationRequest request);
     void createNotificationsAfterRealEstateCreation(List<Search> searchesToNotify);
-
-    NotificationResponse getNotificationById(
-			String notificationCategoryName,
-			Long notificationId
-			)
-		throws NotificationNotOwnedByNotificationCategoryException;
-
+    NotificationResponse getNotificationById(String notificationCategoryName, Long notificationId) throws NotificationNotOwnedByNotificationCategoryException;
     List<NotificationResponse> getPrincipalNotifications(Principal principal, String notificationCategoryName);
 }

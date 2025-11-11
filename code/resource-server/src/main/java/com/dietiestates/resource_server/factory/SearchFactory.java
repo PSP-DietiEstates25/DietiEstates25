@@ -7,11 +7,5 @@ import com.dietiestates.resource_server.model.User;
 import com.dietiestates.resource_server.spec.SearchSpec;
 
 public interface SearchFactory {
-
-    Search createSearchFromSpec(
-            SearchSpec spec,
-            User user,
-            CadastralFilter cadastralFilter,
-            Detail detail
-    );
+    Search createSearchFromSpec(SearchSpec spec, User user, CadastralFilter cadastralFilter, Detail detail);
 }

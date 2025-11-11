@@ -4,8 +4,5 @@ import com.dietiestates.resource_server.model.CadastralData;
 import com.dietiestates.resource_server.spec.CadastralDataSpec;
 
 public interface CadastralDataFactory {
-
-    CadastralData createCadastralDataFromSpec(
-            CadastralDataSpec spec
-    );
+    CadastralData createCadastralDataFromSpec(CadastralDataSpec spec);
 }

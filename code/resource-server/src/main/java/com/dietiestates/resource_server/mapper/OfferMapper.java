@@ -9,10 +9,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface OfferMapper {
-
 	OfferSpec toSpec(OfferRequest request);
-	
 	OfferResponse fromEntity(Offer offer);
-
     Page<OfferResponse> createPagedOffersResponse(Page<Offer> offers);
 }

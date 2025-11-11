@@ -1,5 +1,6 @@
 package com.dietiestates.resource_server.controller;
 
+import com.dietiestates.resource_server.dto.response.StafferResponse;
 import com.dietiestates.resource_server.exception.notfound.EstateAgentNotFoundException;
 import com.dietiestates.resource_server.service.EstateAgentService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class EstateAgentController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<EstateAgentResponse> registerEstateAgent(
+    public ResponseEntity<StafferResponse> registerEstateAgent(
             @RequestBody StafferRequest request,
             @AuthenticationPrincipal Jwt jwt
     ) throws RoleNotFoundException {
@@ -34,7 +35,7 @@ public class EstateAgentController {
     }
 
     @GetMapping("/{estataeagentid}")
-    public ResponseEntity<EstateAgentResponse> getEstateAgentById(
+    public ResponseEntity<StafferResponse> getEstateAgentById(
             @PathVariable Long estateagentid
     ) throws EstateAgentNotFoundException {
 
