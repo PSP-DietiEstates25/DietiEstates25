@@ -54,29 +54,39 @@ public class VisitController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<Page<VisitResponse>> getPagedUserRealEstateVisits(
+    public ResponseEntity<Page<VisitResponse>> getUserVisits(
             @PathVariable Long realestateid,
-            @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "12") Integer size,
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "5") Integer size,
             @AuthenticationPrincipal Jwt jwt
     ) {
         var userEmail = jwt.getSubject();
 
-        var visits = visitService.getPagedUserRealEstateVisits(realestateid, userEmail, page, size);
+        var visits = visitService.getUserVisits(realestateid, userEmail, page, size);
         return ResponseEntity.status(HttpStatus.OK).body(visits);
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('ESTATE_AGENT')")
-    public ResponseEntity<Page<VisitResponse>> getPagedEstateAgentRealEstateVisits(
+    public ResponseEntity<Page<VisitResponse>> getEstateAgentVisits(
             @PathVariable Long realestateid,
-            @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "12") Integer size,
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "5") Integer size,
             @AuthenticationPrincipal Jwt jwt
     ) {
         var estateAgentEmail = jwt.getSubject();
 
-        var visits = visitService.getPagedEstateAgentRealEstateVisits(realestateid, estateAgentEmail, page, size);
+        var visits = visitService.getEstateAgentVisits(realestateid, estateAgentEmail, page, size);
+        return ResponseEntity.status(HttpStatus.OK).body(visits);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<VisitResponse>> getRealEstateVisits(
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "5") Integer size,
+            @PathVariable Long realestateid
+    ){
+        var visits = visitService.getRealEstateVisits(realestateid, page, size);
         return ResponseEntity.status(HttpStatus.OK).body(visits);
     }
 

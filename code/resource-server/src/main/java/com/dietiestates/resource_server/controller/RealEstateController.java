@@ -80,8 +80,8 @@ public class RealEstateController {
 
     @GetMapping
     public ResponseEntity<Page<RealEstateResponse>> getPagedRealEstates(
-            @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "12") Integer size
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "5") Integer size
     ) {
 
         var pagedRealEstates = realEstateSerivce.getPagedRealEstates(page, size);
