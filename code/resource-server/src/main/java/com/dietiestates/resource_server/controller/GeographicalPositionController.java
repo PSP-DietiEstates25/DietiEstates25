@@ -37,7 +37,8 @@ public class GeographicalPositionController {
     public ResponseEntity<GeographicalPositionResponse> getDetailGeographicalPosition(
             @RequestParam Long detailid
     ){
-        return null;
+        var geographicalPosition = geographicalPositionService.getDetailGeograpicalPosition(detailid);
+        return ResponseEntity.status(HttpStatus.OK).body(geographicalPosition);
     }
 
     @PutMapping("/{geographicalpositionid}")
@@ -45,7 +46,6 @@ public class GeographicalPositionController {
             @PathVariable Long geographicalpositionid,
             @RequestBody GeographicalPositionRequest request
     ) {
-
         geographicalPositionService.updateGeographicalPosition(geographicalpositionid, request);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }

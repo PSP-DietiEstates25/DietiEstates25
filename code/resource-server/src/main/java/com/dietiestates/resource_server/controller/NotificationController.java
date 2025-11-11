@@ -47,7 +47,8 @@ public class NotificationController {
     public ResponseEntity<Page<NotificationResponse>> getNotificationCategoryNotifications(
             @PathVariable String notificationcategoryname
     ){
-        return null;
+        var notifications = notificationService.getNotificationCategoryNotifications(notificationcategoryname);
+        return ResponseEntity.status(HttpStatus.OK).body(notifications);
     }
 
     @GetMapping

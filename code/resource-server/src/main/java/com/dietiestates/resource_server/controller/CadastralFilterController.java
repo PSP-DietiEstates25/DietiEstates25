@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/cadastralfilters")
 @RequiredArgsConstructor
-public class    CadastralFilterController {
+public class CadastralFilterController {
 
     private final CadastralFilterService cadastralFilterService;
 
@@ -35,9 +35,10 @@ public class    CadastralFilterController {
     }
 
     @GetMapping
-    public ResponseEntity<CadastralFilterResponse> getRealEstateCadastralFilter(
-            @RequestParam Long realestateid
+    public ResponseEntity<CadastralFilterResponse> getSearchCadastralFilter(
+            @RequestParam Long searchid
     ){
-        return null;
+        var cadastralFilter = cadastralFilterService.getSearchCadastralFilter(searchid);
+        return ResponseEntity.status(HttpStatus.OK).body(cadastralFilter);
     }
 }

@@ -37,14 +37,16 @@ public class DetailController {
     public ResponseEntity<DetailResponse> getRealEstateDetail(
             @RequestParam Long realestateid
     ){
-        return null;
+        var detail = detailService.getRealEstateDetail(realestateid);
+        return ResponseEntity.status(HttpStatus.OK).body(detail);
     }
 
     @GetMapping
     public ResponseEntity<DetailResponse> getSearchDetail(
             @RequestParam Long searchid
     ){
-        return null;
+        var detail = detailService.getSearchDetail(searchid);
+        return ResponseEntity.status(HttpStatus.OK).body(detail);
     }
 
     @PutMapping("/{detailid}")

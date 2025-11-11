@@ -41,9 +41,14 @@ public class RealEstateController {
     @GetMapping
     @PreAuthorize("hasAuthority('ESTATE_AGENT')")
     public ResponseEntity<Page<RealEstateResponse>> getEstateAgentRealEstates(
-            @RequestParam String email
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "5") Integer size,
+            @AuthenticationPrincipal Jwt jwt
     ){
-        return null;
+        var estateAgentEmail = jwt.getSubject();
+
+        var realEstates = realEstateSerivce.getEstateAgentRealEstates(estateAgentEmail, page, size);
+        return ResponseEntity.status(HttpStatus.OK).body(realEstates);
     }
     /*
     @GetMapping
@@ -52,7 +57,17 @@ public class RealEstateController {
         var response = realEstateSerivce.createRealEstatesResponse(all);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-     */
+    */
+
+    @GetMapping
+    public ResponseEntity<Page<RealEstateResponse>> getSearchRealEstates(
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "5") Integer size,
+            @RequestParam Long searchid
+    ){
+        var realEstates = realEstateSerivce.getSearchRealEstates(searchid, page, size);
+        return ResponseEntity.status(HttpStatus.OK).body(realEstates);
+    }
 
     @GetMapping("/{realestateid}")
     public ResponseEntity<RealEstateResponse> getRealEstateById(

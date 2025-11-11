@@ -6,4 +6,5 @@ import com.dietiestates.resource_server.dto.response.CadastralFilterResponse;
 public interface CadastralFilterService {
 	CadastralFilterResponse createCadastralFilter(CadastralFilterRequest request);
 	CadastralFilterResponse getCadastralFilterById(Long cadastralFilterId);
+    CadastralFilterResponse getSearchCadastralFilter(Long realEstateId);
 }

@@ -11,6 +11,8 @@ import com.dietiestates.resource_server.service.NotificationCategoryService;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/notificationcategories")
 @RequiredArgsConstructor
@@ -37,10 +39,11 @@ public class NotificationCategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<NotificationCategoryResponse>> getUserNotificationCategories(
+    public ResponseEntity<List<NotificationCategoryResponse>> getUserNotificationCategories(
             @RequestParam String email
     ){
-        return null;
+        var notificationCategories = notificationCategoryService.getUserNotificationCategories(email);
+        return ResponseEntity.status(HttpStatus.OK).body(notificationCategories);
     }
 
     @PutMapping("/{notificationcategoryname}")

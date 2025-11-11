@@ -47,8 +47,13 @@ public class AdminController {
 
     @GetMapping
     public ResponseEntity<Page<StafferResponse>> getCreatedStaffers(
+            @RequestParam Integer page,
+            @RequestParam Integer size,
             @AuthenticationPrincipal Jwt jwt
     ){
-        return null;
+        var adminEmail = jwt.getSubject();
+
+        var createdStaffers = adminService.getCreatedStaffers(adminEmail);
+        return ResponseEntity.status(HttpStatus.OK).body(createdStaffers);
     }
 }

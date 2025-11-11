@@ -38,10 +38,11 @@ public class UtilityController {
     }
 
     @GetMapping
-    public ResponseEntity<DetailResponse> getDetailUtility(
+    public ResponseEntity<UtilityResponse> getDetailUtility(
             @RequestParam Long detailid
     ){
-        return null;
+        var utility = utilityService.getDetailUtility(detailid);
+        return ResponseEntity.status(HttpStatus.OK).body(utility);
     }
 
     @PutMapping("/{utilityid}")

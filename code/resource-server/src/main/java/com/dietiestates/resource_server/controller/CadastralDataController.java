@@ -1,9 +1,7 @@
 package com.dietiestates.resource_server.controller;
 
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 
 import com.dietiestates.resource_server.dto.request.CadastralDataRequest;
@@ -31,7 +29,8 @@ public class CadastralDataController {
     public ResponseEntity<CadastralDataResponse> getRealEstateCadastralData(
             @RequestParam Long realestateid
     ){
-        return null;
+        var cadastralData = cadastralDataService.getRealEstateCadastralData(realestateid);
+        return ResponseEntity.status(HttpStatus.OK).body(cadastralData);
     }
 
     @GetMapping("/{cadastraldataid}")

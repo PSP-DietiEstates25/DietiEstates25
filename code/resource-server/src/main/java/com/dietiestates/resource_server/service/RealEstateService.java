@@ -10,7 +10,9 @@ import java.util.List;
 public interface RealEstateService {
 	RealEstateResponse createRealEstate(RealEstateRequest request, String estateAgentEmail);
 	RealEstateResponse getRealEstateById(Long id);
-    Page<RealEstateResponse> getPagedRealEstates(Integer page, Integer size);
     RealEstateResponse updateRealEstate(Long realEstateId, RealEstateRequest request, String estateAgentEmail);
+    Page<RealEstateResponse> getPagedRealEstates(Integer page, Integer size);
+    Page<RealEstateResponse> getEstateAgentRealEstates(String estateAgentEmail, Integer page, Integer size);
+    Page<RealEstateResponse> getSearchRealEstates(Long searchId, Integer page, Integer size);
     void deleteRealEstate(Long realEstateId);
 }
