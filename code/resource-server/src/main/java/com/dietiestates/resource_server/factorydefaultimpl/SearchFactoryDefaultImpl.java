@@ -24,8 +24,6 @@ public class SearchFactoryDefaultImpl implements SearchFactory {
     ) {
         return Search.builder()
                 .category(spec.getCategory())
-                .size(spec.getSize())
-                .page(spec.getPage() - 1)
                 .user(user)
                 .cadastralFilter(cadastralFilter)
                 .detail(detail)

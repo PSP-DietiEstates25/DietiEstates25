@@ -1,5 +1,6 @@
 package com.dietiestates.resource_server.controller;
 
+import com.dietiestates.resource_server.dto.response.CreatedStaffersResponse;
 import com.dietiestates.resource_server.dto.response.StafferResponse;
 import com.dietiestates.resource_server.exception.notfound.AdminNotFoundException;
 import com.dietiestates.resource_server.service.AdminService;
@@ -28,7 +29,7 @@ public class AdminController {
     public ResponseEntity<StafferResponse> registerAdmin(
             @RequestBody StafferRequest request,
             @AuthenticationPrincipal Jwt jwt
-    ) throws RoleNotFoundException {
+    ) {
 
         var creatorEmail = jwt.getSubject();
 
@@ -46,14 +47,14 @@ public class AdminController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<StafferResponse>> getCreatedStaffers(
+    public ResponseEntity<CreatedStaffersResponse> getCreatedStaffers(
             @RequestParam Integer page,
             @RequestParam Integer size,
             @AuthenticationPrincipal Jwt jwt
     ){
         var adminEmail = jwt.getSubject();
 
-        var createdStaffers = adminService.getCreatedStaffers(adminEmail);
+        var createdStaffers = adminService.getCreatedStaffers(adminEmail, page, size);
         return ResponseEntity.status(HttpStatus.OK).body(createdStaffers);
     }
 }

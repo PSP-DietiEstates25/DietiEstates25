@@ -8,6 +8,9 @@ import com.dietiestates.resource_server.spec.NotificationCategorySpec;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class NotificationCategoryMapperDefaultImpl implements NotificationCategoryMapper {
@@ -32,4 +35,14 @@ public class NotificationCategoryMapperDefaultImpl implements NotificationCatego
                 .userEmail(notificationCategory.getUser().getEmail())
 				.build();
 	}
+
+    @Override
+    public List<NotificationCategoryResponse> createNotificationCategoriesResponse(List<NotificationCategory> notificationCategories) {
+        var notificationCategoriesResponse = new ArrayList<NotificationCategoryResponse>();
+        notificationCategories.forEach(notificationCategory -> {
+            notificationCategoriesResponse.add(fromEntity(notificationCategory));
+        });
+
+        return notificationCategoriesResponse;
+    }
 }

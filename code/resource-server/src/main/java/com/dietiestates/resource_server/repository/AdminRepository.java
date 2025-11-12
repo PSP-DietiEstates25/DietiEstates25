@@ -1,6 +1,9 @@
 package com.dietiestates.resource_server.repository;
 
 import com.dietiestates.resource_server.model.Admin;
+import com.dietiestates.resource_server.model.Staffer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
@@ -9,4 +12,5 @@ public interface AdminRepository extends CrudRepository<Admin, Long> {
     boolean existsById(Long id);
     boolean existsByEmail(String email);
 	Optional<Admin> findByEmail(String email);
+    Page<Admin> findByAdminId(Long id, Pageable pageable);
 }

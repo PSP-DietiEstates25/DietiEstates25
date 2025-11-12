@@ -9,6 +9,8 @@ import com.dietiestates.resource_server.repository.NotificationCategoryRepositor
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class NotificationCategoryFinderDefaultImpl implements NotificationCategoryFinder {
@@ -24,13 +26,18 @@ public class NotificationCategoryFinderDefaultImpl implements NotificationCatego
 	}
 
     @Override
-    public NotificationCategory getNotificationCategoryByNameAndUser(String name, User user)
+    public NotificationCategory getNotificationCategoryByNameAndUserId(String name, Long userId)
             throws NotificationCategoryNotFoundException {
 
-        return notificationCategoryRepository.findByNameAndUser(
-                NotificationCategoryType.valueOf(name),
-                user
+        return notificationCategoryRepository.findByNameAndUserId(
+                name.toUpperCase(),
+                userId
         ).orElseThrow(NotificationCategoryNotFoundException::new);
+    }
+
+    @Override
+    public List<NotificationCategory> getUserNotificationCategories(Long userId) {
+        return notificationCategoryRepository.findByUserId(userId);
     }
 
 }

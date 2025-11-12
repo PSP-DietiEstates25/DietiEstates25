@@ -9,7 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SearchSpec {
-
 	private String category;
 	private Long cadastralFilterId;
 	private Long detailId;

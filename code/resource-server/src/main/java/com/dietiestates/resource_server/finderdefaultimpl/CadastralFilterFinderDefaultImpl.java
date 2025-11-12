@@ -19,4 +19,10 @@ public class CadastralFilterFinderDefaultImpl implements CadastralFilterFinder {
 		return cadastralFilterRepository.findById(id)
 				.orElseThrow(CadastralFilterNotFoundException::new);
 	}
+
+    @Override
+    public CadastralFilter getSearchCadastralFilter(Long searchId) throws CadastralFilterNotFoundException {
+        return cadastralFilterRepository.findBySearchId(searchId)
+                .orElseThrow(CadastralFilterNotFoundException::new);
+    }
 }

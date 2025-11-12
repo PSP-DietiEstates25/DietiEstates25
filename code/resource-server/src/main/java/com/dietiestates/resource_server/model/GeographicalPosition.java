@@ -36,7 +36,7 @@ public class GeographicalPosition {
 	@Column(nullable = false)
 	private Double longitude;
 	
-	@Column(nullable = true)
+	@Column
 	private Integer radius;
 	
 	@CreatedDate

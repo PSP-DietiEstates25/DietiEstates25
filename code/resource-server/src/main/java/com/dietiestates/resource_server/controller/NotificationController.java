@@ -1,6 +1,7 @@
 package com.dietiestates.resource_server.controller;
 
 import com.dietiestates.resource_server.model.Notification;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -45,20 +46,12 @@ public class NotificationController {
 
     @GetMapping
     public ResponseEntity<Page<NotificationResponse>> getNotificationCategoryNotifications(
-            @PathVariable String notificationcategoryname
+            @PathVariable String notificationcategoryname,
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "5") Integer size
     ){
-        var notifications = notificationService.getNotificationCategoryNotifications(notificationcategoryname);
+        var notifications = notificationService.getNotificationCategoryNotifications(notificationcategoryname, page, size);
         return ResponseEntity.status(HttpStatus.OK).body(notifications);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<Notification>> getNotifications(
-            Principal principal,
-            @PathVariable String notificationcategoryname
-    ) {
-
-        notificationService.getPrincipalNotifications(principal, notificationcategoryname);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 }
 

@@ -20,4 +20,9 @@ public class CadastralDataFinderDefaultImpl implements CadastralDataFinder {
 				.orElseThrow(CadastralDataNotFoundException::new);
 	}
 
+    @Override
+    public CadastralData getRealEstateCadastralData(Long realEstateId) throws CadastralDataNotFoundException {
+        return cadastralDataRepository.findByRealEstateId(realEstateId)
+                .orElseThrow(CadastralDataNotFoundException::new);
+    }
 }

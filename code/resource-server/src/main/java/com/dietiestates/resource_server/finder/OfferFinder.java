@@ -10,4 +10,6 @@ import java.util.List;
 
 public interface OfferFinder {
 	Offer getOfferById(Long id) throws OfferNotFoundException;
+    Page<Offer> getRealEstateUserOffers(Long realEstateId, Long userId, Pageable pageable);
+    Page<Offer> getRealEstateEstateAgentOffers(Long realEstateId, Long estateAgentId, Pageable pageable);
 }

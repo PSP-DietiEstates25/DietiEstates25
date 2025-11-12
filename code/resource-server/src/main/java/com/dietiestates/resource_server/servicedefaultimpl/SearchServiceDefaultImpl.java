@@ -2,6 +2,7 @@ package com.dietiestates.resource_server.servicedefaultimpl;
 
 import com.dietiestates.resource_server.dto.request.SearchRequest;
 import com.dietiestates.resource_server.dto.response.RealEstateResponse;
+import com.dietiestates.resource_server.dto.response.SearchResponse;
 import com.dietiestates.resource_server.factory.SearchFactory;
 import com.dietiestates.resource_server.finder.CadastralFilterFinder;
 import com.dietiestates.resource_server.finder.DetailFinder;
@@ -17,6 +18,10 @@ import com.dietiestates.resource_server.service.RealEstateService;
 import com.dietiestates.resource_server.service.SearchRealEstateService;
 import com.dietiestates.resource_server.service.SearchService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -55,4 +60,14 @@ public class SearchServiceDefaultImpl implements SearchService {
 	    search = searchRepository.save(search);
 		return realEstateMapper.createRealEstatesResponse(searchedRealEstates);
 	}
+
+    @Override
+    public Page<SearchResponse> getUserSearches(String userEmail, Integer page, Integer size) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        var user = userFinder.getUserByEmail(userEmail);
+        var userSearches = searchFinder.getUserSearches(user.getId(), pageable);
+
+        return searchMapper.createPagedSearchResponse(userSearches);
+    }
 }

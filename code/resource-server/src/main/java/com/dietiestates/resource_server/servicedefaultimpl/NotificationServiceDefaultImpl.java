@@ -14,6 +14,10 @@ import com.dietiestates.resource_server.service.NotificationService;
 import com.dietiestates.resource_server.spec.NotificationSpec;
 import com.dietiestates.resource_server.verifier.NotificationVerifier;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -36,10 +40,9 @@ public class NotificationServiceDefaultImpl implements NotificationService {
 	public NotificationResponse createNotification(
 			String notificationCategoryName,
 			NotificationRequest request
-			) {
+    ) {
 		
 		var notificationSpec = notificationMapper.toSpec(request);
-		
 		var notificationCategory = notificationCategoryFinder.getNotificationCategoryByName(notificationCategoryName.toUpperCase());
 	
 		var notification = notificationFactory.createNotificationFromSpec(notificationSpec, notificationCategory);
@@ -53,9 +56,9 @@ public class NotificationServiceDefaultImpl implements NotificationService {
 
         searchesToNotify.forEach(search -> {
 
-            var userNewPropertiesNotificationCategory = notificationCategoryFinder.getNotificationCategoryByNameAndUser(
+            var userNewPropertiesNotificationCategory = notificationCategoryFinder.getNotificationCategoryByNameAndUserId(
                     "NEW_PROPERTIES",
-                    search.getUser()
+                    search.getUser().getId()
             );
             var notificationSpec = NotificationSpec.builder()
                     .message("New property available")
@@ -82,15 +85,12 @@ public class NotificationServiceDefaultImpl implements NotificationService {
 	}
 
     @Override
-    public List<NotificationResponse> getPrincipalNotifications(
-            Principal principal,
-            String notificationCategoryName
-    ) {
+    public Page<NotificationResponse> getNotificationCategoryNotifications(String notificationCategoryName, Integer page, Integer size) {
+        var notificationCategory = notificationCategoryFinder.getNotificationCategoryByName(notificationCategoryName.toUpperCase());
 
-        var user = userFinder.getUserByEmail(principal.getName());
-        var notificationCategory = notificationCategoryFinder.getNotificationCategoryByName(notificationCategoryName);
-        var notifications = notificationFinder.getPrincipalNotifications(user, notificationCategory);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        var notifications = notificationFinder.getNotificationCategoryNotifications(notificationCategory.getId(), pageable);
 
-        return notificationMapper.createNotificationsResponse(notifications);
+        return notificationMapper.createPagedNotificationsResponse(notifications);
     }
 }

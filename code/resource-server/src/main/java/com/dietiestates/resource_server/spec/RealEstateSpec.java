@@ -8,7 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RealEstateSpec {
-
 	private String category;
 	private String[] images;
 	private String description;

@@ -14,10 +14,8 @@ public class UtilityFinderDefaultImpl implements UtilityFinder{
 	private final UtilityRepository utilityRepository;
 
 	@Override
-	public Utility getUtilityById(Long id)
-			throws UtilityNotFoundException {
+	public Utility getUtilityById(Long id) throws UtilityNotFoundException {
 		return utilityRepository.findById(id)
 				.orElseThrow(UtilityNotFoundException::new);
 	}
-	
 }

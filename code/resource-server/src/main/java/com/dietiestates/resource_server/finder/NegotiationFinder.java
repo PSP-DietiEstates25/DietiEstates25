@@ -8,8 +8,6 @@ import com.dietiestates.resource_server.model.User;
 import com.dietiestates.resource_server.spec.NegotiationSpec;
 
 public interface NegotiationFinder {
-    Negotiation getNegotiationById(Long id) throws NegotiationNotFoundException;
-    Negotiation getNegotiationByRealEstate(RealEstate realEstate) throws NegotiationNotFoundException;
-    Negotiation getNegotiationByUserAndRealEstate(User user, RealEstate realEstate) throws NegotiationNotFoundException;
-    Negotiation getNegotiationByEstateAgentAndRealEstate(EstateAgent estateAgent, RealEstate realEstate) throws NegotiationNotFoundException;
+    Negotiation getRealEstateUserNegotiation(Long realEstateId, Long userId) throws NegotiationNotFoundException;
+    Negotiation getRealEstateEstateAgentNegotiation(Long realEstateId, Long estateAgentId) throws NegotiationNotFoundException;
 }

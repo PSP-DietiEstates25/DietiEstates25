@@ -13,6 +13,8 @@ import com.dietiestates.resource_server.service.NotificationCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class NotificationCategoryServiceDefaultImpl implements NotificationCategoryService {
@@ -42,6 +44,13 @@ public class NotificationCategoryServiceDefaultImpl implements NotificationCateg
 		var notificationCategory = notificationCategoryFinder.getNotificationCategoryByName(notificationCategoryName);
 		return notificationCategoryMapper.fromEntity(notificationCategory);
 	}
+
+    @Override
+    public List<NotificationCategoryResponse> getUserNotificationCategories(String userEmail) {
+        var user = userFinder.getUserByEmail(userEmail);
+        var notificationCategories = notificationCategoryFinder.getUserNotificationCategories(user.getId());
+        return notificationCategoryMapper.createNotificationCategoriesResponse(notificationCategories);
+    }
 
     @Override
     public void updateNotificationCategory(String notificationCategoryName, NotificationCategoryRequest request) {

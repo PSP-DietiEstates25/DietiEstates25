@@ -5,4 +5,5 @@ import com.dietiestates.resource_server.model.CadastralData;
 
 public interface CadastralDataFinder {
 	CadastralData getCadastralDataById(Long id) throws CadastralDataNotFoundException;
+    CadastralData getRealEstateCadastralData(Long realEstateId) throws CadastralDataNotFoundException;
 }

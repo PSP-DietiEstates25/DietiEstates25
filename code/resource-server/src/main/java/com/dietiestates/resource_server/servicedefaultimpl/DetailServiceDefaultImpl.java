@@ -27,7 +27,6 @@ public class DetailServiceDefaultImpl implements DetailService {
 	
 	@Override
 	public DetailResponse createDetail(DetailRequest request) {
-		
 		var detailSpec = detailMapper.toSpec(request);
 		
 		var geographicalPosition = geographicalPositionFinder.getGeographicalPositionById(detailSpec.getGeographicalPositionId());
@@ -48,7 +47,6 @@ public class DetailServiceDefaultImpl implements DetailService {
     @Override
     @Transactional
     public void updateDetail(Long id, DetailRequest request) {
-
         var detailToUpdate = detailFinder.getDetailById(id);
 
         var geographicalPosition = geographicalPositionFinder.getGeographicalPositionById(request.getGeographicalPositionId());

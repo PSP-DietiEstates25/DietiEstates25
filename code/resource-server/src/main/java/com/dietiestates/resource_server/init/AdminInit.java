@@ -11,7 +11,6 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @Component
-@DependsOn("rolesInit")
 @RequiredArgsConstructor
 public class AdminInit {
 

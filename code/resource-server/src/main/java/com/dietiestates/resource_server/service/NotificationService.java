@@ -13,7 +13,6 @@ import java.util.List;
 public interface NotificationService {
 	NotificationResponse createNotification(String notificationCategoryName, NotificationRequest request);
     void createNotificationsAfterRealEstateCreation(List<Search> searchesToNotify);
-    List<NotificationResponse> getPrincipalNotifications(Principal principal, String notificationCategoryName);
     NotificationResponse getNotificationById(String notificationCategoryName, Long notificationId) throws NotificationNotOwnedByNotificationCategoryException;
-    Page<NotificationResponse> getNotificationCategoryNotifications(String notificationCategoryName);
+    Page<NotificationResponse> getNotificationCategoryNotifications(String notificationCategoryName, Integer page, Integer size);
 }

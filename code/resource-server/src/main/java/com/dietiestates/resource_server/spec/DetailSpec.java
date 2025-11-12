@@ -8,7 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DetailSpec {
-
 	private Long geographicalPositionId;
 	private Long utilityId;
 }

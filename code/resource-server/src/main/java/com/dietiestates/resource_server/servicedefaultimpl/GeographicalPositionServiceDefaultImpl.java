@@ -3,10 +3,12 @@ package com.dietiestates.resource_server.servicedefaultimpl;
 import com.dietiestates.resource_server.dto.request.GeographicalPositionRequest;
 import com.dietiestates.resource_server.dto.response.GeographicalPositionResponse;
 import com.dietiestates.resource_server.factory.GeographicalPositionFactory;
+import com.dietiestates.resource_server.finder.DetailFinder;
 import com.dietiestates.resource_server.finder.GeographicalPositionFinder;
 import com.dietiestates.resource_server.mapper.GeographicalPositionMapper;
 import com.dietiestates.resource_server.repository.GeographicalPositionRepository;
 import com.dietiestates.resource_server.service.GeographicalPositionService;
+import com.dietiestates.resource_server.verifier.GeographicalPositionVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,12 +20,13 @@ public class GeographicalPositionServiceDefaultImpl implements GeographicalPosit
 	private final GeographicalPositionRepository geographicalPositionRepository;
 	private final GeographicalPositionFactory geographicalPositionFactory;
 	private final GeographicalPositionFinder geographicalPositionFinder;
-	//private final GeographicalPositionVerifier geographicalPositionVerifier;
 	private final GeographicalPositionMapper geographicalPositionMapper;
-	
+    private final GeographicalPositionVerifier geographicalPositionVerifier;
+
+    private final DetailFinder detailFinder;
+
 	@Override
 	public GeographicalPositionResponse createGeographicalPosition(GeographicalPositionRequest request) {
-		
 		var geographicalPositionSpec = geographicalPositionMapper.toSpec(request);
 
 		var geographicalPosition = geographicalPositionFactory.createGeographicalPositionFromSpec(geographicalPositionSpec);
@@ -34,11 +37,18 @@ public class GeographicalPositionServiceDefaultImpl implements GeographicalPosit
 	
 	@Override
 	public GeographicalPositionResponse getGeographicalPositionById(Long geographicalPositionId) {
-		
 		var geographicalPosition = geographicalPositionFinder.getGeographicalPositionById(geographicalPositionId);
-		
 		return geographicalPositionMapper.fromEntity(geographicalPosition);
 	}
+
+    @Override
+    public GeographicalPositionResponse getDetailGeograpicalPosition(Long detailId) {
+        geographicalPositionVerifier.checkGeographicalPositionOwnedByDetail(detailId);
+        var detail = detailFinder.getGeographicalPositionDetail(detailId);
+        var geographicalPosition = geographicalPositionFinder.getGeographicalPositionById(detail.getGeographicalPosition().getId());
+
+        return geographicalPositionMapper.fromEntity(geographicalPosition);
+    }
 
     @Override
     @Transactional

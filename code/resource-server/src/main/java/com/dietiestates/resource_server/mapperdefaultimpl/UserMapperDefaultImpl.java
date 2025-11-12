@@ -15,10 +15,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserMapperDefaultImpl implements UserMapper {
 
-    private final OfferMapper offerMapper;
-    private final VisitMapper visitMapper;
-    private final SearchMapper searchMapper;
-
     @Override
     public UserSpec toSpec(UserRequest request) {
         return UserSpec.builder()

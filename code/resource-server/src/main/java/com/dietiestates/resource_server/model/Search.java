@@ -41,8 +41,8 @@ public class Search {
 	@ManyToOne
 	@JoinColumn(
 			nullable = false,
-			name = "user_email",
-			foreignKey = @ForeignKey(name = "SEARCH_USER_EMAIL_FK"))
+			name = "user_id",
+			foreignKey = @ForeignKey(name = "SEARCH_USER_ID_FK"))
 	private User user;
 	
 	@OneToOne

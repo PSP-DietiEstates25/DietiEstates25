@@ -31,6 +31,7 @@ public class VisitController {
     private final VisitService visitService;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<VisitResponse> createVisit(
             @RequestBody VisitRequest request,
             @PathVariable Long realestateid,
@@ -53,39 +54,12 @@ public class VisitController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<Page<VisitResponse>> getUserVisits(
+    @PreAuthorize("hasAuthority('USER,ESTATE_AGENT')")
+    public ResponseEntity<Page<VisitResponse>> getRealEstateVisit(
             @PathVariable Long realestateid,
             @RequestParam(required = false, defaultValue = "1") Integer page,
-            @RequestParam(required = false, defaultValue = "5") Integer size,
-            @AuthenticationPrincipal Jwt jwt
+            @RequestParam(required = false, defaultValue = "5") Integer size
     ) {
-        var userEmail = jwt.getSubject();
-
-        var visits = visitService.getUserVisits(realestateid, userEmail, page, size);
-        return ResponseEntity.status(HttpStatus.OK).body(visits);
-    }
-
-    @GetMapping
-    @PreAuthorize("hasAuthority('ESTATE_AGENT')")
-    public ResponseEntity<Page<VisitResponse>> getEstateAgentVisits(
-            @PathVariable Long realestateid,
-            @RequestParam(required = false, defaultValue = "1") Integer page,
-            @RequestParam(required = false, defaultValue = "5") Integer size,
-            @AuthenticationPrincipal Jwt jwt
-    ) {
-        var estateAgentEmail = jwt.getSubject();
-
-        var visits = visitService.getEstateAgentVisits(realestateid, estateAgentEmail, page, size);
-        return ResponseEntity.status(HttpStatus.OK).body(visits);
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<VisitResponse>> getRealEstateVisits(
-            @RequestParam(required = false, defaultValue = "1") Integer page,
-            @RequestParam(required = false, defaultValue = "5") Integer size,
-            @PathVariable Long realestateid
-    ){
         var visits = visitService.getRealEstateVisits(realestateid, page, size);
         return ResponseEntity.status(HttpStatus.OK).body(visits);
     }
@@ -103,29 +77,5 @@ public class VisitController {
         var visit = visitService.updateVisitStatus(request, realestateid, visitid);
         return ResponseEntity.status(HttpStatus.OK).body(visit);
     }
-    /*
-    @GetMapping
-    public ResponseEntity<List<VisitResponse>> listVisitsForRealEstate(
-            @PathVariable Long realestateid,
-            @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "12") Integer size
-    ) {
-
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        var entities = visitRepository.findByRealEstateId(realEstateId, pageable);
-        var dtos = entities.stream().map(visitMapper::fromEntity).collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
-    }
-
-    @PatchMapping("/{visitid}")
-    @PreAuthorize("hasAuthority('ESTATE_AGENT')")
-    public ResponseEntity<VisitResponse> updateVisitStatus(
-            @PathVariable Long visitid,
-            Authentication auth
-    ) {
-
-        return ResponseEntity.ok(visitService.acceptVisit(id, auth));
-    }
-    */
 }
 

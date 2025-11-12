@@ -48,11 +48,8 @@ public class NegotiationServiceDefaultImpl implements NegotiationService {
 
     @Override
     public Negotiation getNegotiationByUserAndRealEstate(NegotiationSpec negotiationSpec) {
-
         var user = userFinder.getUserByEmail(negotiationSpec.getUserEmail());
-        var realEstate = realEstateFinder.getRealEstateById(negotiationSpec.getRealEstateId());
-
-        return negotiationFinder.getNegotiationByUserAndRealEstate(user, realEstate);
+        return negotiationFinder.getRealEstateUserNegotiation(negotiationSpec.getRealEstateId(), user.getId());
     }
 
 }

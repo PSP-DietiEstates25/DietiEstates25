@@ -5,10 +5,9 @@ import com.dietiestates.resource_server.finder.AdminFinder;
 import com.dietiestates.resource_server.model.Admin;
 import com.dietiestates.resource_server.repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -31,12 +30,7 @@ public class AdminFinderDefaultImpl implements AdminFinder {
     }
 
     @Override
-	public List<Admin> getAllAdmins() {
-		
-		var adminsIterable = adminRepository.findAll();
-		var allAdmins = new ArrayList<Admin>();
-		adminsIterable.forEach(allAdmins::add);
-		
-		return allAdmins;
-	}
+    public Page<Admin> getCreatedAdmins(Admin admin, Pageable pageable) {
+        return adminRepository.findByAdminId(admin.getId(), pageable);
+    }
 }

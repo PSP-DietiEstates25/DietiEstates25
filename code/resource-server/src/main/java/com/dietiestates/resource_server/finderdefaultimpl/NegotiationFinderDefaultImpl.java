@@ -22,20 +22,14 @@ public class NegotiationFinderDefaultImpl implements NegotiationFinder {
     }
 
     @Override
-    public Negotiation getNegotiationByRealEstate(RealEstate realEstate) throws NegotiationNotFoundException {
-        return negotiationRepository.findByRealEstate(realEstate)
+    public Negotiation getRealEstateUserNegotiation(Long realEstateId, Long userId) throws NegotiationNotFoundException {
+        return negotiationRepository.findByRealEstateIdAndUserId(realEstateId, userId)
                 .orElseThrow(NegotiationNotFoundException::new);
     }
 
     @Override
-    public Negotiation getNegotiationByUserAndRealEstate(User user, RealEstate realEstate) throws NegotiationNotFoundException {
-        return negotiationRepository.findByUserAndRealEstate(user, realEstate)
-                .orElseThrow(NegotiationNotFoundException::new);
-    }
-
-    @Override
-    public Negotiation getNegotiationByEstateAgentAndRealEstate(EstateAgent estateAgent, RealEstate realEstate) throws NegotiationNotFoundException {
-        return negotiationRepository.findByEstateAgentAndRealEstate(estateAgent, realEstate)
+    public Negotiation getRealEstateEstateAgentNegotiation(Long realEstataId, Long userId) throws NegotiationNotFoundException {
+        return negotiationRepository.findByRealEstateIdAndEstateAgentId(realEstataId, userId)
                 .orElseThrow(NegotiationNotFoundException::new);
     }
 }

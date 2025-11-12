@@ -6,6 +6,7 @@ import com.dietiestates.resource_server.mapper.NotificationMapper;
 import com.dietiestates.resource_server.model.Notification;
 import com.dietiestates.resource_server.spec.NotificationSpec;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -41,5 +42,10 @@ public class NotificationMapperDefaultImpl implements NotificationMapper {
         });
 
         return notificationsResponse;
+    }
+
+    @Override
+    public Page<NotificationResponse> createPagedNotificationsResponse(Page<Notification> notifications){
+        return notifications.map(this::fromEntity);
     }
 }

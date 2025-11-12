@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 @RequiredArgsConstructor
 public class SearchMapperDefaultImpl implements SearchMapper {
@@ -37,7 +35,7 @@ public class SearchMapperDefaultImpl implements SearchMapper {
 	}
 
     @Override
-    public Page<SearchResponse> getPagedSearchesResponse(Page<Search> searches){
+    public Page<SearchResponse> createPagedSearchResponse(Page<Search> searches){
         return searches.map(this::fromEntity);
     }
 }

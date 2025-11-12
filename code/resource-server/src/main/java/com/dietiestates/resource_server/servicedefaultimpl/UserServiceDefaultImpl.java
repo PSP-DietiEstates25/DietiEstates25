@@ -6,21 +6,15 @@ import com.dietiestates.resource_server.dto.response.UserResponse;
 import com.dietiestates.resource_server.enums.NotificationCategoryType;
 import com.dietiestates.resource_server.exception.notfound.RoleNotFoundException;
 import com.dietiestates.resource_server.factory.UserFactory;
-import com.dietiestates.resource_server.finder.RoleFinder;
 import com.dietiestates.resource_server.finder.UserFinder;
 import com.dietiestates.resource_server.mapper.UserMapper;
-import com.dietiestates.resource_server.model.NotificationCategory;
 import com.dietiestates.resource_server.repository.UserRepository;
 import com.dietiestates.resource_server.service.NotificationCategoryService;
 import com.dietiestates.resource_server.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Not;
-import org.springframework.context.annotation.Primary;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-@Service("authenticationServiceImpl")
-@Primary
+@Service
 @RequiredArgsConstructor
 public class UserServiceDefaultImpl implements UserService {
 

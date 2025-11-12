@@ -7,6 +7,8 @@ import com.dietiestates.resource_server.model.NotificationCategory;
 import com.dietiestates.resource_server.model.User;
 import com.dietiestates.resource_server.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -25,8 +27,8 @@ public class NotificationFinderDefaultImpl implements NotificationFinder {
 	}
 
     @Override
-    public List<Notification> getPrincipalNotifications(User user, NotificationCategory notificationCategory) {
-        return notificationRepository.findByUserAndNotificationCategory(user, notificationCategory);
+    public Page<Notification> getNotificationCategoryNotifications(Long notificationCategoryId, Pageable pageable) {
+        return notificationRepository.findByNotificationCategoryId(notificationCategoryId, pageable);
     }
 
 }

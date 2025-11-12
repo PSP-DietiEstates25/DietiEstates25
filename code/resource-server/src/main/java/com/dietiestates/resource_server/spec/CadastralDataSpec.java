@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 @ToString
 @Builder
 public class CadastralDataSpec {
-
 	private BigDecimal price;
 	private Integer squareMeters;
 	private String energyClass;

@@ -2,9 +2,12 @@ package com.dietiestates.resource_server.finderdefaultimpl;
 
 import com.dietiestates.resource_server.exception.notfound.EstateAgentNotFoundException;
 import com.dietiestates.resource_server.finder.EstateAgentFinder;
+import com.dietiestates.resource_server.model.Admin;
 import com.dietiestates.resource_server.model.EstateAgent;
 import com.dietiestates.resource_server.repository.EstateAgentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -31,12 +34,7 @@ public class EstateAgentFinderDefaultImpl implements EstateAgentFinder {
     }
 
     @Override
-	public List<EstateAgent> getAllEstateAgents() {
-		
-		var estateAgentsIterable = estateAgentRepository.findAll();
-		var allEstateAgents = new ArrayList<EstateAgent>();
-		estateAgentsIterable.forEach(allEstateAgents::add);
-		
-		return allEstateAgents;
-	}
+    public Page<EstateAgent> getCreatedEstateAgents(Admin admin, Pageable pageable) {
+        return estateAgentRepository.findByAdminId(admin.getId(), pageable);
+    }
 }

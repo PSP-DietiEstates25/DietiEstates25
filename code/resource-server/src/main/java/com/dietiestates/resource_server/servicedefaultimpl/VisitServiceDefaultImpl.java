@@ -9,8 +9,6 @@ import com.dietiestates.resource_server.exception.notowned.VisitNotOwnedByRealEs
 import com.dietiestates.resource_server.factory.VisitFactory;
 import com.dietiestates.resource_server.finder.*;
 import com.dietiestates.resource_server.mapper.VisitMapper;
-import com.dietiestates.resource_server.repository.EstateAgentRepository;
-import com.dietiestates.resource_server.repository.UserRepository;
 import com.dietiestates.resource_server.repository.VisitRepository;
 import com.dietiestates.resource_server.service.NegotiationService;
 import com.dietiestates.resource_server.service.NotificationService;
@@ -36,12 +34,8 @@ public class VisitServiceDefaultImpl implements VisitService {
 	private final VisitMapper visitMapper;
 
     private final NotificationService notificationService;
-    private final NegotiationFinder negotiationFinder;
     private final NegotiationService negotiationService;
-    private final UserFinder userFinder;
     private final RealEstateFinder realEstateFinder;
-    private final RealEstateVerifier realEstateVerifier;
-    private final EstateAgentFinder estateAgentFinder;
 
 	@Override
 	public VisitResponse createVisit(VisitRequest request, Long realEstateId, String userEmail) {
@@ -72,28 +66,11 @@ public class VisitServiceDefaultImpl implements VisitService {
 	}
 
     @Override
-    public Page<VisitResponse> getPagedUserRealEstateVisits(Long realEstateId, String userEmail, Integer page, Integer size) {
+    public Page<VisitResponse> getRealEstateVisits(Long realEstateId, Integer page, Integer size){
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        var realEstate =  realEstateFinder.getRealEstateById(realEstateId);
-        var user = userFinder.getUserByEmail(userEmail);
-        var negotiation = negotiationFinder.getNegotiationByUserAndRealEstate(user, realEstate);
+        var realEstateVisits = visitFinder.getRealEstateVisits(realEstateId, pageable);
 
-        var realEstateVisits = visitRepository.findByNegotiation(negotiation, pageable);
-        return visitMapper.createPagedVisitsResponse(realEstateVisits);
-    }
-
-    @Override
-    public Page<VisitResponse> getPagedEstateAgentRealEstateVisits(Long realEstateId, String estateAgentEmail, Integer page, Integer size){
-
-        realEstateVerifier.checkRealEstateOwnedByEstateAgent(realEstateId, estateAgentEmail);
-
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        var realEstate = realEstateFinder.getRealEstateById(realEstateId);
-        var estateAgent = estateAgentFinder.getEstateAgentByEmail(estateAgentEmail);
-        var negotiation = negotiationFinder.getNegotiationByEstateAgentAndRealEstate(estateAgent, realEstate);
-
-        var realEstateVisits = visitRepository.findByNegotiation(negotiation, pageable);
         return visitMapper.createPagedVisitsResponse(realEstateVisits);
     }
 

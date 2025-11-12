@@ -8,7 +8,6 @@ import lombok.Setter;
 @Setter
 @Builder
 public class NegotiationSpec {
-
     private String userEmail;
     private String estateAgentEmail;
     private Long realEstateId;

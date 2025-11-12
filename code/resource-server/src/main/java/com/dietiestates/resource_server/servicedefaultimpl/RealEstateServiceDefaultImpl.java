@@ -4,10 +4,7 @@ import com.dietiestates.resource_server.dto.request.RealEstateRequest;
 import com.dietiestates.resource_server.dto.response.RealEstateResponse;
 import com.dietiestates.resource_server.enums.RealEstateCategory;
 import com.dietiestates.resource_server.factory.RealEstateFactory;
-import com.dietiestates.resource_server.finder.CadastralDataFinder;
-import com.dietiestates.resource_server.finder.DetailFinder;
-import com.dietiestates.resource_server.finder.EstateAgentFinder;
-import com.dietiestates.resource_server.finder.RealEstateFinder;
+import com.dietiestates.resource_server.finder.*;
 import com.dietiestates.resource_server.mapper.RealEstateMapper;
 import com.dietiestates.resource_server.repository.RealEstateRepository;
 import com.dietiestates.resource_server.service.NotificationService;
@@ -32,7 +29,7 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
 	private final RealEstateFinder realEstateFinder;
 	private final RealEstateMapper realEstateMapper;
 	
-	private final EstateAgentFinder estateAgentFinder;
+    private final EstateAgentFinder estateAgentFinder;
 	private final CadastralDataFinder cadastralDataFinder;
 	private final DetailFinder detailFinder;
     private final SearchRealEstateService searchRealEstateService;
@@ -70,11 +67,30 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
 	}
 
     @Override
-    public Page<RealEstateResponse> getPagedRealEstates(Integer page, Integer size) {
+    public Page<RealEstateResponse> getRealEstates(Integer page, Integer size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
         var realEstates = realEstateRepository.findAll(pageable);
         return realEstateMapper.createPagedRealEstatesResponse(realEstates);
+    }
+
+    @Override
+    public Page<RealEstateResponse> getEstateAgentRealEstates(String estateAgentEmail, Integer page, Integer size) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        var estateAgent = estateAgentFinder.getEstateAgentByEmail(estateAgentEmail);
+        var estateAgentRealEstates = realEstateFinder.getEstateAgentRealEstates(estateAgent.getId(), pageable);
+
+        return realEstateMapper.createPagedRealEstatesResponse(estateAgentRealEstates);
+    }
+
+    @Override
+    public Page<RealEstateResponse> getSearchRealEstates(Long searchId, Integer page, Integer size) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        var searchRealEstates = realEstateFinder.getSearchRealEstates(searchId, pageable);
+
+        return realEstateMapper.createPagedRealEstatesResponse(searchRealEstates);
     }
 
     @Override

@@ -5,7 +5,11 @@ import com.dietiestates.resource_server.dto.response.NotificationCategoryRespons
 import com.dietiestates.resource_server.model.NotificationCategory;
 import com.dietiestates.resource_server.spec.NotificationCategorySpec;
 
+import java.util.List;
+
 public interface NotificationCategoryMapper {
 	NotificationCategorySpec toSpec(NotificationCategoryRequest request);
 	NotificationCategoryResponse fromEntity(NotificationCategory notificationCategory);
+
+    List<NotificationCategoryResponse> createNotificationCategoriesResponse(List<NotificationCategory> notificationCategories);
 }

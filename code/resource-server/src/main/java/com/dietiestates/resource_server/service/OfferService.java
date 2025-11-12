@@ -8,11 +8,12 @@ import org.springframework.security.core.Authentication;
 
 
 public interface OfferService {
-	OfferResponse createUserOffer(OfferRequest request, Long realEstateId, String userEmail);
+	OfferResponse createOffer(OfferRequest request, Long realEstateId, String creatorEmail, String creatorRole);
+    OfferResponse createUserOffer(OfferRequest request, Long realEstateId, String userEmail);
     OfferResponse createEstateAgentCounterOffer(OfferRequest request, Long realEstateId, String estateAgentEmail);
     OfferResponse getOfferById(Long realEstateId, Long offerId);
-    Page<OfferResponse> getUserOffers(Long realEstateId, String userEmail, Integer page, Integer size);
-    Page<OfferResponse> getEstateAgentOffers(Long realEstateId, String estateAgentEmail, Integer page, Integer size);
-    Page<OfferResponse> getRealEstateOffers(Long realEstateId, Integer page, Integer size);
+    Page<OfferResponse> getRealEstateOffers(Long realEstateId, String creatorEmail, String creatorRole, Integer page, Integer size);
+    Page<OfferResponse> getRealEstateUserOffers(Long realEstateId, String userEmail, Integer page, Integer size);
+    Page<OfferResponse> getRealEstateEstateAgentOffers(Long realEstateId, String estateAgentEmail, Integer page, Integer size);
     OfferResponse updateOfferStatus(OfferRequest request, Long realEstateId, Long offerId);
 }

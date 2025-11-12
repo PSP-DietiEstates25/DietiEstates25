@@ -5,7 +5,10 @@ import com.dietiestates.resource_server.exception.notfound.NotificationCategoryN
 import com.dietiestates.resource_server.model.NotificationCategory;
 import com.dietiestates.resource_server.model.User;
 
+import java.util.List;
+
 public interface NotificationCategoryFinder {
 	NotificationCategory getNotificationCategoryByName(String name) throws NotificationCategoryNotFoundException;
-    NotificationCategory getNotificationCategoryByNameAndUser(String name, User user) throws NotificationCategoryNotFoundException;
+    NotificationCategory getNotificationCategoryByNameAndUserId(String name, Long userId) throws NotificationCategoryNotFoundException;
+    List<NotificationCategory> getUserNotificationCategories(Long userId);
 }

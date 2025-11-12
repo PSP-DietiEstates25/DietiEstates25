@@ -33,22 +33,6 @@ public class DetailController {
         return ResponseEntity.status(HttpStatus.OK).body(detail);
     }
 
-    @GetMapping
-    public ResponseEntity<DetailResponse> getRealEstateDetail(
-            @RequestParam Long realestateid
-    ){
-        var detail = detailService.getRealEstateDetail(realestateid);
-        return ResponseEntity.status(HttpStatus.OK).body(detail);
-    }
-
-    @GetMapping
-    public ResponseEntity<DetailResponse> getSearchDetail(
-            @RequestParam Long searchid
-    ){
-        var detail = detailService.getSearchDetail(searchid);
-        return ResponseEntity.status(HttpStatus.OK).body(detail);
-    }
-
     @PutMapping("/{detailid}")
     public ResponseEntity<DetailResponse> updateDetail(
             @PathVariable Long detailid,

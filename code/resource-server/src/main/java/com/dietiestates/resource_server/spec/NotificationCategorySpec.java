@@ -8,7 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NotificationCategorySpec {
-
 	private String name;
 	private Boolean isActive;
     private String userEmail;

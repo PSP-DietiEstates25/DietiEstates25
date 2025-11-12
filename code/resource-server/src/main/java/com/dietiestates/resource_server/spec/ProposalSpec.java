@@ -10,7 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class ProposalSpec {
-
 	private String category;
 	private String status;
 }

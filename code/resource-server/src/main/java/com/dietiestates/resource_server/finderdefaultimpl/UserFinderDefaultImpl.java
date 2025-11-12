@@ -17,9 +17,7 @@ public class UserFinderDefaultImpl implements UserFinder {
 	private final UserRepository userRepository;
 
 	@Override
-	public User getUserByEmail(String userEmail)
-			throws UserNotFoundException {
-		
+	public User getUserByEmail(String userEmail) throws UserNotFoundException {
 		return userRepository.findByEmail(userEmail)
 				.orElseThrow(UserNotFoundException::new);
 	}
@@ -32,7 +30,6 @@ public class UserFinderDefaultImpl implements UserFinder {
 
     @Override
 	public List<User> getAllUsers() {
-		
 		var usersIterable = userRepository.findAll();
 		var allUsers = new ArrayList<User>();
 		usersIterable.forEach(allUsers::add);

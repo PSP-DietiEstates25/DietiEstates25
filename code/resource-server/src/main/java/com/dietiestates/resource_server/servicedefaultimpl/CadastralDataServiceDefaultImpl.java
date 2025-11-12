@@ -40,6 +40,12 @@ public class CadastralDataServiceDefaultImpl implements CadastralDataService {
 	}
 
     @Override
+    public CadastralDataResponse getRealEstateCadastralData(Long realEstateId) {
+        var cadastralData =  cadastralDataFinder.getRealEstateCadastralData(realEstateId);
+        return cadastralDataMapper.fromEntity(cadastralData);
+    }
+
+    @Override
     public void updateCadastralData(Long cadastralDataId, CadastralDataRequest request) {
 
         var cadastralDataToUpdate = cadastralDataFinder.getCadastralDataById(cadastralDataId);

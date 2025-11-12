@@ -1,20 +1,16 @@
 package com.dietiestates.resource_server.controller;
 
-import java.util.List;
-
 import jakarta.validation.Valid;
-import org.jboss.logging.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import com.dietiestates.resource_server.dto.request.RealEstateRequest;
 import com.dietiestates.resource_server.dto.response.RealEstateResponse;
-import com.dietiestates.resource_server.finder.RealEstateFinder;
 import com.dietiestates.resource_server.service.RealEstateService;
 
 import lombok.RequiredArgsConstructor;
@@ -38,6 +34,24 @@ public class RealEstateController {
         return ResponseEntity.status(HttpStatus.CREATED).body(realEstate);
     }
 
+    @GetMapping("/{realestateid}")
+    public ResponseEntity<RealEstateResponse> getRealEstateById(
+            @PathVariable Long realestateid
+    ) {
+        var realEstate = realEstateSerivce.getRealEstateById(realestateid);
+        return ResponseEntity.status(HttpStatus.OK).body(realEstate);
+    }
+
+    /*
+    @GetMapping
+    public ResponseEntity<Page<RealEstateResponse>> getPagedRealEstates(
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "5") Integer size
+    ) {
+        var pagedRealEstates = realEstateSerivce.getRealEstates(page, size);
+        return ResponseEntity.status(HttpStatus.OK).body(pagedRealEstates);
+    }
+
     @GetMapping
     @PreAuthorize("hasAuthority('ESTATE_AGENT')")
     public ResponseEntity<Page<RealEstateResponse>> getEstateAgentRealEstates(
@@ -50,16 +64,31 @@ public class RealEstateController {
         var realEstates = realEstateSerivce.getEstateAgentRealEstates(estateAgentEmail, page, size);
         return ResponseEntity.status(HttpStatus.OK).body(realEstates);
     }
-    /*
-    @GetMapping
-    public ResponseEntity<List<RealEstateResponse>> getAllRealEstates() {
-        var all = realEstateFinder.getAllRealEstates();
-        var response = realEstateSerivce.createRealEstatesResponse(all);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-    */
+     */
 
-    @GetMapping
+    @GetMapping(params = "!searchid")
+    public ResponseEntity<Page<RealEstateResponse>> getRealEstates(
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "5") Integer size,
+            @AuthenticationPrincipal Jwt jwt,
+            Authentication authentication
+    ){
+        Page<RealEstateResponse> pagedRealEstates;
+        boolean isEstateAgent = authentication.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority()
+                        .equals("ESTATE_AGENT")
+                );
+
+        if (isEstateAgent) {
+            var estateAgentEmail = jwt.getSubject();
+            pagedRealEstates = realEstateSerivce.getEstateAgentRealEstates(estateAgentEmail, page, size);
+        } else pagedRealEstates = realEstateSerivce.getRealEstates(page, size);
+
+        return ResponseEntity.status(HttpStatus.OK).body(pagedRealEstates);
+    }
+
+    @GetMapping(params = "searchid")
     public ResponseEntity<Page<RealEstateResponse>> getSearchRealEstates(
             @RequestParam(required = false, defaultValue = "1") Integer page,
             @RequestParam(required = false, defaultValue = "5") Integer size,
@@ -69,32 +98,12 @@ public class RealEstateController {
         return ResponseEntity.status(HttpStatus.OK).body(realEstates);
     }
 
-    @GetMapping("/{realestateid}")
-    public ResponseEntity<RealEstateResponse> getRealEstateById(
-            @PathVariable Long realestateid
-    ) {
-
-        var realEstate = realEstateSerivce.getRealEstateById(realestateid);
-        return ResponseEntity.status(HttpStatus.OK).body(realEstate);
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<RealEstateResponse>> getPagedRealEstates(
-            @RequestParam(required = false, defaultValue = "1") Integer page,
-            @RequestParam(required = false, defaultValue = "5") Integer size
-    ) {
-
-        var pagedRealEstates = realEstateSerivce.getPagedRealEstates(page, size);
-        return ResponseEntity.status(HttpStatus.OK).body(pagedRealEstates);
-    }
-
     @PutMapping("/{realestateid}")
     public ResponseEntity<RealEstateResponse> updateRealEstate(
             @PathVariable Long realestateid,
             @RequestBody @Valid RealEstateRequest request,
             @AuthenticationPrincipal Jwt jwt
     ) {
-
         var estateAgentEmail = jwt.getSubject();
 
         var realEstate = realEstateSerivce.updateRealEstate(realestateid, request, estateAgentEmail);
@@ -105,7 +114,6 @@ public class RealEstateController {
     public ResponseEntity<Void> deleteRealEstate(
             @PathVariable Long realestateid
     ) {
-
         realEstateSerivce.deleteRealEstate(realestateid);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

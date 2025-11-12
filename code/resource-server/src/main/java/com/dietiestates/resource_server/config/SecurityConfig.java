@@ -111,7 +111,7 @@ public class SecurityConfig {
 
         //convertitore per claim "roles" new jwt
         JwtGrantedAuthoritiesConverter rolesConv = new JwtGrantedAuthoritiesConverter();
-        rolesConv.setAuthorityPrefix("ROLE_");
+        rolesConv.setAuthorityPrefix("");
         rolesConv.setAuthoritiesClaimName("role");
 
         //convertitore per scopes

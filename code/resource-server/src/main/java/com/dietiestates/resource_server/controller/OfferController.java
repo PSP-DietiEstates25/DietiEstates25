@@ -24,28 +24,17 @@ public class OfferController {
     private final OfferService offerService;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<OfferResponse> createUserOffer(
+    @PreAuthorize("hasAuthority('USER, ESTATE_AGENT')")
+    public ResponseEntity<OfferResponse> createOffer(
             @RequestBody OfferRequest request,
             @PathVariable Long realestateid,
             @AuthenticationPrincipal Jwt jwt
     ){
 
-        var userEmail = jwt.getSubject();
-        var offer = offerService.createUserOffer(request, realestateid, userEmail);
-        return ResponseEntity.status(HttpStatus.CREATED).body(offer);
-    }
+        var creatorEmail = jwt.getSubject();
+        var creatorRole = jwt.getClaim("role").toString();
 
-    @PostMapping
-    @PreAuthorize("hasAuthority('ESTATE_AGENT'')")
-    public ResponseEntity<OfferResponse> createEstatAgentCounterOffer(
-            @RequestBody OfferRequest request,
-            @PathVariable Long realestateid,
-            @AuthenticationPrincipal Jwt jwt
-    ){
-
-        var estateAgentEmail = jwt.getSubject();
-        var offer = offerService.createEstateAgentCounterOffer(request, realestateid, estateAgentEmail);
+        var offer = offerService.createOffer(request, realestateid, creatorEmail, creatorRole);
         return ResponseEntity.status(HttpStatus.CREATED).body(offer);
     }
 
@@ -59,39 +48,18 @@ public class OfferController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<Page<OfferResponse>> getUserOffers(
+    @PreAuthorize("hasAuthority('USER, ESTATE_AGENT')")
+    public ResponseEntity<Page<OfferResponse>> getRealEstateOffers(
             @PathVariable Long realestateid,
             @AuthenticationPrincipal Jwt jwt,
             @RequestParam(required = false, defaultValue = "1") Integer page,
             @RequestParam(required = false, defaultValue = "5") Integer size
     ) {
 
-        var userEmail = jwt.getSubject();
-        var offers = offerService.getUserOffers(realestateid, userEmail, page, size);
-        return ResponseEntity.status(HttpStatus.OK).body(offers);
-    }
+        var creatorEmail = jwt.getSubject();
+        var creatorRole = jwt.getClaim("role").toString();
 
-    @GetMapping
-    @PreAuthorize("hasAuthority('ESTATE_AGENT')")
-    public ResponseEntity<Page<OfferResponse>> getEstateAgentOffers(
-            @PathVariable Long realestateid,
-            @AuthenticationPrincipal Jwt jwt,
-            @RequestParam(required = false, defaultValue = "1") Integer page,
-            @RequestParam(required = false, defaultValue = "5") Integer size
-    ){
-        var estateAgentEmail = jwt.getSubject();
-        var offers = offerService.getEstateAgentOffers(realestateid, estateAgentEmail, page, size);
-        return ResponseEntity.status(HttpStatus.OK).body(offers);
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<OfferResponse>> getRealEstateOffers(
-            @RequestParam(required = false, defaultValue = "1") Integer page,
-            @RequestParam(required = false, defaultValue = "5") Integer size,
-            @PathVariable Long realestateid
-    ){
-        var offers = offerService.getRealEstateOffers(realestateid, page, size);
+        var offers = offerService.getRealEstateOffers(realestateid, creatorEmail, creatorRole, page, size);
         return ResponseEntity.status(HttpStatus.OK).body(offers);
     }
 

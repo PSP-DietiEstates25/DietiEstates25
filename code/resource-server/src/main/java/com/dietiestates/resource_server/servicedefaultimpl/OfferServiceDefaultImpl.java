@@ -41,10 +41,16 @@ public class OfferServiceDefaultImpl implements OfferService {
 
     private final NotificationService notificationService;
     private final NegotiationService negotiationService;
-    private final NegotiationFinder negotiationFinder;
+
+    @Override
+    public OfferResponse createOffer(OfferRequest request, Long realEstateId, String creatorEmail, String creatorRole) {
+        if(creatorRole.equals("USER"))
+            return this.createUserOffer(request, realEstateId, creatorEmail);
+        else return this.createEstateAgentCounterOffer(request, realEstateId, creatorEmail);
+    }
 
 	@Override
-	public OfferResponse createUserOffer(OfferRequest request, Long realEstateId, String userEmail) {
+    public OfferResponse createUserOffer(OfferRequest request, Long realEstateId, String userEmail) {
 
 		var offerSpec = offerMapper.toSpec(request);
         var realEstate = realEstateFinder.getRealEstateById(realEstateId);
@@ -86,30 +92,33 @@ public class OfferServiceDefaultImpl implements OfferService {
 		return offerMapper.fromEntity(offer);
 	}
 
-    @Override
-    public Page<OfferResponse> getPagedUserRealEstateOffers(Long realEstateId, String userEmail, Integer page, Integer size) {
+    public Page<OfferResponse> getRealEstateOffers(Long realEstateId, String creatorEmail, String creatorRole, Integer page, Integer size) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        var realEstate = realEstateFinder.getRealEstateById(realEstateId);
-        var user = userFinder.getUserByEmail(userEmail);
-        var negotiation = negotiationFinder.getNegotiationByUserAndRealEstate(user, realEstate);
-
-        var realEstateOffers = offerRepository.findByNegotiation(negotiation, pageable);
-        return offerMapper.createPagedOffersResponse(realEstateOffers);
+        if(creatorRole.equals("USER"))
+            return this.getRealEstateUserOffers(realEstateId, creatorEmail, page, size);
+        else return this.getRealEstateEstateAgentOffers(realEstateId, creatorEmail, page, size);
     }
 
     @Override
-    public Page<OfferResponse> getPagedEstateAgentRealEstateOffers(Long realEstateId, String estateAgentEmail, Integer page, Integer size){
+    public Page<OfferResponse> getRealEstateUserOffers(Long realEstateId, String userEmail, Integer page, Integer size) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        var user = userFinder.getUserByEmail(userEmail);
+        var realEstateUserOffers = offerFinder.getRealEstateUserOffers(realEstateId, user.getId(), pageable);
+
+        return offerMapper.createPagedOffersResponse(realEstateUserOffers);
+    }
+
+    @Override
+    public Page<OfferResponse> getRealEstateEstateAgentOffers(Long realEstateId, String estateAgentEmail, Integer page, Integer size){
 
         realEstateVerifier.checkRealEstateOwnedByEstateAgent(realEstateId, estateAgentEmail);
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        var realEstate = realEstateFinder.getRealEstateById(realEstateId);
         var estateAgent = estateAgentFinder.getEstateAgentByEmail(estateAgentEmail);
-        var negotiation = negotiationFinder.getNegotiationByEstateAgentAndRealEstate(estateAgent, realEstate);
+        var realEstateEstateAgentOffers = offerFinder.getRealEstateEstateAgentOffers(realEstateId, estateAgent.getId(), pageable);
 
-        var realEstateOffers = offerRepository.findByNegotiation(negotiation, pageable);
-        return offerMapper.createPagedOffersResponse(realEstateOffers);
+        return offerMapper.createPagedOffersResponse(realEstateEstateAgentOffers);
     }
 
     @Override

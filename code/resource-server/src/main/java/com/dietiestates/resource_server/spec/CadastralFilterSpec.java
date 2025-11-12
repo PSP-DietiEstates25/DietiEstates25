@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CadastralFilterSpec {
-
 	private BigDecimal minPrice;
 	private BigDecimal maxPrice;
 	private Integer minSquareMeters;

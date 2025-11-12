@@ -9,8 +9,6 @@ import org.springframework.data.domain.Page;
 public interface VisitService {
 	VisitResponse createVisit(VisitRequest request, Long realEstateId, String userEmail);
 	VisitResponse getVisitById(Long realEstateId, Long visitId) throws VisitNotOwnedByRealEstateException;
-    Page<VisitResponse> getUserVisits(Long realEstateId, String userEmail, Integer page, Integer size);
-    Page<VisitResponse> getEstateAgentVisits(Long realEstateId, String estateAgentEmail, Integer page, Integer size);
     Page<VisitResponse> getRealEstateVisits(Long realEstateId, Integer page, Integer size);
     VisitResponse updateVisitStatus(VisitRequest request, Long realEstateId, Long visitId) throws VisitNotOwnedByRealEstateException;
 }

@@ -19,7 +19,7 @@ public class OfferSpec extends ProposalSpec {
 			String status,
 			BigDecimal amount,
             Long counterOfId
-			) {
+    ) {
 		super(category, status);
 		this.amount = amount;
         this.counterOfId = counterOfId;

@@ -10,5 +10,5 @@ import java.util.List;
 
 public interface SearchRepository extends CrudRepository<Search, Long>, PagingAndSortingRepository<Search, Long>{
     boolean existsById(Long id);
-	Page<Search> findByUser(String userEmail, Pageable pageable);
+	Page<Search> findByUserId(Long id, Pageable pageable);
 }

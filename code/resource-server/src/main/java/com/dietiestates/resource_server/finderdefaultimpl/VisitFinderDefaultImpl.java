@@ -5,6 +5,8 @@ import com.dietiestates.resource_server.finder.VisitFinder;
 import com.dietiestates.resource_server.model.Visit;
 import com.dietiestates.resource_server.repository.VisitRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,10 +16,14 @@ public class VisitFinderDefaultImpl implements VisitFinder {
 	private final VisitRepository visitRepository;
 
 	@Override
-	public Visit getVisitById(Long id)
-			throws VisitNotFoundException {
+	public Visit getVisitById(Long id) throws VisitNotFoundException {
 		return visitRepository.findById(id)
 				.orElseThrow(VisitNotFoundException::new);
 	}
-	
+
+    @Override
+    public Page<Visit> getRealEstateVisits(Long negotiationId, Pageable pageable) {
+        return visitRepository.findByNegotiationId(negotiationId, pageable);
+    }
+
 }

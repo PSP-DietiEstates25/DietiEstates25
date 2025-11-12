@@ -6,6 +6,8 @@ import com.dietiestates.resource_server.model.RealEstate;
 import com.dietiestates.resource_server.model.Search;
 import com.dietiestates.resource_server.repository.SearchRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -32,5 +34,10 @@ public class SearchFinderDefaultImpl implements SearchFinder {
         searchesIterable.forEach(allSearches::add);
 
         return allSearches;
+    }
+
+    @Override
+    public Page<Search> getUserSearches(Long userId, Pageable pageable) {
+        return searchRepository.findByUserId(userId, pageable);
     }
 }

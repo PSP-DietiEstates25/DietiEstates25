@@ -8,7 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GeographicalPositionSpec {
-
 	private String city;
 	private String municipality;
 	private String address;

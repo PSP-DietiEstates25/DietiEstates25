@@ -14,8 +14,7 @@ public class GeographicalPositionFinderDefaultImpl implements GeographicalPositi
 	private final GeographicalPositionRepository geographicalPositionRepository;
 	
 	@Override
-	public GeographicalPosition getGeographicalPositionById(Long id)
-			throws GeographicalPositionNotFoundException {
+	public GeographicalPosition getGeographicalPositionById(Long id) throws GeographicalPositionNotFoundException {
 		return geographicalPositionRepository.findById(id)
 				.orElseThrow(GeographicalPositionNotFoundException::new);
 	}

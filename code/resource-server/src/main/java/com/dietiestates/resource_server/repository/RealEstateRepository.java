@@ -10,4 +10,5 @@ public interface RealEstateRepository extends CrudRepository<RealEstate, Long>, 
     boolean existsById(Long id);
     boolean existsByIdAndEstateAgentEmail(Long id, String estateAgentEmail);
     Page<RealEstate> findAll(Pageable pageable);
+    Page<RealEstate> findByEstateAgentId(Long estateAgentId, Pageable pageable);
 }

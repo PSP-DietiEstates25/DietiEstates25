@@ -11,7 +11,7 @@ public interface RealEstateService {
 	RealEstateResponse createRealEstate(RealEstateRequest request, String estateAgentEmail);
 	RealEstateResponse getRealEstateById(Long id);
     RealEstateResponse updateRealEstate(Long realEstateId, RealEstateRequest request, String estateAgentEmail);
-    Page<RealEstateResponse> getPagedRealEstates(Integer page, Integer size);
+    Page<RealEstateResponse> getRealEstates(Integer page, Integer size);
     Page<RealEstateResponse> getEstateAgentRealEstates(String estateAgentEmail, Integer page, Integer size);
     Page<RealEstateResponse> getSearchRealEstates(Long searchId, Integer page, Integer size);
     void deleteRealEstate(Long realEstateId);

@@ -3,10 +3,12 @@ package com.dietiestates.resource_server.servicedefaultimpl;
 import com.dietiestates.resource_server.dto.request.UtilityRequest;
 import com.dietiestates.resource_server.dto.response.UtilityResponse;
 import com.dietiestates.resource_server.factory.UtilityFactory;
+import com.dietiestates.resource_server.finder.DetailFinder;
 import com.dietiestates.resource_server.finder.UtilityFinder;
 import com.dietiestates.resource_server.mapper.UtilityMapper;
 import com.dietiestates.resource_server.repository.UtilityRepository;
 import com.dietiestates.resource_server.service.UtilityService;
+import com.dietiestates.resource_server.verifier.UtilityVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,9 +20,11 @@ public class UtilityServiceDefaultImpl implements UtilityService {
 	private final UtilityRepository utilityRepository;
 	private final UtilityFactory utilityFactory;
 	private final UtilityFinder utilityFinder;
-	//private final UtilityVerifier utilityVerifier;
+	private final UtilityVerifier utilityVerifier;
 	private final UtilityMapper utilityMapper;
-	
+
+    private final DetailFinder detailFinder;
+
 	@Override
 	public UtilityResponse createUtility(UtilityRequest request) {
 		
@@ -37,6 +41,15 @@ public class UtilityServiceDefaultImpl implements UtilityService {
 		var utility = utilityFinder.getUtilityById(utilityId);
 		return utilityMapper.fromEntity(utility);
 	}
+
+    @Override
+    public UtilityResponse getDetailUtility(Long detailId) {
+        utilityVerifier.checkUtilityOwnedByDetail(detailId);
+        var detail = detailFinder.getDetailById(detailId);
+        var utility = utilityFinder.getUtilityById(detail.getUtility().getId());
+
+        return utilityMapper.fromEntity(utility);
+    }
 
     @Override
     @Transactional
