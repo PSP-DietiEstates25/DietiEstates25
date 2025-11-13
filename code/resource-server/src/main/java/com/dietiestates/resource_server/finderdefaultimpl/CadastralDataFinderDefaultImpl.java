@@ -2,6 +2,7 @@ package com.dietiestates.resource_server.finderdefaultimpl;
 
 import com.dietiestates.resource_server.exception.notfound.CadastralDataNotFoundException;
 import com.dietiestates.resource_server.finder.CadastralDataFinder;
+import com.dietiestates.resource_server.finder.RealEstateFinder;
 import com.dietiestates.resource_server.model.CadastralData;
 import com.dietiestates.resource_server.repository.CadastralDataRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 public class CadastralDataFinderDefaultImpl implements CadastralDataFinder {
 
 	private final CadastralDataRepository cadastralDataRepository;
+    private final RealEstateFinder realEstateFinder;
 	
 	@Override
 	public CadastralData getCadastralDataById(Long id)
@@ -22,7 +24,8 @@ public class CadastralDataFinderDefaultImpl implements CadastralDataFinder {
 
     @Override
     public CadastralData getRealEstateCadastralData(Long realEstateId) throws CadastralDataNotFoundException {
-        return cadastralDataRepository.findByRealEstateId(realEstateId)
+        var realEstate = realEstateFinder.getRealEstateById(realEstateId);
+        return cadastralDataRepository.findById(realEstate.getCadastralData().getId())
                 .orElseThrow(CadastralDataNotFoundException::new);
     }
 }

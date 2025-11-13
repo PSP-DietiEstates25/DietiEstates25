@@ -74,9 +74,9 @@ public class RealEstate {
         this.category = RealEstateCategory.valueOf(category);
         this.images = images != null ? Arrays.asList(images) : new ArrayList<>();
         this.description = description;
-        estateAgent.addRealEstate(this);
-        setCadastralData(cadastralData);
+        this.cadastralData = cadastralData;
         this.detail = detail;
+        estateAgent.addRealEstate(this);
     }
 
     public void addNegotiation(Negotiation negotiation) {
@@ -88,10 +88,4 @@ public class RealEstate {
         this.searchRealEstates.add(searchRealEstate);
         searchRealEstate.setRealEstate(this);
     }
-
-    public void setCadastralData(CadastralData cadastralData) {
-        this.cadastralData = cadastralData;
-        cadastralData.setRealEstate(this);
-    }
-
 }

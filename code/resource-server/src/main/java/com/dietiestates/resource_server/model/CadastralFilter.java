@@ -45,9 +45,6 @@ public class CadastralFilter {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 	
-	@OneToOne(mappedBy = "cadastralFilter", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Search search;
-	
 	@Builder(builderMethodName = "builder")
 	public CadastralFilter(
 		BigDecimal minPrice,
@@ -60,7 +57,7 @@ public class CadastralFilter {
 		Integer maxRooms,
 		Integer minFloor,
 		Integer maxFloor
-		) {
+    ) {
 		this.priceRange = PriceRange.builder()
 				.minPrice(minPrice)
 				.maxPrice(maxPrice)
@@ -86,5 +83,4 @@ public class CadastralFilter {
 				.maxFloor(maxFloor)
 				.build();
 	}
-	
 }

@@ -2,6 +2,7 @@ package com.dietiestates.resource_server.finderdefaultimpl;
 
 import com.dietiestates.resource_server.exception.notfound.CadastralFilterNotFoundException;
 import com.dietiestates.resource_server.finder.CadastralFilterFinder;
+import com.dietiestates.resource_server.finder.SearchFinder;
 import com.dietiestates.resource_server.model.CadastralFilter;
 import com.dietiestates.resource_server.repository.CadastralFilterRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 public class CadastralFilterFinderDefaultImpl implements CadastralFilterFinder {
 
 	private final CadastralFilterRepository cadastralFilterRepository;
+    private final SearchFinder searchFinder;
 
 	@Override
 	public CadastralFilter getCadastralFilterById(Long id)
@@ -22,7 +24,8 @@ public class CadastralFilterFinderDefaultImpl implements CadastralFilterFinder {
 
     @Override
     public CadastralFilter getSearchCadastralFilter(Long searchId) throws CadastralFilterNotFoundException {
-        return cadastralFilterRepository.findBySearchId(searchId)
+        var search = searchFinder.getSearchById(searchId);
+        return cadastralFilterRepository.findById(search.getCadastralFilter().getId())
                 .orElseThrow(CadastralFilterNotFoundException::new);
     }
 }

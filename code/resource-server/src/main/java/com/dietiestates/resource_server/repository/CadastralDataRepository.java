@@ -7,5 +7,4 @@ import java.util.Optional;
 
 public interface CadastralDataRepository extends CrudRepository<CadastralData, Long> {
     boolean existsById(Long id);
-    Optional<CadastralData> findByRealEstateId(Long id);
 }

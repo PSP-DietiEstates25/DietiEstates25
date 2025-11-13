@@ -44,7 +44,6 @@ public class CadastralFilterMapperDefaultImpl implements CadastralFilterMapper {
 				.maxRooms(cadastralFilter.getRoomsRange().getMaxRooms())
 				.minFloor(cadastralFilter.getFloorRange().getMinFloor())
 				.maxFloor(cadastralFilter.getFloorRange().getMaxFloor())
-				.searchId(cadastralFilter.getSearch().getId())
 				.build();
 	}
 }

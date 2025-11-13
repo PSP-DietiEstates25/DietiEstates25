@@ -94,6 +94,7 @@ public class SecurityConfig {
                                 "/offers",
                                 "/visits",
                                 "/cadastraldata",
+                                "/cadastralfilters",
                                 "/details",
                                 "/geographicalpositions",
                                 "/utilities",

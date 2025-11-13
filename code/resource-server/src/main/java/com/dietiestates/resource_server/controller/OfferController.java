@@ -54,16 +54,20 @@ public class OfferController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('USER, ESTATE_AGENT')")
+    @PreAuthorize("hasAnyAuthority('USER, ESTATE_AGENT')")
     public ResponseEntity<Page<OfferResponse>> getRealEstateOffers(
             @PathVariable Long realestateid,
-            @AuthenticationPrincipal Jwt jwt,
             @RequestParam(required = false, defaultValue = "1") Integer page,
-            @RequestParam(required = false, defaultValue = "5") Integer size
+            @RequestParam(required = false, defaultValue = "5") Integer size,
+            @AuthenticationPrincipal Jwt jwt,
+            Authentication authentication
     ) {
 
         var creatorEmail = jwt.getSubject();
-        var creatorRole = jwt.getClaim("role").toString();
+        var creatorRole = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(authority -> authority.equals("USER") || authority.equals("ESTATE_AGENT"))
+                .findFirst().toString();
 
         var offers = offerService.getRealEstateOffers(realestateid, creatorEmail, creatorRole, page, size);
         return ResponseEntity.status(HttpStatus.OK).body(offers);

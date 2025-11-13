@@ -5,6 +5,7 @@ import com.dietiestates.resource_server.dto.response.CadastralDataResponse;
 import com.dietiestates.resource_server.enums.EnergyClass;
 import com.dietiestates.resource_server.factory.CadastralDataFactory;
 import com.dietiestates.resource_server.finder.CadastralDataFinder;
+import com.dietiestates.resource_server.finder.RealEstateFinder;
 import com.dietiestates.resource_server.mapper.CadastralDataMapper;
 import com.dietiestates.resource_server.repository.CadastralDataRepository;
 import com.dietiestates.resource_server.service.CadastralDataService;
@@ -34,7 +35,6 @@ public class CadastralDataServiceDefaultImpl implements CadastralDataService {
 	
 	@Override
 	public CadastralDataResponse getCadastralDataById(Long cadastralDataId) {
-		
 		var cadastralData = cadastralDataFinder.getCadastralDataById(cadastralDataId);
 		return cadastralDataMapper.fromEntity(cadastralData);
 	}

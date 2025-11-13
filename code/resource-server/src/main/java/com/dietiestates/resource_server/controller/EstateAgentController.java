@@ -22,7 +22,7 @@ public class EstateAgentController {
     private final EstateAgentService estateAgentService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<StafferResponse> registerEstateAgent(
             @RequestBody StafferRequest request,
             @AuthenticationPrincipal Jwt jwt

@@ -68,19 +68,13 @@ public class Search {
 			) {
 		this.category = RealEstateCategory.valueOf(category);
 		this.user = user;
+        this.detail = detail;
+        this.cadastralFilter = cadastralFilter;
 		user.addSearch(this);
-		setCadastralFilter(cadastralFilter);
-		this.detail = detail;
 	}
 	
 	public void addSearchRealEstate(SearchRealEstate searchRealEstate) {
 		this.searchRealEstates.add(searchRealEstate);
 		searchRealEstate.setSearch(this);
 	}
-	
-	public void setCadastralFilter(CadastralFilter cadastralFilter) {
-		this.cadastralFilter = cadastralFilter;
-		cadastralFilter.setSearch(this);
-	}
-	
 }

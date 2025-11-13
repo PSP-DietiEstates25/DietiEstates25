@@ -33,7 +33,7 @@ public class CadastralFilterServiceDefaultImpl implements CadastralFilterService
 	
 	@Override
 	public CadastralFilterResponse getCadastralFilterById(Long cadastralFilterId) {
-		var cadastralFilter = cadastralFilterFinder.getCadastralFilterById(cadastralFilterId);
+		var cadastralFilter = cadastralFilterFinder.getSearchCadastralFilter(cadastralFilterId);
 		return cadastralFilterMapper.fromEntity(cadastralFilter);
 	}
 

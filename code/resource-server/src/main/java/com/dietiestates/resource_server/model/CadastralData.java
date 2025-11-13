@@ -47,9 +47,6 @@ public class CadastralData {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 	
-	@OneToOne(mappedBy = "cadastralData", cascade = CascadeType.ALL, orphanRemoval = true)
-	private RealEstate realEstate;
-	
 	@Builder(builderMethodName = "builder")
 	public CadastralData(
 		BigDecimal price,
@@ -57,12 +54,11 @@ public class CadastralData {
 		String energyClass,
 		Integer rooms,
 		Integer floor
-		) {
+    ) {
 		this.price = price;
 		this.squareMeters = squareMeters;
 		this.energyClass = EnergyClass.valueOf(energyClass);
 		this.rooms = rooms;
 		this.floor = floor;
 	}
-
 }

@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.Optional;
+
 public interface RealEstateRepository extends CrudRepository<RealEstate, Long>, PagingAndSortingRepository<RealEstate, Long>{
     boolean existsById(Long id);
     boolean existsByIdAndEstateAgentEmail(Long id, String estateAgentEmail);

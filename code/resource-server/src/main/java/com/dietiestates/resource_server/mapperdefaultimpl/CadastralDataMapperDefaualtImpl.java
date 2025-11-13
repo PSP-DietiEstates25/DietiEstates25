@@ -33,7 +33,6 @@ public class CadastralDataMapperDefaualtImpl implements CadastralDataMapper {
 				.energyClass(cadastralData.getEnergyClass() != null ? cadastralData.getEnergyClass().toString() : null)
 				.rooms(cadastralData.getRooms())
 				.floor(cadastralData.getFloor())
-				.realEstateId(cadastralData.getRealEstate() != null ? cadastralData.getRealEstate().getId() : null)
 				.build();
 	}
 }
