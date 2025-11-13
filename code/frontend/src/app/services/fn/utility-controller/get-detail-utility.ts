@@ -8,14 +8,16 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { StafferResponse } from '../../models/staffer-response';
+import { UtilityResponse } from '../../models/utility-response';
 
-export interface GetEstateAgentById$Params {
+export interface GetDetailUtility$Params {
+  detailid: number;
 }
 
-export function getEstateAgentById(http: HttpClient, rootUrl: string, params?: GetEstateAgentById$Params, context?: HttpContext): Observable<StrictHttpResponse<StafferResponse>> {
-  const rb = new RequestBuilder(rootUrl, getEstateAgentById.PATH, 'get');
+export function getDetailUtility(http: HttpClient, rootUrl: string, params: GetDetailUtility$Params, context?: HttpContext): Observable<StrictHttpResponse<UtilityResponse>> {
+  const rb = new RequestBuilder(rootUrl, getDetailUtility.PATH, 'get');
   if (params) {
+    rb.query('detailid', params.detailid, {});
   }
 
   return http.request(
@@ -23,9 +25,9 @@ export function getEstateAgentById(http: HttpClient, rootUrl: string, params?: G
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<StafferResponse>;
+      return r as StrictHttpResponse<UtilityResponse>;
     })
   );
 }
 
-getEstateAgentById.PATH = '/estateagents/{estataeagentid}';
+getDetailUtility.PATH = '/utilities';

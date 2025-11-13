@@ -8,14 +8,18 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { StafferResponse } from '../../models/staffer-response';
+import { PageSearchResponse } from '../../models/page-search-response';
 
-export interface GetEstateAgentById$Params {
+export interface GetUserSearches$Params {
+  page?: number;
+  size?: number;
 }
 
-export function getEstateAgentById(http: HttpClient, rootUrl: string, params?: GetEstateAgentById$Params, context?: HttpContext): Observable<StrictHttpResponse<StafferResponse>> {
-  const rb = new RequestBuilder(rootUrl, getEstateAgentById.PATH, 'get');
+export function getUserSearches(http: HttpClient, rootUrl: string, params?: GetUserSearches$Params, context?: HttpContext): Observable<StrictHttpResponse<PageSearchResponse>> {
+  const rb = new RequestBuilder(rootUrl, getUserSearches.PATH, 'get');
   if (params) {
+    rb.query('page', params.page, {});
+    rb.query('size', params.size, {});
   }
 
   return http.request(
@@ -23,9 +27,9 @@ export function getEstateAgentById(http: HttpClient, rootUrl: string, params?: G
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<StafferResponse>;
+      return r as StrictHttpResponse<PageSearchResponse>;
     })
   );
 }
 
-getEstateAgentById.PATH = '/estateagents/{estataeagentid}';
+getUserSearches.PATH = '/searches';

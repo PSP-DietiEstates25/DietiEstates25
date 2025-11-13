@@ -16,6 +16,8 @@ import { createCadastralData } from '../fn/cadastral-data-controller/create-cada
 import { CreateCadastralData$Params } from '../fn/cadastral-data-controller/create-cadastral-data';
 import { getCadastralDataById } from '../fn/cadastral-data-controller/get-cadastral-data-by-id';
 import { GetCadastralDataById$Params } from '../fn/cadastral-data-controller/get-cadastral-data-by-id';
+import { getRealEstateCadastralData } from '../fn/cadastral-data-controller/get-real-estate-cadastral-data';
+import { GetRealEstateCadastralData$Params } from '../fn/cadastral-data-controller/get-real-estate-cadastral-data';
 import { updateCadastralData } from '../fn/cadastral-data-controller/update-cadastral-data';
 import { UpdateCadastralData$Params } from '../fn/cadastral-data-controller/update-cadastral-data';
 
@@ -71,6 +73,31 @@ export class CadastralDataControllerService extends BaseService {
    */
   updateCadastralData(params: UpdateCadastralData$Params, context?: HttpContext): Observable<CadastralDataResponse> {
     return this.updateCadastralData$Response(params, context).pipe(
+      map((r: StrictHttpResponse<CadastralDataResponse>): CadastralDataResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `getRealEstateCadastralData()` */
+  static readonly GetRealEstateCadastralDataPath = '/cadastraldata';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getRealEstateCadastralData()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getRealEstateCadastralData$Response(params: GetRealEstateCadastralData$Params, context?: HttpContext): Observable<StrictHttpResponse<CadastralDataResponse>> {
+    return getRealEstateCadastralData(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getRealEstateCadastralData$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getRealEstateCadastralData(params: GetRealEstateCadastralData$Params, context?: HttpContext): Observable<CadastralDataResponse> {
+    return this.getRealEstateCadastralData$Response(params, context).pipe(
       map((r: StrictHttpResponse<CadastralDataResponse>): CadastralDataResponse => r.body)
     );
   }

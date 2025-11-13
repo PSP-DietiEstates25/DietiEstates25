@@ -8,14 +8,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { EstateAgentResponse } from '../../models/estate-agent-response';
 import { StafferRequest } from '../../models/staffer-request';
+import { StafferResponse } from '../../models/staffer-response';
 
 export interface RegisterEstateAgent$Params {
       body: StafferRequest
 }
 
-export function registerEstateAgent(http: HttpClient, rootUrl: string, params: RegisterEstateAgent$Params, context?: HttpContext): Observable<StrictHttpResponse<EstateAgentResponse>> {
+export function registerEstateAgent(http: HttpClient, rootUrl: string, params: RegisterEstateAgent$Params, context?: HttpContext): Observable<StrictHttpResponse<StafferResponse>> {
   const rb = new RequestBuilder(rootUrl, registerEstateAgent.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
@@ -26,7 +26,7 @@ export function registerEstateAgent(http: HttpClient, rootUrl: string, params: R
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<EstateAgentResponse>;
+      return r as StrictHttpResponse<StafferResponse>;
     })
   );
 }

@@ -8,5 +8,4 @@ export interface NotificationResponse {
   lastModifiedDate?: string;
   message?: string;
   notificationCategoryId?: number;
-  userEmail?: string;
 }

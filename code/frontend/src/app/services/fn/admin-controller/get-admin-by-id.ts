@@ -8,13 +8,13 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { AdminResponse } from '../../models/admin-response';
+import { StafferResponse } from '../../models/staffer-response';
 
 export interface GetAdminById$Params {
   adminid: number;
 }
 
-export function getAdminById(http: HttpClient, rootUrl: string, params: GetAdminById$Params, context?: HttpContext): Observable<StrictHttpResponse<AdminResponse>> {
+export function getAdminById(http: HttpClient, rootUrl: string, params: GetAdminById$Params, context?: HttpContext): Observable<StrictHttpResponse<StafferResponse>> {
   const rb = new RequestBuilder(rootUrl, getAdminById.PATH, 'get');
   if (params) {
     rb.path('adminid', params.adminid, {});
@@ -25,7 +25,7 @@ export function getAdminById(http: HttpClient, rootUrl: string, params: GetAdmin
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<AdminResponse>;
+      return r as StrictHttpResponse<StafferResponse>;
     })
   );
 }

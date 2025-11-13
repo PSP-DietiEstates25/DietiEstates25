@@ -16,11 +16,38 @@ import { createCadastralFilter } from '../fn/cadastral-filter-controller/create-
 import { CreateCadastralFilter$Params } from '../fn/cadastral-filter-controller/create-cadastral-filter';
 import { getCadastralFilterById } from '../fn/cadastral-filter-controller/get-cadastral-filter-by-id';
 import { GetCadastralFilterById$Params } from '../fn/cadastral-filter-controller/get-cadastral-filter-by-id';
+import { getSearchCadastralFilter } from '../fn/cadastral-filter-controller/get-search-cadastral-filter';
+import { GetSearchCadastralFilter$Params } from '../fn/cadastral-filter-controller/get-search-cadastral-filter';
 
 @Injectable({ providedIn: 'root' })
 export class CadastralFilterControllerService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
+  }
+
+  /** Path part for operation `getSearchCadastralFilter()` */
+  static readonly GetSearchCadastralFilterPath = '/cadastralfilters';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getSearchCadastralFilter()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getSearchCadastralFilter$Response(params: GetSearchCadastralFilter$Params, context?: HttpContext): Observable<StrictHttpResponse<CadastralFilterResponse>> {
+    return getSearchCadastralFilter(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getSearchCadastralFilter$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getSearchCadastralFilter(params: GetSearchCadastralFilter$Params, context?: HttpContext): Observable<CadastralFilterResponse> {
+    return this.getSearchCadastralFilter$Response(params, context).pipe(
+      map((r: StrictHttpResponse<CadastralFilterResponse>): CadastralFilterResponse => r.body)
+    );
   }
 
   /** Path part for operation `createCadastralFilter()` */

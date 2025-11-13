@@ -11,16 +11,44 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { AdminResponse } from '../models/admin-response';
+import { CreatedStaffersResponse } from '../models/created-staffers-response';
 import { getAdminById } from '../fn/admin-controller/get-admin-by-id';
 import { GetAdminById$Params } from '../fn/admin-controller/get-admin-by-id';
+import { getCreatedStaffers } from '../fn/admin-controller/get-created-staffers';
+import { GetCreatedStaffers$Params } from '../fn/admin-controller/get-created-staffers';
 import { registerAdmin } from '../fn/admin-controller/register-admin';
 import { RegisterAdmin$Params } from '../fn/admin-controller/register-admin';
+import { StafferResponse } from '../models/staffer-response';
 
 @Injectable({ providedIn: 'root' })
 export class AdminControllerService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
+  }
+
+  /** Path part for operation `getCreatedStaffers()` */
+  static readonly GetCreatedStaffersPath = '/admins';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getCreatedStaffers()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getCreatedStaffers$Response(params: GetCreatedStaffers$Params, context?: HttpContext): Observable<StrictHttpResponse<CreatedStaffersResponse>> {
+    return getCreatedStaffers(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getCreatedStaffers$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getCreatedStaffers(params: GetCreatedStaffers$Params, context?: HttpContext): Observable<CreatedStaffersResponse> {
+    return this.getCreatedStaffers$Response(params, context).pipe(
+      map((r: StrictHttpResponse<CreatedStaffersResponse>): CreatedStaffersResponse => r.body)
+    );
   }
 
   /** Path part for operation `registerAdmin()` */
@@ -32,7 +60,7 @@ export class AdminControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  registerAdmin$Response(params: RegisterAdmin$Params, context?: HttpContext): Observable<StrictHttpResponse<AdminResponse>> {
+  registerAdmin$Response(params: RegisterAdmin$Params, context?: HttpContext): Observable<StrictHttpResponse<StafferResponse>> {
     return registerAdmin(this.http, this.rootUrl, params, context);
   }
 
@@ -42,9 +70,9 @@ export class AdminControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  registerAdmin(params: RegisterAdmin$Params, context?: HttpContext): Observable<AdminResponse> {
+  registerAdmin(params: RegisterAdmin$Params, context?: HttpContext): Observable<StafferResponse> {
     return this.registerAdmin$Response(params, context).pipe(
-      map((r: StrictHttpResponse<AdminResponse>): AdminResponse => r.body)
+      map((r: StrictHttpResponse<StafferResponse>): StafferResponse => r.body)
     );
   }
 
@@ -57,7 +85,7 @@ export class AdminControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getAdminById$Response(params: GetAdminById$Params, context?: HttpContext): Observable<StrictHttpResponse<AdminResponse>> {
+  getAdminById$Response(params: GetAdminById$Params, context?: HttpContext): Observable<StrictHttpResponse<StafferResponse>> {
     return getAdminById(this.http, this.rootUrl, params, context);
   }
 
@@ -67,9 +95,9 @@ export class AdminControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getAdminById(params: GetAdminById$Params, context?: HttpContext): Observable<AdminResponse> {
+  getAdminById(params: GetAdminById$Params, context?: HttpContext): Observable<StafferResponse> {
     return this.getAdminById$Response(params, context).pipe(
-      map((r: StrictHttpResponse<AdminResponse>): AdminResponse => r.body)
+      map((r: StrictHttpResponse<StafferResponse>): StafferResponse => r.body)
     );
   }
 

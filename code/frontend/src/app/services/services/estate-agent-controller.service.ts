@@ -11,11 +11,11 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { EstateAgentResponse } from '../models/estate-agent-response';
 import { getEstateAgentById } from '../fn/estate-agent-controller/get-estate-agent-by-id';
 import { GetEstateAgentById$Params } from '../fn/estate-agent-controller/get-estate-agent-by-id';
 import { registerEstateAgent } from '../fn/estate-agent-controller/register-estate-agent';
 import { RegisterEstateAgent$Params } from '../fn/estate-agent-controller/register-estate-agent';
+import { StafferResponse } from '../models/staffer-response';
 
 @Injectable({ providedIn: 'root' })
 export class EstateAgentControllerService extends BaseService {
@@ -32,7 +32,7 @@ export class EstateAgentControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  registerEstateAgent$Response(params: RegisterEstateAgent$Params, context?: HttpContext): Observable<StrictHttpResponse<EstateAgentResponse>> {
+  registerEstateAgent$Response(params: RegisterEstateAgent$Params, context?: HttpContext): Observable<StrictHttpResponse<StafferResponse>> {
     return registerEstateAgent(this.http, this.rootUrl, params, context);
   }
 
@@ -42,9 +42,9 @@ export class EstateAgentControllerService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  registerEstateAgent(params: RegisterEstateAgent$Params, context?: HttpContext): Observable<EstateAgentResponse> {
+  registerEstateAgent(params: RegisterEstateAgent$Params, context?: HttpContext): Observable<StafferResponse> {
     return this.registerEstateAgent$Response(params, context).pipe(
-      map((r: StrictHttpResponse<EstateAgentResponse>): EstateAgentResponse => r.body)
+      map((r: StrictHttpResponse<StafferResponse>): StafferResponse => r.body)
     );
   }
 
@@ -57,7 +57,7 @@ export class EstateAgentControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getEstateAgentById$Response(params?: GetEstateAgentById$Params, context?: HttpContext): Observable<StrictHttpResponse<EstateAgentResponse>> {
+  getEstateAgentById$Response(params?: GetEstateAgentById$Params, context?: HttpContext): Observable<StrictHttpResponse<StafferResponse>> {
     return getEstateAgentById(this.http, this.rootUrl, params, context);
   }
 
@@ -67,9 +67,9 @@ export class EstateAgentControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getEstateAgentById(params?: GetEstateAgentById$Params, context?: HttpContext): Observable<EstateAgentResponse> {
+  getEstateAgentById(params?: GetEstateAgentById$Params, context?: HttpContext): Observable<StafferResponse> {
     return this.getEstateAgentById$Response(params, context).pipe(
-      map((r: StrictHttpResponse<EstateAgentResponse>): EstateAgentResponse => r.body)
+      map((r: StrictHttpResponse<StafferResponse>): StafferResponse => r.body)
     );
   }
 

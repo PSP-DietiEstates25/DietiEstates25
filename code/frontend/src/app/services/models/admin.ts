@@ -4,7 +4,7 @@
 
 import { Staffer } from '../models/staffer';
 export interface Admin {
-  admin?: any;
+  admin?: Admin;
   email?: string;
   id?: number;
   staffers?: Array<Staffer>;

@@ -6,7 +6,6 @@ import { EnergyClassRange } from '../models/energy-class-range';
 import { FloorRange } from '../models/floor-range';
 import { PriceRange } from '../models/price-range';
 import { RoomsRange } from '../models/rooms-range';
-import { Search } from '../models/search';
 import { SquareMetersRange } from '../models/square-meters-range';
 export interface CadastralFilter {
   createdDate?: string;
@@ -16,6 +15,5 @@ export interface CadastralFilter {
   lastModifiedDate?: string;
   priceRange?: PriceRange;
   roomsRange?: RoomsRange;
-  search?: Search;
   squareMetersRange?: SquareMetersRange;
 }

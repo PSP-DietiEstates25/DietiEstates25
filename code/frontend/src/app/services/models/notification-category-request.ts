@@ -5,4 +5,5 @@
 export interface NotificationCategoryRequest {
   isActive: boolean;
   name: string;
+  userEmail: string;
 }

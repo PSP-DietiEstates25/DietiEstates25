@@ -13,12 +13,40 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { createSearch } from '../fn/search-controller/create-search';
 import { CreateSearch$Params } from '../fn/search-controller/create-search';
+import { getUserSearches } from '../fn/search-controller/get-user-searches';
+import { GetUserSearches$Params } from '../fn/search-controller/get-user-searches';
+import { PageSearchResponse } from '../models/page-search-response';
 import { RealEstateResponse } from '../models/real-estate-response';
 
 @Injectable({ providedIn: 'root' })
 export class SearchControllerService extends BaseService {
   constructor(config: ApiConfiguration, http: HttpClient) {
     super(config, http);
+  }
+
+  /** Path part for operation `getUserSearches()` */
+  static readonly GetUserSearchesPath = '/searches';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getUserSearches()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getUserSearches$Response(params?: GetUserSearches$Params, context?: HttpContext): Observable<StrictHttpResponse<PageSearchResponse>> {
+    return getUserSearches(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getUserSearches$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getUserSearches(params?: GetUserSearches$Params, context?: HttpContext): Observable<PageSearchResponse> {
+    return this.getUserSearches$Response(params, context).pipe(
+      map((r: StrictHttpResponse<PageSearchResponse>): PageSearchResponse => r.body)
+    );
   }
 
   /** Path part for operation `createSearch()` */

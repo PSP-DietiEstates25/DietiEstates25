@@ -5,7 +5,7 @@
 import { CadastralData } from '../models/cadastral-data';
 import { Detail } from '../models/detail';
 import { EstateAgent } from '../models/estate-agent';
-import { Proposal } from '../models/proposal';
+import { Negotiation } from '../models/negotiation';
 import { SearchRealEstate } from '../models/search-real-estate';
 export interface RealEstate {
   cadastralData?: CadastralData;
@@ -17,6 +17,6 @@ export interface RealEstate {
   id?: number;
   images?: Array<string>;
   lastModifiedDate?: string;
-  proposals?: Array<Proposal>;
+  negotiations?: Array<Negotiation>;
   searchRealEstates?: Array<SearchRealEstate>;
 }

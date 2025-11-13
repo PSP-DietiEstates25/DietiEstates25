@@ -8,14 +8,16 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { StafferResponse } from '../../models/staffer-response';
+import { CadastralFilterResponse } from '../../models/cadastral-filter-response';
 
-export interface GetEstateAgentById$Params {
+export interface GetSearchCadastralFilter$Params {
+  searchid: number;
 }
 
-export function getEstateAgentById(http: HttpClient, rootUrl: string, params?: GetEstateAgentById$Params, context?: HttpContext): Observable<StrictHttpResponse<StafferResponse>> {
-  const rb = new RequestBuilder(rootUrl, getEstateAgentById.PATH, 'get');
+export function getSearchCadastralFilter(http: HttpClient, rootUrl: string, params: GetSearchCadastralFilter$Params, context?: HttpContext): Observable<StrictHttpResponse<CadastralFilterResponse>> {
+  const rb = new RequestBuilder(rootUrl, getSearchCadastralFilter.PATH, 'get');
   if (params) {
+    rb.query('searchid', params.searchid, {});
   }
 
   return http.request(
@@ -23,9 +25,9 @@ export function getEstateAgentById(http: HttpClient, rootUrl: string, params?: G
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<StafferResponse>;
+      return r as StrictHttpResponse<CadastralFilterResponse>;
     })
   );
 }
 
-getEstateAgentById.PATH = '/estateagents/{estataeagentid}';
+getSearchCadastralFilter.PATH = '/cadastralfilters';

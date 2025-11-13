@@ -4,5 +4,4 @@
 
 export interface NotificationRequest {
   message: string;
-  userEmail: string;
 }

@@ -8,16 +8,16 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { Notification } from '../../models/notification';
+import { CadastralDataResponse } from '../../models/cadastral-data-response';
 
-export interface GetNotifications$Params {
-  notificationcategoryname: string;
+export interface GetRealEstateCadastralData$Params {
+  realestateid: number;
 }
 
-export function getNotifications(http: HttpClient, rootUrl: string, params: GetNotifications$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Notification>>> {
-  const rb = new RequestBuilder(rootUrl, getNotifications.PATH, 'get');
+export function getRealEstateCadastralData(http: HttpClient, rootUrl: string, params: GetRealEstateCadastralData$Params, context?: HttpContext): Observable<StrictHttpResponse<CadastralDataResponse>> {
+  const rb = new RequestBuilder(rootUrl, getRealEstateCadastralData.PATH, 'get');
   if (params) {
-    rb.path('notificationcategoryname', params.notificationcategoryname, {});
+    rb.query('realestateid', params.realestateid, {});
   }
 
   return http.request(
@@ -25,9 +25,9 @@ export function getNotifications(http: HttpClient, rootUrl: string, params: GetN
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<Notification>>;
+      return r as StrictHttpResponse<CadastralDataResponse>;
     })
   );
 }
 
-getNotifications.PATH = '/notificationcategories/{notificationcategoryname}/notifications';
+getRealEstateCadastralData.PATH = '/cadastraldata';

@@ -15,10 +15,10 @@ import { createRealEstate } from '../fn/real-estate-controller/create-real-estat
 import { CreateRealEstate$Params } from '../fn/real-estate-controller/create-real-estate';
 import { deleteRealEstate } from '../fn/real-estate-controller/delete-real-estate';
 import { DeleteRealEstate$Params } from '../fn/real-estate-controller/delete-real-estate';
-import { getPagedRealEstates } from '../fn/real-estate-controller/get-paged-real-estates';
-import { GetPagedRealEstates$Params } from '../fn/real-estate-controller/get-paged-real-estates';
 import { getRealEstateById } from '../fn/real-estate-controller/get-real-estate-by-id';
 import { GetRealEstateById$Params } from '../fn/real-estate-controller/get-real-estate-by-id';
+import { getSearchRealEstates } from '../fn/real-estate-controller/get-search-real-estates';
+import { GetSearchRealEstates$Params } from '../fn/real-estate-controller/get-search-real-estates';
 import { PageRealEstateResponse } from '../models/page-real-estate-response';
 import { RealEstateResponse } from '../models/real-estate-response';
 import { updateRealEstate } from '../fn/real-estate-controller/update-real-estate';
@@ -105,27 +105,27 @@ export class RealEstateControllerService extends BaseService {
     );
   }
 
-  /** Path part for operation `getPagedRealEstates()` */
-  static readonly GetPagedRealEstatesPath = '/realestates';
+  /** Path part for operation `getSearchRealEstates()` */
+  static readonly GetSearchRealEstatesPath = '/realestates';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getPagedRealEstates()` instead.
+   * To access only the response body, use `getSearchRealEstates()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getPagedRealEstates$Response(params?: GetPagedRealEstates$Params, context?: HttpContext): Observable<StrictHttpResponse<PageRealEstateResponse>> {
-    return getPagedRealEstates(this.http, this.rootUrl, params, context);
+  getSearchRealEstates$Response(params: GetSearchRealEstates$Params, context?: HttpContext): Observable<StrictHttpResponse<PageRealEstateResponse>> {
+    return getSearchRealEstates(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getPagedRealEstates$Response()` instead.
+   * To access the full response (for headers, for example), `getSearchRealEstates$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getPagedRealEstates(params?: GetPagedRealEstates$Params, context?: HttpContext): Observable<PageRealEstateResponse> {
-    return this.getPagedRealEstates$Response(params, context).pipe(
+  getSearchRealEstates(params: GetSearchRealEstates$Params, context?: HttpContext): Observable<PageRealEstateResponse> {
+    return this.getSearchRealEstates$Response(params, context).pipe(
       map((r: StrictHttpResponse<PageRealEstateResponse>): PageRealEstateResponse => r.body)
     );
   }

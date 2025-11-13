@@ -15,10 +15,10 @@ import { createNotification } from '../fn/notification-controller/create-notific
 import { CreateNotification$Params } from '../fn/notification-controller/create-notification';
 import { getNotificationById } from '../fn/notification-controller/get-notification-by-id';
 import { GetNotificationById$Params } from '../fn/notification-controller/get-notification-by-id';
-import { getNotifications } from '../fn/notification-controller/get-notifications';
-import { GetNotifications$Params } from '../fn/notification-controller/get-notifications';
-import { Notification } from '../models/notification';
+import { getNotificationCategoryNotifications } from '../fn/notification-controller/get-notification-category-notifications';
+import { GetNotificationCategoryNotifications$Params } from '../fn/notification-controller/get-notification-category-notifications';
 import { NotificationResponse } from '../models/notification-response';
+import { PageNotificationResponse } from '../models/page-notification-response';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationControllerService extends BaseService {
@@ -26,28 +26,28 @@ export class NotificationControllerService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `getNotifications()` */
-  static readonly GetNotificationsPath = '/notificationcategories/{notificationcategoryname}/notifications';
+  /** Path part for operation `getNotificationCategoryNotifications()` */
+  static readonly GetNotificationCategoryNotificationsPath = '/notificationcategories/{notificationcategoryname}/notifications';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getNotifications()` instead.
+   * To access only the response body, use `getNotificationCategoryNotifications()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getNotifications$Response(params: GetNotifications$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Notification>>> {
-    return getNotifications(this.http, this.rootUrl, params, context);
+  getNotificationCategoryNotifications$Response(params: GetNotificationCategoryNotifications$Params, context?: HttpContext): Observable<StrictHttpResponse<PageNotificationResponse>> {
+    return getNotificationCategoryNotifications(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getNotifications$Response()` instead.
+   * To access the full response (for headers, for example), `getNotificationCategoryNotifications$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getNotifications(params: GetNotifications$Params, context?: HttpContext): Observable<Array<Notification>> {
-    return this.getNotifications$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<Notification>>): Array<Notification> => r.body)
+  getNotificationCategoryNotifications(params: GetNotificationCategoryNotifications$Params, context?: HttpContext): Observable<PageNotificationResponse> {
+    return this.getNotificationCategoryNotifications$Response(params, context).pipe(
+      map((r: StrictHttpResponse<PageNotificationResponse>): PageNotificationResponse => r.body)
     );
   }
 

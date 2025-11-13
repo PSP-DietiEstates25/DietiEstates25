@@ -13,6 +13,8 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { createUtility } from '../fn/utility-controller/create-utility';
 import { CreateUtility$Params } from '../fn/utility-controller/create-utility';
+import { getDetailUtility } from '../fn/utility-controller/get-detail-utility';
+import { GetDetailUtility$Params } from '../fn/utility-controller/get-detail-utility';
 import { getUtilityById } from '../fn/utility-controller/get-utility-by-id';
 import { GetUtilityById$Params } from '../fn/utility-controller/get-utility-by-id';
 import { updateUtility } from '../fn/utility-controller/update-utility';
@@ -71,6 +73,31 @@ export class UtilityControllerService extends BaseService {
    */
   updateUtility(params: UpdateUtility$Params, context?: HttpContext): Observable<UtilityResponse> {
     return this.updateUtility$Response(params, context).pipe(
+      map((r: StrictHttpResponse<UtilityResponse>): UtilityResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `getDetailUtility()` */
+  static readonly GetDetailUtilityPath = '/utilities';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getDetailUtility()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getDetailUtility$Response(params: GetDetailUtility$Params, context?: HttpContext): Observable<StrictHttpResponse<UtilityResponse>> {
+    return getDetailUtility(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getDetailUtility$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getDetailUtility(params: GetDetailUtility$Params, context?: HttpContext): Observable<UtilityResponse> {
+    return this.getDetailUtility$Response(params, context).pipe(
       map((r: StrictHttpResponse<UtilityResponse>): UtilityResponse => r.body)
     );
   }

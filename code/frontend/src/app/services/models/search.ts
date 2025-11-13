@@ -13,8 +13,6 @@ export interface Search {
   detail?: Detail;
   id?: number;
   lastModifiedDate?: string;
-  page?: number;
   searchRealEstates?: Array<SearchRealEstate>;
-  size?: number;
   user?: User;
 }

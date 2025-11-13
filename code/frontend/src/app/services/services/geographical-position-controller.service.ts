@@ -14,6 +14,8 @@ import { StrictHttpResponse } from '../strict-http-response';
 import { createGeographicalPosition } from '../fn/geographical-position-controller/create-geographical-position';
 import { CreateGeographicalPosition$Params } from '../fn/geographical-position-controller/create-geographical-position';
 import { GeographicalPositionResponse } from '../models/geographical-position-response';
+import { getDetailGeographicalPosition } from '../fn/geographical-position-controller/get-detail-geographical-position';
+import { GetDetailGeographicalPosition$Params } from '../fn/geographical-position-controller/get-detail-geographical-position';
 import { getGeographicalPositionById } from '../fn/geographical-position-controller/get-geographical-position-by-id';
 import { GetGeographicalPositionById$Params } from '../fn/geographical-position-controller/get-geographical-position-by-id';
 import { updateGeographicalPosition } from '../fn/geographical-position-controller/update-geographical-position';
@@ -71,6 +73,31 @@ export class GeographicalPositionControllerService extends BaseService {
    */
   updateGeographicalPosition(params: UpdateGeographicalPosition$Params, context?: HttpContext): Observable<GeographicalPositionResponse> {
     return this.updateGeographicalPosition$Response(params, context).pipe(
+      map((r: StrictHttpResponse<GeographicalPositionResponse>): GeographicalPositionResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `getDetailGeographicalPosition()` */
+  static readonly GetDetailGeographicalPositionPath = '/geographicalpositions';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getDetailGeographicalPosition()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getDetailGeographicalPosition$Response(params: GetDetailGeographicalPosition$Params, context?: HttpContext): Observable<StrictHttpResponse<GeographicalPositionResponse>> {
+    return getDetailGeographicalPosition(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getDetailGeographicalPosition$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getDetailGeographicalPosition(params: GetDetailGeographicalPosition$Params, context?: HttpContext): Observable<GeographicalPositionResponse> {
+    return this.getDetailGeographicalPosition$Response(params, context).pipe(
       map((r: StrictHttpResponse<GeographicalPositionResponse>): GeographicalPositionResponse => r.body)
     );
   }

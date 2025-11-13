@@ -5,8 +5,10 @@
 export interface OfferResponse {
   amount?: number;
   category?: string;
-  counteredOfferId?: number;
+  counterOfId?: number;
+  counterOfferId?: number;
   createdDate?: string;
+  estateAgentEmail?: string;
   id?: number;
   lastModifiedDate?: string;
   realEstateId?: number;

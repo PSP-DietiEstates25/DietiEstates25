@@ -8,4 +8,5 @@ export interface NotificationCategoryResponse {
   isActive?: boolean;
   lastModifiedDate?: string;
   name?: string;
+  userEmail?: string;
 }

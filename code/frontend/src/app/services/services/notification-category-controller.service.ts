@@ -15,6 +15,8 @@ import { createNotificationCategory } from '../fn/notification-category-controll
 import { CreateNotificationCategory$Params } from '../fn/notification-category-controller/create-notification-category';
 import { getNotificationCategoryByName } from '../fn/notification-category-controller/get-notification-category-by-name';
 import { GetNotificationCategoryByName$Params } from '../fn/notification-category-controller/get-notification-category-by-name';
+import { getUserNotificationCategories } from '../fn/notification-category-controller/get-user-notification-categories';
+import { GetUserNotificationCategories$Params } from '../fn/notification-category-controller/get-user-notification-categories';
 import { NotificationCategoryResponse } from '../models/notification-category-response';
 import { updateIsActive } from '../fn/notification-category-controller/update-is-active';
 import { UpdateIsActive$Params } from '../fn/notification-category-controller/update-is-active';
@@ -72,6 +74,31 @@ export class NotificationCategoryControllerService extends BaseService {
   updateIsActive(params: UpdateIsActive$Params, context?: HttpContext): Observable<NotificationCategoryResponse> {
     return this.updateIsActive$Response(params, context).pipe(
       map((r: StrictHttpResponse<NotificationCategoryResponse>): NotificationCategoryResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `getUserNotificationCategories()` */
+  static readonly GetUserNotificationCategoriesPath = '/notificationcategories';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getUserNotificationCategories()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getUserNotificationCategories$Response(params: GetUserNotificationCategories$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<NotificationCategoryResponse>>> {
+    return getUserNotificationCategories(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getUserNotificationCategories$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getUserNotificationCategories(params: GetUserNotificationCategories$Params, context?: HttpContext): Observable<Array<NotificationCategoryResponse>> {
+    return this.getUserNotificationCategories$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<NotificationCategoryResponse>>): Array<NotificationCategoryResponse> => r.body)
     );
   }
 
