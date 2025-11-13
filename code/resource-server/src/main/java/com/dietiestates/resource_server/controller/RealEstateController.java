@@ -74,6 +74,7 @@ public class RealEstateController {
             Authentication authentication
     ){
         Page<RealEstateResponse> pagedRealEstates;
+
         boolean isEstateAgent = authentication.getAuthorities()
                 .stream()
                 .anyMatch(a -> a.getAuthority()

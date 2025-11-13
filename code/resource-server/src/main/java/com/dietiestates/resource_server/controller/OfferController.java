@@ -4,6 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
@@ -24,15 +26,19 @@ public class OfferController {
     private final OfferService offerService;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('USER, ESTATE_AGENT')")
+    @PreAuthorize("hasAnyAuthority('USER, ESTATE_AGENT')")
     public ResponseEntity<OfferResponse> createOffer(
             @RequestBody OfferRequest request,
             @PathVariable Long realestateid,
-            @AuthenticationPrincipal Jwt jwt
+            @AuthenticationPrincipal Jwt jwt,
+            Authentication authentication
     ){
 
         var creatorEmail = jwt.getSubject();
-        var creatorRole = jwt.getClaim("role").toString();
+        var creatorRole = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(authority -> authority.equals("USER") || authority.equals("ESTATE_AGENT"))
+                .findFirst().toString();
 
         var offer = offerService.createOffer(request, realestateid, creatorEmail, creatorRole);
         return ResponseEntity.status(HttpStatus.CREATED).body(offer);
