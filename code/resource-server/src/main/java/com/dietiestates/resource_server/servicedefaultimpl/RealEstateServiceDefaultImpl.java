@@ -6,6 +6,7 @@ import com.dietiestates.resource_server.enums.RealEstateCategory;
 import com.dietiestates.resource_server.factory.RealEstateFactory;
 import com.dietiestates.resource_server.finder.*;
 import com.dietiestates.resource_server.mapper.RealEstateMapper;
+import com.dietiestates.resource_server.model.Admin;
 import com.dietiestates.resource_server.repository.RealEstateRepository;
 import com.dietiestates.resource_server.service.NotificationService;
 import com.dietiestates.resource_server.service.RealEstateService;
@@ -30,6 +31,7 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
 	private final RealEstateMapper realEstateMapper;
 	
     private final EstateAgentFinder estateAgentFinder;
+    private final AdminFinder adminFinder;
 	private final CadastralDataFinder cadastralDataFinder;
 	private final DetailFinder detailFinder;
     private final SearchRealEstateService searchRealEstateService;
@@ -82,6 +84,15 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
         var estateAgentRealEstates = realEstateFinder.getEstateAgentRealEstates(estateAgent.getId(), pageable);
 
         return realEstateMapper.createPagedRealEstatesResponse(estateAgentRealEstates);
+    }
+
+    @Override
+    public Page<RealEstateResponse> getAdminRealEstates(String adminEmail, Integer page, Integer size) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        var admin = adminFinder.getAdminByEmail(adminEmail);
+        var adminRealEstates = realEstateFinder.getAdminRealEstates(admin, pageable);
+        return realEstateMapper.createPagedRealEstatesResponse(adminRealEstates);
     }
 
     @Override

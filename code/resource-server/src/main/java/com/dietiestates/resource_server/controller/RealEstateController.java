@@ -42,37 +42,20 @@ public class RealEstateController {
         return ResponseEntity.status(HttpStatus.OK).body(realEstate);
     }
 
-    /*
     @GetMapping
-    public ResponseEntity<Page<RealEstateResponse>> getPagedRealEstates(
-            @RequestParam(required = false, defaultValue = "1") Integer page,
-            @RequestParam(required = false, defaultValue = "5") Integer size
-    ) {
-        var pagedRealEstates = realEstateSerivce.getRealEstates(page, size);
-        return ResponseEntity.status(HttpStatus.OK).body(pagedRealEstates);
-    }
-
-    @GetMapping
-    @PreAuthorize("hasAuthority('ESTATE_AGENT')")
-    public ResponseEntity<Page<RealEstateResponse>> getEstateAgentRealEstates(
-            @RequestParam(required = false, defaultValue = "1") Integer page,
-            @RequestParam(required = false, defaultValue = "5") Integer size,
-            @AuthenticationPrincipal Jwt jwt
-    ){
-        var estateAgentEmail = jwt.getSubject();
-
-        var realEstates = realEstateSerivce.getEstateAgentRealEstates(estateAgentEmail, page, size);
-        return ResponseEntity.status(HttpStatus.OK).body(realEstates);
-    }
-     */
-
-    @GetMapping(params = "!searchid")
     public ResponseEntity<Page<RealEstateResponse>> getRealEstates(
             @RequestParam(required = false, defaultValue = "1") Integer page,
             @RequestParam(required = false, defaultValue = "5") Integer size,
+            @RequestParam(required = false) Long searchid,
             @AuthenticationPrincipal Jwt jwt,
             Authentication authentication
     ){
+
+        if (searchid != null) {
+            var realEstates = realEstateSerivce.getSearchRealEstates(searchid, page, size);
+            return ResponseEntity.ok(realEstates);
+        }
+
         Page<RealEstateResponse> pagedRealEstates;
 
         boolean isEstateAgent = authentication.getAuthorities()
@@ -81,22 +64,28 @@ public class RealEstateController {
                         .equals("ESTATE_AGENT")
                 );
 
+        boolean isAdmin = authentication.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority()
+                        .equals("ADMIN")
+                );
+
+        boolean isUser = authentication.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority()
+                        .equals("USER")
+                );
+
         if (isEstateAgent) {
             var estateAgentEmail = jwt.getSubject();
             pagedRealEstates = realEstateSerivce.getEstateAgentRealEstates(estateAgentEmail, page, size);
-        } else pagedRealEstates = realEstateSerivce.getRealEstates(page, size);
+        } else if (isAdmin) {
+            var adminEmail = jwt.getSubject();
+            pagedRealEstates = realEstateSerivce.getAdminRealEstates(adminEmail, page, size);
+        } else
+            pagedRealEstates = realEstateSerivce.getRealEstates(page, size);
 
         return ResponseEntity.status(HttpStatus.OK).body(pagedRealEstates);
-    }
-
-    @GetMapping(params = "searchid")
-    public ResponseEntity<Page<RealEstateResponse>> getSearchRealEstates(
-            @RequestParam(required = false, defaultValue = "1") Integer page,
-            @RequestParam(required = false, defaultValue = "5") Integer size,
-            @RequestParam Long searchid
-    ){
-        var realEstates = realEstateSerivce.getSearchRealEstates(searchid, page, size);
-        return ResponseEntity.status(HttpStatus.OK).body(realEstates);
     }
 
     @PutMapping("/{realestateid}")
