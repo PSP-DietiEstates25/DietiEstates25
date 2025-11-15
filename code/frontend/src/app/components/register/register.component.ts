@@ -6,7 +6,7 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AutentServiceService } from '../../autent.service.service';
 import { environment } from '../../../environments/environment';
 import { firstValueFrom } from 'rxjs';
@@ -21,13 +21,12 @@ function matchPassword(group: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule],
   templateUrl: './register.component.html',
 })
 export class RegisterComponent {
   private formBuilder = inject(FormBuilder);
   private autentService = inject(AutentServiceService);
-  private router = inject(Router);
 
   loading = signal(false);
   errorMsg = signal<string | null>(null);

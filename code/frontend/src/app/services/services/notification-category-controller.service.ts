@@ -86,7 +86,7 @@ export class NotificationCategoryControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getUserNotificationCategories$Response(params: GetUserNotificationCategories$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<NotificationCategoryResponse>>> {
+  getUserNotificationCategories$Response(params?: GetUserNotificationCategories$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<NotificationCategoryResponse>>> {
     return getUserNotificationCategories(this.http, this.rootUrl, params, context);
   }
 
@@ -96,7 +96,7 @@ export class NotificationCategoryControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getUserNotificationCategories(params: GetUserNotificationCategories$Params, context?: HttpContext): Observable<Array<NotificationCategoryResponse>> {
+  getUserNotificationCategories(params?: GetUserNotificationCategories$Params, context?: HttpContext): Observable<Array<NotificationCategoryResponse>> {
     return this.getUserNotificationCategories$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<NotificationCategoryResponse>>): Array<NotificationCategoryResponse> => r.body)
     );

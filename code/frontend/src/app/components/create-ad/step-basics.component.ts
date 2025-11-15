@@ -10,19 +10,19 @@ import { CreateAdFacade, Category } from './create-ad.facade';
   templateUrl: './step-basics.component.html',
 })
 export class StepBasicsComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private fb = inject(FormBuilder);
+  private activatedRoute = inject(ActivatedRoute);
+  private formBuilder = inject(FormBuilder);
   private facade = inject(CreateAdFacade);
-  private router = inject(Router);
+  private routerService = inject(Router);
 
-  form = this.fb.nonNullable.group({
+  form = this.formBuilder.nonNullable.group({
     category: ['SALE' as Category, Validators.required],
     description: ['', [Validators.required, Validators.minLength(3)]],
   });
 
   ngOnInit(): void {
-    const b = this.facade.basics();
-    if (b) this.form.patchValue(b, { emitEvent: false });
+    const basics = this.facade.basics();
+    if (basics) this.form.patchValue(basics, { emitEvent: false });
   }
 
   next() {
@@ -31,6 +31,6 @@ export class StepBasicsComponent implements OnInit {
       return;
     }
     this.facade.setBasics(this.form.getRawValue());
-    this.router.navigate(['../details'], { relativeTo: this.route });
+    this.routerService.navigate(['../details'], { relativeTo: this.activatedRoute });
   }
 }

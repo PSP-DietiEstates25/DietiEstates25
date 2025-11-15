@@ -16,8 +16,8 @@
 <p class="text-sm text-red-600 mt-1">Inserisci un importo valido.</p>
 } @if (!isLoggedIn) {
 <p class="text-xs mt-2">Per inviare un'offerta devi accedere.</p>
-} @if (ok) {
-<p class="text-green-600 mt-2">{{ ok }}</p>
-} @if (err) {
-<p class="text-red-600 mt-2">{{ err }}</p>
+} @if (successMessage) {
+<p class="text-green-600 mt-2">{{ successMessage }}</p>
+} @if (error) {
+<p class="text-red-600 mt-2">{{ error }}</p>
 }

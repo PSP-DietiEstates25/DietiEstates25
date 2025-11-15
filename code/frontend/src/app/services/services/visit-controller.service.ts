@@ -13,8 +13,8 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { createVisit } from '../fn/visit-controller/create-visit';
 import { CreateVisit$Params } from '../fn/visit-controller/create-visit';
-import { getRealEstateVisit } from '../fn/visit-controller/get-real-estate-visit';
-import { GetRealEstateVisit$Params } from '../fn/visit-controller/get-real-estate-visit';
+import { getRealEstateVisits } from '../fn/visit-controller/get-real-estate-visits';
+import { GetRealEstateVisits$Params } from '../fn/visit-controller/get-real-estate-visits';
 import { getVisitById } from '../fn/visit-controller/get-visit-by-id';
 import { GetVisitById$Params } from '../fn/visit-controller/get-visit-by-id';
 import { PageVisitResponse } from '../models/page-visit-response';
@@ -28,27 +28,27 @@ export class VisitControllerService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `getRealEstateVisit()` */
-  static readonly GetRealEstateVisitPath = '/realestates/{realestateid}/visits';
+  /** Path part for operation `getRealEstateVisits()` */
+  static readonly GetRealEstateVisitsPath = '/realestates/{realestateid}/visits';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getRealEstateVisit()` instead.
+   * To access only the response body, use `getRealEstateVisits()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getRealEstateVisit$Response(params: GetRealEstateVisit$Params, context?: HttpContext): Observable<StrictHttpResponse<PageVisitResponse>> {
-    return getRealEstateVisit(this.http, this.rootUrl, params, context);
+  getRealEstateVisits$Response(params: GetRealEstateVisits$Params, context?: HttpContext): Observable<StrictHttpResponse<PageVisitResponse>> {
+    return getRealEstateVisits(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getRealEstateVisit$Response()` instead.
+   * To access the full response (for headers, for example), `getRealEstateVisits$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getRealEstateVisit(params: GetRealEstateVisit$Params, context?: HttpContext): Observable<PageVisitResponse> {
-    return this.getRealEstateVisit$Response(params, context).pipe(
+  getRealEstateVisits(params: GetRealEstateVisits$Params, context?: HttpContext): Observable<PageVisitResponse> {
+    return this.getRealEstateVisits$Response(params, context).pipe(
       map((r: StrictHttpResponse<PageVisitResponse>): PageVisitResponse => r.body)
     );
   }

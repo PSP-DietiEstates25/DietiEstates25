@@ -53,6 +53,7 @@ export type { SquareMetersRange } from './models/square-meters-range';
 export type { Staffer } from './models/staffer';
 export type { StafferRequest } from './models/staffer-request';
 export type { StafferResponse } from './models/staffer-response';
+export type { UpdateNotificationCategoryStatusRequest } from './models/update-notification-category-status-request';
 export type { User } from './models/user';
 export type { UserRequest } from './models/user-request';
 export type { UserResponse } from './models/user-response';

@@ -8,12 +8,12 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { NotificationCategoryRequest } from '../../models/notification-category-request';
 import { NotificationCategoryResponse } from '../../models/notification-category-response';
+import { UpdateNotificationCategoryStatusRequest } from '../../models/update-notification-category-status-request';
 
 export interface UpdateIsActive$Params {
   notificationcategoryname: string;
-      body: NotificationCategoryRequest
+      body: UpdateNotificationCategoryStatusRequest
 }
 
 export function updateIsActive(http: HttpClient, rootUrl: string, params: UpdateIsActive$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationCategoryResponse>> {

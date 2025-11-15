@@ -10,22 +10,36 @@ import { firstValueFrom } from 'rxjs';
   templateUrl: './offer-form.component.html',
 })
 export class OfferFormComponent {
-  private fb = inject(FormBuilder);
-  private offerApi = inject(OfferControllerService);
-  @Input() realEstateId!: number;
-  @Input() isLoggedIn = false;
-  @Input() auth?: { getEmail: () => string | null };
-  @Output() success = new EventEmitter<void>();
-  @Output() loginRequired = new EventEmitter<void>();
+
+  private formBuilder = inject(FormBuilder);
+  private offerService = inject(OfferControllerService);
+
+  @Input()
+  realEstateId!: number;
+
+  @Input()
+  isLoggedIn = false;
+
+  @Input()
+  auth?: { getEmail: () => string | null };
+
+  @Output()
+  success = new EventEmitter<void>();
+
+  @Output()
+  loginRequired = new EventEmitter<void>();
+  
   loading = false;
-  ok = '';
-  err = '';
-  form = this.fb.group({
+  successMessage = '';
+  error = '';
+
+  form = this.formBuilder.group({
     amount: [null, [Validators.required, Validators.min(1)]],
   });
+
   async submitOffer() {
-    this.ok = '';
-    this.err = '';
+    this.successMessage = '';
+    this.error = '';
 
     if (!this.isLoggedIn) {
       this.loginRequired.emit();
@@ -38,7 +52,7 @@ export class OfferFormComponent {
 
     const email = this.auth?.getEmail();
     if (!email) {
-      this.err = 'Non riesco a leggere la tua email. Rifai login.';
+      this.error = 'Non riesco a leggere la tua email. Rifai login.';
       return;
     }
 
@@ -52,14 +66,15 @@ export class OfferFormComponent {
       };
 
       await firstValueFrom(
-        this.offerApi.createOffer({ realestateid: this.realEstateId, body })
+        this.offerService.createOffer({ realestateid: this.realEstateId, body })
       );
 
-      this.ok = 'Offerta inviata!';
+      this.successMessage = 'Offerta inviata!';
       this.success.emit();
       this.form.reset();
-    } catch (e: any) {
-      this.err = e?.error?.message ?? 'Errore durante l’invio dell’offerta.';
+
+    } catch (error: any) {
+      this.error = error?.error?.message ?? 'Errore durante l’invio dell’offerta.';
     } finally {
       this.loading = false;
     }

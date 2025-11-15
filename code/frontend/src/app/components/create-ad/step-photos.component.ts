@@ -8,9 +8,9 @@ import { CreateAdFacade } from './create-ad.facade';
   templateUrl: './step-photos.component.html',
 })
 export class StepPhotosComponent {
-  private route = inject(ActivatedRoute);
+  private activatedRoute = inject(ActivatedRoute);
   private facade = inject(CreateAdFacade);
-  private router = inject(Router);
+  private routerService = inject(Router);
 
   previews: string[] = [];
 
@@ -30,26 +30,26 @@ export class StepPhotosComponent {
     if (typeof (this.facade as any).addImages === 'function') {
       (this.facade as any).addImages(files);
     } else {
-      for (const f of files) this.facade.addImages(files);
+      for (const file of files) this.facade.addImages(files);
     }
 
     this.rebuildPreviews();
     input.value = '';
   }
 
-  remove(i: number) {
-    this.facade.removeImage(i);
+  remove(index: number) {
+    this.facade.removeImage(index);
     this.rebuildPreviews();
   }
 
   next() {
-    this.router.navigate(['../review'], { relativeTo: this.route });
+    this.routerService.navigate(['../review'], { relativeTo: this.activatedRoute });
   }
 
   private rebuildPreviews() {
     this.clearPreviews();
-    this.previews = (this.facade.images() ?? []).map((f) =>
-      URL.createObjectURL(f)
+    this.previews = (this.facade.images() ?? []).map((file) =>
+      URL.createObjectURL(file)
     );
   }
 

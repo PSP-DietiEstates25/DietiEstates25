@@ -10,25 +10,38 @@ import { firstValueFrom } from 'rxjs';
   templateUrl: './visit-form.component.html',
 })
 export class VisitFormComponent {
-  private fb = inject(FormBuilder);
-  private visitApi = inject(VisitControllerService);
-  @Input() realEstateId!: number;
-  @Input() isLoggedIn = false;
-  @Input() auth?: { getEmail: () => string | null };
-  @Output() success = new EventEmitter<void>();
-  @Output() loginRequired = new EventEmitter<void>();
+
+  private formBuilder = inject(FormBuilder);
+  private visitService = inject(VisitControllerService);
+
+  @Input()
+  realEstateId!: number;
+
+  @Input()
+  isLoggedIn = false;
+
+  @Input()
+  auth?: { getEmail: () => string | null };
+
+  @Output()
+  success = new EventEmitter<void>();
+
+  @Output()
+  loginRequired = new EventEmitter<void>();
+
   loading = false;
-  ok = '';
-  err = '';
+  successMessage = '';
+  errorMessage = '';
   today = new Date().toISOString().slice(0, 10);
-  form = this.fb.group({
+
+  form = this.formBuilder.group({
     date: [null, [Validators.required]],
     time: [null, [Validators.required]],
   });
 
   async submitVisit() {
-    this.ok = '';
-    this.err = '';
+    this.successMessage = '';
+    this.errorMessage = '';
 
     if (!this.isLoggedIn) {
       this.loginRequired.emit();
@@ -41,7 +54,7 @@ export class VisitFormComponent {
 
     const email = this.auth?.getEmail();
     if (!email) {
-      this.err = 'Non riesco a leggere la tua email. Rifai login.';
+      this.errorMessage = 'Non riesco a leggere la tua email. Rifai login.';
       return;
     }
 
@@ -56,14 +69,14 @@ export class VisitFormComponent {
       };
 
       await firstValueFrom(
-        this.visitApi.createVisit({ realestateid: this.realEstateId, body })
+        this.visitService.createVisit({ realestateid: this.realEstateId, body })
       );
 
-      this.ok = 'Richiesta inviata!';
+      this.successMessage = 'Richiesta inviata!';
       this.success.emit();
       this.form.reset();
-    } catch (e: any) {
-      this.err = e?.error?.message ?? 'Errore durante la richiesta di visita.';
+    } catch (error: any) {
+      this.errorMessage = error?.error?.message ?? 'Errore durante la richiesta di visita.';
     } finally {
       this.loading = false;
     }

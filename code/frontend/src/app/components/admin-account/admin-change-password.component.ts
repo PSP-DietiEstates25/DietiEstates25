@@ -24,11 +24,11 @@ function matchValidator(a: string, b: string) {
   templateUrl: './admin-change-password.component.html',
 })
 export class AdminChangePasswordComponent {
-  private fb = inject(FormBuilder);
-  private router = inject(Router);
+  private formBuilder = inject(FormBuilder);
+  private routerService = inject(Router);
   facade = inject(AdminAccountFacade);
 
-  form = this.fb.group(
+  form = this.formBuilder.group(
     {
       currentPassword: ['', [Validators.required]],
       newPassword: [
@@ -45,10 +45,10 @@ export class AdminChangePasswordComponent {
   );
 
   loading = this.facade.loading;
-  ok = this.facade.ok;
-  err = this.facade.err;
+  success = this.facade.success;
+  error = this.facade.error;
 
-  get f() {
+  get formControls() {
     return this.form.controls;
   }
 
@@ -57,13 +57,13 @@ export class AdminChangePasswordComponent {
       this.form.markAllAsTouched();
       return;
     }
-    const current = this.f.currentPassword.value!;
-    const next = this.f.newPassword.value!;
+    const current = this.formControls.currentPassword.value!;
+    const next = this.formControls.newPassword.value!;
 
     this.facade.changePassword(current, next).subscribe(() => {
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
-      this.router.navigate(['/auth']);
+      this.routerService.navigate(['/auth']);
     });
   }
 }

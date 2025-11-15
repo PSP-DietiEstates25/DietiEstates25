@@ -37,23 +37,20 @@ export interface RecentSearchSnapshot {
   size: number;
   page: number;
   userEmail: string;
-  geo: GeographicalPositionRequest;
-  uti: UtilityRequest;
-  cf: CadastralFilterRequest;
+  geographicalPosition: GeographicalPositionRequest;
+  utility: UtilityRequest;
+  cadastralFilter: CadastralFilterRequest;
   label: string;
 }
 
 @Injectable({ providedIn: 'root' })
 export class SearchFacade {
-  constructor() {
-    const email = this.getEmailFromLocalStorage();
-    this.loadRecentFor(email);
-  }
-  private searches = inject(SearchControllerService);
-  private geoSvc = inject(GeographicalPositionControllerService);
-  private utilSvc = inject(UtilityControllerService);
-  private detSvc = inject(DetailControllerService);
-  private cadfSvc = inject(CadastralFilterControllerService);
+
+  private searchService = inject(SearchControllerService);
+  private geographicalPositionService = inject(GeographicalPositionControllerService);
+  private utilityService = inject(UtilityControllerService);
+  private detailService = inject(DetailControllerService);
+  private cadastralFilterService = inject(CadastralFilterControllerService);
 
   loading = signal(false);
   error = signal<string | null>(null);
@@ -64,7 +61,7 @@ export class SearchFacade {
   cadastralFilterId = signal<number | null>(null);
 
   private _detailCache = new Map<number, { geographicalPositionId?: number }>();
-  private _geoCache = new Map<
+  private _geographicalPositionCache = new Map<
     number,
     { latitude?: number; longitude?: number; address?: string; city?: string }
   >();
@@ -75,12 +72,15 @@ export class SearchFacade {
     size: number; // >0
     userEmail: string;
   } | null>(null);
+
   lastForm = this._lastForm.asReadonly();
 
-  cards = signal<SearchCard[]>([]);
+  searchCards = signal<SearchCard[]>([]);
+
   hasNext = computed(
-    () => this.cards().length >= (this._lastForm()?.size ?? 0)
+    () => this.searchCards().length >= (this._lastForm()?.size ?? 0)
   );
+
   hasPrev = computed(() => (this._lastForm()?.page ?? 1) > 1);
 
   private getUserEmailSafe(input: string | null | undefined): string {
@@ -88,28 +88,33 @@ export class SearchFacade {
     return email;
   }
 
-  private _cachedGeoSig = signal<GeographicalPositionRequest | null>(null);
-  private _cachedUtiSig = signal<UtilityRequest | null>(null);
-  private _cachedCfSig = signal<CadastralFilterRequest | null>(null);
+  private _cachedGeographicalPosition = signal<GeographicalPositionRequest | null>(null);
+  private _cachedUtility = signal<UtilityRequest | null>(null);
+  private _cachedCadastralFilter = signal<CadastralFilterRequest | null>(null);
+
+  constructor() {
+    const email = this.getEmailFromLocalStorage();
+    this.loadRecentFor(email);
+  }
 
   cacheFilters(
-    geo: GeographicalPositionRequest,
-    uti: UtilityRequest,
-    cf: CadastralFilterRequest
+    geographicalPositionRequest: GeographicalPositionRequest,
+    utilityRequest: UtilityRequest,
+    cadastralFilterRequest: CadastralFilterRequest
   ) {
-    this._cachedGeoSig.set(geo ?? null);
-    this._cachedUtiSig.set(uti ?? null);
-    this._cachedCfSig.set(cf ?? null);
+    this._cachedGeographicalPosition.set(geographicalPositionRequest ?? null);
+    this._cachedUtility.set(utilityRequest ?? null);
+    this._cachedCadastralFilter.set(cadastralFilterRequest ?? null);
   }
 
-  private _cachedGeo() {
-    return this._cachedGeoSig();
+  private _getCachedGeographicalPosition() {
+    return this._cachedGeographicalPosition();
   }
-  private _cachedUti() {
-    return this._cachedUtiSig();
+  private _getCachedUtility() {
+    return this._cachedUtility();
   }
-  private _cachedCf() {
-    return this._cachedCfSig();
+  private _getCachedCadastralFilter() {
+    return this._cachedCadastralFilter();
   }
 
   recent = signal<RecentSearchSnapshot[]>([]);
@@ -123,7 +128,7 @@ export class SearchFacade {
       const raw = localStorage.getItem(this._recentKey(email));
       const arr: RecentSearchSnapshot[] = raw ? JSON.parse(raw) : [];
       const cleaned = (arr ?? [])
-        .filter((s) => !!s?.id && !!s?.when)
+        .filter((search) => !!search?.id && !!search?.when)
         .sort((a, b) => b.when.localeCompare(a.when));
       this.recent.set(cleaned);
     } catch {
@@ -137,13 +142,13 @@ export class SearchFacade {
     this.recent.set([]);
   }
 
-  private _persistRecent(s: RecentSearchSnapshot, max = 10) {
+  private _persistRecent(search: RecentSearchSnapshot, max = 10) {
     const email = this.getEmailFromLocalStorage();
     const key = this._recentKey(email);
 
     const current = [...this.recent()];
-    const without = current.filter((x) => x.id !== s.id);
-    const next = [s, ...without].slice(0, max);
+    const without = current.filter((searchFilter) => searchFilter.id !== search.id);
+    const next = [search, ...without].slice(0, max);
 
     this.recent.set(next);
     try {
@@ -151,85 +156,86 @@ export class SearchFacade {
     } catch {}
   }
 
-  removeRecent(id: string) {
+  removeRecent(searchId: string) {
     const email = this.getEmailFromLocalStorage();
     const key = this._recentKey(email);
-    const next = this.recent().filter((s) => s.id !== id);
+    const next = this.recent().filter((search) => search.id !== searchId);
     this.recent.set(next);
     try {
       localStorage.setItem(key, JSON.stringify(next));
     } catch {}
   }
 
-  replaySearch(s: RecentSearchSnapshot) {
+  replaySearch(search: RecentSearchSnapshot) {
     this.resetContext();
 
-    this._cachedGeoSig.set(s.geo);
-    this._cachedUtiSig.set(s.uti);
-    this._cachedCfSig.set(s.cf);
+    this._cachedGeographicalPosition.set(search.geographicalPosition);
+    this._cachedUtility.set(search.utility);
+    this._cachedCadastralFilter.set(search.cadastralFilter);
 
-    const email = this.getEmailFromLocalStorage() ?? s.userEmail ?? '';
+    const email = this.getEmailFromLocalStorage() ?? search.userEmail ?? '';
+
     return this.runFullSearch({
-      category: s.category,
-      page: Math.max(1, s.page || 1),
-      size: Math.max(1, s.size || 10),
+      category: search.category,
+      page: Math.max(1, search.page || 1),
+      size: Math.max(1, search.size || 10),
       userEmail: email,
-      geo: s.geo,
-      uti: s.uti,
-      cf: s.cf,
+      geographicalPosition: search.geographicalPosition,
+      utility: search.utility,
+      cadastralFilter: search.cadastralFilter,
     }).subscribe();
   }
 
-  private _hash(obj: unknown): string {
-    const str = JSON.stringify(obj, Object.keys(obj as any).sort());
+  private _hash(object: unknown): string {
+    const string = JSON.stringify(object, Object.keys(object as any).sort());
     let h = 0,
       i = 0,
-      len = str.length;
+      len = string.length;
     while (i < len) {
-      h = (h * 31 + str.charCodeAt(i++)) | 0;
+      h = (h * 31 + string.charCodeAt(i++)) | 0;
     }
     return `h${(h >>> 0).toString(16)}`;
   }
 
-  prepareDetail(geo: GeographicalPositionRequest, uti: UtilityRequest) {
+  prepareDetail(geographicalPosition: GeographicalPositionRequest, utility: UtilityRequest) {
+
     this.error.set(null);
     this.loading.set(true);
 
-    const ensureGeo$ = iif(
+    const ensureGeographicalPosition$ = iif(
       () => this.geographicalPositionId() != null,
       of(this.geographicalPositionId()!),
-      this.geoSvc.createGeographicalPosition({ body: geo }).pipe(
-        map((res) => res?.id ?? null),
-        tap((id) => this.geographicalPositionId.set(id))
+      this.geographicalPositionService.createGeographicalPosition({ body: geographicalPosition }).pipe(
+        map((geographicalPositionResponse) => geographicalPositionResponse?.id ?? null),
+        tap((geographicalPositionId) => this.geographicalPositionId.set(geographicalPositionId))
       )
     );
 
-    const ensureUtil$ = iif(
+    const ensureUtility$ = iif(
       () => this.utilityId() != null,
       of(this.utilityId()!),
-      this.utilSvc.createUtility({ body: uti }).pipe(
-        map((res) => res?.id ?? null),
-        tap((id) => this.utilityId.set(id))
+      this.utilityService.createUtility({ body: utility }).pipe(
+        map((utilityResponse) => utilityResponse?.id ?? null),
+        tap((utilityId) => this.utilityId.set(utilityId))
       )
     );
 
-    return ensureGeo$.pipe(
-      switchMap((geoId) =>
-        ensureUtil$.pipe(
-          switchMap((utilId) =>
+    return ensureGeographicalPosition$.pipe(
+      switchMap((geographicalPositionId) =>
+        ensureUtility$.pipe(
+          switchMap((utilityId) =>
             iif(
               () => this.detailId() != null,
               of(this.detailId()!),
-              this.detSvc
-                .createDetail({
+              this.detailService.createDetail({
                   body: {
-                    geographicalPositionId: geoId!,
-                    utilityId: utilId!,
+                    geographicalPositionId: geographicalPositionId!,
+                    utilityId: utilityId!,
                   } as DetailRequest,
                 })
                 .pipe(
-                  map((res) => res?.id ?? null),
-                  tap((id) => this.detailId.set(id))
+                  map((detailResponse) => detailResponse?.id ?? null),
+                  tap((detailId) => this.detailId.set(detailId))
                 )
             )
           )
@@ -238,32 +244,33 @@ export class SearchFacade {
       tap((detailId) => {
         if (detailId == null) throw new Error('Creazione detailId fallita');
       }),
-      catchError((err) => {
-        this.error.set(this._msg(err));
-        throw err;
+      catchError((error) => {
+        this.error.set(this._msg(error));
+        throw error;
       }),
       finalize(() => this.loading.set(false))
     );
   }
 
-  prepareCadastralFilter(cf: CadastralFilterRequest) {
+  prepareCadastralFilter(cadastralFilter: CadastralFilterRequest) {
+
     this.error.set(null);
     this.loading.set(true);
 
     return iif(
       () => this.cadastralFilterId() != null,
       of(this.cadastralFilterId()!),
-      this.cadfSvc.createCadastralFilter({ body: cf }).pipe(
-        map((res) => res?.id ?? null),
-        tap((id) => this.cadastralFilterId.set(id))
+      this.cadastralFilterService.createCadastralFilter({ body: cadastralFilter }).pipe(
+        map((cadastralFilterResponse) => cadastralFilterResponse?.id ?? null),
+        tap((cadastralFilterId) => this.cadastralFilterId.set(cadastralFilterId))
       )
     ).pipe(
-      tap((id) => {
-        if (id == null) throw new Error('Creazione cadastralFilterId fallita');
+      tap((cadastralFilterId) => {
+        if (cadastralFilterId == null) throw new Error('Creazione cadastralFilterId fallita');
       }),
-      catchError((err) => {
-        this.error.set(this._msg(err));
-        throw err;
+      catchError((error) => {
+        this.error.set(this._msg(error));
+        throw error;
       }),
       finalize(() => this.loading.set(false))
     );
@@ -274,15 +281,15 @@ export class SearchFacade {
     page: number;
     size: number;
     userEmail?: string;
-    geo: GeographicalPositionRequest;
-    uti: UtilityRequest;
-    cf: CadastralFilterRequest;
+    geographicalPosition: GeographicalPositionRequest;
+    utility: UtilityRequest;
+    cadastralFilter: CadastralFilterRequest;
   }) {
     this.error.set(null);
     this.loading.set(true);
 
-    return this.prepareDetail(params.geo, params.uti).pipe(
-      switchMap(() => this.prepareCadastralFilter(params.cf)),
+    return this.prepareDetail(params.geographicalPosition, params.utility).pipe(
+      switchMap(() => this.prepareCadastralFilter(params.cadastralFilter)),
       switchMap(() =>
         this.search({
           category: params.category,
@@ -347,89 +354,97 @@ export class SearchFacade {
 
     console.log('[SEARCH] body', body);
     return guard$.pipe(
-      switchMap(() => this.searches.createSearch({ body })),
+      switchMap(() => this.searchService.createSearch({ body })),
       map((list) =>
-        (list ?? []).map((r: any) => {
-          const gp =
-            r?.geographicalPosition ?? r?.geographicalPositionResponse ?? {};
-          const latRaw = r?.latitude ?? gp?.latitude ?? r?.lat;
-          const lonRaw = r?.longitude ?? gp?.longitude ?? r?.lon;
+        (list ?? []).map((response: any) => {
+
+          const geographicalPosition =
+            response?.geographicalPosition ?? response?.geographicalPositionResponse ?? {};
+
+          const latRaw = response?.latitude ?? geographicalPosition?.latitude ?? response?.lat;
+
+          const lonRaw = response?.longitude ?? geographicalPosition?.longitude ?? response?.lon;
 
           const lat = Number(latRaw);
           const lon = Number(lonRaw);
 
           const category = this._normalizeCategory(
-            r?.category ?? r?.realEstateCategory ?? r?.adCategory
+            response?.category ?? response?.realEstateCategory ?? response?.adCategory
           );
 
           return {
-            ...r,
+            ...response,
             category,
-            title: r.title ?? `Immobile #${r.id}`,
-            address: r.address ?? gp?.address ?? '',
-            city: r.city ?? gp?.city ?? '',
+            title: response.title ?? `Immobile #${response.id}`,
+            address: response.address ?? geographicalPosition?.address ?? '',
+            city: response.city ?? geographicalPosition?.city ?? '',
             lat: Number.isFinite(lat) ? lat : undefined,
             lon: Number.isFinite(lon) ? lon : undefined,
           } as SearchCardGeo;
         })
       ),
 
-      switchMap((cards) => {
-        const missing = cards.filter(
-          (c) =>
-            !Number.isFinite(c.lat as any) ||
-            !Number.isFinite(c.lon as any) ||
-            (!c.address && !c.city)
+      switchMap((searchCards) => {
+
+        const missing = searchCards.filter(
+          (searchCard) =>
+            !Number.isFinite(searchCard.lat as any) ||
+            !Number.isFinite(searchCard.lon as any) ||
+            (!searchCard.address && !searchCard.city)
         );
-        if (missing.length === 0) return of(cards);
+        if (missing.length === 0) return of(searchCards);
 
         const detailIds = Array.from(
           new Set(
             missing
-              .map((m) => Number((m as any).detailId))
+              .map((searchCard) => Number((searchCard as any).detailId))
               .filter(Number.isFinite)
           )
         ) as number[];
-        if (detailIds.length === 0) return of(cards);
+        if (detailIds.length === 0) return of(searchCards);
 
-        return forkJoin(detailIds.map((id) => this._getDetail(id))).pipe(
+        return forkJoin(detailIds.map((detailId) => this._getDetail(detailId))).pipe(
           switchMap((details) => {
-            const mapDetailToGeo = new Map<number, number>();
-            details.forEach((d, i) => {
-              const did = detailIds[i];
-              const gid = Number(d?.geographicalPositionId);
-              if (Number.isFinite(gid)) mapDetailToGeo.set(did, gid);
+
+            const mapDetailToGeographicalPosition = new Map<number, number>();
+
+            details.forEach((detail, idx) => {
+              const detailId = detailIds[idx];
+              const geographicalPositionId = Number(detail?.geographicalPositionId);
+              if (Number.isFinite(geographicalPositionId)) mapDetailToGeographicalPosition.set(detailId, geographicalPositionId);
             });
 
-            const geoIds = Array.from(
+            const geographicalPositionIds = Array.from(
               new Set(
-                Array.from(mapDetailToGeo.values()).filter(Number.isFinite)
+                Array.from(mapDetailToGeographicalPosition.values()).filter(Number.isFinite)
               )
             ) as number[];
-            if (geoIds.length === 0) return of({ cards, mapDetailToGeo });
+          
+            if (geographicalPositionIds.length === 0) return of({ searchCards, mapDetailToGeographicalPosition });
 
-            return forkJoin(geoIds.map((id) => this._getGeo(id))).pipe(
-              map((geos) => {
-                const mapGeo = new Map<number, any>();
-                geos.forEach((g, i) => mapGeo.set(geoIds[i], g));
-                return { cards, mapDetailToGeo, mapGeo };
+            return forkJoin(geographicalPositionIds.map((geographicalPositionId) => this._getGeographicalPosition(geographicalPositionId))).pipe(
+              map((geographicalPositions) => {
+                const mapGeographicalPosition = new Map<number, any>();
+                geographicalPositions.forEach((geographicalPosition, idx) => mapGeographicalPosition.set(geographicalPositionIds[idx], geographicalPosition));
+                return { searchCards, mapDetailToGeographicalPosition, mapGeographicalPosition };
               })
             );
           }),
 
-          map(({ cards, mapDetailToGeo, mapGeo }: any) =>
-            cards.map((c: any) => {
-              const did = Number(c.detailId);
-              const gid = mapDetailToGeo?.get(did);
-              const g = gid != null ? mapGeo?.get(gid) : null;
+          map(({ searchCards, mapDetailToGeographicalPosition, mapGeographicalPosition }: any) =>
+            searchCards.map((search: any) => {
 
-              const lat = Number.isFinite(c.lat) ? c.lat : Number(g?.latitude);
-              const lon = Number.isFinite(c.lon) ? c.lon : Number(g?.longitude);
-              const address = c.address || g?.address || '';
-              const city = c.city || g?.city || '';
+              const detailId = Number(search.detailId);
+              const geographicalPositionId = mapDetailToGeographicalPosition?.get(detailId);
+              const geographicalPosition = geographicalPositionId != null ? mapGeographicalPosition?.get(geographicalPositionId) : null;
+
+              const lat = Number.isFinite(search.lat) ? search.lat : Number(geographicalPosition?.latitude);
+              const lon = Number.isFinite(search.lon) ? search.lon : Number(geographicalPosition?.longitude);
+              const address = search.address || geographicalPosition?.address || '';
+              const city = search.city || geographicalPosition?.city || '';
 
               return {
-                ...c,
+                ...search,
                 lat: Number.isFinite(lat) ? lat : undefined,
                 lon: Number.isFinite(lon) ? lon : undefined,
                 address,
@@ -440,71 +455,71 @@ export class SearchFacade {
         );
       }),
 
-      map((cards: SearchCardWithCat[]) =>
-        cards.filter((c): c is SearchCardWithCat =>
-          this._isRequestedCategory(c, requestedCategory)
+      map((searchCards: SearchCardWithCat[]) =>
+        searchCards.filter((searchCard): searchCard is SearchCardWithCat =>
+          this._isRequestedCategory(searchCard, requestedCategory)
         )
       ),
 
       tap((mapped) => {
-        this.cards.set(mapped);
-        const geo = this._cachedGeo();
-        const uti = this._cachedUti();
-        const cf = this._cachedCf();
+        this.searchCards.set(mapped);
+        const geographicalPosition = this._cachedGeographicalPosition();
+        const utility = this._cachedUtility();
+        const cadastralFilter = this._cachedCadastralFilter();
         const last = this._lastForm();
-        if (geo && uti && cf && last) {
+        if (geographicalPosition && utility && cadastralFilter && last) {
           const label = [
-            geo.city || geo.municipality || geo.address || 'Ricerca',
+            geographicalPosition.city || geographicalPosition.municipality || geographicalPosition.address || 'Ricerca',
             (last.category || '').toString(),
-            cf.minPrice ? `≥€${cf.minPrice}` : '',
-            cf.maxPrice ? `≤€${cf.maxPrice}` : '',
+            cadastralFilter.minPrice ? `≥€${cadastralFilter.minPrice}` : '',
+            cadastralFilter.maxPrice ? `≤€${cadastralFilter.maxPrice}` : '',
           ]
             .filter(Boolean)
             .join(' · ');
           const snapshot: RecentSearchSnapshot = {
             id: `${this._hash({
-              geo,
-              uti,
-              cf,
-              cat: last.category,
+              geographicalPosition,
+              utility,
+              cadastralFilter,
+              category: last.category,
             })}-${Date.now()}`, // univoco
             when: new Date().toISOString(),
             category: last.category,
             size: last.size,
             page: last.page,
             userEmail: last.userEmail,
-            geo,
-            uti,
-            cf,
+            geographicalPosition,
+            utility,
+            cadastralFilter,
             label,
           };
           this._persistRecent(snapshot);
         }
       }),
-      catchError((err) => {
-        this.error.set(this._msg(err));
-        this.cards.set([]);
-        throw err;
+      catchError((error) => {
+        this.error.set(this._msg(error));
+        this.searchCards.set([]);
+        throw error;
       }),
       finalize(() => this.loading.set(false))
     );
   }
 
   nextPage() {
-    const lf = this._lastForm();
-    if (!lf) return of(null);
-    return this.search({ ...lf, page: Math.max(1, lf.page + 1) });
+    const lastForm = this._lastForm();
+    if (!lastForm) return of(null);
+    return this.search({ ...lastForm, page: Math.max(1, lastForm.page + 1) });
   }
 
   prevPage() {
-    const lf = this._lastForm();
-    if (!lf) return of(null);
-    return this.search({ ...lf, page: Math.max(1, lf.page - 1) });
+    const lastForm = this._lastForm();
+    if (!lastForm) return of(null);
+    return this.search({ ...lastForm, page: Math.max(1, lastForm.page - 1) });
   }
 
-  private _msg(e: any): string {
-    if (e?.error?.message) return e.error.message;
-    if (e?.message) return e.message;
+  private _msg(error: any): string {
+    if (error?.error?.message) return error.error.message;
+    if (error?.message) return error.message;
     return 'Errore inatteso';
   }
 
@@ -546,42 +561,45 @@ export class SearchFacade {
   }
 
   private base64UrlDecode(input: string): string {
-    let str = input.replace(/-/g, '+').replace(/_/g, '/');
-    const pad = str.length % 4;
-    if (pad) str += '='.repeat(4 - pad);
-    return atob(str);
+    let string = input.replace(/-/g, '+').replace(/_/g, '/');
+    const pad = string.length % 4;
+    if (pad) string += '='.repeat(4 - pad);
+    return atob(string);
   }
 
   private _getDetail(detailId: number) {
-    const cached = this._detailCache.get(detailId);
-    if (cached) return of(cached);
-    return this.detSvc.getDetailById({ detailid: detailId }).pipe(
-      map((d: any) => {
-        const out = {
+
+    const cachedDetail = this._detailCache.get(detailId);
+    if (cachedDetail) return of(cachedDetail);
+
+    return this.detailService.getDetailById({ detailid: detailId }).pipe(
+      map((detail: any) => {
+        const output = {
           geographicalPositionId:
-            d?.geographicalPositionId ?? d?.geographicalPosition?.id,
+            detail?.geographicalPositionId ?? detail?.geographicalPosition?.id,
         };
-        this._detailCache.set(detailId, out);
-        return out;
+        this._detailCache.set(detailId, output);
+        return output;
       })
     );
   }
 
-  private _getGeo(geoId: number) {
-    const cached = this._geoCache.get(geoId);
-    if (cached) return of(cached);
-    return this.geoSvc
-      .getGeographicalPositionById({ geographicalpositionid: geoId })
+  private _getGeographicalPosition(geographicalPositionId: number) {
+
+    const _cachedGeographicalPosition = this._geographicalPositionCache.get(geographicalPositionId);
+    if (_cachedGeographicalPosition) return of(_cachedGeographicalPosition);
+
+    return this.geographicalPositionService.getGeographicalPositionById({ geographicalpositionid: geographicalPositionId })
       .pipe(
-        map((g: any) => {
-          const out = {
-            latitude: Number(g?.latitude),
-            longitude: Number(g?.longitude),
-            address: g?.address ?? '',
-            city: g?.city ?? '',
+        map((geographicalPosition: any) => {
+          const output = {
+            latitude: Number(geographicalPosition?.latitude),
+            longitude: Number(geographicalPosition?.longitude),
+            address: geographicalPosition?.address ?? '',
+            city: geographicalPosition?.city ?? '',
           };
-          this._geoCache.set(geoId, out);
-          return out;
+          this._geographicalPositionCache.set(geographicalPositionId, output);
+          return output;
         })
       );
   }

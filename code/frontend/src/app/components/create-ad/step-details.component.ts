@@ -11,12 +11,12 @@ import { MapComponent } from '../map/map.component';
   templateUrl: './step-details.component.html',
 })
 export class StepDetailsComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private fb = inject(FormBuilder);
+  private activatedRoute = inject(ActivatedRoute);
+  private formBuilder = inject(FormBuilder);
   private facade = inject(CreateAdFacade);
-  private router = inject(Router);
+  private routerService = inject(Router);
 
-  utilitiesForm = this.fb.nonNullable.group({
+  utilitiesForm = this.formBuilder.nonNullable.group({
     hasElevator: [false],
     hasDoorman: [false],
     hasAirConditioning: [false],
@@ -26,7 +26,7 @@ export class StepDetailsComponent implements OnInit {
     nearSchool: [false],
   });
 
-  positionForm = this.fb.nonNullable.group({
+  positionForm = this.formBuilder.nonNullable.group({
     address: ['', Validators.required],
     city: ['', Validators.required],
     municipality: ['', Validators.required],
@@ -36,18 +36,18 @@ export class StepDetailsComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    const u = this.facade.utilities();
-    if (u) this.utilitiesForm.patchValue(u, { emitEvent: false });
+    const utility = this.facade.utility();
+    if (utility) this.utilitiesForm.patchValue(utility, { emitEvent: false });
 
-    const p = this.facade.position();
-    if (p) this.positionForm.patchValue(p, { emitEvent: false });
+    const geographicalPosition = this.facade.geographicalPosition();
+    if (geographicalPosition) this.positionForm.patchValue(geographicalPosition, { emitEvent: false });
   }
 
-  onLatChange(lat: number) {
-    this.positionForm.patchValue({ latitude: lat });
+  onLatChange(latitude: number) {
+    this.positionForm.patchValue({ latitude: latitude });
   }
-  onLngChange(lng: number) {
-    this.positionForm.patchValue({ longitude: lng });
+  onLngChange(longitude: number) {
+    this.positionForm.patchValue({ longitude: longitude });
   }
 
   next() {
@@ -58,6 +58,6 @@ export class StepDetailsComponent implements OnInit {
     }
     this.facade.setUtilities(this.utilitiesForm.getRawValue());
     this.facade.setPosition(this.positionForm.getRawValue());
-    this.router.navigate(['../cadastral'], { relativeTo: this.route });
+    this.routerService.navigate(['../cadastral'], { relativeTo: this.activatedRoute });
   }
 }

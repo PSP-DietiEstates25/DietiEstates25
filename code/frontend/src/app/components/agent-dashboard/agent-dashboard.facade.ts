@@ -82,9 +82,9 @@ export class AgentDashboardFacade {
   addOfferLoading = signal<boolean>(false);
 
   constructor(
-    private estateApi: RealEstateControllerService,
-    private visitApi: VisitControllerService,
-    private offerApi: OfferControllerService
+    private realEstateService: RealEstateControllerService,
+    private visitService: VisitControllerService,
+    private offerService: OfferControllerService
   ) {}
 
   private callById$<T>(
@@ -134,84 +134,84 @@ export class AgentDashboardFacade {
   }
 
   // Mappers
-  private toVisitVM(v: any): VisitVM {
-    const re = v?.realEstate ?? v?.estate ?? null;
-    const reId = v?.realEstateId ?? re?.id ?? 0;
+  private toVisitVM(visit: any): VisitVM {
+    const realEstate = visit?.realEstate ?? visit?.estate ?? null;
+    const realEstateId = visit?.realEstateId ?? realEstate?.id ?? 0;
 
     const adTitle =
-      v?.adTitle ??
-      re?.title ??
-      re?.name ??
-      (reId ? `Annuncio #${reId}` : 'Annuncio');
+      visit?.adTitle ??
+      realEstate?.title ??
+      realEstate?.name ??
+      (realEstateId ? `Annuncio #${realEstateId}` : 'Annuncio');
 
-    const user = v?.user ?? v?.requester ?? v?.buyer ?? null;
+    const user = visit?.user ?? visit?.requester ?? visit?.buyer ?? null;
     const requesterName =
-      v?.requesterName ??
+      visit?.requesterName ??
       user?.name ??
       user?.fullName ??
       user?.email ??
       'Utente';
 
     return {
-      id: Number(v?.id ?? 0),
-      realEstateId: Number(reId),
+      id: Number(visit?.id ?? 0),
+      realEstateId: Number(realEstateId),
       adTitle,
       requesterName,
-      requestedAt: v?.requestedAt ?? v?.createdAt ?? v?.createdDate ?? null,
-      preferredDate: v?.preferredDate ?? v?.date ?? null,
-      status: (v?.status ?? v?.proposalStatus ?? 'PENDING') as any,
+      requestedAt: visit?.requestedAt ?? visit?.createdAt ?? visit?.createdDate ?? null,
+      preferredDate: visit?.preferredDate ?? visit?.date ?? null,
+      status: (visit?.status ?? visit?.proposalStatus ?? 'PENDING') as any,
     };
   }
 
-  private toOfferVM(o: any, parentRealEstateId?: number): OfferVM {
-    const re = o?.realEstate ?? o?.estate ?? null;
-    const reId = o?.realEstateId ?? parentRealEstateId ?? re?.id ?? null;
+  private toOfferVM(offer: any, parentRealEstateId?: number): OfferVM {
+    const realEstate = offer?.realEstate ?? offer?.estate ?? null;
+    const realEstateId = offer?.realEstateId ?? parentRealEstateId ?? re?.id ?? null;
     const title =
-      o?.adTitle ??
-      re?.title ??
-      re?.name ??
-      (reId != null ? `Annuncio #${reId}` : 'Annuncio');
+      offer?.adTitle ??
+      realEstate?.title ??
+      realEstate?.name ??
+      (realEstateId != null ? `Annuncio #${realEstateId}` : 'Annuncio');
 
     return {
-      id: Number(o?.id ?? 0),
-      realEstateId: reId,
+      id: Number(offer?.id ?? 0),
+      realEstateId: realEstateId,
       adTitle: title,
-      bidderName: o?.userName ?? o?.userEmail ?? 'utente',
-      createdAt: o?.createdAt ?? o?.createdDate ?? null,
-      status: o?.status ?? 'PENDING',
-      amount: o?.amount ?? null,
+      bidderName: offer?.userName ?? offer?.userEmail ?? 'utente',
+      createdAt: offer?.createdAt ?? offer?.createdDate ?? null,
+      status: offer?.status ?? 'PENDING',
+      amount: offer?.amount ?? null,
     };
   }
 
-  private toAdVM(re: any): AdVM {
+  private toAdVM(realEstate: any): AdVM {
     const location = this.val<any>(
-      re,
+      realEstate,
       ['geographicalPosition', 'location', 'address'],
       null
     );
 
     const title =
-      this.val<string>(re, ['title', 'name'], '') ||
-      this.val<string>(re, ['description'], 'Annuncio');
+      this.val<string>(realEstate, ['title', 'name'], '') ||
+      this.val<string>(realEstate, ['description'], 'Annuncio');
 
     const city =
-      this.val<string>(re, ['city'], '') ||
+      this.val<string>(realEstate, ['city'], '') ||
       this.val<string>(location, ['city'], '');
 
-    const price = this.val<number | null>(re, ['price', 'amount'], null);
+    const price = this.val<number | null>(realEstate, ['price', 'amount'], null);
 
     const createdAt = this.val<string>(
-      re,
+      realEstate,
       ['createdAt', 'createdDate', 'lastModifiedDate'],
       ''
     );
 
-    const images = this.val<string[]>(re, ['images'], []) ?? [];
+    const images = this.val<string[]>(realEstate, ['images'], []) ?? [];
     const first = images?.[0] ?? null;
     const coverSrc = first ? `data:image/jpeg;base64,${first}` : null;
 
     return {
-      id: Number(this.val<number>(re, ['id'], 0)),
+      id: Number(this.val<number>(realEstate, ['id'], 0)),
       title,
       city,
       price,
@@ -224,15 +224,14 @@ export class AgentDashboardFacade {
   // VISITS
   loadVisits(): Observable<void> {
     this.visitsLoading.set(true);
-    return this.estateApi.getPagedRealEstates({ page: 0, size: 100 }).pipe(
-      map((p) => (Array.isArray(p?.content) ? p.content : [])),
-      switchMap((estates) => {
-        if (!estates.length) return of([] as VisitVM[]);
+    return this.realEstateService.getRealEstates({ page: 0, size: 100 }).pipe(
+      map((page) => (Array.isArray(page?.content) ? page.content : [])),
+      switchMap((realEstates) => {
+        if (!realEstates.length) return of([] as VisitVM[]);
         return forkJoin(
-          estates.map((re) =>
-            this.visitApi
-              .getPagedRealEstateVisits({
-                realestateid: re.id as number,
+          realEstates.map((realEstate) =>
+            this.visitService.getRealEstateVisits({
+                realestateid: realEstate.id as number,
                 page: 0,
                 size: 100,
               })
@@ -241,17 +240,17 @@ export class AgentDashboardFacade {
                 map((page) =>
                   Array.isArray(page?.content) ? page.content : []
                 ),
-                map((visits) => visits.map((v: any) => this.toVisitVM(v)))
+                map((visits) => visits.map((visit: any) => this.toVisitVM(visit)))
               )
           )
         ).pipe(map((chunks) => chunks.flat()));
       }),
-      tap((all) => {
-        const f = this.visitFilter();
-        this.visits.set(f ? all.filter((v) => v.status === f) : all);
+      tap((visits) => {
+        const visitFilter = this.visitFilter();
+        this.visits.set(visitFilter ? visits.filter((visit) => visit.status === visitFilter) : visits);
       }),
-      catchError((e) => {
-        console.error('[Facade] loadVisits error', e);
+      catchError((error) => {
+        console.error('[Facade] loadVisits error', error);
         this.visits.set([]);
         return of(void 0);
       }),
@@ -260,44 +259,42 @@ export class AgentDashboardFacade {
     );
   }
 
-  approveVisit(v: VisitVM): Observable<void> {
+  approveVisit(visit: VisitVM): Observable<void> {
     const prev = this.visits();
     this.visits.set(
-      prev.map((x) => (x.id === v.id ? { ...x, status: 'ACCEPTED' } : x))
+      prev.map((visitMap) => (visitMap.id === visit.id ? { ...visitMap, status: 'ACCEPTED' } : visitMap))
     );
 
-    return this.visitApi
-      .updateVisitStatus({
-        realestateid: v.realEstateId,
-        visitid: v.id,
+    return this.visitService.updateVisitStatus({
+        realestateid: visit.realEstateId,
+        visitid: visit.id,
         body: { status: 'ACCEPTED' } as any,
       })
       .pipe(
         switchMap(() => this.loadVisits()),
-        catchError((e) => {
-          console.error('[Facade] approveVisit', e);
+        catchError((error) => {
+          console.error('[Facade] approveVisit', error);
           this.visits.set(prev);
           return of(void 0);
         })
       );
   }
 
-  declineVisit(v: VisitVM): Observable<void> {
+  declineVisit(visit: VisitVM): Observable<void> {
     const prev = this.visits();
     this.visits.set(
-      prev.map((x) => (x.id === v.id ? { ...x, status: 'REJECTED' } : x))
+      prev.map((visitMap) => (visitMap.id === visit.id ? { ...visitMap, status: 'REJECTED' } : visitMap))
     );
 
-    return this.visitApi
-      .updateVisitStatus({
-        realestateid: v.realEstateId,
-        visitid: v.id,
+    return this.visitService.updateVisitStatus({
+        realestateid: visit.realEstateId,
+        visitid: visit.id,
         body: { status: 'REJECTED' } as any,
       })
       .pipe(
         switchMap(() => this.loadVisits()),
-        catchError((e) => {
-          console.error('[Facade] declineVisit', e);
+        catchError((error) => {
+          console.error('[Facade] declineVisit', error);
           this.visits.set(prev);
           return of(void 0);
         })
@@ -307,12 +304,12 @@ export class AgentDashboardFacade {
   // ADS
   loadAds(): Observable<void> {
     this.adsLoading.set(true);
-    return this.estateApi.getPagedRealEstates({ page: 0, size: 100 }).pipe(
+    return this.realEstateService.getRealEstates({ page: 0, size: 100 }).pipe(
       map((page) => (Array.isArray(page?.content) ? page.content : [])),
-      map((list) => (list ?? []).map((re) => this.toAdVM(re))),
-      tap((v) => this.ads.set(v)),
-      catchError((e) => {
-        console.error('[Facade] loadAds error', e);
+      map((list) => (list ?? []).map((realEstate) => this.toAdVM(realEstate))),
+      tap((visit) => this.ads.set(visit)),
+      catchError((error) => {
+        console.error('[Facade] loadAds error', error);
         this.ads.set([]);
         return of(void 0);
       }),
@@ -323,18 +320,18 @@ export class AgentDashboardFacade {
 
   deleteAd(adId: number): Observable<void> {
     const prev = this.ads();
-    this.ads.set(prev.filter((a) => a.id !== adId));
+    this.ads.set(prev.filter((ad) => ad.id !== adId));
 
-    return this.estateApi.deleteRealEstate({ realestateid: adId }).pipe(
-      catchError((e) => {
-        console.error('[Facade] deleteAd error (delete)', e);
+    return this.realEstateService.deleteRealEstate({ realestateid: adId }).pipe(
+      catchError((error) => {
+        console.error('[Facade] deleteAd error (delete)', error);
         this.ads.set(prev);
         return of(void 0);
       }),
       switchMap(() =>
         this.loadAds().pipe(
-          catchError((e) => {
-            console.error('[Facade] deleteAd error (reload)', e);
+          catchError((error) => {
+            console.error('[Facade] deleteAd error (reload)', error);
             return of(void 0);
           })
         )
@@ -348,10 +345,10 @@ export class AgentDashboardFacade {
     patch: Partial<{ description: string }>
   ): Observable<void> {
     const body: any = { ...patch };
-    return this.estateApi.updateRealEstate({ realestateid: adId, body }).pipe(
+    return this.realEstateService.updateRealEstate({ realestateid: adId, body }).pipe(
       switchMap(() => this.loadAds()),
-      catchError((e) => {
-        console.error('[Facade] updateAd error', e);
+      catchError((error) => {
+        console.error('[Facade] updateAd error', error);
         return of(void 0);
       })
     );
@@ -360,15 +357,14 @@ export class AgentDashboardFacade {
   // OFFERS
   loadOffers(): Observable<void> {
     this.offersLoading.set(true);
-    return this.estateApi.getPagedRealEstates({ page: 0, size: 100 }).pipe(
-      map((p) => (Array.isArray(p?.content) ? p.content : [])),
-      switchMap((estates) => {
-        if (!estates.length) return of([] as OfferVM[]);
+    return this.realEstateService.getRealEstates({ page: 0, size: 100 }).pipe(
+      map((page) => (Array.isArray(page?.content) ? page.content : [])),
+      switchMap((realEstates) => {
+        if (!realEstates.length) return of([] as OfferVM[]);
         return forkJoin(
-          estates.map((re) =>
-            this.offerApi
-              .getPagedRealEstateOffers({
-                realestateid: re.id as number,
+          realEstates.map((realEstate) =>
+            this.offerService.getRealEstateOffers({
+                realestateid: realEstate.id as number,
                 page: 0,
                 size: 100,
               })
@@ -378,18 +374,18 @@ export class AgentDashboardFacade {
                   Array.isArray(page?.content) ? page.content : []
                 ),
                 map((offers) =>
-                  offers.map((o: any) => this.toOfferVM(o, re.id as number))
+                  offers.map((offer: any) => this.toOfferVM(offer, realEstate.id as number))
                 )
               )
           )
         ).pipe(map((chunks) => chunks.flat()));
       }),
-      tap((all) => {
-        const f = this.offerFilter();
-        this.offers.set(f ? all.filter((o) => o.status === f) : all);
+      tap((offers) => {
+        const offerFilter = this.offerFilter();
+        this.offers.set(offerFilter ? offers.filter((offer) => offer.status === offerFilter) : offers);
       }),
-      catchError((e) => {
-        console.error('[Facade] loadOffers error', e);
+      catchError((error) => {
+        console.error('[Facade] loadOffers error', error);
         this.offers.set([]);
         return of(void 0);
       }),
@@ -398,48 +394,46 @@ export class AgentDashboardFacade {
     );
   }
 
-  acceptOffer(o: OfferVM): Observable<void> {
-    if (o.realEstateId == null) return of(void 0);
+  acceptOffer(offer: OfferVM): Observable<void> {
+    if (offer.realEstateId == null) return of(void 0);
 
     const prev = this.offers();
     this.offers.set(
-      prev.map((x) => (x.id === o.id ? { ...x, status: 'ACCEPTED' } : x))
+      prev.map((offerMap) => (offerMap.id === offer.id ? { ...offerMap, status: 'ACCEPTED' } : offerMap))
     );
 
-    return this.offerApi
-      .updateOfferStatus({
-        realestateid: o.realEstateId,
-        offerid: o.id,
+    return this.offerService.updateOfferStatus({
+        realestateid: offer.realEstateId,
+        offerid: offer.id,
         body: { status: 'ACCEPTED' } as any,
       })
       .pipe(
         switchMap(() => this.loadOffers()),
-        catchError((e) => {
-          console.error('[Facade] acceptOffer', e);
+        catchError((error) => {
+          console.error('[Facade] acceptOffer', error);
           this.offers.set(prev);
           return of(void 0);
         })
       );
   }
 
-  declineOffer(o: OfferVM): Observable<void> {
-    if (o.realEstateId == null) return of(void 0);
+  declineOffer(offer: OfferVM): Observable<void> {
+    if (offer.realEstateId == null) return of(void 0);
 
     const prev = this.offers();
     this.offers.set(
-      prev.map((x) => (x.id === o.id ? { ...x, status: 'REJECTED' } : x))
+      prev.map((offerMap) => (offerMap.id === offer.id ? { ...offerMap, status: 'REJECTED' } : offerMap))
     );
 
-    return this.offerApi
-      .updateOfferStatus({
-        realestateid: o.realEstateId,
-        offerid: o.id,
+    return this.offerService.updateOfferStatus({
+        realestateid: offer.realEstateId,
+        offerid: offer.id,
         body: { status: 'REJECTED' } as any,
       })
       .pipe(
         switchMap(() => this.loadOffers()),
-        catchError((e) => {
-          console.error('[Facade] declineOffer', e);
+        catchError((error) => {
+          console.error('[Facade] declineOffer', error);
           this.offers.set(prev);
           return of(void 0);
         })
@@ -477,9 +471,9 @@ export class AgentDashboardFacade {
       category: 'OFFER',
     };
 
-    return this.offerApi.createOffer({ realestateid: adId, body }).pipe(
-      catchError((e) => {
-        console.error('[Facade] createExternalOffer error', e);
+    return this.offerService.createOffer({ realestateid: adId, body }).pipe(
+      catchError((error) => {
+        console.error('[Facade] createExternalOffer error', error);
         return of(void 0);
       }),
       switchMap(() => this.loadOffers()),
@@ -491,10 +485,10 @@ export class AgentDashboardFacade {
   }
 
   // Counter-offer
-  startCounter(o: OfferVM) {
-    this.counterId.set(o.id);
-    this.counterAmount.set(o.amount ?? null);
-    this.counterRealEstateId.set(o.realEstateId ?? null);
+  startCounter(offer: OfferVM) {
+    this.counterId.set(offer.id);
+    this.counterAmount.set(offer.amount ?? null);
+    this.counterRealEstateId.set(offer.realEstateId ?? null);
     this.counterMessage.set('');
   }
 
@@ -514,11 +508,10 @@ export class AgentDashboardFacade {
 
     const prev = this.offers();
     this.offers.set(
-      prev.map((o) => (o.id === id ? { ...o, status: 'COUNTERED', amount } : o))
+      prev.map((offerMap) => (offerMap.id === id ? { ...offerMap, status: 'COUNTERED', amount } : offerMap))
     );
 
-    return this.offerApi
-      .updateOfferStatus({
+    return this.offerService.updateOfferStatus({
         realestateid,
         offerid: id,
         body: { status: 'COUNTERED', amount, message } as any,
@@ -528,8 +521,8 @@ export class AgentDashboardFacade {
           this.cancelCounter();
           return this.loadOffers();
         }),
-        catchError((e) => {
-          console.error('[Facade] sendCounter error', e);
+        catchError((error) => {
+          console.error('[Facade] sendCounter error', error);
           // rollback UI se fallisce
           this.offers.set(prev);
           return of(void 0);

@@ -12,6 +12,7 @@ import {
   templateUrl: './recent-searches.component.html',
 })
 export class RecentSearchesComponent {
+
   facade = inject(SearchFacade);
 
   readonly pageSize = 3;
@@ -30,6 +31,7 @@ export class RecentSearchesComponent {
     if (!this.canPrev()) return;
     this.start.set(Math.max(0, this.start() - this.pageSize));
   }
+  
   next() {
     if (!this.canNext()) return;
     this.start.set(
@@ -40,12 +42,14 @@ export class RecentSearchesComponent {
     );
   }
 
-  replay = (s: RecentSearchSnapshot) => this.facade.replaySearch(s);
-  remove = (s: RecentSearchSnapshot) => {
-    this.facade.removeRecent(s.id);
+  replay = (search: RecentSearchSnapshot) => this.facade.replaySearch(search);
+
+  remove = (search: RecentSearchSnapshot) => {
+    this.facade.removeRecent(search.id);
     if (this.start() >= this.total())
       this.start.set(Math.max(0, this.total() - this.pageSize));
   };
+
   clearAll = () => {
     this.facade.forgetRecent();
     this.start.set(0);

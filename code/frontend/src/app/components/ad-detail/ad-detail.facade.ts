@@ -68,25 +68,25 @@ export enum ProximityTag {
 export class AdDetailFacade {
   private router = inject(Router);
 
-  private searchApi = inject(SearchControllerService);
-  private detailApi = inject(DetailControllerService);
-  private geoApi = inject(GeographicalPositionControllerService);
-  private cadApi = inject(CadastralDataControllerService);
-  private reApi = inject(RealEstateControllerService);
+  private searchService = inject(SearchControllerService);
+  private detailService = inject(DetailControllerService);
+  private geographicalPositionService = inject(GeographicalPositionControllerService);
+  private cadastralDataService = inject(CadastralDataControllerService);
+  private realEstateService = inject(RealEstateControllerService);
 
-  private offerApi = inject(OfferControllerService);
-  private visitApi = inject(VisitControllerService);
-  private utiApi = inject(UtilityControllerService);
+  private offerService = inject(OfferControllerService);
+  private visitService = inject(VisitControllerService);
+  private utilityService = inject(UtilityControllerService);
 
   // state
   loading = signal<boolean>(false);
   error = signal<string | null>(null);
 
-  re = signal<RealEstateResponse | null>(null);
-  det = signal<DetailResponse | null>(null);
-  cad = signal<CadastralDataResponse | null>(null);
-  geo = signal<GeographicalPositionResponse | null>(null);
-  uti = signal<UtilityResponse | null>(null);
+  realEstateResponse = signal<RealEstateResponse | null>(null);
+  detailResponse = signal<DetailResponse | null>(null);
+  cadastralDataResponse = signal<CadastralDataResponse | null>(null);
+  geographicalPositionResponse = signal<GeographicalPositionResponse | null>(null);
+  utilityResponse = signal<UtilityResponse | null>(null);
 
   mainImage = signal<string | null>(null);
 
@@ -94,64 +94,64 @@ export class AdDetailFacade {
   myOffersLoading = signal<boolean>(false);
 
   vm = computed<AdVM | null>(() => {
-    const re = this.re();
-    const det = this.det();
-    const cad = this.cad();
-    const geo = this.geo();
-    const uti = this.uti();
-    if (!re || !re.id || !re.detailId) return null;
+    const realEstateResponse = this.realEstateResponse();
+    const detailResponse = this.detailResponse();
+    const cadastralDataResponse = this.cadastralDataResponse();
+    const geographicalPositionResponse = this.geographicalPositionResponse();
+    const utilityResponse = this.utilityResponse();
+    if (!realEstateResponse || !realEstateResponse.id || !realEstateResponse.detailId) return null;
 
-    const images = re.images ?? [];
+    const images = realEstateResponse.images ?? [];
     const cover = images[0] ?? null;
 
     // preferisci det → cad → re
-    const price = (re as any)?.price ?? cad?.price ?? null;
+    const price = (realEstateResponse as any)?.price ?? cadastralDataResponse?.price ?? null;
 
     const surface =
-      (det as any)?.surface ??
-      cad?.squareMeters ??
-      (re as any)?.surface ??
+      (detailResponse as any)?.surface ??
+      cadastralDataResponse?.squareMeters ??
+      (realEstateResponse as any)?.surface ??
       null;
 
     const rooms =
-      (det as any)?.rooms ?? cad?.rooms ?? (re as any)?.rooms ?? null;
+      (detailResponse as any)?.rooms ?? cadastralDataResponse?.rooms ?? (realEstateResponse as any)?.rooms ?? null;
 
-    const city = geo?.city ?? null;
+    const city = geographicalPositionResponse?.city ?? null;
 
     const titleParts = [
-      re.category || null,
+      realEstateResponse.category || null,
       city ? `a ${city}` : null,
       surface ? `— ${surface} m²` : null,
     ].filter(Boolean);
     const title = titleParts.length ? titleParts.join(' ') : 'Annuncio';
 
     const type =
-      (re as any)?.type ?? (det as any)?.type ?? (cad as any)?.type ?? null;
+      (realEstateResponse as any)?.type ?? (detailResponse as any)?.type ?? (cadastralDataResponse as any)?.type ?? null;
     const floor =
-      (cad as any)?.floor ?? (det as any)?.floor ?? (re as any)?.floor ?? null;
+      (cadastralDataResponse as any)?.floor ?? (detailResponse as any)?.floor ?? (realEstateResponse as any)?.floor ?? null;
     const energyClass =
-      (cad as any)?.energyClass ??
-      (det as any)?.energyClass ??
-      (re as any)?.energyClass ??
+      (cadastralDataResponse as any)?.energyClass ??
+      (detailResponse as any)?.energyClass ??
+      (realEstateResponse as any)?.energyClass ??
       null;
 
     const utilities: string[] = (() => {
-      if (!uti) return [];
+      if (!utilityResponse) return [];
       const labels: Record<string, string> = {
         hasAirConditioning: 'Aria condizionata',
         hasElevator: 'Ascensore',
         hasDoorman: 'Portineria',
       };
-      return Object.entries(uti)
+      return Object.entries(utilityResponse)
         .filter(([k, v]) => typeof v === 'boolean' && v === true)
         .map(([k]) => labels[k] ?? k);
     })();
 
     return {
-      realEstateId: re.id!,
-      detailId: re.detailId!,
+      realEstateId: realEstateResponse.id!,
+      detailId: realEstateResponse.detailId!,
       title,
-      description: (det as any)?.description ?? re.description ?? null,
+      description: (detailResponse as any)?.description ?? realEstateResponse.description ?? null,
       price,
       city,
       surface,
@@ -160,14 +160,14 @@ export class AdDetailFacade {
       energyClass,
       images,
       coverUrl: cover || undefined,
-      agent: { email: (re as any)?.estateAgentEmail ?? null },
+      agent: { email: (realEstateResponse as any)?.estateAgentEmail ?? null },
       position: {
-        latitude: geo?.latitude,
-        longitude: geo?.longitude,
-        address: geo?.address,
-        municipality: geo?.municipality,
+        latitude: geographicalPositionResponse?.latitude,
+        longitude: geographicalPositionResponse?.longitude,
+        address: geographicalPositionResponse?.address,
+        municipality: geographicalPositionResponse?.municipality,
       },
-      proximityTags: (re as any)?.proximityTags ?? undefined,
+      proximityTags: (realEstateResponse as any)?.proximityTags ?? undefined,
       utilities,
     };
   });
@@ -183,68 +183,68 @@ export class AdDetailFacade {
     this.loading.set(true);
     this.error.set(null);
 
-    this.det.set(null);
-    this.re.set(null);
-    this.cad.set(null);
-    this.geo.set(null);
-    this.uti.set(null);
+    this.detailResponse.set(null);
+    this.realEstateResponse.set(null);
+    this.cadastralDataResponse.set(null);
+    this.geographicalPositionResponse.set(null);
+    this.utilityResponse.set(null);
     this.mainImage.set(null);
 
     const userEmail = opts?.userEmail ?? 'guest@public.local';
 
-    this.reApi.getRealEstateById({ realestateid: realEstateId }).subscribe({
-      next: (re) => {
-        this.re.set(re);
-        this.loadMyOffers(userEmail, re.id!);
-        const imgs = re.images ?? [];
+    this.realEstateService.getRealEstateById({ realestateid: realEstateId }).subscribe({
+      next: (realEstate) => {
+        this.realEstateResponse.set(realEstate);
+        this.loadMyOffers(userEmail, realEstate.id!);
+        const imgs = realEstate.images ?? [];
         this.mainImage.set(imgs[0] ?? null);
 
-        const detailId = re.detailId;
+        const detailId = realEstate.detailId;
         if (detailId != null) {
-          this.detailApi.getDetailById({ detailid: detailId }).subscribe({
-            next: (det) => {
-              this.det.set(det);
+          this.detailService.getDetailById({ detailid: detailId }).subscribe({
+            next: (detail) => {
+              this.detailResponse.set(detail);
 
-              console.log('[DETAIL]', det);
+              console.log('[DETAIL]', detail);
 
               const utilityId =
-                (det as any)?.utilityId ?? (det as any)?.utility?.id;
+                (detail as any)?.utilityId ?? (detail as any)?.utility?.id;
               if (utilityId != null) {
-                this.utiApi.getUtilityById({ utilityid: utilityId }).subscribe({
-                  next: (u) => this.uti.set(u),
+                this.utilityService.getUtilityById({ utilityid: utilityId }).subscribe({
+                  next: (utility) => this.utilityResponse.set(utility),
                   error: () => {},
                 });
               }
 
-              if (det.geographicalPositionId != null) {
-                this.geoApi
+              if (detail.geographicalPositionId != null) {
+                this.geographicalPositionService
                   .getGeographicalPositionById({
-                    geographicalpositionid: det.geographicalPositionId,
+                    geographicalpositionid: detail.geographicalPositionId,
                   })
                   .subscribe({
-                    next: (geo) => this.geo.set(geo),
+                    next: (geographicalPosition) => this.geographicalPositionResponse.set(geographicalPosition),
                     error: () => {},
                   });
               }
 
-              if (re.cadastralDataId != null) {
-                this.cadApi
-                  .getCadastralDataById({ cadastraldataid: re.cadastralDataId })
+              if (realEstate.cadastralDataId != null) {
+                this.cadastralDataService
+                  .getCadastralDataById({ cadastraldataid: realEstate.cadastralDataId })
                   .subscribe({
-                    next: (cad) => this.cad.set(cad),
+                    next: (cadastralData) => this.cadastralDataResponse.set(cadastralData),
                     error: () => {},
                   });
               }
               this.loading.set(false);
             },
-            error: (e) => this.fail(e),
+            error: (error) => this.fail(error),
           });
         } else {
           this.loading.set(false);
           this.error.set('Annuncio non trovato.');
         }
       },
-      error: (e) => this.fail(e),
+      error: (error) => this.fail(error),
     });
   }
 
@@ -260,7 +260,7 @@ export class AdDetailFacade {
       category,
       status: 'PENDING',
     };
-    return this.offerApi.createOffer({ realestateid: vm.realEstateId, body });
+    return this.offerService.createOffer({ realestateid: vm.realEstateId, body });
   }
 
   submitVisit(
@@ -277,23 +277,23 @@ export class AdDetailFacade {
       date,
       time,
     };
-    return this.visitApi.createVisit({ realestateid: vm.realEstateId, body });
+    return this.visitService.createVisit({ realestateid: vm.realEstateId, body });
   }
 
-  private fail(e: unknown) {
-    console.error(e);
+  private fail(error: unknown) {
+    console.error(error);
     this.error.set(
-      typeof e === 'string' ? e : 'Errore durante il caricamento.'
+      typeof error === 'string' ? error : 'Errore durante il caricamento.'
     );
     this.loading.set(false);
   }
 
-  private toMyOfferVM(o: OfferResponse): MyOfferVM {
+  private toMyOfferVM(offerResponse: OfferResponse): MyOfferVM {
     return {
-      id: (o as any)?.id ?? 0,
-      amount: (o as any)?.amount ?? 0,
-      status: ((o as any)?.status ?? 'PENDING') as any,
-      createdAt: (o as any)?.createdAt ?? (o as any)?.createdDate ?? null,
+      id: (offerResponse as any)?.id ?? 0,
+      amount: (offerResponse as any)?.amount ?? 0,
+      status: ((offerResponse as any)?.status ?? 'PENDING') as any,
+      createdAt: (offerResponse as any)?.createdAt ?? (offerResponse as any)?.createdDate ?? null,
     };
   }
 
@@ -305,8 +305,8 @@ export class AdDetailFacade {
 
     this.myOffersLoading.set(true);
 
-    this.offerApi
-      .getPagedRealEstateOffers({
+    this.offerService
+      .getRealEstateOffers({
         realestateid: realEstateId,
         page: 0,
         size: 100,
@@ -319,28 +319,28 @@ export class AdDetailFacade {
 
           const email = userEmail.toLowerCase();
 
-          const mine = list.filter((o: OfferResponse) => {
-            const reId =
-              (o as any)?.realEstateId ??
-              (o as any)?.estateId ??
-              (o as any)?.ad?.id ??
-              (o as any)?.realestateId;
-            const ue = (
-              (o as any)?.userEmail ??
-              (o as any)?.buyerEmail ??
-              (o as any)?.clientEmail ??
+          const mine = list.filter((offerResponse: OfferResponse) => {
+            const realEstateId =
+              (offerResponse as any)?.realEstateId ??
+              (offerResponse as any)?.estateId ??
+              (offerResponse as any)?.ad?.id ??
+              (offerResponse as any)?.realestateId;
+            const userEmail = (
+              (offerResponse as any)?.userEmail ??
+              (offerResponse as any)?.buyerEmail ??
+              (offerResponse as any)?.clientEmail ??
               ''
             ).toLowerCase();
-            return reId === realEstateId && ue === email;
+            return realEstateId === realEstateId && userEmail === email;
           });
 
           this.myOffers.set(
-            mine.map((o: OfferResponse) => this.toMyOfferVM(o))
+            mine.map((offerResponse: OfferResponse) => this.toMyOfferVM(offerResponse))
           );
           this.myOffersLoading.set(false);
         },
-        error: (e) => {
-          console.error(e);
+        error: (error) => {
+          console.error(error);
           this.myOffers.set([]);
           this.myOffersLoading.set(false);
         },
