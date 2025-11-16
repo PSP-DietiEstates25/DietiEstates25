@@ -24,9 +24,9 @@ import { environment } from '../../../environments/environment.development';
   templateUrl: './admin-dashboard.component.html',
 })
 export class AdminDashboardComponent {
-  private api = inject(AdminDashboardFacade);
-  private fb = inject(FormBuilder);
-  private router = inject(Router);
+  private facade = inject(AdminDashboardFacade);
+  private formBuilder = inject(FormBuilder);
+  private routerService = inject(Router);
 
   private readonly autent = inject(AutentServiceService);
 
@@ -52,9 +52,9 @@ export class AdminDashboardComponent {
   usersLoading = signal(false);
   roleFilter = signal<Role | ''>('');
 
-  createForm = this.fb.nonNullable.group({
+  createForm = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    role: ['AGENT' as Role, [Validators.required]],
+    role: ['ESTATE_AGENT' as Role, [Validators.required]],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
@@ -70,28 +70,29 @@ export class AdminDashboardComponent {
 
   loadAds() {
     this.adsLoading.set(true);
-    this.api
-      .listAds({ q: this.q().trim() || undefined, active: this.activeFilter() })
+    this.facade.listAds({ q: this.q().trim() || undefined, active: this.activeFilter() })
       .subscribe({
         next: (list) => this.ads.set(list || []),
         error: (_) => this.ads.set([]),
         complete: () => this.adsLoading.set(false),
       });
   }
+
   startEdit(a: AdminAd) {
     this.editId.set(a.id);
     this.editTitle.set(a.title || '');
     this.editPrice.set(a.price ?? null);
     this.editActive.set(!!a.active);
   }
+
   cancelEdit() {
     this.editId.set(null);
   }
+
   saveEdit() {
     const id = this.editId();
     if (!id) return;
-    this.api
-      .updateAd(id, {
+    this.facade.updateAd(id, {
         title: this.editTitle(),
         price: this.editPrice(),
         active: this.editActive(),
@@ -103,9 +104,10 @@ export class AdminDashboardComponent {
         },
       });
   }
+
   deleteAd(a: AdminAd) {
     if (!confirm(`Eliminare l'annuncio "${a.title}"?`)) return;
-    this.api.deleteAd(a.id).subscribe({ next: (_) => this.loadAds() });
+    this.facade.deleteAd(a.id).subscribe({ next: (_) => this.loadAds() });
   }
 
   createUser() {
@@ -113,11 +115,11 @@ export class AdminDashboardComponent {
       this.createForm.markAllAsTouched();
       return;
     }
-    this.api.createUser(this.createForm.getRawValue()).subscribe({
+    this.facade.createUser(this.createForm.getRawValue()).subscribe({
       next: (_) => {
         this.createForm.reset({
           email: '',
-          role: 'AGENT',
+          role: 'ESTATE_AGENT',
           password: '',
         });
       },
@@ -128,15 +130,9 @@ export class AdminDashboardComponent {
     this.autent.logout().subscribe(() => {
       this.isAuthenticated = false;
       this.email = '';
-      this.router.navigateByUrl(
+      this.routerService.navigateByUrl(
         `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`
       );
     });
   }
-}
-
-function clearStorage() {
-  localStorage.removeItem('userEmail');
-  localStorage.removeItem('userRole');
-  localStorage.removeItem('isAuthenticated');
 }

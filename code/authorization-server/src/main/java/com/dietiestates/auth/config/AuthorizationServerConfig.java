@@ -4,9 +4,8 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.Collections;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.dietiestates.auth.federation.FederatedIdentityIdTokenCustomizer;
@@ -19,22 +18,17 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.core.oidc.OidcScopes;
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
-import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.server.authorization.oidc.authentication.OidcUserInfoAuthenticationContext;
+import org.springframework.security.oauth2.server.authorization.oidc.authentication.OidcUserInfoAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
-import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
-import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
@@ -63,7 +57,9 @@ public class AuthorizationServerConfig {
                 .securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
                 .with(authorizationServerConfigurer, (authorizationServer) ->
                         authorizationServer
-                                .oidc(Customizer.withDefaults())
+                                .oidc(oidc -> oidc.userInfoEndpoint(userInfo -> userInfo
+                                        .userInfoMapper(userInfoMapper()))
+                                )
                 )
                 .authorizeHttpRequests((authorize) ->
                         authorize
@@ -78,6 +74,25 @@ public class AuthorizationServerConfig {
 
         return http.build();
     }
+
+    @Bean
+    public Function<OidcUserInfoAuthenticationContext, OidcUserInfo> userInfoMapper() {
+        return context -> {
+
+            OidcUserInfoAuthenticationToken authentication = context.getAuthentication();
+            JwtAuthenticationToken principal = (JwtAuthenticationToken) authentication.getPrincipal();
+
+            Map<String, Object> claims = new HashMap<>(principal.getToken().getClaims());
+            Map<String, Object> toExpose = new HashMap<>();
+
+            toExpose.put("sub", claims.get("sub"));
+            if (claims.containsKey("role")) {
+                toExpose.put("role", claims.get("role"));
+            }
+
+            return new OidcUserInfo(toExpose);
+        };
+    };
 
     @Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtTokenCustomizer() {

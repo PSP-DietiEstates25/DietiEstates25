@@ -165,7 +165,7 @@ export class AgentDashboardFacade {
 
   private toOfferVM(offer: any, parentRealEstateId?: number): OfferVM {
     const realEstate = offer?.realEstate ?? offer?.estate ?? null;
-    const realEstateId = offer?.realEstateId ?? parentRealEstateId ?? re?.id ?? null;
+    const realEstateId = offer?.realEstateId ?? parentRealEstateId ?? realEstate?.id ?? null;
     const title =
       offer?.adTitle ??
       realEstate?.title ??

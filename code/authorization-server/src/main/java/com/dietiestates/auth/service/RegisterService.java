@@ -36,7 +36,7 @@ public class RegisterService {
 
         var authenticationSpec = registerMapper.toSpec(request);
 
-        var accountRole = roleFinder.getByRoleName("USER");
+        var accountRole = roleFinder.getByRoleName(request.getRole());
         var defaultAccount = defaultAccountFactory.createAccountFromSpec(authenticationSpec, passwordEncoder, accountRole);
         var securityAccountDecorator = securityAccountFactory.createSecurityAccountDecoratorFromSpec(defaultAccount);
 

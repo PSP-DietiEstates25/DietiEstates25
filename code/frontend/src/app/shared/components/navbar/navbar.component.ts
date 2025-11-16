@@ -11,6 +11,7 @@ import { NotificationsFacade } from '../../../components/notifications/notificat
 import { AutentServiceService } from '../../../autent.service.service';
 import { filter } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment.development';
+import { LocalStorageService } from '../../../services/services/local-storage.service';
 
 interface NavLink {
   label: string;
@@ -25,6 +26,7 @@ interface NavLink {
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit {
+  private readonly localStorageService = inject(LocalStorageService)
   private readonly autent = inject(AutentServiceService);
   private readonly router = inject(Router);
   private readonly notifications = inject(NotificationsFacade);
@@ -69,6 +71,7 @@ export class NavbarComponent implements OnInit {
     this.autent.logout().subscribe(() => {
       this.isAuthenticated = false;
       this.email = '';
+      this.localStorageService.clear();
       this.router.navigateByUrl('/');
     });
   }
@@ -77,8 +80,8 @@ export class NavbarComponent implements OnInit {
     this.autent.getUserInfo().subscribe({
       next: (userInfo) => {
         this.isAuthenticated = true;
-        this.email =
-          userInfo.email ?? userInfo.preferred_username ?? userInfo.sub ?? '';
+        this.localStorageService.setItem("role", userInfo.role[0]);
+        this.email = userInfo.sub;
       },
       error: (err) => {
         if (err?.status === 401) {

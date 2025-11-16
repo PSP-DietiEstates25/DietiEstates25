@@ -28,7 +28,7 @@ export interface AdminAd {
   createdAt?: string | null;
 }
 
-export type Role = 'ADMIN' | 'AGENT';
+export type Role = 'ADMIN' | 'ESTATE_AGENT';
 
 export interface AdminUser {
   id: number;
@@ -233,11 +233,11 @@ export class AdminDashboardFacade {
     const {email, role, password} = body;
 
     switch (body.role) {
-      case 'AGENT': 
+      case 'ESTATE_AGENT': 
         return this.authRegister(
           email,
           password,
-          'AGENT'
+          'ESTATE_AGENT'
         )
         .pipe(
           switchMap(() => {
@@ -249,7 +249,7 @@ export class AdminDashboardFacade {
           map((agent: StafferResponse) => ({
             id: Number((agent as any)?.id) || Date.now(),
             email,
-            role: 'AGENT' as const,
+            role: 'ESTATE_AGENT' as const,
             active: true,
           })),
           catchError((error) => {
