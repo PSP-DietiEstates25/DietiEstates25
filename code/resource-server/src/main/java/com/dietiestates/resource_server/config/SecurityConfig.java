@@ -56,34 +56,6 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/openapi.json"
                         ).permitAll()
-                        /*
-                        .requestMatchers(
-                                "/auth/estateagent",
-                                "/auth/admins",
-                                "/auth/realestates",
-                                "/notificationcategories"
-                        ).hasRole("ADMIN")
-                        .requestMatchers(
-                                "/realestates",
-                                "/offers",
-                                "/visits",
-                                "/cadastraldata",
-                                "/details",
-                                "/geographicalpositions",
-                                "/utilities"
-                        ).hasRole("ESTATE_AGENT")
-                        .requestMatchers(
-                                "/searches",
-                                "/visits",
-                                "/offers",
-                                "/cadastralfilters",
-                                "/details",
-                                "/geographicalpositions",
-                                "/utilities",
-                                "/notifications"
-                        ).hasRole("USER")
-                        */
-
                         .requestMatchers(
                                 "/estateagents",
                                 "/admins",
