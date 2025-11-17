@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AccountResponse } from './components/admin-dashboard/admin-dashboard.facade';
-import { LocalStorageService } from './services/services/local-storage.service';
+import { AccountResponse } from '../components/admin-dashboard/admin-dashboard.facade';
+import { LocalStorageService } from './services/local-storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -59,5 +59,9 @@ export class AuthService {
 
   isUser(){
     return this.localStorageService.getItem("role") === "USER";
+  }
+
+  getRole(){
+    return this.localStorageService.getItem("role");
   }
 }

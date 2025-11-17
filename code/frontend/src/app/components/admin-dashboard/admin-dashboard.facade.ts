@@ -14,7 +14,7 @@ import { PageRealEstateResponse } from '../../services/models/page-real-estate-r
 
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration } from '../../services/api-configuration';
-import { AutentServiceService } from '../../auth.service';
+import { AuthService } from '../../services/auth.service';
 
 import { StafferRequest } from '../../services/models';
 import { StafferResponse } from '../../services/models';
@@ -66,7 +66,7 @@ export class AdminDashboardFacade {
   private realEstateService = inject(RealEstateControllerService);
   private estateAgentService = inject(EstateAgentControllerService);
   private adminService = inject(AdminControllerService);
-  private accountService = inject(AutentServiceService);
+  private authService = inject(AuthService);
 
   private http = inject(HttpClient);
   private apiConfig = inject(ApiConfiguration);
@@ -220,7 +220,7 @@ export class AdminDashboardFacade {
       role: role
     };
 
-    return this.accountService.register(body)
+    return this.authService.register(body)
   }
 
   //crea un account nel resource server

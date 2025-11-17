@@ -14,7 +14,7 @@ import {
 } from './admin-dashboard.facade';
 import { Router, RouterLink } from '@angular/router';
 
-import { AutentServiceService } from '../../auth.service';
+import { AuthService } from '../../services/auth.service';
 import { environment } from '../../../environments/environment.development';
 
 @Component({
@@ -28,7 +28,7 @@ export class AdminDashboardComponent {
   private formBuilder = inject(FormBuilder);
   private routerService = inject(Router);
 
-  private readonly autent = inject(AutentServiceService);
+  private readonly authService = inject(AuthService);
 
   isAuthenticated = false;
   email = '';
@@ -127,7 +127,7 @@ export class AdminDashboardComponent {
   }
 
   logout() {
-    this.autent.logout().subscribe(() => {
+    this.authService.logout().subscribe(() => {
       this.isAuthenticated = false;
       this.email = '';
       this.routerService.navigateByUrl(

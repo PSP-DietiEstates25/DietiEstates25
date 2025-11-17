@@ -8,8 +8,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { MenuToggleComponent } from '../../buttons/menu_toggle/menu-toggle.component';
 import { NotificationsFacade } from '../../../components/notifications/notifications.facade';
-import { AutentServiceService } from '../../../auth.service';
-import { filter } from 'rxjs/operators';
+import { AuthService } from '../../../services/auth.service';
 import { environment } from '../../../../environments/environment.development';
 import { LocalStorageService } from '../../../services/services/local-storage.service';
 
@@ -27,7 +26,7 @@ interface NavLink {
 })
 export class NavbarComponent implements OnInit {
   private readonly localStorageService = inject(LocalStorageService)
-  private readonly autent = inject(AutentServiceService);
+  private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly notifications = inject(NotificationsFacade);
 
@@ -61,14 +60,12 @@ export class NavbarComponent implements OnInit {
 
   onClickLogin(): void {
     this.closeMenu();
-    window.location.href = `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`;
+    window.location.href = environment.loginUrl;
   }
-
-  onClickRegister(): void {}
 
   logout(): void {
     this.closeMenu();
-    this.autent.logout().subscribe(() => {
+    this.authService.logout().subscribe(() => {
       this.isAuthenticated = false;
       this.email = '';
       this.localStorageService.clear();
@@ -77,14 +74,14 @@ export class NavbarComponent implements OnInit {
   }
 
   getUserInfo(): void {
-    this.autent.getUserInfo().subscribe({
+    this.authService.getUserInfo().subscribe({
       next: (userInfo) => {
         this.isAuthenticated = true;
         this.localStorageService.setItem("role", userInfo.role[0]);
         this.email = userInfo.sub;
       },
-      error: (err) => {
-        if (err?.status === 401) {
+      error: (error) => {
+        if (error?.status === 401) {
           this.isAuthenticated = false;
           this.email = '';
           return;

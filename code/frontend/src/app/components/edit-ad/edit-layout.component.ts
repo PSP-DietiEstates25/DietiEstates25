@@ -17,6 +17,7 @@ import { CreateAdFacade } from '../create-ad/create-ad.facade';
 })
 
 export class EditLayoutComponent implements OnInit {
+  
   private facade = inject(EditAdFacade);
   private activatedRoute = inject(ActivatedRoute);
   private routerService = inject(Router);

@@ -93,21 +93,27 @@ export class CreateAdFacade {
   setBasics(basicDraft: BasicsDraft) {
     this.basics.set(basicDraft);
   }
+
   setUtilities(utilityDraft: UtilitiesDraft) {
     this.utility.set(utilityDraft);
   }
+
   setPosition(geographicalPositionDraft: PositionDraft) {
     this.geographicalPosition.set(geographicalPositionDraft);
   }
+
   setCadastral(cadastralDataDraft: CadastralDraft) {
     this.cadastralData.set(cadastralDataDraft);
   }
+
   setImages(files: File[]) {
     this.images.set(files ?? []);
   }
+
   addImages(files: File[]) {
     this.images.set([...(this.images() ?? []), ...(files ?? [])]);
   }
+
   removeImage(index: number) {
     const arr = [...(this.images() ?? [])];
     arr.splice(index, 1);
@@ -115,6 +121,7 @@ export class CreateAdFacade {
   }
 
   createAd() {
+
     const basics = this.basics();
     const utility = this.utility();
     const geographicalPosition = this.geographicalPosition();
@@ -308,9 +315,5 @@ export class CreateAdFacade {
       if (m) return Number(m[1]);
     }
     return null;
-  }
-
-  private logBody(tag: string, response: any) {
-    console.log(tag, response?.body ?? response);
   }
 }

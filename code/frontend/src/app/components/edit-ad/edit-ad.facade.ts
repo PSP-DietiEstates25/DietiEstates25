@@ -61,6 +61,7 @@ export interface CadastralDataDraft {
 
 @Injectable()
 export class EditAdFacade {
+
   private detailId = signal<number | null>(null);
   private geographicalPositionId = signal<number | null>(null);
   private utilityId = signal<number | null>(null);
@@ -130,10 +131,12 @@ export class EditAdFacade {
   }
 
   load(realEstateId: number) {
+
     if (Number.isNaN(realEstateId)) {
       const realEstateIdParam = this.activatedRoute.snapshot.paramMap.get('realestateId');
       realEstateId = realEstateIdParam ? Number(realEstateIdParam) : NaN;
     }
+
     if (Number.isNaN(realEstateId)) {
       this.error.set('ID annuncio non valido nell’URL.');
       return;
@@ -344,6 +347,7 @@ export class EditAdFacade {
       return;
 
     }
+    
     if (realestateId == null || Number.isNaN(realestateId)) {
       this.error.set('ID annuncio mancante o non valido.');
       return;

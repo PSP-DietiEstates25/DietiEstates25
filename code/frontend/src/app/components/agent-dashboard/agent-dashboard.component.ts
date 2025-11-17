@@ -10,7 +10,7 @@ import {
   VisitVM,
   OfferVM,
 } from './agent-dashboard.facade';
-import { AutentServiceService } from '../../auth.service';
+import { AuthService } from '../../services/auth.service';
 import { environment } from '../../../environments/environment.development';
 
 @Component({
@@ -20,11 +20,12 @@ import { environment } from '../../../environments/environment.development';
   templateUrl: './agent-dashboard.component.html',
 })
 export class AgentDashboardComponent {
+
   private router = inject(Router);
   private facade = inject(AgentDashboardFacade);
   private destroyRef = inject(DestroyRef);
 
-  private readonly autent = inject(AutentServiceService);
+  private readonly authService = inject(AuthService);
 
   createAdFacade = inject(CreateAdFacade);
 
@@ -151,16 +152,10 @@ export class AgentDashboardComponent {
   }
 
   logout() {
-    this.autent.logout().subscribe(() => {
+    this.authService.logout().subscribe(() => {
       this.isAuthenticated = false;
       this.email = '';
       this.router.navigateByUrl(`${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`);
     });
   }
-}
-
-function clearStorage() {
-  localStorage.removeItem('userEmail');
-  localStorage.removeItem('userRole');
-  localStorage.removeItem('isAuthenticated');
 }

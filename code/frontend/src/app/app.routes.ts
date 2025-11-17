@@ -1,8 +1,5 @@
 import { Routes } from '@angular/router';
 
-import { HomeComponent } from './components/home/home.component';
-import { AgentDashboardComponent } from './components/agent-dashboard/agent-dashboard.component';
-import { roleGuard } from './_guards/role/role.guard';
 import { SearchPageComponent } from './components/search/search-page.component';
 import { CreateAdFacade } from './components/create-ad/create-ad.facade';
 import { EditAdFacade } from './components/edit-ad/edit-ad.facade';
@@ -12,38 +9,134 @@ import { HomeSelectorComponent } from './components/home-selector/home-selector.
 import { DetailControllerService } from './services/services';
 import { StepDetailsComponent } from './components/create-ad/step-details.component';
 import { StepCadastralComponent } from './components/create-ad/step-cadastral.component';
+import { StepBasicsComponent } from './components/create-ad/step-basics.component';
+import { isUserGuard } from './_guards/user/is-user.guard';
+import { isEstateAgentGuard } from './_guards/estate-agent/is-estate-agent.guard';
+import { StepPhotosComponent } from './components/create-ad/step-photos.component';
+import { StepReviewComponent } from './components/create-ad/step-review.component';
+import { AgentCreateLayoutComponent } from './components/create-ad/create-layout.component';
+import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
+import { AdminChangePasswordComponent } from './components/admin-account/admin-change-password.component';
+import { AdDetailComponent } from './components/ad-detail/ad-detail.component';
+import { NotificationsPageComponent } from './components/notifications/notifications-page.component';
+import { isAdminGuard } from './_guards/admin/is-admin.guard';
 
 export const routes: Routes = [
   {
-    path: 'register',
-    title: 'Register',
-    component: RegisterComponent
+    path: 'auth',
+    children: [
+      {
+        path: 'register',
+        component: RegisterComponent
+      },
+      {
+        path: 'change-password',
+        canActivate: [isAdminGuard],
+        component: AdminChangePasswordComponent
+      },
+    ],
   },
   {
     path: '',
     title: 'Home',
-    component: HomeSelectorComponent
+    component: HomeSelectorComponent,
   },
   {
-    path: 'searches',
-    title: 'Searches',
-    component: SearchPageComponent
+    path: 'search',
+    component: SearchPageComponent,
   },
   {
-    path: ''
+    path: 'realestates',
+    canActivate: [isEstateAgentGuard],
+    children: [
+      {
+        path: '',
+        component: AgentCreateLayoutComponent,
+        children: [
+          { 
+            path: '',
+            title: 'Publishing',
+            pathMatch: 'full',
+            redirectTo: 'basics'
+          },
+          {
+            path: 'basics',
+            title: 'Basics info step',
+            component: StepBasicsComponent
+          },
+          {
+            path: 'details',
+            title: 'Details step',
+            component: StepDetailsComponent
+          },
+          {
+            path: 'cadastraldata',
+            title: 'Cadastral data step',
+            component: StepCadastralComponent 
+          },
+          {
+            path: 'photos',
+            title: 'Photos step',
+            component: StepPhotosComponent
+          },
+          {
+            path: 'reviews',
+            title: 'Review',
+            component: StepReviewComponent
+          },
+        ],
+      },
+
+      {
+        path: ':realestateId',
+        component: EditLayoutComponent,
+        providers: [
+          EditAdFacade,
+          { provide: CreateAdFacade, useExisting: EditAdFacade },
+        ],
+        children: [
+          { 
+            path: '',
+            pathMatch: 'full',
+            redirectTo: 'basics'
+          },
+          {
+            path: 'basics',
+            component: StepBasicsComponent
+          },
+          {
+            path: 'details',
+            component: StepDetailsComponent
+          },
+          {
+            path: 'cadastraldata',
+            component: StepCadastralComponent
+          },
+          {
+            path: 'photos',
+            component: StepPhotosComponent
+          },
+          {
+            path: 'reviews',
+            component: StepReviewComponent
+          },
+        ],
+      },
+    ],
   },
+
   {
-    path: 'details',
-    title: "Details",
-    component: StepDetailsComponent,
-    canActivate: [roleGuard]
+    path: 'ad/:id',
+    component: AdDetailComponent
   },
+
   {
-    path: 'cadastraldata',
-    title: 'Cadastral Data',
-    component: StepCadastralComponent
-  }
+    path: 'notifications',
+    component: NotificationsPageComponent,
+    canActivate: [isUserGuard],
+  },
 ];
+
 /*
 export const routes: Routes = [
   {

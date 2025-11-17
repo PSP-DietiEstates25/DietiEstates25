@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 
 import { Router } from '@angular/router';
-import { AuthService } from '../../auth.service';
+import { AuthService } from '../../services/auth.service';
 import { environment } from '../../../environments/environment';
 import { firstValueFrom } from 'rxjs';
 import { AccountRequest } from '../admin-dashboard/admin-dashboard.facade';
@@ -44,7 +44,7 @@ export class RegisterComponent {
   });
 
   onClickLogin(): void {
-    window.location.href = `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`;
+    window.location.href = environment.loginUrl;
   }
 
   async submit(): Promise<void> {
@@ -70,7 +70,7 @@ export class RegisterComponent {
       await firstValueFrom(this.authService.getCsrf());
       await firstValueFrom(this.authService.register(body));
       // opzionale: attendi il redirect del router, oppure vai al flusso OIDC
-      window.location.href = `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`;
+      window.location.href = environment.loginUrl;
     } catch (err: any) {
       this.errorMsg.set(err?.error?.message || 'Registrazione non riuscita');
     } finally {
