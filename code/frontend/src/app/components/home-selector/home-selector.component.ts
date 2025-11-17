@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { single, windowTime } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth.service';
+import { environmentMap } from '../../../environments/environment.map';
 
 @Component({
   selector: 'app-home-selector',
@@ -23,36 +24,21 @@ export class HomeSelectorComponent implements OnInit {
 
   role!: string | null;
 
-  isAuthenticated = signal<boolean>(false);
-  _isAuthenticated!: Signal<boolean>;
-
-  constructor(){
-    effect(() => {
-      this._isAuthenticated = computed(() => this.isAuthenticated());
-    });
-  }
-
   ngOnInit(): void {
-    this.getUserInfo();
-    this.role = this.authService.getRole();
+    const isAuthenticated = this.localStorageService.getItem('isAuthenticated') === 'true';
+    const savedRole = this.localStorageService.getItem('role');
+
+    if (!isAuthenticated) {
+      // Non autenticato / ruolo non presente → vai subito al login
+      this.login();
+      return;
+    }
+
+    this.role = savedRole;
+    // Niente chiamata a getUserInfo qui: è già stata fatta da AuthCallbackComponent
   }
 
-  getUserInfo(): void {
-    this.authService.getUserInfo().subscribe({
-      next: (userInfo) => {
-        this.isAuthenticated.set(true);
-        this.localStorageService.setItem("role", userInfo.role[0]);
-      },
-      error: (error) => {
-        if (error?.status === 401) {
-          this.isAuthenticated.set(false);
-          this.login();
-        }
-      },
-    });
-  }
-
-  login(): void {
+  private login(): void {
     window.location.href = environment.loginUrl;
   }
 }

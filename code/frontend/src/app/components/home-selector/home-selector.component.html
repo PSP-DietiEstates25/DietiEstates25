@@ -1,7 +1,7 @@
-@if(role == "USER"){
-    <app-home></app-home>
-} @else if (role == "ADMIN") {
+@if (role == "ADMIN") {
     <app-admin-dashboard></app-admin-dashboard>
 } @else if (role == "ESTATE_AGENT") {
     <app-agent-dashboard></app-agent-dashboard>
+} @else {
+    <app-home></app-home>
 }

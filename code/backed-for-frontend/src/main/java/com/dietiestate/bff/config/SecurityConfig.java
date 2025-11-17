@@ -79,7 +79,7 @@ public class SecurityConfig {
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint()))
                 .oauth2Login(oauth2 -> oauth2
-                        .successHandler(new SimpleUrlAuthenticationSuccessHandler(this.appBaseUri)))
+                        .successHandler(new SimpleUrlAuthenticationSuccessHandler(this.appBaseUri + "/auth/callback")))
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .invalidateHttpSession(true)

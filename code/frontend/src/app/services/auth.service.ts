@@ -61,6 +61,10 @@ export class AuthService {
     return this.localStorageService.getItem("role") === "USER";
   }
 
+  setRole(role: string){
+    this.localStorageService.setItem('role', role);
+  }
+
   getRole(){
     return this.localStorageService.getItem("role");
   }

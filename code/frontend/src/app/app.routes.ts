@@ -20,6 +20,7 @@ import { AdminChangePasswordComponent } from './components/admin-account/admin-c
 import { AdDetailComponent } from './components/ad-detail/ad-detail.component';
 import { NotificationsPageComponent } from './components/notifications/notifications-page.component';
 import { isAdminGuard } from './_guards/admin/is-admin.guard';
+import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
 
 export const routes: Routes = [
   {
@@ -28,6 +29,10 @@ export const routes: Routes = [
       {
         path: 'register',
         component: RegisterComponent
+      },
+      {
+        path: 'callback',
+        component: AuthCallbackComponent
       },
       {
         path: 'change-password',
