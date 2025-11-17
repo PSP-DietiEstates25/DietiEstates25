@@ -18,12 +18,12 @@ import { CreateAdFacade } from '../create-ad/create-ad.facade';
 
 export class EditLayoutComponent implements OnInit {
   private facade = inject(EditAdFacade);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+  private routerService = inject(Router);
 
   basicsValid = computed(() => !!this.facade.basics());
   detailsValid = computed(
-    () => !!(this.facade.utilities() && this.facade.position())
+    () => !!(this.facade.utility() && this.facade.geographicalPosition())
   );
   photosValid = computed(() => this.facade.images().length > 0);
   allValid = computed(() => this.facade.allValid());
@@ -36,7 +36,7 @@ export class EditLayoutComponent implements OnInit {
     {
       key: 'cadastral',
       label: 'Catastali',
-      valid: computed(() => !!this.facade.cadastral()),
+      valid: computed(() => !!this.facade.cadastralData()),
     },
     { key: 'photos', label: 'Foto', valid: this.photosValid },
     { key: 'review', label: 'Riepilogo', valid: this.allValid },
@@ -44,12 +44,12 @@ export class EditLayoutComponent implements OnInit {
 
   ngOnInit(): void {
     this.realestateId = Number(
-      this.route.snapshot.paramMap.get('realestateId')
+      this.activatedRoute.snapshot.paramMap.get('realestateId')
     );
     (this.facade as any).load(this.realestateId);
   }
 
   cancelEdit() {
-    this.router.navigate(['/agent']);
+    this.routerService.navigate(['/agent']);
   }
 }

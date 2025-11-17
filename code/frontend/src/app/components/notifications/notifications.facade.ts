@@ -15,22 +15,22 @@ export class NotificationsFacade {
   private readonly _pages = signal<Page[]>([]);
   private readonly _page = signal(0);
   private readonly _size = signal(20);
-  private readonly _selectedCats = signal<Set<NotificationCategory>>(new Set());
+  private readonly _selectedNotificationCategories = signal<Set<NotificationCategory>>(new Set());
   private readonly _query = signal<string>('');
 
   readonly loading = computed(() => this._loading());
-  readonly prefs = this.adapter.prefs;
-  readonly items = computed(() => this._pages().flatMap((p) => p.items));
+  readonly userPreferences = this.adapter.userPreferences;
+  readonly items = computed(() => this._pages().flatMap((page) => page.items));
   readonly unreadCount = computed(() => this.items().length);
 
   readonly filtered = computed(() => {
-    const enabled = new Map(this.prefs().map((p) => [p.category, p.enabled]));
-    const q = this._query().toLowerCase();
-    const sel = this._selectedCats();
-    return this.items().filter((n) => {
-      if (!enabled.get(n.category)) return false;
-      if (sel.size && !sel.has(n.category)) return false;
-      if (q && !n.message.toLowerCase().includes(q)) return false;
+    const enabledCategories = new Map(this.userPreferences().map((preference) => [preference.category, preference.enabled]));
+    const query = this._query().toLowerCase();
+    const selectedNotificationCategories = this._selectedNotificationCategories();
+    return this.items().filter((notification) => {
+      if (!enabledCategories.get(notification.category)) return false;
+      if (selectedNotificationCategories.size && !selectedNotificationCategories.has(notification.category)) return false;
+      if (query && !notification.message.toLowerCase().includes(query)) return false;
       return true;
     });
   });
@@ -68,16 +68,19 @@ export class NotificationsFacade {
   async setCategoryEnabled(category: NotificationCategory, enabled: boolean) {
     await this.adapter.toggle(category, enabled);
   }
-  setQuery(q: string) {
-    this._query.set(q ?? '');
+
+  setQuery(query: string) {
+    this._query.set(query ?? '');
   }
-  toggleFilterCat(cat: NotificationCategory) {
-    const s = new Set(this._selectedCats());
-    s.has(cat) ? s.delete(cat) : s.add(cat);
-    this._selectedCats.set(s);
+
+  toggleFilterCat(notificationCategory: NotificationCategory) {
+    const selectedNotificationCategories = new Set(this._selectedNotificationCategories());
+    selectedNotificationCategories.has(notificationCategory) ? selectedNotificationCategories.delete(notificationCategory) : selectedNotificationCategories.add(notificationCategory);
+    this._selectedNotificationCategories.set(selectedNotificationCategories);
   }
+
   clearFilters() {
-    this._selectedCats.set(new Set());
+    this._selectedNotificationCategories.set(new Set());
     this._query.set('');
   }
 }

@@ -10,13 +10,13 @@ import { Router } from '@angular/router';
 export class StepReviewComponent {
   facade = inject(CreateAdFacade);
   canPublish = computed(() => this.facade.allValid());
-  private router = inject(Router); 
+  private routerService = inject(Router); 
 
   publish() {
     this.facade.createAd();
   }
 
   cancel() {
-    this.router.navigate(['/agent']);
+    this.routerService.navigate(['/agent']);
   }
 }

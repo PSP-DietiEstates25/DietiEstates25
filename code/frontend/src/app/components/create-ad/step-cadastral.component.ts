@@ -10,12 +10,12 @@ import { CreateAdFacade } from './create-ad.facade';
   templateUrl: './step-cadastral.component.html',
 })
 export class StepCadastralComponent implements OnInit {
-  private fb = inject(FormBuilder);
+  private formBuilder = inject(FormBuilder);
   private facade = inject(CreateAdFacade);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
+  private routerService = inject(Router);
+  private activatedRouter = inject(ActivatedRoute);
 
-  form = this.fb.nonNullable.group({
+  form = this.formBuilder.nonNullable.group({
     price: [null as number | null, [Validators.required, Validators.min(0)]],
     rooms: [null as number | null, [Validators.required, Validators.min(0)]],
     floor: [null as number | null, [Validators.required, Validators.min(0)]],
@@ -27,8 +27,8 @@ export class StepCadastralComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    const c = this.facade.cadastral();
-    if (c) this.form.patchValue(c, { emitEvent: false });
+    const cadastralData = this.facade.cadastralData();
+    if (cadastralData) this.form.patchValue(cadastralData, { emitEvent: false });
   }
 
   next() {
@@ -37,6 +37,6 @@ export class StepCadastralComponent implements OnInit {
       return;
     }
     this.facade.setCadastral(this.form.getRawValue() as any);
-    this.router.navigate(['../photos'], { relativeTo: this.route });
+    this.routerService.navigate(['../photos'], { relativeTo: this.activatedRouter });
   }
 }

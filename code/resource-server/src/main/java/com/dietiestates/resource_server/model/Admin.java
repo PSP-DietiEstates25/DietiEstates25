@@ -32,4 +32,24 @@ public class Admin extends Staffer {
 		staffers.add(staffer);
 		staffer.setAdmin(this);
 	}
+
+    public List<Admin> getCreatedAdmins(){
+        var admins = new ArrayList<Admin>();
+        staffers.forEach(staffer -> {
+            if(staffer instanceof Admin admin)
+                admins.add(admin);
+        });
+
+        return admins;
+    }
+
+    public List<EstateAgent> getCreatedEstateAgents(){
+        var estateAgents = new ArrayList<EstateAgent>();
+        staffers.forEach(staffer -> {
+            if(staffer instanceof EstateAgent estateAgent)
+                estateAgents.add(estateAgent);
+        });
+
+        return estateAgents;
+    }
 }

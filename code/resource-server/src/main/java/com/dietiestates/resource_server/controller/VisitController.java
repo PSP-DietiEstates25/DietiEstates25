@@ -1,27 +1,18 @@
 package com.dietiestates.resource_server.controller;
 
-import com.dietiestates.resource_server.model.Visit;
-import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.*;
 
 import com.dietiestates.resource_server.dto.request.VisitRequest;
 import com.dietiestates.resource_server.dto.response.VisitResponse;
 import com.dietiestates.resource_server.service.VisitService;
 
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/realestates/{realestateid}/visits")
@@ -55,7 +46,7 @@ public class VisitController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('USER,ESTATE_AGENT')")
-    public ResponseEntity<Page<VisitResponse>> getRealEstateVisit(
+    public ResponseEntity<Page<VisitResponse>> getRealEstateVisits(
             @PathVariable Long realestateid,
             @RequestParam(required = false, defaultValue = "1") Integer page,
             @RequestParam(required = false, defaultValue = "5") Integer size

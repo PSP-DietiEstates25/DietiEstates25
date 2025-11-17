@@ -6,8 +6,9 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { AutentServiceService } from '../../auth.service';
+
+import { Router } from '@angular/router';
+import { AuthService } from '../../auth.service';
 import { environment } from '../../../environments/environment';
 import { firstValueFrom } from 'rxjs';
 import { AccountRequest } from '../admin-dashboard/admin-dashboard.facade';
@@ -21,13 +22,12 @@ function matchPassword(group: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule],
   templateUrl: './register.component.html',
 })
 export class RegisterComponent {
   private formBuilder = inject(FormBuilder);
-  private autentService = inject(AutentServiceService);
-  private router = inject(Router);
+  private authService = inject(AuthService);
 
   loading = signal(false);
   errorMsg = signal<string | null>(null);
@@ -67,8 +67,8 @@ export class RegisterComponent {
     const body = { email, password, role: 'USER' } as AccountRequest;
 
     try {
-      await firstValueFrom(this.autentService.getCsrf());
-      await firstValueFrom(this.autentService.register(body));
+      await firstValueFrom(this.authService.getCsrf());
+      await firstValueFrom(this.authService.register(body));
       // opzionale: attendi il redirect del router, oppure vai al flusso OIDC
       window.location.href = `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`;
     } catch (err: any) {

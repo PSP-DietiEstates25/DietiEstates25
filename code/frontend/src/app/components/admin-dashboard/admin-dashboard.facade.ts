@@ -8,7 +8,7 @@ import {
   AdminControllerService,
 } from '../../services/services';
 
-import { EstateAgent } from '../../services/models/estate-agent';
+import { GetRealEstates$Params } from '../../services/fn/real-estate-controller/get-real-estates';
 import { RealEstateResponse } from '../../services/models/real-estate-response';
 import { PageRealEstateResponse } from '../../services/models/page-real-estate-response';
 
@@ -18,8 +18,6 @@ import { AutentServiceService } from '../../auth.service';
 
 import { StafferRequest } from '../../services/models';
 import { StafferResponse } from '../../services/models';
-import { AdminResponse } from '../../services/models';
-import { EstateAgentResponse } from '../../services/models';
 
 export interface AdminAd {
   id: number;
@@ -30,7 +28,7 @@ export interface AdminAd {
   createdAt?: string | null;
 }
 
-export type Role = 'ADMIN' | 'AGENT';
+export type Role = 'ADMIN' | 'ESTATE_AGENT';
 
 export interface AdminUser {
   id: number;
@@ -65,11 +63,10 @@ export interface AccountRequest {
 @Injectable({ providedIn: 'root' })
 export class AdminDashboardFacade {
 
-  private resourceServerRealEstateService = inject(RealEstateControllerService);
-  private resourceServerEstateAgentService = inject(EstateAgentControllerService);
-  private resourceServerAdminService = inject(AdminControllerService);
-
-  private authenticationServerAccountService = inject(AutentServiceService);
+  private realEstateService = inject(RealEstateControllerService);
+  private estateAgentService = inject(EstateAgentControllerService);
+  private adminService = inject(AdminControllerService);
+  private accountService = inject(AutentServiceService);
 
   private http = inject(HttpClient);
   private apiConfig = inject(ApiConfiguration);
@@ -139,11 +136,12 @@ export class AdminDashboardFacade {
       active = arg1.active;
     }
 
-    return this.resourceServerRealEstateService
-      .getPagedRealEstates({
-        page: 0,
-        size: 100,
-      })
+    const realEstateParams: GetRealEstates$Params = {
+      page: 0,
+      size: 0
+    };
+
+    return this.realEstateService.getRealEstates(realEstateParams)
       .pipe(
         map((page: PageRealEstateResponse) => {
           const list = Array.isArray(page?.content)
@@ -181,8 +179,9 @@ export class AdminDashboardFacade {
       () => new Error('updateAd non supportato dagli OpenAPI services.')
     );
   }
+  
   deleteAd(id: number): Observable<void> {
-    return this.resourceServerRealEstateService.deleteRealEstate({ realestateid: id }).pipe(
+    return this.realEstateService.deleteRealEstate({ realestateid: id }).pipe(
       switchMap(() => this.listAds({})),
       catchError((e) => {
         console.error('[AdminDashboard] deleteAd error', e);
@@ -221,7 +220,7 @@ export class AdminDashboardFacade {
       role: role
     };
 
-    return this.authenticationServerAccountService.register(body)
+    return this.accountService.register(body)
   }
 
   //crea un account nel resource server
@@ -234,33 +233,30 @@ export class AdminDashboardFacade {
     const {email, role, password} = body;
 
     switch (body.role) {
-      case 'AGENT': {
-        // crea account credenziale su authorization server
+      case 'ESTATE_AGENT': 
         return this.authRegister(
           email,
           password,
-          'AGENT'
+          'ESTATE_AGENT'
         )
         .pipe(
-          // collega come staffer nel dominio applicativo
           switchMap(() => {
-            const payload: StafferRequest = { 
+            const payload: StafferRequest = {
               email: email
             };
-            return this.resourceServerEstateAgentService.registerEstateAgent({ body: payload });
+            return this.estateAgentService.registerEstateAgent({ body: payload });
           }),
-          map((agent: EstateAgentResponse) => ({
+          map((agent: StafferResponse) => ({
             id: Number((agent as any)?.id) || Date.now(),
             email,
-            role: 'AGENT' as const,
+            role: 'ESTATE_AGENT' as const,
             active: true,
           })),
-          catchError((e) => {
-            console.error('[AdminDashboard] createUser(AGENT) error', e);
-            return throwError(() => e);
+          catchError((error) => {
+            console.error('[AdminDashboard] createUser(AGENT) error', error);
+            return throwError(() => error);
           })
         );
-      }
 
       case 'ADMIN': {
         // crea account credenziale su authorization server
@@ -274,7 +270,7 @@ export class AdminDashboardFacade {
             const payload: StafferRequest = { 
               email: email
             };
-            return this.resourceServerAdminService.registerAdmin({ body: payload })
+            return this.adminService.registerAdmin({ body: payload })
           }),
           map(() => ({
             id: Date.now(),

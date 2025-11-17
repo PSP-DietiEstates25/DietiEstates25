@@ -11,13 +11,11 @@ import { RequestBuilder } from '../../request-builder';
 import { NotificationCategoryResponse } from '../../models/notification-category-response';
 
 export interface GetUserNotificationCategories$Params {
-  email: string;
 }
 
-export function getUserNotificationCategories(http: HttpClient, rootUrl: string, params: GetUserNotificationCategories$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<NotificationCategoryResponse>>> {
+export function getUserNotificationCategories(http: HttpClient, rootUrl: string, params?: GetUserNotificationCategories$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<NotificationCategoryResponse>>> {
   const rb = new RequestBuilder(rootUrl, getUserNotificationCategories.PATH, 'get');
   if (params) {
-    rb.query('email', params.email, {});
   }
 
   return http.request(

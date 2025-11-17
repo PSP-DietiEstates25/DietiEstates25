@@ -10,7 +10,7 @@ export type NotificationCategory =
   | 'VISIT'
   | 'OFFER';
 
-export interface UserPref {
+export interface UserPreferences {
   category: NotificationCategory;
   enabled: boolean;
 }
@@ -32,104 +32,105 @@ const LS_KEY = 'dietiestates:user-notification-prefs';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationPreferencesAdapter {
-  private readonly http = inject(HttpClient);
-  private readonly apiCfg = inject(ApiConfiguration);
-  private readonly categoryApi = inject(NotificationCategoryControllerService);
-  private readonly notifApi = inject(NotificationControllerService);
+  private readonly httpClient = inject(HttpClient);
+  private readonly apiConfiguration = inject(ApiConfiguration);
+  private readonly notificationCategoryService = inject(NotificationCategoryControllerService);
+  private readonly notificationService = inject(NotificationControllerService);
 
-  private readonly _prefs = signal<UserPref[]>(this.readLocal());
-  readonly prefs = computed(() => this._prefs());
+  private readonly _userPreferences = signal<UserPreferences[]>(this.readLocal());
+  readonly userPreferences = computed(() => this._userPreferences());
 
   private baseUrl(path: string) {
-    return `${this.apiCfg.rootUrl}${path}`;
+    return `${this.apiConfiguration.rootUrl}${path}`;
   }
 
-  private readLocal(): UserPref[] {
+  private readLocal(): UserPreferences[] {
     try {
       const raw = localStorage.getItem(LS_KEY);
       if (raw) return JSON.parse(raw);
     } catch {}
-    return ALL_CATEGORIES.map((c) => ({ category: c, enabled: true }));
+    return ALL_CATEGORIES.map((category) => ({ category: category, enabled: true }));
   }
-  private persistLocal(next: UserPref[]) {
+  private persistLocal(next: UserPreferences[]) {
     localStorage.setItem(LS_KEY, JSON.stringify(next));
   }
 
   async toggle(category: NotificationCategory, enabled: boolean) {
-    const next = this._prefs().map((p) =>
-      p.category === category ? { ...p, enabled } : p
+    const next = this._userPreferences().map((preference) =>
+      preference.category === category ? { ...preference, enabled } : preference
     );
     try {
-      await this.categoryApi
-        .updateIsActive({
+      await this.notificationCategoryService.updateIsActive({
           notificationcategoryname: category,
           body: { name: category, isActive: enabled },
         })
         .toPromise();
-      this._prefs.set(next);
+      this._userPreferences.set(next);
       this.persistLocal(next);
-    } catch (e: any) {
-      if (e?.status !== 404)
-        console.warn('toggle pref failed, falling back to local', e);
-      this._prefs.set(next);
+    } catch (error: any) {
+      if (error?.status !== 404)
+        console.warn('toggle pref failed, falling back to local', error);
+      this._userPreferences.set(next);
       this.persistLocal(next);
     }
   }
 
   async getCategoryInfo(name: NotificationCategory) {
-    return this.categoryApi
-      .getNotificationCategoryByName({ notificationcategoryname: name })
+    return this.notificationCategoryService.getNotificationCategoryByName({ notificationcategoryname: name })
       .toPromise();
   }
 
-  async listUserNotifications(opts?: {
+  //??? al posto di usare l'http client si dovrebbe usare l'apposito servizio
+  // togliere questo /me di riga 93
+  async listUserNotifications(params?: {
     page?: number;
     size?: number;
   }): Promise<UiNotification[]> {
-    const page = opts?.page ?? 0;
-    const size = opts?.size ?? 20;
+    
+    const page = params?.page ?? 0;
+    const size = params?.size ?? 20;
 
     try {
       const url = this.baseUrl(`/notifications/me?page=${page}&size=${size}`);
-      const res: any = await this.http.get(url).toPromise();
-      if (res && Array.isArray(res.content)) {
-        return (res.content as any[]).map((n) => ({
-          id: n.id,
-          message: n.message,
-          createdDate: n.createdDate,
-          category: (n.notificationCategory?.name ??
-            n.category) as NotificationCategory,
+      const response: any = await this.httpClient.get(url).toPromise();
+
+      if (response && Array.isArray(response.content)) {
+        return (response.content as any[]).map((notification) => ({
+          id: notification.id,
+          message: notification.message,
+          createdDate: notification.createdDate,
+          category: (notification.notificationCategory?.name ?? notification.category) as NotificationCategory,
         }));
       }
-    } catch (e: any) {
-      if (e?.status !== 404) {
+    } catch (error: any) {
+      if (error?.status !== 404) {
         console.warn(
           'GET /notifications/me failed, using per-category fallback',
-          e
+          error
         );
       }
     }
 
-    const perCat = await Promise.all(
-      ALL_CATEGORIES.map(async (cat) => {
+    const byNotificationCategory = await Promise.all(
+      ALL_CATEGORIES.map(async (notificationCategory) => {
         try {
-          const url = `${this.apiCfg.rootUrl}/notificationcategories/${cat}/notifications/me?page=${page}&size=${size}`;
-          const res: any = await this.http.get(url).toPromise();
+          const url = `${this.apiConfiguration.rootUrl}/notificationcategories/${notificationCategory}/notifications/me?page=${page}&size=${size}`;
+          const res: any = await this.httpClient.get(url).toPromise();
           const content = (res?.content ?? []) as any[];
-          return content.map((n) => ({
-            id: n.id,
-            message: n.message,
-            createdDate: n.createdDate,
-            category: cat,
+          return content.map((notification) => ({
+            id: notification.id,
+            message: notification.message,
+            createdDate: notification.createdDate,
+            category: notificationCategory,
           })) as UiNotification[];
-        } catch (e) {
-          console.warn(`listMine failed for ${cat}`, e);
+        } catch (error) {
+          console.warn(`listMine failed for ${notificationCategory}`, error);
           return [] as UiNotification[];
         }
       })
     );
 
-    const merged = perCat.flat();
+    const merged = byNotificationCategory.flat();
     merged.sort((a, b) => (a.createdDate < b.createdDate ? 1 : -1));
     return merged.slice(0, size);
   }

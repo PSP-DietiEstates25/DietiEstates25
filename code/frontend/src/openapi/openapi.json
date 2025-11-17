@@ -221,7 +221,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NotificationCategoryRequest"
+                "$ref": "#/components/schemas/UpdateNotificationCategoryStatusRequest"
               }
             }
           },
@@ -618,7 +618,7 @@
         "tags": [
           "real-estate-controller"
         ],
-        "operationId": "getSearchRealEstates",
+        "operationId": "getRealEstates",
         "parameters": [
           {
             "name": "page",
@@ -643,7 +643,7 @@
           {
             "name": "searchid",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -697,7 +697,7 @@
         "tags": [
           "visit-controller"
         ],
-        "operationId": "getRealEstateVisit",
+        "operationId": "getRealEstateVisits",
         "parameters": [
           {
             "name": "realestateid",
@@ -878,16 +878,6 @@
           "notification-category-controller"
         ],
         "operationId": "getUserNotificationCategories",
-        "parameters": [
-          {
-            "name": "email",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -1791,7 +1781,7 @@
           }
         }
       },
-      "NotificationCategoryRequest": {
+      "UpdateNotificationCategoryStatusRequest": {
         "type": "object",
         "properties": {
           "name": {
@@ -1800,16 +1790,11 @@
           },
           "isActive": {
             "type": "boolean"
-          },
-          "userEmail": {
-            "type": "string",
-            "minLength": 1
           }
         },
         "required": [
           "isActive",
-          "name",
-          "userEmail"
+          "name"
         ]
       },
       "NotificationCategoryResponse": {
@@ -2223,6 +2208,27 @@
             "format": "int64"
           }
         }
+      },
+      "NotificationCategoryRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "userEmail": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "isActive",
+          "name",
+          "userEmail"
+        ]
       },
       "NotificationRequest": {
         "type": "object",
@@ -2725,6 +2731,12 @@
             "items": {
               "$ref": "#/components/schemas/Staffer"
             }
+          },
+          "createdEstateAgents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EstateAgent"
+            }
           }
         }
       },
@@ -2864,9 +2876,7 @@
           "email": {
             "type": "string"
           },
-          "admin": {
-            "$ref": "#/components/schemas/Admin"
-          },
+          "admin": {},
           "realEstates": {
             "type": "array",
             "items": {

@@ -16,7 +16,7 @@ export class NotificationsPageComponent {
 
   readonly vm = {
     loading: this.facade.loading,
-    prefs: this.facade.prefs,
+    prefs: this.facade.userPreferences,
     filtered: this.facade.filtered,
   };
 

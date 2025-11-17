@@ -5,7 +5,6 @@ import { RouterLink } from '@angular/router';
 import { HttpBackend, HttpClient } from '@angular/common/http';
 
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
-import { SearchBarComponent } from '../../shared/components/search-bar/search-bar.component';
 import { ResultsMapComponent } from '../resultsMap/results-map.component';
 import { FilterPanelComponent } from '../../shared/components/filter-panel/filter-panel.component';
 import { RecentSearchesComponent } from '../recent-searches/recent-searches.component';
@@ -24,7 +23,6 @@ const looksPng = (b64: string) => b64?.startsWith('iVBOR');
     CommonModule,
     RouterLink,
     NavbarComponent,
-    SearchBarComponent,
     ResultsMapComponent,
     FilterPanelComponent,
     RecentSearchesComponent,
@@ -34,8 +32,8 @@ const looksPng = (b64: string) => b64?.startsWith('iVBOR');
 export class SearchPageComponent implements OnDestroy {
   facade = inject(SearchFacade);
 
-  private handler = inject(HttpBackend);
-  private httpNoInter = new HttpClient(this.handler);
+  private httpBackend = inject(HttpBackend);
+  private httpNoInter = new HttpClient(this.httpBackend);
 
   private blobCache = new Map<string, string>();
   private pending = new Set<string>();
@@ -85,20 +83,19 @@ export class SearchPageComponent implements OnDestroy {
   }
 
   ngOnInit() {
-    this.facade
-      .runFullSearch({
+    this.facade.runFullSearch({
         category: 'SALE',
         page: 1,
         size: 12,
         userEmail: '',
-        geo: {
+        geographicalPosition: {
           address: '',
           city: '',
           latitude: 0,
           longitude: 0,
           municipality: '',
         },
-        uti: {
+        utility: {
           hasAirConditioning: false,
           hasDoorman: false,
           hasElevator: false,
@@ -107,7 +104,7 @@ export class SearchPageComponent implements OnDestroy {
           nearPublicTransport: false,
           nearSchool: false,
         },
-        cf: {
+        cadastralFilter: {
           maxPrice: 0,
           minPrice: 0,
           minRooms: 0,

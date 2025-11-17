@@ -39,11 +39,21 @@ type Point = {
   ],
 })
 export class ResultsMapComponent implements AfterViewInit, OnChanges {
-  @Input() points: Point[] = [];
-  @Input() center?: { lat: number; lon: number };
-  @Input() selectedId?: number | null;
-  @Output() select = new EventEmitter<number>();
-  @ViewChild('resultsMap', { static: true }) mapEl!: ElementRef<HTMLDivElement>;
+  
+  @Input()
+  points: Point[] = [];
+
+  @Input()
+  center?: { lat: number; lon: number };
+
+  @Input()
+  selectedId?: number | null;
+
+  @Output()
+  select = new EventEmitter<number>();
+
+  @ViewChild('resultsMap', { static: true })
+  mapEl!: ElementRef<HTMLDivElement>;
 
   private map!: L.Map;
   private markersLayer = L.layerGroup();
@@ -70,9 +80,9 @@ export class ResultsMapComponent implements AfterViewInit, OnChanges {
     });
 
     // 2) Inizializza mappa con centro certo (fallback Roma)
-    const c = this.center ?? { lat: 41.9028, lon: 12.4964 };
+    const center = this.center ?? { lat: 41.9028, lon: 12.4964 };
     this.map = L.map(this.mapEl.nativeElement, {
-      center: [c.lat, c.lon],
+      center: [center.lat, center.lon],
       zoom: 12,
       preferCanvas: true,
     });
@@ -126,30 +136,34 @@ export class ResultsMapComponent implements AfterViewInit, OnChanges {
     const bounds = L.latLngBounds([]);
     let added = 0;
 
-    for (const p of this.points ?? []) {
-      const lat = Number(
-        p?.lat ?? p?.latitude ?? p?.geographicalPosition?.latitude
+    for (const point of this.points ?? []) {
+
+      const latitude = Number(
+        point?.lat ?? point?.latitude ?? point?.geographicalPosition?.latitude
       );
-      const lon = Number(
-        p?.lon ?? p?.longitude ?? p?.geographicalPosition?.longitude
+
+      const longitude = Number(
+        point?.lon ?? point?.longitude ?? point?.geographicalPosition?.longitude
       );
 
       const isValid =
-        Number.isFinite(lat) &&
-        Number.isFinite(lon) &&
-        !(lat === 0 && lon === 0);
+        Number.isFinite(latitude) &&
+        Number.isFinite(longitude) &&
+        !(latitude === 0 && longitude === 0);
+
       if (!isValid) {
         if (!environment.production) {
-          console.warn('[ResultsMap] scarto punto per lat/lon invalidi:', p);
+          console.warn('[ResultsMap] scarto punto per lat/lon invalidi:', point);
         }
         continue;
       }
 
-      L.marker([lat, lon])
-        .on('click', () => p.id != null && this.select.emit(p.id as number))
+      L.marker([latitude, longitude])
+        .on('click', () => point.id != null && this.select.emit(point.id as number))
         .addTo(this.markersLayer);
 
-      bounds.extend([lat, lon]);
+      bounds.extend([latitude, longitude]);
+      
       added++;
     }
 

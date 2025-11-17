@@ -10,14 +10,14 @@ import { RequestBuilder } from '../../request-builder';
 
 import { PageRealEstateResponse } from '../../models/page-real-estate-response';
 
-export interface GetSearchRealEstates$Params {
+export interface GetRealEstates$Params {
   page?: number;
   size?: number;
-  searchid: number;
+  searchid?: number;
 }
 
-export function getSearchRealEstates(http: HttpClient, rootUrl: string, params: GetSearchRealEstates$Params, context?: HttpContext): Observable<StrictHttpResponse<PageRealEstateResponse>> {
-  const rb = new RequestBuilder(rootUrl, getSearchRealEstates.PATH, 'get');
+export function getRealEstates(http: HttpClient, rootUrl: string, params?: GetRealEstates$Params, context?: HttpContext): Observable<StrictHttpResponse<PageRealEstateResponse>> {
+  const rb = new RequestBuilder(rootUrl, getRealEstates.PATH, 'get');
   if (params) {
     rb.query('page', params.page, {});
     rb.query('size', params.size, {});
@@ -34,4 +34,4 @@ export function getSearchRealEstates(http: HttpClient, rootUrl: string, params: 
   );
 }
 
-getSearchRealEstates.PATH = '/realestates';
+getRealEstates.PATH = '/realestates';

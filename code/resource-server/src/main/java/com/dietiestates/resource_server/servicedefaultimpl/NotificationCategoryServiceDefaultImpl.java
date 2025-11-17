@@ -1,6 +1,7 @@
 package com.dietiestates.resource_server.servicedefaultimpl;
 
 import com.dietiestates.resource_server.dto.request.NotificationCategoryRequest;
+import com.dietiestates.resource_server.dto.request.UpdateNotificationCategoryStatusRequest;
 import com.dietiestates.resource_server.dto.response.NotificationCategoryResponse;
 import com.dietiestates.resource_server.enums.NotificationCategoryType;
 import com.dietiestates.resource_server.factory.NotificationCategoryFactory;
@@ -53,7 +54,7 @@ public class NotificationCategoryServiceDefaultImpl implements NotificationCateg
     }
 
     @Override
-    public void updateNotificationCategory(String notificationCategoryName, NotificationCategoryRequest request) {
+    public void updateNotificationCategory(String notificationCategoryName, UpdateNotificationCategoryStatusRequest request) {
 
         var notificationCategoryToUpdate = notificationCategoryFinder.getNotificationCategoryByName(notificationCategoryName);
         notificationCategoryToUpdate.setName(NotificationCategoryType.valueOf(request.getName()));

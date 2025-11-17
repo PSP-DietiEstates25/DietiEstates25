@@ -13,6 +13,7 @@ public interface RealEstateService {
     RealEstateResponse updateRealEstate(Long realEstateId, RealEstateRequest request, String estateAgentEmail);
     Page<RealEstateResponse> getRealEstates(Integer page, Integer size);
     Page<RealEstateResponse> getEstateAgentRealEstates(String estateAgentEmail, Integer page, Integer size);
+    Page<RealEstateResponse> getAdminRealEstates(String adminEmail, Integer page, Integer size);
     Page<RealEstateResponse> getSearchRealEstates(Long searchId, Integer page, Integer size);
     void deleteRealEstate(Long realEstateId);
 }

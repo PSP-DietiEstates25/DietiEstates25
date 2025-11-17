@@ -1,8 +1,13 @@
 package com.dietiestates.resource_server.controller;
 
+import com.dietiestates.resource_server.dto.request.UpdateNotificationCategoryStatusRequest;
+import org.hibernate.sql.Update;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import com.dietiestates.resource_server.dto.request.NotificationCategoryRequest;
@@ -39,17 +44,20 @@ public class NotificationCategoryController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<List<NotificationCategoryResponse>> getUserNotificationCategories(
-            @RequestParam String email
+            @AuthenticationPrincipal Jwt jwt
     ){
-        var notificationCategories = notificationCategoryService.getUserNotificationCategories(email);
+        var userEmail = jwt.getSubject();
+
+        var notificationCategories = notificationCategoryService.getUserNotificationCategories(userEmail);
         return ResponseEntity.status(HttpStatus.OK).body(notificationCategories);
     }
 
     @PutMapping("/{notificationcategoryname}")
     public ResponseEntity<NotificationCategoryResponse> updateIsActive(
             @PathVariable String notificationcategoryname,
-            @RequestBody NotificationCategoryRequest request
+            @RequestBody UpdateNotificationCategoryStatusRequest request
     ) {
 
         notificationCategoryService.updateNotificationCategory(notificationcategoryname, request);

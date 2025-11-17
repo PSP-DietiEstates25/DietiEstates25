@@ -41,7 +41,7 @@
         <div class="h-4 w-2/5 bg-gray-200 rounded mb-2"></div>
         <div class="h-4 w-3/5 bg-gray-200 rounded"></div>
       </div>
-      } @if (!facade.loading() && facade.cards().length === 0) {
+      } @if (!facade.loading() && facade.searchCards().length === 0) {
       <div class="space-y-3">
         <p class="text-sm text-gray-600">
           Nessun risultato. Prova ad ampliare i filtri.
@@ -75,9 +75,9 @@
         </div>
       </div>
 
-      } @if (facade.cards().length > 0) {
+      } @if (facade.searchCards().length > 0) {
       <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-        @for (c of facade.cards(); track c.id) {
+        @for (c of facade.searchCards(); track c.id) {
         <article
           class="group rounded-2xl border border-black/10 overflow-hidden bg-white shadow-sm hover:shadow-lg transition-all duration-200"
         >
@@ -189,7 +189,7 @@
         >
           <app-results-map
             class="h-full w-full"
-            [points]="facade.cards()"
+            [points]="facade.searchCards()"
             [selectedId]="null"
             [center]="{ lat: 40.847, lon: 14.265 }"
           ></app-results-map>
