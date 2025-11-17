@@ -14,7 +14,7 @@ import { PageRealEstateResponse } from '../../services/models/page-real-estate-r
 
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration } from '../../services/api-configuration';
-import { AutentServiceService } from '../../autent.service.service';
+import { AutentServiceService } from '../../auth.service';
 
 import { StafferRequest } from '../../services/models';
 import { StafferResponse } from '../../services/models';

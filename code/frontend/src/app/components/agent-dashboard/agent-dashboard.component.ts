@@ -10,7 +10,7 @@ import {
   VisitVM,
   OfferVM,
 } from './agent-dashboard.facade';
-import { AutentServiceService } from '../../autent.service.service';
+import { AutentServiceService } from '../../auth.service';
 import { environment } from '../../../environments/environment.development';
 
 @Component({

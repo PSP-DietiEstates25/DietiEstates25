@@ -2,12 +2,49 @@ import { Routes } from '@angular/router';
 
 import { HomeComponent } from './components/home/home.component';
 import { AgentDashboardComponent } from './components/agent-dashboard/agent-dashboard.component';
-import { roleGuard } from './_guards/role.guard';
+import { roleGuard } from './_guards/role/role.guard';
 import { SearchPageComponent } from './components/search/search-page.component';
 import { CreateAdFacade } from './components/create-ad/create-ad.facade';
 import { EditAdFacade } from './components/edit-ad/edit-ad.facade';
 import { EditLayoutComponent } from './components/edit-ad/edit-layout.component';
+import { RegisterComponent } from './components/register/register.component';
+import { HomeSelectorComponent } from './components/home-selector/home-selector.component';
+import { DetailControllerService } from './services/services';
+import { StepDetailsComponent } from './components/create-ad/step-details.component';
+import { StepCadastralComponent } from './components/create-ad/step-cadastral.component';
 
+export const routes: Routes = [
+  {
+    path: 'register',
+    title: 'Register',
+    component: RegisterComponent
+  },
+  {
+    path: '',
+    title: 'Home',
+    component: HomeSelectorComponent
+  },
+  {
+    path: 'searches',
+    title: 'Searches',
+    component: SearchPageComponent
+  },
+  {
+    path: ''
+  },
+  {
+    path: 'details',
+    title: "Details",
+    component: StepDetailsComponent,
+    canActivate: [roleGuard]
+  },
+  {
+    path: 'cadastraldata',
+    title: 'Cadastral Data',
+    component: StepCadastralComponent
+  }
+];
+/*
 export const routes: Routes = [
   {
     path: 'auth',
@@ -181,3 +218,4 @@ export const routes: Routes = [
     canActivate: [],
   },
 ];
+*/

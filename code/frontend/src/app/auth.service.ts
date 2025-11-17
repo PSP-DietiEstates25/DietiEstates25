@@ -1,13 +1,17 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AccountResponse } from './components/admin-dashboard/admin-dashboard.facade';
+import { LocalStorageService } from './services/services/local-storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AutentServiceService {
+export class AuthService {
+
+  private readonly localStorageService = inject(LocalStorageService);
 
   httpClient = inject(HttpClient);
+
   url = 'http://localhost:8080/userinfo';
   httpOptions: { headers: HttpHeaders, withCredentials: boolean } = {
     headers: new HttpHeaders({
@@ -43,5 +47,17 @@ export class AutentServiceService {
   }){
     const url = 'http://localhost:8080/account/password';
     return this.httpClient.patch(url, changeAdminPasswordRequest, this.httpOptions);
+  }
+
+  isEstateAgent(){
+    return this.localStorageService.getItem("role") === "ESTATE_AGENT";
+  }
+
+  isAdmin(){
+    return this.localStorageService.getItem("role") === "ADMIN";
+  }
+
+  isUser(){
+    return this.localStorageService.getItem("role") === "USER";
   }
 }

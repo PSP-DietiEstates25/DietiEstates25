@@ -8,7 +8,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { MenuToggleComponent } from '../../buttons/menu_toggle/menu-toggle.component';
 import { NotificationsFacade } from '../../../components/notifications/notifications.facade';
-import { AutentServiceService } from '../../../autent.service.service';
+import { AutentServiceService } from '../../../auth.service';
 import { filter } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment.development';
 

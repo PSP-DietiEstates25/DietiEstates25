@@ -14,7 +14,7 @@ import {
 } from './admin-dashboard.facade';
 import { Router, RouterLink } from '@angular/router';
 
-import { AutentServiceService } from '../../autent.service.service';
+import { AutentServiceService } from '../../auth.service';
 import { environment } from '../../../environments/environment.development';
 
 @Component({

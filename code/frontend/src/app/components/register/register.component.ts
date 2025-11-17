@@ -7,7 +7,7 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AutentServiceService } from '../../autent.service.service';
+import { AutentServiceService } from '../../auth.service';
 import { environment } from '../../../environments/environment';
 import { firstValueFrom } from 'rxjs';
 import { AccountRequest } from '../admin-dashboard/admin-dashboard.facade';
