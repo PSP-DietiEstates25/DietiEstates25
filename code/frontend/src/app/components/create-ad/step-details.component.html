@@ -19,12 +19,9 @@
     <!-- Mappa interattiva -->
     <div class="relative rounded-xl overflow-hidden border h-96">
       <app-map
-        [initialLatitude]="positionForm.value.latitude!"
-        [initialLongitude]="positionForm.value.longitude!"
-        [initialZoom]="13"
-        [isEditable]="false"
-        (latitudeChange)="onLatChange($event)"
-        (longitudeChange)="onLngChange($event)"
+        (latitudeChange)="updateLatitude($event)"
+        (longitudeChange)="updateLongitude($event)"
+        [isEditable]="true"
       />
     </div>
 
@@ -74,34 +71,23 @@
           placeholder="0"
         />
       </div>
-      <div>
-        <label for="lat" class="block text-sm mb-1 dark:text-slate-200"
-          >Latitudine</label
-        >
-        <input
-          id="lat"
-          type="number"
-          step="any"
-          class="input_main"
-          formControlName="latitude"
-        />
-      </div>
-      <div>
-        <label for="lng" class="block text-sm mb-1 dark:text-slate-200"
-          >Longitudine</label
-        >
-        <input
-          id="lng"
-          type="number"
-          step="any"
-          class="input_main"
-          formControlName="longitude"
-        />
-      </div>
+      <div class="flex justify-start items-start gap-5">
+        @if(this.submitted && this.latitude?.invalid){
+          @if(this.latitude?.hasError('required')){
+            <h3 class="form_error">Latitude is required</h3>
+          }
+        }
+        @if(this.submitted && this.longitude?.invalid){
+          @if(this.longitude?.hasError('required')){
+            <h3 class="form_error">Longitude is required</h3>
+          }
+        }
+        </div>
     </form>
 
     <div class="flex justify-end gap-2 mt-2">
       <button class="btn_primary" type="button" (click)="next()">Avanti</button>
+      <button class="btn_primary" type="button" (click)="previous()">Indietro</button>
     </div>
   </div>
 </section>

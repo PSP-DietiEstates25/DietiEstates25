@@ -89,6 +89,7 @@ export const routes: Routes = [
       },
     ],
   },
+  /*
   {
     path: '',
     canActivate: [isEstateAgentGuard],
@@ -120,6 +121,7 @@ export const routes: Routes = [
       },
     ],
   },
+  */
   {
     path: 'ad/:id',
     component: AdDetailComponent

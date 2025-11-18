@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @use "tailwindcss";
+@import 'ngx-toastr/toastr';
 
 
 html,
@@ -50,6 +51,10 @@ font-semibold;
            border-2 border-transparent hover:border-amber-600 dark:hover:border-blue-500
            hover:bg-gray-100 dark:hover:bg-slate-800 transition
            disabled:opacity-60 disabled:cursor-not-allowed;
+  }
+
+  .form_error {
+    @apply text-red-700 text-xs italic
   }
 }
 

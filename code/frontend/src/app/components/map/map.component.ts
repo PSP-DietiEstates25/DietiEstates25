@@ -1,214 +1,198 @@
-import {
-  AfterViewInit,
-  Component,
-  computed,
-  Signal,
-  ViewChild,
-  ElementRef,
-  signal,
-  output,
-  input,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AfterViewInit, Component, computed, Signal, ViewChild, ElementRef, signal, output, input } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { GeocoderAutocomplete } from '@geoapify/geocoder-autocomplete';
 import * as L from 'leaflet';
 import 'mapbox-gl-leaflet';
 
 @Component({
-  selector: 'app-map',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './map.component.html',
-  styleUrls: ['./map.component.scss'],
+	selector: 'app-map',
+	imports: [],
+	templateUrl: './map.component.html',
+	styleUrl: './map.component.scss'
 })
 export class MapComponent implements AfterViewInit {
-  @ViewChild('map')
-  private mapContainer!: ElementRef<HTMLElement>;
+	
+	@ViewChild('map')
+	private mapContainer!: ElementRef<HTMLElement>;
+	
+	@ViewChild('autocomplete')
+	private autocompleteContainer!: ElementRef<HTMLElement>;
+	
+	private map!: L.Map;
 
-  @ViewChild('autocomplete')
-  private autocompleteContainer!: ElementRef<HTMLElement>;
+	//Naples
+	initialLatitude = input<number>(40.85631);
+	initialLongitude = input<number>(14.24641);
+	initialZoom = input<number>(13);
 
-  private map!: L.Map;
+	private autocompleter!: GeocoderAutocomplete;
+	private marker!: L.Marker;
+	private markerIcon!: L.Icon;
+	
+	private _latitude = signal(this.initialLatitude());
+	private _longitude = signal(this.initialLongitude());
+	latitude!: Signal<number>;
+	longitude!: Signal<number>;
+	latitudeChange = output<number>();
+	longitudeChange = output<number>();
+	isEditable = input.required<boolean>();
+	
+	constructor() {
+		this.latitude = computed(() => this._latitude());
+		this.longitude = computed(() => this._longitude());
+	}
+	
+	ngAfterViewInit() {
+		this.setMarkerIcon();
+		this.setMap();
+		if(!this.isEditable()){
+			this.setAutocompleter();
+			this.setAutocompleterMarkerEvent();
+			this.setClickMapEvents();
+		}
+	}
+	
+	setMap(){
+		const initialLatitude = this.initialLatitude();
+		const initialLongitude = this.initialLongitude();
+		const initialZoom = this.initialZoom();
+		
+		this.map = new L.Map(
+			this.mapContainer.nativeElement, { zoomControl: false }).setView(
+				[initialLatitude, initialLongitude],
+				initialZoom,
+			);
+			
+			L.control.zoom({ position: 'bottomright' }).addTo(this.map);
+			
+			// credits attribution required
+			this.map.attributionControl
+			.setPrefix("")
+			.addAttribution(
+				'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © OpenStreetMap <a href="https://www.openstreetmap.org/copyright" target="_blank">contributors</a>'
+			);
+			
+			//map style and attribution
+			L.tileLayer(`https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}@2x.png?apiKey=${environment.geoapifyAPIKey}`, {
+  				attribution:
+    			'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © OpenStreetMap <a href="https://www.openstreetmap.org/copyright" target="_blank">contributors</a>',
+  				maxZoom: 20,
+			}).addTo(this.map);
 
-  //Naples
-  initialLatitude = input<number>(40.85631);
-  initialLongitude = input<number>(14.24641);
-  initialZoom = input<number>(13);
-
-  private autocompleter!: GeocoderAutocomplete;
-  private marker!: L.Marker;
-  private markerIcon!: L.Icon;
-
-  private _latitude = signal(this.initialLatitude());
-  private _longitude = signal(this.initialLongitude());
-  latitude!: Signal<number>;
-  longitude!: Signal<number>;
-  latitudeChange = output<number>();
-  longitudeChange = output<number>();
-
-  isEditable = input.required<boolean>();
-
-  centerChanged = output<{ lat: number; lon: number }>();
-
-  constructor() {
-    this.latitude = computed(() => this._latitude());
-    this.longitude = computed(() => this._longitude());
-  }
-
-  ngAfterViewInit() {
-    this.setMarkerIcon();
-    this.setMap();
-    if (!this.isEditable()) {
-      this.setAutocompleter();
-      this.setAutocompleterMarkerEvent();
-      this.setClickMapEvents();
-    }
-  }
-
-  setMap() {
-    const initialLatitude = this.initialLatitude();
-    const initialLongitude = this.initialLongitude();
-    const initialZoom = this.initialZoom();
-
-    this.map = new L.Map(this.mapContainer.nativeElement, {
-      zoomControl: false,
-    }).setView([initialLatitude, initialLongitude], initialZoom);
-
-    L.control.zoom({ position: 'bottomright' }).addTo(this.map);
-
-    // credits attribution required
-    this.map.attributionControl
-      .setPrefix('')
-      .addAttribution(
-        'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © OpenStreetMap <a href="https://www.openstreetmap.org/copyright" target="_blank">contributors</a>'
-      );
-
-    //map style and attribution
-    L.tileLayer(
-      `https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}@2x.png?apiKey=${environment.geoapifyAPIKey}`,
-      {
-        attribution:
-          'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © OpenStreetMap <a href="https://www.openstreetmap.org/copyright" target="_blank">contributors</a>',
-        maxZoom: 20,
-      }
-    ).addTo(this.map);
-
-    if (this.isEditable()) {
-      if (this.marker) {
-        this.marker.setLatLng([initialLatitude, initialLongitude]);
-      } else {
-        this.marker = L.marker([initialLatitude, initialLongitude], {
-          icon: this.markerIcon,
-          draggable: true,
-        }).addTo(this.map);
-        this.setDragMarkerEvents();
-      }
-
-      this.map.panTo([initialLatitude, initialLongitude]);
-
-      this.setLatitude(initialLatitude);
-      this.setLongitude(initialLongitude);
-
-      this.updateLatLon();
-    }
-  }
-
-  setAutocompleter() {
-    this.autocompleter = new GeocoderAutocomplete(
-      this.autocompleteContainer.nativeElement,
-      environment.geoapifyAPIKey
-    );
-  }
-
-  setMarkerIcon() {
-    this.markerIcon = L.icon({
-      iconUrl: `https://api.geoapify.com/v1/icon/?type=awesome&color=%232ea2ff&size=large&scaleFactor=2&apiKey=${environment.geoapifyAPIKey}`,
-      iconSize: [38, 56], // size of the icon
-      iconAnchor: [19, 51], // point of the icon which will correspond to marker's location
-      popupAnchor: [0, -60], // point from which the popup should open relative to the iconAnchor
-    });
-  }
-
-  setAutocompleterMarkerEvent() {
-    this.autocompleter.on('select', (location: any) => {
-      const lat = location.properties.lat;
-      const lon = location.properties.lon;
-
-      if (this.marker) {
-        this.marker.setLatLng([lat, lon]);
-      } else {
-        this.marker = L.marker([lat, lon], {
-          icon: this.markerIcon,
-          draggable: true,
-        }).addTo(this.map);
-
-        this.setDragMarkerEvents();
-      }
-
-      this.map.panTo([lat, lon]);
-
-      this.setLatitude(lat);
-      this.setLongitude(lon);
-
-      this.updateLatLon();
-    });
-  }
-
-  setDragMarkerEvents() {
-    if (!this.marker) return;
-
-    this.marker.on('drag', () => {});
-
-    this.marker.on('dragend', (dragEndEvent: L.DragEndEvent) => {
-      const marker = dragEndEvent.target as L.Marker;
-      const lat = marker.getLatLng().lat;
-      const lon = marker.getLatLng().lng;
-
-      this.map.panTo([lat, lon]);
-      this.setLatitude(lat);
-      this.setLongitude(lon);
-      this.updateLatLon(); // <-- emette anche centerChanged
-    });
-  }
-
-  setClickMapEvents() {
-    this.map.on('click', (e: L.LeafletMouseEvent) => {
-      const lat = e.latlng.lat;
-      const lon = e.latlng.lng;
-
-      if (this.marker) {
-        this.marker.setLatLng([lat, lon]);
-      } else {
-        this.marker = L.marker([lat, lon], {
-          icon: this.markerIcon,
-          draggable: true,
-        }).addTo(this.map);
-        this.setDragMarkerEvents();
-      }
-
-      this.map.panTo([lat, lon]);
-
-      this.setLatitude(lat);
-      this.setLongitude(lon);
-
-      this.updateLatLon();
-    });
-  }
-
-  setLatitude(latitude: number) {
-    this._latitude.set(latitude);
-  }
-
-  setLongitude(longitude: number) {
-    this._longitude.set(longitude);
-  }
-
-  updateLatLon() {
-    const lat = this.latitude();
-    const lon = this.longitude();
-    this.latitudeChange.emit(lat);
-    this.longitudeChange.emit(lon);
-    this.centerChanged.emit({ lat, lon }); // <-- AGGIUNTO
-  }
-}
+			if(this.isEditable()){
+				if (this.marker) {
+					this.marker.setLatLng([initialLatitude, initialLongitude]);
+				} else {
+					this.marker = L.marker([initialLatitude, initialLongitude], {
+						icon: this.markerIcon,
+					}).addTo(this.map);
+				}
+				
+				this.map.panTo([initialLatitude, initialLongitude]);
+				
+				this.setLatitude(initialLatitude);
+				this.setLongitude(initialLongitude);
+				
+				this.updateLatLon();
+			}
+		}
+		
+		setAutocompleter(){
+			this.autocompleter = new GeocoderAutocomplete(
+				this.autocompleteContainer.nativeElement,
+				environment.geoapifyAPIKey
+			);
+		}
+		
+		setMarkerIcon(){
+			this.markerIcon = L.icon({
+				iconUrl: `https://api.geoapify.com/v1/icon/?type=awesome&color=%232ea2ff&size=large&scaleFactor=2&apiKey=${environment.geoapifyAPIKey}`,
+				iconSize: [38, 56], // size of the icon
+				iconAnchor: [19, 51], // point of the icon which will correspond to marker's location
+				popupAnchor: [0, -60] // point from which the popup should open relative to the iconAnchor
+			});
+		}
+		
+		setAutocompleterMarkerEvent(){
+			this.autocompleter.on('select', (location: any) => {
+				const lat = location.properties.lat;
+				const lon = location.properties.lon;
+				
+				if (this.marker) {
+					this.marker.setLatLng([lat, lon]);
+				} else {
+					this.marker = L.marker([lat, lon], {
+						icon: this.markerIcon,
+						draggable: true,
+					}).addTo(this.map);
+					
+					this.setDragMarkerEvents();
+				}
+				
+				this.map.panTo([lat, lon]);
+				
+				this.setLatitude(lat);
+				this.setLongitude(lon);
+				
+				this.updateLatLon();
+			});
+		}
+		
+		setDragMarkerEvents() {
+			
+			if (!this.marker) return;
+			
+			this.marker.on('drag', () => {});
+			
+			this.marker.on('dragend', (dragEndEvent: L.DragEndEvent) => {
+				const marker = dragEndEvent.target as L.Marker;
+				const lat = marker.getLatLng().lat;
+				const lon = marker.getLatLng().lng;
+				
+				this.map.panTo([lat, lon]);
+				
+				this.setLatitude(lat);
+				this.setLongitude(lon);
+				
+				this.updateLatLon();
+			});
+		}
+		
+		setClickMapEvents(){
+			this.map.on('click', (e: L.LeafletMouseEvent) => {
+				const lat = e.latlng.lat;
+				const lon = e.latlng.lng;
+				
+				if (this.marker) {
+					this.marker.setLatLng([lat, lon]);
+				} else {
+					this.marker = L.marker([lat, lon], {
+						icon: this.markerIcon,
+						draggable: true,
+					}).addTo(this.map);
+					this.setDragMarkerEvents();
+				}
+				
+				this.map.panTo([lat, lon]);
+				
+				this.setLatitude(lat);
+				this.setLongitude(lon);
+				
+				this.updateLatLon();
+			});
+		}
+		
+		setLatitude(latitude: number){
+			this._latitude.set(latitude);
+		}
+		
+		setLongitude(longitude: number){
+			this._longitude.set(longitude);
+		}
+		
+		updateLatLon(){
+			this.latitudeChange.emit(this.latitude());
+			this.longitudeChange.emit(this.longitude());
+		}
+	}
+	
