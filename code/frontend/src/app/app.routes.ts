@@ -89,10 +89,52 @@ export const routes: Routes = [
       },
     ],
   },
-      
+  {
+    path: '',
+    component: EditLayoutComponent,
+    providers: [
+      EditAdFacade,
+      { provide: CreateAdFacade, useExisting: EditAdFacade },
+    ],
+    children: [
+      {
+        path: 'details/:detailId',
+        component: StepDetailsComponent
+      },
+      {
+        path: 'basics/:realestateId',
+        component: StepBasicsComponent
+      },
+      {
+        path: 'cadastraldata/:cadastralId',
+        component: StepCadastralComponent
+      },
+      {
+        path: 'photos/:photoSetId',
+        component: StepPhotosComponent
+      },
+      {
+        path: 'reviews/:realestateId',
+        component: StepReviewComponent
+      },
+    ],
+  },
+  {
+    path: 'ad/:id',
+    component: AdDetailComponent
+  },
 
+  {
+    path: 'notifications',
+    component: NotificationsPageComponent,
+    canActivate: [isUserGuard],
+  },
+];
 
-  /*
+/*
+
+  ROUTES INIZIALI CON COMPONENTI NON LAZY
+
   {
     path: '',
     canActivate: [isEstateAgentGuard],
@@ -172,21 +214,13 @@ export const routes: Routes = [
       },
     ],
   },
+*/
 
-  */
-  {
-    path: 'ad/:id',
-    component: AdDetailComponent
-  },
-
-  {
-    path: 'notifications',
-    component: NotificationsPageComponent,
-    canActivate: [isUserGuard],
-  },
-];
 
 /*
+
+ROUTES INIZIALI CON COMPONENTI LAZY
+
 export const routes: Routes = [
   {
     path: 'auth',

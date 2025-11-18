@@ -26,8 +26,6 @@ import {
   RealEstateResponse,
   UtilityRequest,
 } from '../../services/models';
-import { getOfferById } from '../../services/fn/offer-controller/get-offer-by-id';
-import { HomeComponent } from '../home/home.component';
 
 export type Category = 'SALE' | 'RENT';
 export interface BasicsDraft {
