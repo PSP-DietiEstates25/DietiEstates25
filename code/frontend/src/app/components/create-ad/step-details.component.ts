@@ -77,7 +77,7 @@ export class StepDetailsComponent implements OnInit {
     this.positionForm.patchValue({ longitude: longitude });
   }
 
-  onDiscard(){
+  discard(){
     this.routerService.navigate(['/']);
     this.toastrService.error('Creazione annuncio interrotta!', "Cancellazione");
   }

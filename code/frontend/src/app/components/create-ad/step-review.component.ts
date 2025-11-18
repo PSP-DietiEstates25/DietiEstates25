@@ -8,9 +8,14 @@ import { Router } from '@angular/router';
   templateUrl: './step-review.component.html',
 })
 export class StepReviewComponent {
+
   facade = inject(CreateAdFacade);
   canPublish = computed(() => this.facade.allValid());
   private routerService = inject(Router); 
+
+  previous(){
+    this.routerService.navigate(['/photos']);
+  }
 
   publish() {
     this.facade.createAd();

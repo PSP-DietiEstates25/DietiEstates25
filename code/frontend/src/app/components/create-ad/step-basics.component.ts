@@ -25,6 +25,10 @@ export class StepBasicsComponent implements OnInit {
     if (basics) this.form.patchValue(basics, { emitEvent: false });
   }
 
+  discard(){
+    
+  }
+
   next() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();

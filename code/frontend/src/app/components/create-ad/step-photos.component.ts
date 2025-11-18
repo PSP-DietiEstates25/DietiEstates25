@@ -42,6 +42,14 @@ export class StepPhotosComponent {
     this.rebuildPreviews();
   }
 
+  discard(){
+
+  }
+
+  previous(){
+    this.routerService.navigate(['/cadastraldata']);
+  }
+
   next() {
     this.routerService.navigate(['/reviews'], { relativeTo: this.activatedRoute });
   }

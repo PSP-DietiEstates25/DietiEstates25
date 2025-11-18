@@ -31,6 +31,14 @@ export class StepCadastralComponent implements OnInit {
     if (cadastralData) this.form.patchValue(cadastralData, { emitEvent: false });
   }
 
+  discard(){
+
+  }
+
+  previous(){
+    this.routerService.navigate(['/details']);
+  }
+
   next() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();

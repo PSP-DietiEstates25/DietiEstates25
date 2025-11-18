@@ -18,7 +18,7 @@
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
     @for (url of previews; track url; let i = $index) {
     <div class="relative aspect-square rounded-lg overflow-hidden border">
-      <img [src]="url" alt="preview" class="w-full h-full object-cover" />
+      <img [src]="url" alt="preview" class="block w-full h-full object-cover" />
       <button
         type="button"
         class="absolute top-2 right-2 btn_ghost text-xs"
@@ -31,7 +31,9 @@
   </div>
   }
 
-  <div class="flex justify-end gap-2">
+  <div class="w-full col-span-3 flex justify-between gap-2 sm:px-20 mdpx_10 px-8">
+    <button class="btn_primary" type="button" (click)="previous()">Indietro</button>
+    <button class="discard_button" type="button" (click)="discard()">Elimina</button>
     <button class="btn_primary" type="button" (click)="next()">Avanti</button>
   </div>
 </div>

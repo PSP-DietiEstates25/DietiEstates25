@@ -1,18 +1,19 @@
 <section class="grid lg:grid-cols-3 gap-6">
-  <form [formGroup]="utilitiesForm" class="grid gap-3 lg:col-span-1">
-    <h3 class="font-semibold">Servizi</h3>
-    <label class="flex items-center gap-2">
-      <input type="checkbox" formControlName="hasElevator" /> Ascensore
-    </label>
-    <label class="flex items-center gap-2">
-      <input type="checkbox" formControlName="hasDoorman" /> Portiere
-    </label>
-    <label class="flex items-center gap-2">
-      <input type="checkbox" formControlName="hasAirConditioning" /> Aria
-      condizionata
-    </label>
-  </form>
-
+  <div class="flex justify-center items-start gap-4">
+    <form [formGroup]="utilitiesForm" class="grid gap-3 lg:col-span-1">
+      <h3 class="font-semibold">Servizi</h3>
+      <label class="flex items-center gap-2">
+        <input type="checkbox" formControlName="hasElevator" /> Ascensore
+      </label>
+      <label class="flex items-center gap-2">
+        <input type="checkbox" formControlName="hasDoorman" /> Portiere
+      </label>
+      <label class="flex items-center gap-2">
+        <input type="checkbox" formControlName="hasAirConditioning" /> Aria
+        condizionata
+      </label>
+    </form>
+  </div>
   <div class="grid gap-3 lg:col-span-2">
     <h3 class="font-semibold">Posizione</h3>
 
@@ -39,10 +40,10 @@
         }
         </div>
     </form>
-
-    <div class="flex justify-between gap-2 mt-2">
-      <button class="btn_primary" type="button" (click)="next()">Avanti</button>
+  </div>
+  <div class="w-full col-span-3 flex justify-between gap-2 sm:px-20 mdpx_10 px-8">
       <button class="btn_primary" type="button" (click)="previous()">Indietro</button>
-    </div>
+      <button class="discard_button" type="button" (click)="discard()">Elimina</button>
+      <button class="btn_primary" type="button" (click)="next()">Avanti</button>
   </div>
 </section>
