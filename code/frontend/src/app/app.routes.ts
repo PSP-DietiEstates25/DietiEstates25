@@ -91,6 +91,7 @@ export const routes: Routes = [
   },
   {
     path: '',
+    canActivate: [isEstateAgentGuard],
     component: EditLayoutComponent,
     providers: [
       EditAdFacade,

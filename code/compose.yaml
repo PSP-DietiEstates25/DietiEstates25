@@ -1,18 +1,48 @@
-include:
-  - sonarqube.yaml
 services:
-  postgres_backend:
-    container_name: postgres_dietiestates
+  postgres_dietiestates_authorization:
+    container_name: postgres_dietiestates_authorization
     image: postgres:latest
     environment:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-      PGDATA: /var/lib/postgresql/dieti
+      POSTGRES_DB: dietiestates_authorization_server
+      PGDATA: /var/lib/postgresql/dietiestates_authorization
     volumes:
-      - postgres_backend:/var/lib/postgresql/dieti
+      - postgres_dietiestates_authorization:/var/lib/postgresql/dietiestates_authorization
     ports:
-      - 5432:5432
+      - "5431:5432"
+    networks:
+      - spring-backend
+    restart: unless-stopped
+
+  postgres_dietiestates_bff:
+    container_name: postgres_dietiestates_bff
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: dietiestates_bff_server
+      PGDATA: /var/lib/postgresql/dietiestates_bff
+    volumes:
+      - postgres_dietiestates_bff:/var/lib/postgresql/dietiestates_bff
+    ports:
+      - "5432:5432"
+    networks:
+      - spring-backend
+    restart: unless-stopped
+
+  postgres_dietiestates_resource:
+    container_name: postgres_dietiestates_resource
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: dietiestates_resource_server
+      PGDATA: /var/lib/postgresql/dietiestates_resource
+    volumes:
+      - postgres_dietiestates_resource:/var/lib/postgresql/dietiestates_resource
+    ports:
+      - "5433:5432"
     networks:
       - spring-backend
     restart: unless-stopped
@@ -22,5 +52,9 @@ networks:
     driver: bridge
 
 volumes:
-  postgres_backend:
+  postgres_dietiestates_authorization:
+    driver: local
+  postgres_dietiestates_bff:
+    driver: local
+  postgres_dietiestates_resource:
     driver: local
