@@ -46,8 +46,7 @@ export class LoginComponent {
   }
 
   goToRegister(): void {
-    const url = new URL('/register', environment.frontendBaseUrl);
-    window.location.href = url.toString();
+    window.location.href = `${environment.frontendBaseUrl}/register`;
   }
 
   csrfToken() {
