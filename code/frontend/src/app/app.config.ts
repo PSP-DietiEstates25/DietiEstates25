@@ -10,6 +10,7 @@ import { xsrfInterceptor } from './_interceptors/xsrf/xsrf.interceptor';
 import { authInterceptor } from './_interceptors/auth/auth.interceptor'; 
 import { authCredentials } from './_interceptors/cookie/auth-credentials.interceptor';
 import { provideToastr } from 'ngx-toastr';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 export const appConfig: ApplicationConfig = {
   providers: [
