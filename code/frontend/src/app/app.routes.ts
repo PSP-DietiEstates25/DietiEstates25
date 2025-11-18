@@ -44,6 +44,7 @@ export const routes: Routes = [
   {
     path: '',
     title: 'Home',
+    pathMatch: 'full',
     component: HomeSelectorComponent,
   },
   {
@@ -51,7 +52,49 @@ export const routes: Routes = [
     component: SearchPageComponent,
   },
   {
-    path: 'realestates',
+    path: '',
+    canActivate: [isEstateAgentGuard],
+    component: AgentCreateLayoutComponent,
+    children: [
+      { 
+        path: '',
+        title: 'Publishing',
+        pathMatch: 'full',
+        redirectTo: 'basics'
+      },
+      {
+        path: 'basics',
+        title: 'Basics info step',
+        component: StepBasicsComponent
+      },
+      {
+        path: 'details',
+        title: 'Details step',
+        component: StepDetailsComponent
+      },
+      {
+        path: 'cadastraldata',
+        title: 'Cadastral data step',
+        component: StepCadastralComponent 
+      },
+      {
+        path: 'photos',
+        title: 'Photos step',
+        component: StepPhotosComponent
+      },
+      {
+        path: 'reviews',
+        title: 'Review',
+        component: StepReviewComponent
+      },
+    ],
+  },
+      
+
+
+  /*
+  {
+    path: '',
     canActivate: [isEstateAgentGuard],
     children: [
       {
@@ -91,7 +134,7 @@ export const routes: Routes = [
           },
         ],
       },
-
+      
       {
         path: ':realestateId',
         component: EditLayoutComponent,
@@ -130,6 +173,7 @@ export const routes: Routes = [
     ],
   },
 
+  */
   {
     path: 'ad/:id',
     component: AdDetailComponent

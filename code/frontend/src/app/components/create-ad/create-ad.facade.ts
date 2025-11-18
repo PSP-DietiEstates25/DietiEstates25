@@ -134,13 +134,6 @@ export class CreateAdFacade {
       return;
     }
 
-    if (!agentEmail) {
-      this.error.set(
-        "Impossibile ottenere l'email dell'agente. Effettua nuovamente il login."
-      );
-      return;
-    }
-
     const utilityRequest: UtilityRequest = {
       hasAirConditioning: !!utility.hasAirConditioning,
       hasDoorman: !!utility.hasDoorman,
@@ -258,7 +251,7 @@ export class CreateAdFacade {
       )
       .subscribe((realEstateId: number) => {
         this.publishedSubject.next(realEstateId);
-        this.routerService.navigateByUrl('/agent');
+        this.routerService.navigateByUrl('/');
       });
   }
 

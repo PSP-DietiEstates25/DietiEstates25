@@ -22,7 +22,7 @@ export class AgentCreateLayoutComponent {
 steps = [
   { key: 'basics',    label: 'Dati principali', valid: this.basicsValid },
   { key: 'details',   label: 'Dettagli',        valid: this.detailsValid },
-  { key: 'cadastral', label: 'Catastali',       valid: computed(() => !!this.facade.cadastralData()) },
+  { key: 'cadastral', label: 'Dati catastali',       valid: computed(() => !!this.facade.cadastralData()) },
   { key: 'photos',    label: 'Foto',            valid: this.photosValid },
   { key: 'review',    label: 'Riepilogo',       valid: this.allValid },
 ] as const;

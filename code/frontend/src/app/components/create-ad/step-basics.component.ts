@@ -31,6 +31,6 @@ export class StepBasicsComponent implements OnInit {
       return;
     }
     this.facade.setBasics(this.form.getRawValue());
-    this.routerService.navigate(['../details'], { relativeTo: this.activatedRoute });
+    this.routerService.navigate(['/details'], { relativeTo: this.activatedRoute });
   }
 }

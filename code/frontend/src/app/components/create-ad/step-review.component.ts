@@ -17,6 +17,6 @@ export class StepReviewComponent {
   }
 
   cancel() {
-    this.routerService.navigate(['/agent']);
+    this.routerService.navigate(['/']);
   }
 }

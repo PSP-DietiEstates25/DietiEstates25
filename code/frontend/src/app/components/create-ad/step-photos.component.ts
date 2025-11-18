@@ -43,7 +43,7 @@ export class StepPhotosComponent {
   }
 
   next() {
-    this.routerService.navigate(['../review'], { relativeTo: this.activatedRoute });
+    this.routerService.navigate(['/reviews'], { relativeTo: this.activatedRoute });
   }
 
   private rebuildPreviews() {

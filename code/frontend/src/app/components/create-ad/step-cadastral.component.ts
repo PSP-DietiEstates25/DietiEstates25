@@ -37,6 +37,6 @@ export class StepCadastralComponent implements OnInit {
       return;
     }
     this.facade.setCadastral(this.form.getRawValue() as any);
-    this.routerService.navigate(['../photos'], { relativeTo: this.activatedRouter });
+    this.routerService.navigate(['/photos'], { relativeTo: this.activatedRouter });
   }
 }

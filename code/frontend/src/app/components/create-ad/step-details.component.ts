@@ -58,6 +58,6 @@ export class StepDetailsComponent implements OnInit {
     }
     this.facade.setUtilities(this.utilitiesForm.getRawValue());
     this.facade.setPosition(this.positionForm.getRawValue());
-    this.routerService.navigate(['../cadastral'], { relativeTo: this.activatedRoute });
+    this.routerService.navigate(['/cadastraldata'], { relativeTo: this.activatedRoute });
   }
 }
