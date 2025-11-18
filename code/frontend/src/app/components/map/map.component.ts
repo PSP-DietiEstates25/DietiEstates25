@@ -35,7 +35,7 @@ export class MapComponent implements AfterViewInit {
 	longitude!: Signal<number>;
 	latitudeChange = output<number>();
 	longitudeChange = output<number>();
-	isEditable = input.required<boolean>();
+	isNotEditable = input.required<boolean>();
 	
 	constructor() {
 		this.latitude = computed(() => this._latitude());
@@ -45,7 +45,7 @@ export class MapComponent implements AfterViewInit {
 	ngAfterViewInit() {
 		this.setMarkerIcon();
 		this.setMap();
-		if(!this.isEditable()){
+		if(!this.isNotEditable()){
 			this.setAutocompleter();
 			this.setAutocompleterMarkerEvent();
 			this.setClickMapEvents();
@@ -79,7 +79,7 @@ export class MapComponent implements AfterViewInit {
   				maxZoom: 20,
 			}).addTo(this.map);
 
-			if(this.isEditable()){
+			if(this.isNotEditable()){
 				if (this.marker) {
 					this.marker.setLatLng([initialLatitude, initialLongitude]);
 				} else {

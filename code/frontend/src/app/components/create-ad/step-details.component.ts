@@ -4,16 +4,18 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CreateAdFacade } from './create-ad.facade';
 import { MapComponent } from '../map/map.component';
 import { ToastrService } from 'ngx-toastr';
+import { GeoapifyService } from '../../services/services/geoapify.service';
 
 @Component({
   selector: 'app-step-details',
   standalone: true,
-  imports: [ReactiveFormsModule, MapComponent],
+  imports: [MapComponent, ReactiveFormsModule],
   templateUrl: './step-details.component.html',
 })
 export class StepDetailsComponent implements OnInit {
 
   private activatedRoute = inject(ActivatedRoute);
+  private geoapifyService = inject(GeoapifyService);
   private toastrService = inject(ToastrService);
   private formBuilder = inject(FormBuilder);
   private facade = inject(CreateAdFacade);
@@ -48,6 +50,18 @@ export class StepDetailsComponent implements OnInit {
     if (geographicalPosition) this.positionForm.patchValue(geographicalPosition, { emitEvent: false });
   }
 
+  get address(){
+    return this.positionForm.get('address');
+  }
+
+  get municipality(){
+    return this.positionForm.get('municipality');
+  }
+
+  get city(){
+    return this.positionForm.get('city');
+  }
+
   get latitude(){
     return this.positionForm.get('latitude');
   }
@@ -74,18 +88,33 @@ export class StepDetailsComponent implements OnInit {
 
   next() {
     this.submitted = true;
+    const latitude = this.positionForm.value.latitude as number;
+    const longitude = this.positionForm.value.longitude as number;
 
+    /*
     if (this.utilitiesForm.invalid || this.positionForm.invalid) {
       this.utilitiesForm.markAllAsTouched();
       this.positionForm.markAllAsTouched();
       return;
     }
+    */
 
-    console.log("Latitude: " + this.positionForm.value.latitude);
-    console.log("Longitude: " + this.positionForm.value.longitude);
+    this.geoapifyService.getLatitudeLongitudeData(latitude, longitude).subscribe({
+      next: (data: any) => {
+        this.positionForm.patchValue({
+          city: data.results[0].city,
+          municipality: data.results[0].suburb,
+          address: data.results[0].formatted,
 
-    this.facade.setUtilities(this.utilitiesForm.getRawValue());
-    this.facade.setPosition(this.positionForm.getRawValue());
-    this.routerService.navigate(['/cadastraldata'], { relativeTo: this.activatedRoute });
+          //ATTENZIONE: LATITUDE E LONGITUDE VENGONO SOVRASCRITTI CON QUELLI TROVATI DA GEOAPIFY, QUINDI POTREBBERO NON COINCIDERE CON QUELLI ORIGINALI
+          latitude: data.results[0].lat,
+          longitude: data.results[0].lon,
+        });
+
+        this.facade.setUtilities(this.utilitiesForm.getRawValue());
+        this.facade.setPosition(this.positionForm.getRawValue());
+        this.routerService.navigate(['/cadastraldata'], { relativeTo: this.activatedRoute });
+      },
+    });
   }
 }
