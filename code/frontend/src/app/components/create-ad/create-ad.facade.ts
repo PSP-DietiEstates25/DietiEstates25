@@ -90,6 +90,26 @@ export class CreateAdFacade {
       )
   );
 
+  getBasics(){
+    return this.basics();
+  }
+
+  getUtility(){
+    return this.utility();
+  }
+
+  getGeographicalPosition(){
+    return this.geographicalPosition();
+  }
+
+  getCadastralData(){
+    return this.cadastralData();
+  }
+
+  getImages(){
+    return this.images();
+  }
+
   setBasics(basicDraft: BasicsDraft) {
     this.basics.set(basicDraft);
   }
@@ -253,6 +273,14 @@ export class CreateAdFacade {
         this.publishedSubject.next(realEstateId);
         this.routerService.navigateByUrl('/');
       });
+  }
+
+  clearSavedData(){
+    this.basics.set(null);
+    this.utility.set(null);
+    this.geographicalPosition.set(null);
+    this.cadastralData.set(null);
+    this.images.set([]);
   }
 
   //da eliminare, non recuperiamo nulla dal local storage, al massimo il ruolo

@@ -1,7 +1,7 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, Signal, computed, effect, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { CreateAdFacade } from './create-ad.facade';
+import { CreateAdFacade, PositionDraft, UtilitiesDraft } from './create-ad.facade';
 import { MapComponent } from '../map/map.component';
 import { ToastrService } from 'ngx-toastr';
 import { GeoapifyService } from '../../services/services/geoapify.service';
@@ -12,7 +12,7 @@ import { GeoapifyService } from '../../services/services/geoapify.service';
   imports: [MapComponent, ReactiveFormsModule],
   templateUrl: './step-details.component.html',
 })
-export class StepDetailsComponent implements OnInit {
+export class StepDetailsComponent {
 
   private activatedRoute = inject(ActivatedRoute);
   private geoapifyService = inject(GeoapifyService);
@@ -22,6 +22,9 @@ export class StepDetailsComponent implements OnInit {
   private routerService = inject(Router);
 
   submitted = false;
+
+  _savedUtility!: Signal<UtilitiesDraft | null>;
+  _savedGeographicalPosition!: Signal<PositionDraft | null>;
 
   utilitiesForm = this.formBuilder.nonNullable.group({
     hasElevator: [false],
@@ -41,7 +44,33 @@ export class StepDetailsComponent implements OnInit {
     longitude: [14.24641, Validators.required],
     radius: [0],
   });
+  
+  constructor(){
+    effect(() => {
+      this._savedUtility = computed(() => this.facade.getUtility());
+      this._savedGeographicalPosition = computed(() => this.facade.getGeographicalPosition());
+      console.log(this._savedUtility()?.hasAirConditioning);
+      console.log(this._savedUtility()?.hasDoorman);
+      console.log(this._savedUtility()?.hasElevator);
+      if(this._savedUtility()?.hasAirConditioning !== null){
+        this.utilitiesForm.patchValue({
+          hasAirConditioning: this._savedUtility()?.hasAirConditioning
+        });
+      }
+      if(this._savedUtility()?.hasDoorman !== null){
+        this.utilitiesForm.patchValue({
+          hasDoorman: this._savedUtility()?.hasDoorman
+        });
+      }
+      if(this._savedUtility()?.hasElevator !== null){
+        this.utilitiesForm.patchValue({
+          hasElevator: this._savedUtility()?.hasElevator
+        });
+      }
+    });
+  }
 
+  /*
   ngOnInit(): void {
     const utility = this.facade.utility();
     if (utility) this.utilitiesForm.patchValue(utility, { emitEvent: false });
@@ -49,6 +78,7 @@ export class StepDetailsComponent implements OnInit {
     const geographicalPosition = this.facade.geographicalPosition();
     if (geographicalPosition) this.positionForm.patchValue(geographicalPosition, { emitEvent: false });
   }
+  */
 
   get address(){
     return this.positionForm.get('address');
