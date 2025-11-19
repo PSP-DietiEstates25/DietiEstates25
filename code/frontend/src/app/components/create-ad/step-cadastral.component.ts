@@ -4,11 +4,12 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CreateAdFacade } from './create-ad.facade';
 import { CadastralDataDraft } from '../edit-ad/edit-ad.facade';
 import { ToastrService } from 'ngx-toastr';
+import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.component';
 
 @Component({
   selector: 'app-step-cadastral',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DiscardDialogComponent],
   templateUrl: './step-cadastral.component.html',
 })
 export class StepCadastralComponent {
@@ -19,6 +20,7 @@ export class StepCadastralComponent {
   private activatedRouter = inject(ActivatedRoute);
 
   _savedCadastralData!: Signal<CadastralDataDraft | null>;
+  isDiscardModalOpen = false;
 
   form = this.formBuilder.nonNullable.group({
     price: [null as number | null, [Validators.required, Validators.min(0)]],
@@ -69,7 +71,16 @@ export class StepCadastralComponent {
   }
   */
 
-  discard(){
+  openDiscardModal(){
+    this.isDiscardModalOpen = true;
+  }
+
+  closeDiscardModal(){
+    this.isDiscardModalOpen = false;
+  }
+
+  confirmDiscard(){
+    this.closeDiscardModal();
     this.facade.clearSavedData();
     this.routerService.navigate(['/']);
     this.toastrService.error('Creazione annuncio interrotta!', "Cancellazione");

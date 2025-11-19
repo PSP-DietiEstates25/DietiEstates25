@@ -2,10 +2,12 @@ import { Component, inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CreateAdFacade } from './create-ad.facade';
 import { ToastrService } from 'ngx-toastr';
+import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.component';
 
 @Component({
   selector: 'app-step-photos',
   standalone: true,
+  imports: [DiscardDialogComponent],
   templateUrl: './step-photos.component.html',
 })
 export class StepPhotosComponent {
@@ -16,6 +18,7 @@ export class StepPhotosComponent {
   private routerService = inject(Router);
 
   previews: string[] = [];
+  isDiscardModalOpen = false;
 
   ngOnInit() {
     this.rebuildPreviews();
@@ -45,7 +48,16 @@ export class StepPhotosComponent {
     this.rebuildPreviews();
   }
 
-  discard(){
+  openDiscardModal(){
+    this.isDiscardModalOpen = true;
+  }
+
+  closeDiscardModal(){
+    this.isDiscardModalOpen = false;
+  }
+
+  confirmDiscard(){
+    this.closeDiscardModal();
     this.facade.clearSavedData();
     this.routerService.navigate(['/']);
     this.toastrService.error('Creazione annuncio interrotta!', "Cancellazione");

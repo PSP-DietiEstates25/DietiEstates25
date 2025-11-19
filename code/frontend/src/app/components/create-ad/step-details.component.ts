@@ -5,11 +5,12 @@ import { CreateAdFacade, PositionDraft, UtilitiesDraft } from './create-ad.facad
 import { MapComponent } from '../map/map.component';
 import { ToastrService } from 'ngx-toastr';
 import { GeoapifyService } from '../../services/services/geoapify.service';
+import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.component';
 
 @Component({
   selector: 'app-step-details',
   standalone: true,
-  imports: [MapComponent, ReactiveFormsModule],
+  imports: [MapComponent, ReactiveFormsModule, DiscardDialogComponent],
   templateUrl: './step-details.component.html',
 })
 export class StepDetailsComponent {
@@ -22,6 +23,7 @@ export class StepDetailsComponent {
   private routerService = inject(Router);
 
   submitted = false;
+  isDiscardModalOpen = false;
 
   _savedUtility!: Signal<UtilitiesDraft | null>;
   _savedGeographicalPosition!: Signal<PositionDraft | null>;
@@ -104,7 +106,16 @@ export class StepDetailsComponent {
     this.positionForm.patchValue({ longitude: longitude });
   }
 
-  discard(){
+  openDiscardModal(){
+    this.isDiscardModalOpen = true;
+  }
+
+  closeDiscardModal(){
+    this.isDiscardModalOpen = false;
+  }
+
+  confirmDiscard(){
+    this.closeDiscardModal();
     this.facade.clearSavedData();
     this.routerService.navigate(['/']);
     this.toastrService.error('Creazione annuncio interrotta!', "Cancellazione");
