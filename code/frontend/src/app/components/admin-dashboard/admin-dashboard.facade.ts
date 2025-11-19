@@ -15,7 +15,6 @@ import { PageRealEstateResponse } from '../../services/models/page-real-estate-r
 import { AuthService } from '../../services/auth.service';
 
 import { StafferRequest, StafferResponse } from '../../services/models';
-import { AuthAccountService } from '../../services_server/auth-account.service';
 
 export interface AdminAd {
   id: number;
@@ -62,7 +61,6 @@ export class AdminDashboardFacade {
   private estateAgentService = inject(EstateAgentControllerService);
   private adminService = inject(AdminControllerService);
   private authService = inject(AuthService);
-  private authAccountService = inject(AuthAccountService);
 
   loading = signal(false);
   success = signal<string | null>(null);
@@ -222,8 +220,8 @@ export class AdminDashboardFacade {
     this.success.set(null);
     this.error.set(null);
 
-    return this.authAccountService
-      .changePassword({ oldPassword: currentPassword, newPassword })
+    return this.authService
+      .changeAdminPassword({ oldPassword: currentPassword, newPassword })
       .pipe(
         tap(() => {
           this.success.set('Password aggiornata. Effettua di nuovo l’accesso.');
