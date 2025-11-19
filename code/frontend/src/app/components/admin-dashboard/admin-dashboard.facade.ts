@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable, throwError, of } from 'rxjs';
-import { map, catchError, switchMap } from 'rxjs/operators';
+import { Injectable, inject, signal } from '@angular/core';
+import { Observable, throwError, of, EMPTY } from 'rxjs';
+import { map, catchError, switchMap, tap, finalize } from 'rxjs/operators';
 
 import {
   RealEstateControllerService,
@@ -12,12 +12,9 @@ import { GetRealEstates$Params } from '../../services/fn/real-estate-controller/
 import { RealEstateResponse } from '../../services/models/real-estate-response';
 import { PageRealEstateResponse } from '../../services/models/page-real-estate-response';
 
-import { HttpClient } from '@angular/common/http';
-import { ApiConfiguration } from '../../services/api-configuration';
 import { AuthService } from '../../services/auth.service';
 
-import { StafferRequest } from '../../services/models';
-import { StafferResponse } from '../../services/models';
+import { StafferRequest, StafferResponse } from '../../services/models';
 
 export interface AdminAd {
   id: number;
@@ -43,83 +40,31 @@ export interface ListAdsOpts {
   active?: boolean | '';
 }
 
-//gli account mappano i dto dell'authorization server
+// account dell'authorization server
 export interface AccountResponse {
-
-  id?: number,
-  email?: string,
-  role?: string,
-  locked?: boolean,
-  active?: boolean
+  id?: number;
+  email?: string;
+  role?: string;
+  locked?: boolean;
+  active?: boolean;
 }
 
 export interface AccountRequest {
-
-  email?: string,
-  password?: string,
-  role?: string
+  email?: string;
+  password?: string;
+  role?: string;
 }
 
 @Injectable({ providedIn: 'root' })
 export class AdminDashboardFacade {
-
   private realEstateService = inject(RealEstateControllerService);
   private estateAgentService = inject(EstateAgentControllerService);
   private adminService = inject(AdminControllerService);
   private authService = inject(AuthService);
 
-  private http = inject(HttpClient);
-  private apiConfig = inject(ApiConfiguration);
-
-  // ===== Util =====
-  private findAnyJwtFromClientStorage(): string | null {
-    const candidatesKeys = [
-      'token',
-      'jwt',
-      'access_token',
-      'id_token',
-      'auth_token',
-      'Authorization',
-    ];
-    const isJwt = (v: string | null | undefined) =>
-      !!v && /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/.test(v);
-    const stripBearer = (v: string) =>
-      v.startsWith('Bearer ') ? v.slice('Bearer '.length).trim() : v.trim();
-
-    for (const k of candidatesKeys) {
-      const v1 = localStorage.getItem(k);
-      if (v1 && isJwt(stripBearer(v1))) return stripBearer(v1);
-      const v2 = sessionStorage.getItem(k);
-      if (v2 && isJwt(stripBearer(v2))) return stripBearer(v2);
-    }
-    for (let i = 0; i < localStorage.length; i++) {
-      const val = localStorage.getItem(localStorage.key(i)!);
-      const s = stripBearer(val ?? '');
-      if (isJwt(s)) return s;
-    }
-    for (let i = 0; i < sessionStorage.length; i++) {
-      const val = sessionStorage.getItem(sessionStorage.key(i)!);
-      const s = stripBearer(val ?? '');
-      if (isJwt(s)) return s;
-    }
-    try {
-      const cookie = document?.cookie ?? '';
-      const parts = cookie.split(';').map((p) => p.split('=').pop()!.trim());
-      for (const p of parts) {
-        const s = stripBearer(decodeURIComponent(p));
-        if (isJwt(s)) return s;
-      }
-    } catch {
-      /* ignore */
-    }
-    return null;
-  }
-
-  private getAdminEmailFromJwt(): string | null {
-    return (
-      localStorage.getItem('userEmail')
-    );
-  }
+  loading = signal(false);
+  success = signal<string | null>(null);
+  error = signal<string | null>(null);
 
   // ===== ADS =====
   listAds(
@@ -138,37 +83,36 @@ export class AdminDashboardFacade {
 
     const realEstateParams: GetRealEstates$Params = {
       page: 0,
-      size: 0
+      size: 0,
     };
 
-    return this.realEstateService.getRealEstates(realEstateParams)
-      .pipe(
-        map((page: PageRealEstateResponse) => {
-          const list = Array.isArray(page?.content)
-            ? (page.content as RealEstateResponse[])
-            : [];
-          return list.map((re) => this.toAdminAd(re));
-        }),
-        map((ads) => {
-          const qNorm = (q ?? '').trim().toLowerCase();
-          let res = ads;
-          if (qNorm) {
-            res = res.filter((a) =>
-              [a.title, a.city, String(a.price ?? ''), String(a.id)]
-                .filter(Boolean)
-                .some((v) => String(v).toLowerCase().includes(qNorm))
-            );
-          }
-          if (active !== '' && active !== undefined) {
-            res = res.filter((a) => (a.active ?? null) === (active as boolean));
-          }
-          return res;
-        }),
-        catchError((e) => {
-          console.error('[AdminDashboard] listAds error', e);
-          return of([]);
-        })
-      );
+    return this.realEstateService.getRealEstates(realEstateParams).pipe(
+      map((page: PageRealEstateResponse) => {
+        const list = Array.isArray(page?.content)
+          ? (page.content as RealEstateResponse[])
+          : [];
+        return list.map((re) => this.toAdminAd(re));
+      }),
+      map((ads) => {
+        const qNorm = (q ?? '').trim().toLowerCase();
+        let res = ads;
+        if (qNorm) {
+          res = res.filter((a) =>
+            [a.title, a.city, String(a.price ?? ''), String(a.id)]
+              .filter(Boolean)
+              .some((v) => String(v).toLowerCase().includes(qNorm))
+          );
+        }
+        if (active !== '' && active !== undefined) {
+          res = res.filter((a) => (a.active ?? null) === (active as boolean));
+        }
+        return res;
+      }),
+      catchError((e) => {
+        console.error('[AdminDashboard] listAds error', e);
+        return of([]);
+      })
+    );
   }
 
   updateAd(
@@ -179,7 +123,7 @@ export class AdminDashboardFacade {
       () => new Error('updateAd non supportato dagli OpenAPI services.')
     );
   }
-  
+
   deleteAd(id: number): Observable<void> {
     return this.realEstateService.deleteRealEstate({ realestateid: id }).pipe(
       switchMap(() => this.listAds({})),
@@ -191,60 +135,43 @@ export class AdminDashboardFacade {
     );
   }
 
-  private toAdminAd = (re: RealEstateResponse): AdminAd => {
-    const images = re.images ?? [];
-    const first = images[0] ?? null;
-    return {
-      id: Number(re.id ?? 0),
-      title: re.description ?? `Annuncio #${re.id ?? '?'}`,
-      city: null,
-      price: null,
-      active: null,
-      createdAt: re.createdDate ?? null,
-      // coverSrc: first ? `data:image/jpeg;base64,${first}` : null,
-    };
-  };
+  private toAdminAd = (re: RealEstateResponse): AdminAd => ({
+    id: Number(re.id ?? 0),
+    title: re.description ?? `Annuncio #${re.id ?? '?'}`,
+    city: null,
+    price: null,
+    active: null,
+    createdAt: re.createdDate ?? null,
+  });
 
   // ===== USERS =====
 
-  //crea un account nell'authorization server
+  // crea un account nell'authorization server
   private authRegister(
     email: string,
     password: string,
     role?: Role
   ): Observable<AccountResponse> {
-
-    const body: AccountRequest = {
-      email: email,
-      password: password,
-      role: role
-    };
-
-    return this.authService.register(body)
+    const body: AccountRequest = { email, password, role };
+    return this.authService.register(body);
   }
 
-  //crea un account nel resource server
+  // crea un account nel resource server
   createUser(body: {
     email: string;
     role: Role;
     password: string;
   }): Observable<AdminUser> {
+    const { email, role, password } = body;
 
-    const {email, role, password} = body;
-
-    switch (body.role) {
-      case 'ESTATE_AGENT': 
-        return this.authRegister(
-          email,
-          password,
-          'ESTATE_AGENT'
-        )
-        .pipe(
+    switch (role) {
+      case 'ESTATE_AGENT':
+        return this.authRegister(email, password, 'ESTATE_AGENT').pipe(
           switchMap(() => {
-            const payload: StafferRequest = {
-              email: email
-            };
-            return this.estateAgentService.registerEstateAgent({ body: payload });
+            const payload: StafferRequest = { email };
+            return this.estateAgentService.registerEstateAgent({
+              body: payload,
+            });
           }),
           map((agent: StafferResponse) => ({
             id: Number((agent as any)?.id) || Date.now(),
@@ -258,19 +185,11 @@ export class AdminDashboardFacade {
           })
         );
 
-      case 'ADMIN': {
-        // crea account credenziale su authorization server
-        return this.authRegister(
-          email,
-          password, 
-          'ADMIN'
-        ).pipe(
-          // registra come admin nel dominio applicativo
+      case 'ADMIN':
+        return this.authRegister(email, password, 'ADMIN').pipe(
           switchMap(() => {
-            const payload: StafferRequest = { 
-              email: email
-            };
-            return this.adminService.registerAdmin({ body: payload })
+            const payload: StafferRequest = { email };
+            return this.adminService.registerAdmin({ body: payload });
           }),
           map(() => ({
             id: Date.now(),
@@ -283,12 +202,45 @@ export class AdminDashboardFacade {
             return throwError(() => e);
           })
         );
-      }
 
       default:
         return throwError(
           () => new Error(`Ruolo non supportato: ${role as string}`)
         );
     }
+  }
+
+  // ===== PASSWORD =====
+
+  changePassword(
+    currentPassword: string,
+    newPassword: string
+  ): Observable<void> {
+    this.loading.set(true);
+    this.success.set(null);
+    this.error.set(null);
+
+    return this.authService
+      .changeAdminPassword({ oldPassword: currentPassword, newPassword })
+      .pipe(
+        tap(() => {
+          this.success.set('Password aggiornata.');
+          this.error.set(null);
+        }),
+        map(() => void 0),
+        catchError((error) => {
+          if (error?.status === 400) {
+            this.error.set('La password corrente non è corretta.');
+          } else if (error?.status === 401) {
+            this.error.set('Sessione scaduta: accedi di nuovo.');
+          } else if (error?.status === 403) {
+            this.error.set('Non hai i permessi per questa operazione.');
+          } else {
+            this.error.set('Errore durante l’aggiornamento della password.');
+          }
+          return EMPTY;
+        }),
+        finalize(() => this.loading.set(false))
+      );
   }
 }

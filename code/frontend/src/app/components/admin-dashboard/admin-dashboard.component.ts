@@ -5,6 +5,7 @@ import {
   ReactiveFormsModule,
   FormBuilder,
   Validators,
+  AbstractControl,
 } from '@angular/forms';
 import {
   AdminDashboardFacade,
@@ -16,6 +17,14 @@ import { Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../services/auth.service';
 import { environment } from '../../../environments/environment.development';
+
+function matchValidator(a: string, b: string) {
+  return (ctrl: AbstractControl) => {
+    const v1 = ctrl.get(a)?.value;
+    const v2 = ctrl.get(b)?.value;
+    return v1 && v2 && v1 !== v2 ? { mismatch: true } : null;
+  };
+}
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -36,8 +45,9 @@ export class AdminDashboardComponent {
   tabs = [
     { key: 'ads' as const, label: 'Annunci' },
     { key: 'users' as const, label: 'Utenti' },
+    { key: 'passwords' as const, label: 'Password' },
   ];
-  active = signal<'ads' | 'users'>('ads');
+  active = signal<'passwords' | 'ads' | 'users'>('ads');
 
   ads = signal<AdminAd[]>([]);
   adsLoading = signal(false);
@@ -62,15 +72,25 @@ export class AdminDashboardComponent {
     this.loadAds();
   }
 
-  setTab(t: 'ads' | 'users') {
+  setTab(t: 'ads' | 'users' | 'passwords') {
     this.active.set(t);
-    if (t === 'ads') this.loadAds();
-    else this.createUser();
+
+    if (t === 'ads') {
+      this.loadAds();
+    }
+    // else if (t === 'users') {
+    //   this.createForm.reset({
+    //     email: '',
+    //     role: 'ESTATE_AGENT',
+    //     password: '',
+    //   });
+    // }
   }
 
   loadAds() {
     this.adsLoading.set(true);
-    this.facade.listAds({ q: this.q().trim() || undefined, active: this.activeFilter() })
+    this.facade
+      .listAds({ q: this.q().trim() || undefined, active: this.activeFilter() })
       .subscribe({
         next: (list) => this.ads.set(list || []),
         error: (_) => this.ads.set([]),
@@ -92,7 +112,8 @@ export class AdminDashboardComponent {
   saveEdit() {
     const id = this.editId();
     if (!id) return;
-    this.facade.updateAd(id, {
+    this.facade
+      .updateAd(id, {
         title: this.editTitle(),
         price: this.editPrice(),
         active: this.editActive(),
@@ -133,6 +154,48 @@ export class AdminDashboardComponent {
       this.routerService.navigateByUrl(
         `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`
       );
+    });
+  }
+
+  form = this.formBuilder.group(
+    {
+      currentPassword: ['', [Validators.required]],
+      newPassword: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/),
+        ],
+      ],
+      confirmNewPassword: ['', [Validators.required]],
+    },
+    { validators: matchValidator('newPassword', 'confirmNewPassword') }
+  );
+
+  loading = this.facade.loading;
+  success = this.facade.success;
+  error = this.facade.error;
+
+  get formControls() {
+    return this.form.controls;
+  }
+
+  submit() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    const current = this.formControls.currentPassword.value!;
+    const next = this.formControls.newPassword.value!;
+
+    this.facade.changePassword(current, next).subscribe({
+      next: () => {
+        this.form.reset();
+        this.form.markAsPristine();
+        this.form.markAsUntouched();
+      },
     });
   }
 }
