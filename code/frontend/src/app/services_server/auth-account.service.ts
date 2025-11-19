@@ -2,7 +2,7 @@ import { Inject, Injectable, InjectionToken } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 
-export const AUTH_API_ROOT = new InjectionToken<string>('http://localhost:8081');
+export const AUTH_API_ROOT = new InjectionToken<string>('AUTH_API_ROOT');
 
 export interface ChangePasswordRequest {
   oldPassword: string;

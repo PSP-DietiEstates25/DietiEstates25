@@ -16,7 +16,6 @@ import { StepPhotosComponent } from './components/create-ad/step-photos.componen
 import { StepReviewComponent } from './components/create-ad/step-review.component';
 import { AgentCreateLayoutComponent } from './components/create-ad/create-layout.component';
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
-import { AdminChangePasswordComponent } from './components/admin-account/admin-change-password.component';
 import { AdDetailComponent } from './components/ad-detail/ad-detail.component';
 import { NotificationsPageComponent } from './components/notifications/notifications-page.component';
 import { isAdminGuard } from './_guards/admin/is-admin.guard';
@@ -33,11 +32,6 @@ export const routes: Routes = [
       {
         path: 'callback',
         component: AuthCallbackComponent
-      },
-      {
-        path: 'change-password',
-        canActivate: [isAdminGuard],
-        component: AdminChangePasswordComponent
       },
     ],
   },
@@ -364,16 +358,6 @@ export const routes: Routes = [
           import('./components/admin-dashboard/admin-dashboard.component').then(
             (m) => m.AdminDashboardComponent
           ),
-      },
-
-      {
-        path: 'change-password',
-        // canActivate: [roleGuard],
-        data: { roles: ['ADMIN'] },
-        loadComponent: () =>
-          import(
-            './components/admin-account/admin-change-password.component'
-          ).then((m) => m.AdminChangePasswordComponent),
       },
     ],
   },

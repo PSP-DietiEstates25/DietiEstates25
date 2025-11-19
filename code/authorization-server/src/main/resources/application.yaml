@@ -15,7 +15,7 @@ spring:
             alias: as
             password: changeit
           keystore:
-            location: "/home/luca/certs/apps/as-keystore.p12"
+            location: "/home/falen/certs/apps/as-keystore.p12"
             type: PKCS12
             password: changeit
   datasource:
