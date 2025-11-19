@@ -62,7 +62,7 @@ font-semibold;
   }
 
   .discard_button {
-    @apply cursor-pointer bg-red-800 hover:bg-red-700 hover:scale-105 text-white rounded px-3 py-2 md:text-base sm:text-base text-sm;
+    @apply flex gap-2 cursor-pointer bg-red-800 hover:bg-red-700 hover:scale-105 text-white rounded px-3 py-2 md:text-base sm:text-base text-sm;
   }
 }
 

@@ -2,21 +2,25 @@ import { Component, OnInit, inject, signal, effect, Signal, computed } from '@an
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CreateAdFacade, Category, BasicsDraft } from './create-ad.facade';
+import { ToastrService } from 'ngx-toastr';
+import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.component';
 
 @Component({
   selector: 'app-step-basics',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DiscardDialogComponent],
   templateUrl: './step-basics.component.html',
 })
 export class StepBasicsComponent {
 
   private activatedRoute = inject(ActivatedRoute);
+  private toastrService = inject(ToastrService);
   private formBuilder = inject(FormBuilder);
   private facade = inject(CreateAdFacade);
   private routerService = inject(Router);
 
   _savedBasics!: Signal<BasicsDraft | null>;
+  isDiscardModalOpen = false;
 
   form = this.formBuilder.nonNullable.group({
     category: ['SALE' as Category, Validators.required],
@@ -46,8 +50,19 @@ export class StepBasicsComponent {
   }
   */
 
-  discard(){
-    
+  openDiscardModal(){
+    this.isDiscardModalOpen = true;
+  }
+
+  closeDiscardModal(){
+    this.isDiscardModalOpen = false;
+  }
+
+  confirmDiscard(){
+    this.closeDiscardModal();
+    this.facade.clearSavedData();
+    this.routerService.navigate(['/']);
+    this.toastrService.error('Creazione annuncio interrotta!', "Cancellazione");
   }
 
   next() {

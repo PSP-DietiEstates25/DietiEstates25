@@ -49,9 +49,6 @@ export class StepDetailsComponent {
     effect(() => {
       this._savedUtility = computed(() => this.facade.getUtility());
       this._savedGeographicalPosition = computed(() => this.facade.getGeographicalPosition());
-      console.log(this._savedUtility()?.hasAirConditioning);
-      console.log(this._savedUtility()?.hasDoorman);
-      console.log(this._savedUtility()?.hasElevator);
       if(this._savedUtility()?.hasAirConditioning !== null){
         this.utilitiesForm.patchValue({
           hasAirConditioning: this._savedUtility()?.hasAirConditioning
@@ -108,11 +105,13 @@ export class StepDetailsComponent {
   }
 
   discard(){
+    this.facade.clearSavedData();
     this.routerService.navigate(['/']);
     this.toastrService.error('Creazione annuncio interrotta!', "Cancellazione");
   }
 
   previous(){
+    this.saveFormData();
     this.routerService.navigateByUrl('/basics');
   }
 
@@ -141,10 +140,14 @@ export class StepDetailsComponent {
           longitude: data.results[0].lon,
         });
 
-        this.facade.setUtilities(this.utilitiesForm.getRawValue());
-        this.facade.setPosition(this.positionForm.getRawValue());
+        this.saveFormData();
         this.routerService.navigate(['/cadastraldata'], { relativeTo: this.activatedRoute });
       },
     });
+  }
+
+  saveFormData(){
+    this.facade.setUtilities(this.utilitiesForm.getRawValue());
+    this.facade.setPosition(this.positionForm.getRawValue());
   }
 }

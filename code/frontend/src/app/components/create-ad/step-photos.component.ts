@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CreateAdFacade } from './create-ad.facade';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-step-photos',
@@ -8,7 +9,9 @@ import { CreateAdFacade } from './create-ad.facade';
   templateUrl: './step-photos.component.html',
 })
 export class StepPhotosComponent {
+  
   private activatedRoute = inject(ActivatedRoute);
+  private toastrService = inject(ToastrService);
   private facade = inject(CreateAdFacade);
   private routerService = inject(Router);
 
@@ -43,7 +46,9 @@ export class StepPhotosComponent {
   }
 
   discard(){
-
+    this.facade.clearSavedData();
+    this.routerService.navigate(['/']);
+    this.toastrService.error('Creazione annuncio interrotta!', "Cancellazione");
   }
 
   previous(){
