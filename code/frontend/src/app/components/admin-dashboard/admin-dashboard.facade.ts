@@ -224,7 +224,7 @@ export class AdminDashboardFacade {
       .changeAdminPassword({ oldPassword: currentPassword, newPassword })
       .pipe(
         tap(() => {
-          this.success.set('Password aggiornata. Effettua di nuovo l’accesso.');
+          this.success.set('Password aggiornata.');
           this.error.set(null);
         }),
         map(() => void 0),

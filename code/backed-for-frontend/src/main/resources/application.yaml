@@ -74,6 +74,15 @@ spring:
                 - TokenRelay=
                 - RemoveRequestHeader=Cookie
 
+            # AUTH SERVER /account/password
+            - id: auth_server_account_password
+              uri: https://localhost:9443
+              predicates:
+                - Path=/account/password
+              filters:
+                - TokenRelay=
+                - RemoveRequestHeader=Cookie
+
             # /auth/register
             - id: auth_server_register_account
               uri: https://localhost:9443

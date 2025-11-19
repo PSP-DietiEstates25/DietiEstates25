@@ -186,13 +186,16 @@ export class AdminDashboardComponent {
       this.form.markAllAsTouched();
       return;
     }
+
     const current = this.formControls.currentPassword.value!;
     const next = this.formControls.newPassword.value!;
 
-    this.facade.changePassword(current, next).subscribe(() => {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      this.routerService.navigate(['/auth']);
+    this.facade.changePassword(current, next).subscribe({
+      next: () => {
+        this.form.reset();
+        this.form.markAsPristine();
+        this.form.markAsUntouched();
+      },
     });
   }
 }
