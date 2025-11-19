@@ -1,40 +1,60 @@
-<div class="mx-auto w-full max-w-md px-4">
-  <h1 class="mb-3 text-2xl font-bold">Accedi</h1>
+<section class="container mx-auto px-4 py-8 max-w-lg">
+  <h1 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">Accedi</h1>
 
   <form
     [formGroup]="loginForm"
     (ngSubmit)="onSubmit($event)"
     action="/auth/login/process"
     method="post"
-    class="grid gap-3 rounded-xl border border-black/10 p-4"
+    class="space-y-4"
   >
-    <label class="grid gap-1">
-      <span class="text-sm text-neutral-600">Email</span>
+    <!-- EMAIL -->
+    <div>
+      <label class="block text-sm mb-1 dark:text-slate-200">Email</label>
       <input
         type="email"
         name="username"
-        class="rounded-lg border border-black/20 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500/50"
         formControlName="email"
         autocomplete="email"
+        class="input_main"
+        placeholder="you@example.com"
       />
-    </label>
 
-    <label class="grid gap-1">
-      <span class="text-sm text-neutral-600">Password</span>
+      @if (email?.touched && email?.invalid) { @if (email?.errors?.['required'])
+      {
+      <p class="text-sm text-red-600 mt-1">L'email è obbligatoria</p>
+      } @if (email?.errors?.['minlength']) {
+      <p class="text-sm text-red-600 mt-1">Minimo 5 caratteri</p>
+      } }
+    </div>
+
+    <!-- PASSWORD -->
+    <div>
+      <label class="block text-sm mb-1 dark:text-slate-200">Password</label>
       <input
         type="password"
         name="password"
-        class="rounded-lg border border-black/20 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500/50"
         formControlName="password"
         autocomplete="current-password"
+        class="input_main"
+        placeholder="••••••••"
       />
-    </label>
+
+      @if (password?.touched && password?.invalid) { @if
+      (password?.errors?.['required']) {
+      <p class="text-sm text-red-600 mt-1">La password è obbligatoria</p>
+      } @if (password?.errors?.['minlength']) {
+      <p class="text-sm text-red-600 mt-1">Minimo 5 caratteri</p>
+      } @if (password?.errors?.['maxlength']) {
+      <p class="text-sm text-red-600 mt-1">Massimo 15 caratteri</p>
+      } }
+    </div>
 
     <input type="hidden" name="_csrf" [value]="csrfToken()" />
 
     <button
       type="submit"
-      class="mt-1 inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+      class="btn_primary w-full"
       [disabled]="loginForm.invalid || loading"
     >
       Accedi
@@ -53,4 +73,4 @@
   </div>
 
   <app-social-login-buttons></app-social-login-buttons>
-</div>
+</section>

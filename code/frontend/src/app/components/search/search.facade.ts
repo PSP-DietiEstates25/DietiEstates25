@@ -83,11 +83,6 @@ export class SearchFacade {
 
   hasPrev = computed(() => (this._lastForm()?.page ?? 1) > 1);
 
-  private getUserEmailSafe(input: string | null | undefined): string {
-    const email = input && input.trim() ? input.trim() : 'vale@email.com';
-    return email;
-  }
-
   private _cachedGeographicalPosition = signal<GeographicalPositionRequest | null>(null);
   private _cachedUtility = signal<UtilityRequest | null>(null);
   private _cachedCadastralFilter = signal<CadastralFilterRequest | null>(null);
