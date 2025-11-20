@@ -31,7 +31,7 @@ public class RealEstate {
     @ElementCollection
     @CollectionTable(name = "real_estate_image", joinColumns = @JoinColumn(name = "real_estate_id", foreignKey = @ForeignKey(name = "RE_IMAGE_REALESTATE_ID_FK")))
     @Column(name = "content", columnDefinition = "TEXT", nullable = false)
-    @Lob
+    //@Lob
     private List<String> images = new ArrayList<>();
 
     @Column(nullable = false)

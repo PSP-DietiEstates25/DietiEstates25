@@ -45,7 +45,7 @@ public class VisitController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('USER,ESTATE_AGENT')")
+    @PreAuthorize("hasAuthority('USER', 'ESTATE_AGENT')")
     public ResponseEntity<Page<VisitResponse>> getRealEstateVisits(
             @PathVariable Long realestateid,
             @RequestParam(required = false, defaultValue = "1") Integer page,

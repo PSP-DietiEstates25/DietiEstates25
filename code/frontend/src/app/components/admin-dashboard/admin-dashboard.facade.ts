@@ -83,7 +83,7 @@ export class AdminDashboardFacade {
 
     const realEstateParams: GetRealEstates$Params = {
       page: 0,
-      size: 0,
+      size: 100,
     };
 
     return this.realEstateService.getRealEstates(realEstateParams).pipe(
