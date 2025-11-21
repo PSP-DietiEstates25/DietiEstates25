@@ -59,19 +59,31 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/images/**",
                                 "/estateagents",
+                                "/estateagents/**",
                                 "/admins",
+                                "/admins/**",
                                 "/realestates",
                                 "/realestates/**",
                                 "/notificationcategories",
+                                "/notificationcategories/**",
                                 "/searches",
+                                "/searches/**",
                                 "/offers",
+                                "/offers/**",
                                 "/visits",
+                                "/visits/**",
                                 "/cadastraldata",
+                                "/cadastraldata/**",
                                 "/cadastralfilters",
+                                "/cadastralfilters/**",
                                 "/details",
+                                "/details/**",
                                 "/geographicalpositions",
+                                "/geographicalpositions/**",
                                 "/utilities",
-                                "/notifications"
+                                "/utilities/**",
+                                "/notifications",
+                                "/notifications/**"
                         ).authenticated()
                         .anyRequest().denyAll()
         );
