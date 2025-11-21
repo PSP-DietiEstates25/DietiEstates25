@@ -1,86 +1,254 @@
-import { inject, Injectable, signal, computed } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { forkJoin, of } from 'rxjs';
+import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
+
+import { NotificationControllerService } from '../../services/services/notification-controller.service';
+import { NotificationCategoryControllerService } from '../../services/services/notification-category-controller.service';
+
+import { PageNotificationResponse } from '../../services/models/page-notification-response';
+import { NotificationResponse } from '../../services/models/notification-response';
+import { NotificationCategoryResponse } from '../../services/models/notification-category-response';
+import { UpdateNotificationCategoryStatusRequest } from '../../services/models/update-notification-category-status-request';
+
 import {
-  NotificationPreferencesAdapter,
   NotificationCategory,
-  UiNotification, // NEW
+  NotificationPreferenceVM,
+  adaptUserPreferences,
 } from './notification-preferences.adapter';
 
-type Page = { items: UiNotification[]; page: number; size: number };
+export interface NotificationItemVM {
+  id: number;
+  message: string;
+  createdDate: string;
+  category: NotificationCategory;
+}
 
 @Injectable({ providedIn: 'root' })
 export class NotificationsFacade {
-  private readonly adapter = inject(NotificationPreferencesAdapter);
+  private readonly notificationService = inject(NotificationControllerService);
+  private readonly categoryService = inject(
+    NotificationCategoryControllerService
+  );
 
-  private readonly _loading = signal(false);
-  private readonly _pages = signal<Page[]>([]);
+  readonly loading = signal(false);
+  readonly error = signal<string | null>(null);
+
+  private readonly _preferences = signal<NotificationPreferenceVM[]>([]);
+  private readonly _notifications = signal<NotificationItemVM[]>([]);
+
+  readonly unreadCount = computed(() => this._notifications().length);
+
+  private readonly _query = signal('');
+  private readonly _filterCategories = signal<NotificationCategory[]>([]);
+
   private readonly _page = signal(0);
-  private readonly _size = signal(20);
-  private readonly _selectedNotificationCategories = signal<Set<NotificationCategory>>(new Set());
-  private readonly _query = signal<string>('');
+  private readonly _hasMore = signal(true);
+  private readonly PAGE_SIZE = 12;
 
-  readonly loading = computed(() => this._loading());
-  readonly userPreferences = this.adapter.userPreferences;
-  readonly items = computed(() => this._pages().flatMap((page) => page.items));
-  readonly unreadCount = computed(() => this.items().length);
+  readonly userPreferences = computed(() => this._preferences());
 
   readonly filtered = computed(() => {
-    const enabledCategories = new Map(this.userPreferences().map((preference) => [preference.category, preference.enabled]));
-    const query = this._query().toLowerCase();
-    const selectedNotificationCategories = this._selectedNotificationCategories();
-    return this.items().filter((notification) => {
-      if (!enabledCategories.get(notification.category)) return false;
-      if (selectedNotificationCategories.size && !selectedNotificationCategories.has(notification.category)) return false;
-      if (query && !notification.message.toLowerCase().includes(query)) return false;
+    const query = this._query().trim().toLowerCase();
+    const cats = this._filterCategories();
+
+    return this._notifications().filter((n) => {
+      if (cats.length && !cats.includes(n.category)) return false;
+      if (query && !n.message.toLowerCase().includes(query)) return false;
       return true;
     });
   });
 
-  async init() {
-    this._loading.set(true);
-    try {
-      this._pages.set([]); 
-      this._page.set(0);
-      await this.loadPage(0);
-    } finally {
-      this._loading.set(false);
-    }
+  init(): void {
+    this.loading.set(true);
+    this.error.set(null);
+    this._notifications.set([]);
+    this._page.set(0);
+    this._hasMore.set(true);
+
+    this.categoryService
+      .getUserNotificationCategories({})
+      .pipe(
+        map(res => adaptUserPreferences(res)),
+        tap((prefs) => this._preferences.set(prefs)),
+        switchMap((prefs) => {
+          const enabled = prefs.filter((p) => p.enabled).map((p) => p.category);
+          if (!enabled.length) {
+            this._hasMore.set(false);
+            return of<void>(undefined);
+          }
+          return this.loadPageInternal(enabled, 0);
+        }),
+        catchError((err) => {
+          console.error('[NotificationsFacade] init error', err);
+          this.error.set('Errore nel caricamento delle notifiche.');
+          this._preferences.set([]);
+          this._notifications.set([]);
+          this._hasMore.set(false);
+          return of<void>(undefined);
+        }),
+        finalize(() => this.loading.set(false))
+      )
+      .subscribe();
   }
 
-  private async loadPage(page: number) {
-    const size = this._size();
-    const items = await this.adapter.listUserNotifications({ page, size });
-    const next = this._pages().slice();
-    next.push({ items, page, size });
-    this._pages.set(next);
-    this._page.set(page);
+  loadMore(): void {
+    if (this.loading() || !this._hasMore()) return;
+
+    const enabled = this._preferences()
+      .filter((p) => p.enabled)
+      .map((p) => p.category);
+
+    if (!enabled.length) return;
+
+    this.loading.set(true);
+    const nextPage = this._page() + 1;
+
+    this.loadPageInternal(enabled, nextPage)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe();
   }
 
-  async loadMore() {
-    if (this._loading()) return; 
-    this._loading.set(true);
-    try {
-      await this.loadPage(this._page() + 1);
-    } finally {
-      this._loading.set(false);
-    }
+  setCategoryEnabled(category: NotificationCategory, enabled: boolean): void {
+    const before = this._preferences();
+
+    this._preferences.set(
+      before.map((p) => (p.category === category ? { ...p, enabled } : p))
+    );
+
+    const body: UpdateNotificationCategoryStatusRequest = {
+      name: category,
+      isActive: enabled,
+    };
+
+    this.categoryService
+      .updateIsActive({
+        notificationcategoryname: category,
+        body,
+      })
+      .pipe(
+        tap((res) => {
+          const prefs = this._preferences();
+          this._preferences.set(
+            prefs.map((p) =>
+              p.category === category
+                ? { ...p, enabled: Boolean(res.isActive) }
+                : p
+            )
+          );
+        }),
+        catchError((err) => {
+          console.error('[NotificationsFacade] setCategoryEnabled error', err);
+          this.error.set("Errore nell'aggiornare la preferenza.");
+          this._preferences.set(before);
+          return of(null);
+        })
+      )
+      .subscribe();
   }
 
-  async setCategoryEnabled(category: NotificationCategory, enabled: boolean) {
-    await this.adapter.toggle(category, enabled);
+  toggleFilterCat(category: NotificationCategory): void {
+    const current = this._filterCategories();
+    const exists = current.includes(category);
+    this._filterCategories.set(
+      exists ? current.filter((c) => c !== category) : [...current, category]
+    );
   }
 
-  setQuery(query: string) {
+  setQuery(query: string): void {
     this._query.set(query ?? '');
   }
 
-  toggleFilterCat(notificationCategory: NotificationCategory) {
-    const selectedNotificationCategories = new Set(this._selectedNotificationCategories());
-    selectedNotificationCategories.has(notificationCategory) ? selectedNotificationCategories.delete(notificationCategory) : selectedNotificationCategories.add(notificationCategory);
-    this._selectedNotificationCategories.set(selectedNotificationCategories);
+  clearFilters(): void {
+    this._query.set('');
+    this._filterCategories.set([]);
   }
 
-  clearFilters() {
-    this._selectedNotificationCategories.set(new Set());
-    this._query.set('');
+  private loadPageInternal(categories: NotificationCategory[], page: number) {
+    if (!categories.length) {
+      return of<void>(undefined);
+    }
+
+    const size = this.PAGE_SIZE;
+
+    const calls = categories.map((cat) =>
+      this.notificationService
+        .getNotificationCategoryNotifications({
+          notificationcategoryname: cat,
+          page,
+          size,
+        })
+        .pipe(
+          catchError((err) => {
+            console.error(
+              '[NotificationsFacade] error loading notifications for category',
+              cat,
+              err
+            );
+            const empty: PageNotificationResponse = {
+              content: [],
+              first: page === 0,
+              last: true,
+              number: page,
+              numberOfElements: 0,
+              size,
+              totalElements: 0,
+              totalPages: 0,
+            };
+            return of(empty);
+          })
+        )
+    );
+
+    return forkJoin(calls).pipe(
+      tap((responses) => {
+        const existing = this._notifications();
+        const byId = new Map<number, NotificationItemVM>();
+        for (const n of existing) {
+          byId.set(n.id, n);
+        }
+
+        responses.forEach((res, idx) => {
+          const cat = categories[idx];
+          (res.content ?? []).forEach((n: NotificationResponse) => {
+            if (n.id == null) {
+              return;
+            }
+            byId.set(n.id, this.toNotificationItemVM(n, cat));
+          });
+        });
+
+        const merged = Array.from(byId.values()).sort(
+          (a, b) =>
+            new Date(b.createdDate).getTime() -
+            new Date(a.createdDate).getTime()
+        );
+
+        this._notifications.set(merged);
+
+        const anyHasMore = responses.some((r) => r && r.last === false);
+        this._hasMore.set(anyHasMore);
+        if (anyHasMore) {
+          this._page.set(page);
+        }
+      }),
+      map(() => void 0)
+    );
+  }
+
+  private toNotificationItemVM(
+    res: NotificationResponse,
+    category: NotificationCategory
+  ): NotificationItemVM {
+    const created =
+      res.createdDate ?? res.lastModifiedDate ?? new Date().toISOString();
+
+    const id = res.id ?? Math.floor(Math.random() * 1_000_000_000);
+
+    return {
+      id,
+      message: res.message ?? '',
+      createdDate: created,
+      category,
+    };
   }
 }

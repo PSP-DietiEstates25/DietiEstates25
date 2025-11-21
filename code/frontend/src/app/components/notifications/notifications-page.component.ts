@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NotificationsFacade } from './notifications.facade';
 import { NotificationCategory } from './notification-preferences.adapter';
-import { NavbarComponent } from "../../shared/components/navbar/navbar.component";
+import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 
 @Component({
   selector: 'app-notifications-page',
@@ -31,16 +31,19 @@ export class NotificationsPageComponent {
     this.facade.init();
   }
 
-  onToggle(cat: string, ev: Event) {
+  onToggle(category: string, ev: Event) {
     const enabled = (ev.target as HTMLInputElement).checked;
-    this.facade.setCategoryEnabled(cat as NotificationCategory, enabled);
+    this.facade.setCategoryEnabled(category as NotificationCategory, enabled);
   }
-  onFilterCat(cat: NotificationCategory) {
-    this.facade.toggleFilterCat(cat);
+
+  onFilterCat(category: NotificationCategory) {
+    this.facade.toggleFilterCat(category);
   }
+
   onQuery(q: string) {
     this.facade.setQuery(q ?? '');
   }
+
   onClearFilters() {
     this.facade.clearFilters();
   }
@@ -50,6 +53,8 @@ export class NotificationsPageComponent {
     if (this.vm.loading()) return;
     const nearBottom =
       window.innerHeight + window.scrollY >= document.body.offsetHeight - 300;
-    if (nearBottom) this.facade.loadMore();
+    if (nearBottom) {
+      this.facade.loadMore();
+    }
   }
 }
