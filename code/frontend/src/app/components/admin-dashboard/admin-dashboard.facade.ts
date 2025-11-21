@@ -12,7 +12,7 @@ import { GetRealEstates$Params } from '../../services/fn/real-estate-controller/
 import { RealEstateResponse } from '../../services/models/real-estate-response';
 import { PageRealEstateResponse } from '../../services/models/page-real-estate-response';
 
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../manual_services/auth.service';
 
 import { StafferRequest, StafferResponse } from '../../services/models';
 

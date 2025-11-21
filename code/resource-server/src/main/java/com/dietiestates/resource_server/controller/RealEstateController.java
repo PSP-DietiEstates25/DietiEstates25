@@ -3,6 +3,7 @@ package com.dietiestates.resource_server.controller;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,6 +15,10 @@ import com.dietiestates.resource_server.dto.response.RealEstateResponse;
 import com.dietiestates.resource_server.service.RealEstateService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/realestates")
@@ -22,15 +27,16 @@ public class RealEstateController {
 
     private final RealEstateService realEstateSerivce;
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<RealEstateResponse> createRealEstate(
-            @RequestBody RealEstateRequest request,
+            @RequestPart("data") @Valid RealEstateRequest request,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
             @AuthenticationPrincipal Jwt jwt
-    ) {
+    ) throws IOException {
 
         var estateAgentEmail = jwt.getSubject();
 
-        var realEstate = realEstateSerivce.createRealEstate(request, estateAgentEmail);
+        var realEstate = realEstateSerivce.createRealEstate(request, images, estateAgentEmail);
         return ResponseEntity.status(HttpStatus.CREATED).body(realEstate);
     }
 
@@ -44,7 +50,7 @@ public class RealEstateController {
 
     @GetMapping
     public ResponseEntity<Page<RealEstateResponse>> getRealEstates(
-            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "5") Integer size,
             @RequestParam(required = false) Long searchid,
             @AuthenticationPrincipal Jwt jwt,
@@ -82,21 +88,24 @@ public class RealEstateController {
         } else if (isAdmin) {
             var adminEmail = jwt.getSubject();
             pagedRealEstates = realEstateSerivce.getAdminRealEstates(adminEmail, page, size);
-        } else
+        } else {
             pagedRealEstates = realEstateSerivce.getRealEstates(page, size);
+        }
 
+        System.out.println(pagedRealEstates.toString());
         return ResponseEntity.status(HttpStatus.OK).body(pagedRealEstates);
     }
 
-    @PutMapping("/{realestateid}")
+    @PutMapping(value = "/{realestateid}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<RealEstateResponse> updateRealEstate(
             @PathVariable Long realestateid,
-            @RequestBody @Valid RealEstateRequest request,
+            @RequestPart("data") @Valid RealEstateRequest request,
+            @RequestPart(value = "images",  required = false) List<MultipartFile> images,
             @AuthenticationPrincipal Jwt jwt
-    ) {
+    ) throws IOException {
         var estateAgentEmail = jwt.getSubject();
 
-        var realEstate = realEstateSerivce.updateRealEstate(realestateid, request, estateAgentEmail);
+        var realEstate = realEstateSerivce.updateRealEstate(realestateid, request, images, estateAgentEmail);
         return ResponseEntity.status(HttpStatus.OK).body(realEstate);
     }
 

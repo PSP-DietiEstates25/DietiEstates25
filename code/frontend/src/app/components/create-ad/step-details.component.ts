@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CreateAdFacade, PositionDraft, UtilitiesDraft } from './create-ad.facade';
 import { MapComponent } from '../map/map.component';
 import { ToastrService } from 'ngx-toastr';
-import { GeoapifyService } from '../../services/services/geoapify.service';
+import { GeoapifyService } from '../../manual_services/geoapify.service';
 import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.component';
 
 @Component({

@@ -108,55 +108,72 @@ spring:
               predicates:
                 - Path=/v3/api-docs/swagger-config
 
-            #/users
+            #POST /users
             - id: resource_server_register_user
               uri: http://localhost:8090
               predicates:
                 - Path=/users
+                - Method=POST
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 
-            #/admins
+            #GET /users/{userid}
+            - id: resource_server_get_user_by_id
+              uri: http://localhost:8090
+              predicates:
+                - Path=/users/{userid}
+                - Method=GET
+              filters:
+                - RelayTokenIfExists=messaging-client-oidc
+
+            #POST,GET /admins
             - id: resource_server_register_admin
               uri: http://localhost:8090
               predicates:
                 - Path=/admins
+                - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 
-            #/estateagents
+            # GET /admins/{adminid}
+            - id: resource_server_get_admin_by_id
+              uri: http://localhost:8090
+              predicates:
+                - Path=/admins/{adminid}
+                - Method=GET
+              filters:
+                - RelayTokenIfExists=messaging-client-oidc
+
+            #POST /estateagents
             - id: resource_server_register_estate_agents
               uri: http://localhost:8090
               predicates:
                 - Path=/estateagents
-              filters:
-                - RelayTokenIfExists=messaging-client-oidc
-
-            # /realestates
-            #POST realestates
-            - id: resource_server_post_real_estate
-              uri: http://localhost:8090
-              predicates:
-                - Path=/realestates
                 - Method=POST
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
-                - RemoveRequestHeader=Cookie
 
-            #GET realestates?page=1&size=10
-            - id: resource_server_get_paged_real_estates
+            #GET /estateagents/{estateagentid}
+            - id: resource_server_register_get_estate_agent_by_id
+              uri: http://localhost:8090
+              predicates:
+                - Path=/estateagents/{estateagentid}
+                - Method=GET
+              filters:
+                - RelayTokenIfExists=messaging-client-oidc
+
+            #POST,GET /realestates
+            - id: resource_server_real_estates
               uri: http://localhost:8090
               predicates:
                 - Path=/realestates
-                - Method=GET
+                - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
                 - RemoveRequestHeader=Cookie
 
-            #GET realestates/{realestateid}
-            #PUT realestates/{realestateid}
-            #DELETE realestates/{realestateid}
-            - id: resource_server_get_put_delete_real_estate
+            #GET,PUT,DELETE realestates/{realestateid}
+            - id: resource_server_get_put_delete_real_estate_by_id
               uri: http://localhost:8090
               predicates:
                 - Path=/realestates/{realestateid}
@@ -165,83 +182,183 @@ spring:
                 - RelayTokenIfExists=messaging-client-oidc
                 - RemoveRequestHeader=Cookie
 
-            # /searches
+            #GET /images
+            - id: resource_server_realestate_images
+              uri: http://localhost:8090
+              predicates:
+                - Path=/images/**
+              filters:
+                - RelayTokenIfExists=messaging-client-oidc
+                - RemoveRequestHeader=Cookie
+
+            #POST,GET /searches
             - id: resource_server_searches
               uri: http://localhost:8090
               predicates:
                 - Path=/searches
+                - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 
-            # /detais
+            #POST /detais
             - id: resource_server_details
               uri: http://localhost:8090
               predicates:
                 - Path=/details
+                - Method=POST
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 
-            # /geographicalpositions
+            #GET,PUT /details/{detailid}
+            - id: resource_server_get_put_detail_by_id
+              uri: http://localhost:8090
+              predicates:
+                - Path=/details/{detailid}
+                - Method=GET,PUT
+              filters:
+                - RelayTokenIfExists=messaging-client-oidc
+
+            #POST,GET /geographicalpositions
             - id: resource_server_geographical_positions
               uri: http://localhost:8090
               predicates:
                 - Path=/geographicalpositions
+                - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 
-            # /utilities
+            #GET,PUT /geographicalpositions/{geographicalpositionid}
+            - id: resource_server_get_put_geographical_position_by_id
+              uri: http://localhost:8090
+              predicates:
+                - Path=/geographicalpositions/{geographicalpositionid}
+                - Method=GET,PUT
+              filters:
+                - RelayTokenIfExists=messaging-client-oidc
+
+            #POST,GET /utilities
             - id: resource_server_utilities
               uri: http://localhost:8090
               predicates:
                 - Path=/utilities
+                - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 
-            #/cadastraldata
+            #GET,PUT /utilities/{utilityid}
+            - id: resource_server_get_put_utility_by_id
+              uri: http://localhost:8090
+              predicates:
+                - Path=/utilities/{utilityid}
+                - Method=POST,GET
+              filters:
+                - RelayTokenIfExists=messaging-client-oidc
+
+            #POST,GET /cadastraldata
             - id: resource_server_cadastral_data
               uri: http://localhost:8090
               predicates:
                 - Path=/cadastraldata
+                - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 
-            #/cadastralfilters
+            #GET,PUT /cadastraldata/{cadastraldataid}
+            - id: resource_server_get_put_cadastral_data_by_id
+              uri: http://localhost:8090
+              predicates:
+                - Path=/cadastraldata/{cadastraldataid}
+                - Method=GET,PUT
+              filters:
+                - RelayTokenIfExists=messaging-client-oidc
+
+            #POST,GET /cadastralfilters
             - id: resource_server_cadastral_filters
               uri: http://localhost:8090
               predicates:
                 - Path=/cadastralfilters
+                - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 
-            #/realestates/{realestateid}/offers
+            #GET /cadastralfilters/{cadastralfilterid}
+            - id: resource_server_get_put_cadastral_filter_by_id
+              uri: http://localhost:8090
+              predicates:
+                - Path=/cadastralfilters/{cadastralfilterid}
+                - Method=GET
+              filters:
+                - RelayTokenIfExists=messaging-client-oidc
+
+            #POST,GET /realestates/{realestateid}/offers
             - id: resource_server_realestate_offers
               uri: http://localhost:8090
               predicates:
                 - Path=/realestates/{realestateid}/offers
+                - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 
-            #/realestates/{realestateid}/visits
+            #GET,PATCH /realestates/{realestateid}/offers/{offerid}
+            - id: resource_server_get_patch_offer_by_id
+              uri: http://localhost:8090
+              predicates:
+                - Path=/realestates/{realestateid}/offers/{offerid}
+                - Method=GET,PATCH
+              filters:
+                - RelayTokenIfExists=messaging-client-oidc
+
+            #POST,GET /realestates/{realestateid}/visits
             - id: resource_server_realestate_visits
               uri: http://localhost:8090
               predicates:
                 - Path=/realestates/{realestateid}/visits
+                - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 
-            #/notificationcategories
+            #GET,PATCH /realestates/{realestateid}/visits/{visitid}
+            - id: resource_server_get_patch_visit_by_id
+              uri: http://localhost:8090
+              predicates:
+                - Path=/realestates/{realestateid}/visits/{visitid}
+                - Method=GET,PATCH
+              filters:
+                - RelayTokenIfExists=messaging-client-oidc
+
+            #POST,GET /notificationcategories
             - id: resource_server_notification_categories
               uri: http://localhost:8090
               predicates:
                 - Path=/notificationcategories
+                - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 
-            #/notificationcategories/{name}/notification
-            - id: resource_server_notification_categories_notification
+            #GET,PUT /notificationcategories/{notificationcategoryname}
+            - id: resource_server_get_put_notification_category_by_name
               uri: http://localhost:8090
               predicates:
-                - Path=/notificationcategories/{name}/notifications
+                - Path=/notificationcategories/{notificationcategoryname}
+                - Method=GET,PUT
+              filters:
+                - RelayTokenIfExists=messaging-client-oidc
+
+            #POST,GET /notificationcategories/{notificationcategoryname}/notifications
+            - id: resource_server_notification_category_notifications
+              uri: http://localhost:8090
+              predicates:
+                - Path=/notificationcategories/{notificationcategoryname}/notifications
+                - Method=POST,GET
+              filters:
+                - RelayTokenIfExists=messaging-client-oidc
+
+            #GET /notificationcategories/{notificationcategoryname}/notifications/{notificationid}
+            - id: resource_server_get_notification_by_id
+              uri: http://localhost:8090
+              predicates:
+                - Path=/notificationcategories/{notificationcategoryname}/notifications/{notificationid}
+                - Method=GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 app:

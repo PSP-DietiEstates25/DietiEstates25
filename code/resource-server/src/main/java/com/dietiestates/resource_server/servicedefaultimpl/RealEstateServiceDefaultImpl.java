@@ -11,6 +11,7 @@ import com.dietiestates.resource_server.repository.RealEstateRepository;
 import com.dietiestates.resource_server.service.NotificationService;
 import com.dietiestates.resource_server.service.RealEstateService;
 import com.dietiestates.resource_server.service.SearchRealEstateService;
+import com.dietiestates.resource_server.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,8 +19,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -36,11 +41,24 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
 	private final DetailFinder detailFinder;
     private final SearchRealEstateService searchRealEstateService;
     private final NotificationService notificationService;
-	
-	@Override
-	public RealEstateResponse createRealEstate(RealEstateRequest request, String estateAgentEmail) {
 
-		var realEstateSpec = realEstateMapper.toSpec(request);
+    private final StorageService storageService;
+
+	@Override
+	public RealEstateResponse createRealEstate(RealEstateRequest request, List<MultipartFile> images, String estateAgentEmail) throws IOException {
+
+        // 1. Salvo le immagini su filesystem e mi faccio restituire le URL pubbliche
+        List<String> imageUrls = new ArrayList<>();
+        if (images != null) {
+            for (MultipartFile img : images) {
+                if (img != null && !img.isEmpty()) {
+                    String url = storageService.uploadImageToFileSystem(img);
+                    imageUrls.add(url);
+                }
+            }
+        }
+
+		var realEstateSpec = realEstateMapper.toSpec(request, imageUrls);
 		
 		var estateAgent = estateAgentFinder.getEstateAgentByEmail(estateAgentEmail);
 		var cadastralData = cadastralDataFinder.getCadastralDataById(realEstateSpec.getCadastralDataId());
@@ -106,10 +124,30 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
 
     @Override
     @Transactional
-    public RealEstateResponse updateRealEstate(Long id, RealEstateRequest request, String estateAgentEmail) {
+    public RealEstateResponse updateRealEstate(Long id, RealEstateRequest request, List<MultipartFile> images, String estateAgentEmail) throws IOException {
 
-        var realEstateSpec = realEstateMapper.toSpec(request);
         var realEstateToUpdate = realEstateFinder.getRealEstateById(id);
+
+        // 2. Gestione immagini
+        List<String> imageUrls = new ArrayList<>();
+
+        boolean hasNewImages = images != null && images.stream()
+                .anyMatch(f -> f != null && !f.isEmpty());
+
+        if (hasNewImages) {
+            // Sostituisco COMPLETAMENTE le immagini con le nuove
+            for (MultipartFile img : images) {
+                if (img != null && !img.isEmpty()) {
+                    String url = storageService.uploadImageToFileSystem(img);
+                    imageUrls.add(url);
+                }
+            }
+        } else {
+            // Non è stato caricato nulla di nuovo: mantengo quelle esistenti
+            imageUrls.addAll(realEstateToUpdate.getImages());
+        }
+
+        var realEstateSpec = realEstateMapper.toSpec(request, imageUrls);
 
         var estateAgent = estateAgentFinder.getEstateAgentByEmail(estateAgentEmail);
         var cadastralData = cadastralDataFinder.getCadastralDataById(realEstateSpec.getCadastralDataId());
@@ -118,7 +156,7 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
         realEstateToUpdate.setCategory(
                 RealEstateCategory.valueOf(realEstateSpec.getCategory())
         );
-        realEstateToUpdate.setImages(Arrays.asList(realEstateSpec.getImages()));
+        realEstateToUpdate.setImages(new ArrayList<>(realEstateSpec.getImages()));
         realEstateToUpdate.setDescription(realEstateSpec.getDescription());
         realEstateToUpdate.setEstateAgent(estateAgent);
         realEstateToUpdate.setCadastralData(cadastralData);

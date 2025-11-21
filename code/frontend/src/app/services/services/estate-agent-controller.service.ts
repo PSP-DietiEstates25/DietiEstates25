@@ -49,7 +49,7 @@ export class EstateAgentControllerService extends BaseService {
   }
 
   /** Path part for operation `getEstateAgentById()` */
-  static readonly GetEstateAgentByIdPath = '/estateagents/{estataeagentid}';
+  static readonly GetEstateAgentByIdPath = '/estateagents/{estateagentid}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -57,7 +57,7 @@ export class EstateAgentControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getEstateAgentById$Response(params?: GetEstateAgentById$Params, context?: HttpContext): Observable<StrictHttpResponse<StafferResponse>> {
+  getEstateAgentById$Response(params: GetEstateAgentById$Params, context?: HttpContext): Observable<StrictHttpResponse<StafferResponse>> {
     return getEstateAgentById(this.http, this.rootUrl, params, context);
   }
 
@@ -67,7 +67,7 @@ export class EstateAgentControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getEstateAgentById(params?: GetEstateAgentById$Params, context?: HttpContext): Observable<StafferResponse> {
+  getEstateAgentById(params: GetEstateAgentById$Params, context?: HttpContext): Observable<StafferResponse> {
     return this.getEstateAgentById$Response(params, context).pipe(
       map((r: StrictHttpResponse<StafferResponse>): StafferResponse => r.body)
     );

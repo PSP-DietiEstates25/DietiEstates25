@@ -31,3 +31,4 @@ logging:
     org.springframework.orm.jpa: DEBUG
 
 defaultAdminEmail: "admin@admin.com"
+imagesFolderPath: "${user.home}/DietiEstates25/images/"

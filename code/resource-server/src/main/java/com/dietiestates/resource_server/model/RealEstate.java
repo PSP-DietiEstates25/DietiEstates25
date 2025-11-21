@@ -29,9 +29,14 @@ public class RealEstate {
     private RealEstateCategory category;
 
     @ElementCollection
-    @CollectionTable(name = "real_estate_image", joinColumns = @JoinColumn(name = "real_estate_id", foreignKey = @ForeignKey(name = "RE_IMAGE_REALESTATE_ID_FK")))
-    @Column(name = "content", columnDefinition = "TEXT", nullable = false)
-    @Lob
+    @CollectionTable(
+            name = "real_estate_image",
+            joinColumns = @JoinColumn(
+                    name = "real_estate_id",
+                    foreignKey = @ForeignKey(name = "RE_IMAGE_REALESTATE_ID_FK")
+            )
+    )
+    @Column(name = "content", nullable = false)
     private List<String> images = new ArrayList<>();
 
     @Column(nullable = false)
@@ -66,13 +71,13 @@ public class RealEstate {
     @Builder(builderMethodName = "builder")
     public RealEstate(
             String category,
-            String[] images,
+            List<String> images,
             String description,
             EstateAgent estateAgent,
             CadastralData cadastralData,
             Detail detail) {
         this.category = RealEstateCategory.valueOf(category);
-        this.images = images != null ? Arrays.asList(images) : new ArrayList<>();
+        this.images = (images != null) ? new ArrayList<>(images) : new ArrayList<>();
         this.description = description;
         this.cadastralData = cadastralData;
         this.detail = detail;

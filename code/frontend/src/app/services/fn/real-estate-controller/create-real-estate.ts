@@ -12,13 +12,16 @@ import { RealEstateRequest } from '../../models/real-estate-request';
 import { RealEstateResponse } from '../../models/real-estate-response';
 
 export interface CreateRealEstate$Params {
-      body: RealEstateRequest
+      body?: {
+'data': RealEstateRequest;
+'images'?: Array<Blob>;
+}
 }
 
-export function createRealEstate(http: HttpClient, rootUrl: string, params: CreateRealEstate$Params, context?: HttpContext): Observable<StrictHttpResponse<RealEstateResponse>> {
+export function createRealEstate(http: HttpClient, rootUrl: string, params?: CreateRealEstate$Params, context?: HttpContext): Observable<StrictHttpResponse<RealEstateResponse>> {
   const rb = new RequestBuilder(rootUrl, createRealEstate.PATH, 'post');
   if (params) {
-    rb.body(params.body, 'application/json');
+    rb.body(params.body, 'multipart/form-data');
   }
 
   return http.request(

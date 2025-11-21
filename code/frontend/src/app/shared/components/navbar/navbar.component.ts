@@ -8,9 +8,9 @@ import {
 import { CommonModule } from '@angular/common';
 import { MenuToggleComponent } from '../../buttons/menu_toggle/menu-toggle.component';
 import { NotificationsFacade } from '../../../components/notifications/notifications.facade';
-import { AuthService } from '../../../services/auth.service';
+import { AuthService } from '../../../manual_services/auth.service';
 import { environment } from '../../../../environments/environment.development';
-import { LocalStorageService } from '../../../services/services/local-storage.service';
+import { LocalStorageService } from '../../../manual_services/local-storage.service';
 
 interface NavLink {
   label: string;

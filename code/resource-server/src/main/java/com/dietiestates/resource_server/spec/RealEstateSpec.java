@@ -2,6 +2,8 @@ package com.dietiestates.resource_server.spec;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -9,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 public class RealEstateSpec {
 	private String category;
-	private String[] images;
+    private List<String> images;
 	private String description;
 	private Long cadastralDataId;
 	private Long detailId;

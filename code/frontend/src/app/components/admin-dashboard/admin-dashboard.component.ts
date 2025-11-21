@@ -15,7 +15,7 @@ import {
 } from './admin-dashboard.facade';
 import { Router, RouterLink } from '@angular/router';
 
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../manual_services/auth.service';
 import { environment } from '../../../environments/environment.development';
 
 function matchValidator(a: string, b: string) {

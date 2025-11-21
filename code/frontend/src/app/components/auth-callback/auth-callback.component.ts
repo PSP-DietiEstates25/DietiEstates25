@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../manual_services/auth.service';
 import { Router } from '@angular/router';
-import { LocalStorageService } from '../../services/services/local-storage.service';
+import { LocalStorageService } from '../../manual_services/local-storage.service';
 
 @Component({
   selector: 'app-auth-callback',

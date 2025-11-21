@@ -21,7 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/notificationcategories")
 @RequiredArgsConstructor
-public class NotificationCategoryController {
+public class    NotificationCategoryController {
 
     private final NotificationCategoryService notificationCategoryService;
 

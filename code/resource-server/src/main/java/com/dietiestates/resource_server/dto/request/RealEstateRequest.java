@@ -20,10 +20,6 @@ public class RealEstateRequest {
     @NotBlank(message = "Category is mandatory")
     private String category;
 
-    @NotEmpty(message = "Images are mandatory")
-    @NotBlank(message = "Images are mandatory")
-    private String[] images;
-
     @NotEmpty(message = "Description is mandatory")
     @NotBlank(message = "Description is mandatory")
     @Size(min = 1, message = "Description must be at least 1 character long")

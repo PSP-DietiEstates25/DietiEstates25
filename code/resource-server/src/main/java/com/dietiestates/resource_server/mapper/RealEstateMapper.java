@@ -11,7 +11,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface RealEstateMapper {
-	RealEstateSpec toSpec(RealEstateRequest request);
+	RealEstateSpec toSpec(RealEstateRequest request, List<String> images);
 	RealEstateResponse fromEntity(RealEstate realEstate);
     Page<RealEstateResponse> createPagedRealEstatesResponse(Page<RealEstate> realEstates);
     List<RealEstateResponse> createRealEstatesResponse(List<RealEstate> realEstates);

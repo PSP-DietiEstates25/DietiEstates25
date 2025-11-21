@@ -34,7 +34,7 @@ public class EstateAgentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(estateAgent);
     }
 
-    @GetMapping("/{estataeagentid}")
+    @GetMapping("/{estateagentid}")
     public ResponseEntity<StafferResponse> getEstateAgentById(
             @PathVariable Long estateagentid
     ) throws EstateAgentNotFoundException {

@@ -1,0 +1,90 @@
+package com.dietiestates.resource_server.servicedefaultimpl;
+
+import com.dietiestates.resource_server.factory.FileDataFactory;
+import com.dietiestates.resource_server.factory.ImageDataFactory;
+import com.dietiestates.resource_server.finder.FileDataFinder;
+import com.dietiestates.resource_server.finder.ImageDataFinder;
+import com.dietiestates.resource_server.repository.FileDataRepository;
+import com.dietiestates.resource_server.repository.ImageDataRepository;
+import com.dietiestates.resource_server.service.StorageService;
+import com.dietiestates.resource_server.utils.ImageUtils;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class StorageServiceDefaultImpl implements StorageService {
+
+    @Value("${imagesFolderPath}")
+    private String imagesFolderPath;
+
+    private final ImageDataFinder imageDataFinder;
+    private final FileDataFinder fileDataFinder;
+    private final ImageDataFactory imageDataFactory;
+    private final FileDataFactory fileDataFactory;
+    private final ImageDataRepository imageDataRepository;
+    private final FileDataRepository fileDataRepository;
+
+    @PostConstruct
+    public void init() throws IOException {
+        Path folder = Paths.get(imagesFolderPath);
+        Files.createDirectories(folder);
+    }
+
+    @Override
+    public String uploadImage(MultipartFile imageFile) throws IOException {
+        var image = imageDataFactory.createImage(imageFile);
+        imageDataRepository.save(image);
+        return null;
+    }
+
+    @Override
+    public byte[] downloadImage(String fileName){
+        var image = imageDataFinder.getByName(fileName);
+        return ImageUtils.decompressImage(image.getImageData());
+    }
+
+    @Override
+    public String uploadImageToFileSystem(MultipartFile file) throws IOException {
+
+        String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
+        String ext = "";
+
+        int dotIndex = originalFilename.lastIndexOf('.');
+        if (dotIndex != -1) {
+            ext = originalFilename.substring(dotIndex);
+        }
+
+        String storedFileName = UUID.randomUUID() + ext;
+
+        Path folder = Paths.get(imagesFolderPath);
+        Files.createDirectories(folder);
+
+        Path filePath = folder.resolve(storedFileName);
+
+        file.transferTo(filePath.toFile());
+
+        var fileData = fileDataFactory.createFileData(file, filePath.toString());
+        fileDataRepository.save(fileData);
+
+        return "/images/" + storedFileName;
+    }
+
+    @Override
+    public byte[] downloadImageFromFileSystem(String fileName) throws IOException {
+        var fileData = fileDataFinder.getByName(fileName);
+        var filePath = fileData.getPath();
+        return Files.readAllBytes(new File(filePath).toPath());
+    }
+}

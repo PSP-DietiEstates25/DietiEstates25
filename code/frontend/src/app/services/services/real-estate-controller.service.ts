@@ -62,7 +62,7 @@ export class RealEstateControllerService extends BaseService {
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `updateRealEstate()` instead.
    *
-   * This method sends `application/json` and handles request body of type `application/json`.
+   * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
    */
   updateRealEstate$Response(params: UpdateRealEstate$Params, context?: HttpContext): Observable<StrictHttpResponse<RealEstateResponse>> {
     return updateRealEstate(this.http, this.rootUrl, params, context);
@@ -72,7 +72,7 @@ export class RealEstateControllerService extends BaseService {
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `updateRealEstate$Response()` instead.
    *
-   * This method sends `application/json` and handles request body of type `application/json`.
+   * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
    */
   updateRealEstate(params: UpdateRealEstate$Params, context?: HttpContext): Observable<RealEstateResponse> {
     return this.updateRealEstate$Response(params, context).pipe(
@@ -137,9 +137,9 @@ export class RealEstateControllerService extends BaseService {
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `createRealEstate()` instead.
    *
-   * This method sends `application/json` and handles request body of type `application/json`.
+   * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
    */
-  createRealEstate$Response(params: CreateRealEstate$Params, context?: HttpContext): Observable<StrictHttpResponse<RealEstateResponse>> {
+  createRealEstate$Response(params?: CreateRealEstate$Params, context?: HttpContext): Observable<StrictHttpResponse<RealEstateResponse>> {
     return createRealEstate(this.http, this.rootUrl, params, context);
   }
 
@@ -147,9 +147,9 @@ export class RealEstateControllerService extends BaseService {
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `createRealEstate$Response()` instead.
    *
-   * This method sends `application/json` and handles request body of type `application/json`.
+   * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
    */
-  createRealEstate(params: CreateRealEstate$Params, context?: HttpContext): Observable<RealEstateResponse> {
+  createRealEstate(params?: CreateRealEstate$Params, context?: HttpContext): Observable<RealEstateResponse> {
     return this.createRealEstate$Response(params, context).pipe(
       map((r: StrictHttpResponse<RealEstateResponse>): RealEstateResponse => r.body)
     );

@@ -1,10 +1,14 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import {
   RealEstateControllerService,
   VisitControllerService,
   OfferControllerService,
+  DetailControllerService,
+  GeographicalPositionControllerService,
+  UtilityControllerService,
+  CadastralDataControllerService,
 } from '../../services/services';
-import { OfferRequest } from '../../services/models';
+import { CadastralData, CadastralDataRequest, OfferRequest, RealEstateResponse } from '../../services/models';
 import { forkJoin, from, of, EMPTY, concat, defer, Observable } from 'rxjs';
 import {
   map,
@@ -14,6 +18,14 @@ import {
   take,
   switchMap,
 } from 'rxjs/operators';
+import { 
+  PageRealEstateResponse,
+  CadastralDataResponse,
+  DetailResponse,
+  GeographicalPositionResponse,
+  UtilityResponse
+} from '../../services/models';
+import { environment } from '../../../environments/environment';
 
 export type VisitVM = {
   id: number;
@@ -81,11 +93,13 @@ export class AgentDashboardFacade {
   addOfferEmail = signal<string>('');
   addOfferLoading = signal<boolean>(false);
 
-  constructor(
-    private realEstateService: RealEstateControllerService,
-    private visitService: VisitControllerService,
-    private offerService: OfferControllerService
-  ) {}
+  private realEstateService = inject(RealEstateControllerService);
+  private cadastralDataService = inject(CadastralDataControllerService);
+  private detailService = inject(DetailControllerService);
+  private geographicalPositionService = inject(GeographicalPositionControllerService);
+  private utilityService = inject(UtilityControllerService);
+  private visitService = inject(VisitControllerService);
+  private offerService = inject(OfferControllerService);
 
   private callById$<T>(
     svc: any,
@@ -126,11 +140,6 @@ export class AgentDashboardFacade {
       : defer(() => {
           throw new Error(`Metodo-byId non trovato: ${methodNames.join(', ')}`);
         });
-  }
-
-  private val<T>(o: any, keys: string[], fallback: T): T {
-    for (const k of keys) if (o?.[k] != null) return o[k] as T;
-    return fallback;
   }
 
   // Mappers
@@ -183,35 +192,25 @@ export class AgentDashboardFacade {
     };
   }
 
-  private toAdVM(realEstate: any): AdVM {
-    const location = this.val<any>(
-      realEstate,
-      ['geographicalPosition', 'location', 'address'],
-      null
-    );
+  private toAdVM(
+    realEstate: RealEstateResponse | null,
+    cadastralData: CadastralDataResponse | null,
+    detail: DetailResponse | null,
+    geographicalPosition: GeographicalPositionResponse | null,
+    utility: UtilityResponse | null
+  ): AdVM {
 
-    const title =
-      this.val<string>(realEstate, ['title', 'name'], '') ||
-      this.val<string>(realEstate, ['description'], 'Annuncio');
-
-    const city =
-      this.val<string>(realEstate, ['city'], '') ||
-      this.val<string>(location, ['city'], '');
-
-    const price = this.val<number | null>(realEstate, ['price', 'amount'], null);
-
-    const createdAt = this.val<string>(
-      realEstate,
-      ['createdAt', 'createdDate', 'lastModifiedDate'],
-      ''
-    );
-
-    const images = this.val<string[]>(realEstate, ['images'], []) ?? [];
-    const first = images?.[0] ?? null;
-    const coverSrc = first ? `data:image/jpeg;base64,${first}` : null;
+    const title = realEstate?.description?.trim() || 'Annuncio';
+    const city = geographicalPosition?.city as string;
+    const municipality = geographicalPosition?.municipality as string;
+    const price = cadastralData?.price as number;
+    const createdAt = realEstate?.createdDate as string;
+    const images = realEstate?.images ?? [];
+    const coverPath = realEstate?.images && realEstate.images.length > 0 ? realEstate.images[0] : null;
+    const coverSrc = coverPath ? `${environment.apiBaseUrl}${coverPath}` : null;
 
     return {
-      id: Number(this.val<number>(realEstate, ['id'], 0)),
+      id: realEstate!.id as number,
       title,
       city,
       price,
@@ -224,7 +223,7 @@ export class AgentDashboardFacade {
   // VISITS
   loadVisits(): Observable<void> {
     this.visitsLoading.set(true);
-    return this.realEstateService.getRealEstates({ page: 0, size: 100 }).pipe(
+    return this.realEstateService.getRealEstates({ page: 2, size: 6 }).pipe(
       map((page) => (Array.isArray(page?.content) ? page.content : [])),
       switchMap((realEstates) => {
         if (!realEstates.length) return of([] as VisitVM[]);
@@ -304,18 +303,32 @@ export class AgentDashboardFacade {
   // ADS
   loadAds(): Observable<void> {
     this.adsLoading.set(true);
-    return this.realEstateService.getRealEstates({ page: 0, size: 100 }).pipe(
-      map((page) => (Array.isArray(page?.content) ? page.content : [])),
-      map((list) => (list ?? []).map((realEstate) => this.toAdVM(realEstate))),
-      tap((visit) => this.ads.set(visit)),
-      catchError((error) => {
-        console.error('[Facade] loadAds error', error);
-        this.ads.set([]);
-        return of(void 0);
-      }),
-      finalize(() => this.adsLoading.set(false)),
-      map(() => void 0)
-    );
+    return this.realEstateService
+      .getRealEstates({ page: 0, size: 5 }) // o getRealEstates$Json / $Response a seconda del generato
+      .pipe(
+        switchMap((pageResp: PageRealEstateResponse) => {
+
+          const content = pageResp.content ?? [];
+
+          if (!content.length) {
+            this.ads.set([]);
+            return of(void 0);
+          } 
+
+          const adStreams = content.map((reaalEstate) => this.buildAdVM(reaalEstate));
+
+          return forkJoin(adStreams).pipe(
+            tap((ads) => this.ads.set(ads)),
+            map(() => void 0)
+          );
+        }),
+        catchError((err) => {
+          console.error('[AgentDashboardFacade] loadAds error', err);
+          this.ads.set([]);
+          return of(void 0);
+        }),
+        finalize(() => this.adsLoading.set(false))
+      );
   }
 
   deleteAd(adId: number): Observable<void> {
@@ -343,15 +356,18 @@ export class AgentDashboardFacade {
   updateAd(
     adId: number,
     patch: Partial<{ description: string }>
-  ): Observable<void> {
+  ): Observable<RealEstateResponse> {
     const body: any = { ...patch };
-    return this.realEstateService.updateRealEstate({ realestateid: adId, body }).pipe(
+    return this.realEstateService.updateRealEstate({ realestateid: adId, body })
+    /*
+    .pipe(
       switchMap(() => this.loadAds()),
       catchError((error) => {
         console.error('[Facade] updateAd error', error);
         return of(void 0);
       })
     );
+    */
   }
 
   // OFFERS
@@ -528,5 +544,52 @@ export class AgentDashboardFacade {
           return of(void 0);
         })
       );
+  }
+
+  private buildAdVM(realEstateResponse: RealEstateResponse): Observable<AdVM> {
+
+    const cadastralData = this.cadastralDataService.getCadastralDataById({
+      cadastraldataid: realEstateResponse.cadastralDataId as number
+    });
+
+    const detail = this.detailService.getDetailById({
+      detailid: realEstateResponse.detailId as number 
+    })
+
+    return forkJoin({ cadastral: cadastralData, detail: detail }).pipe(
+
+      switchMap(({ cadastral: cadastralData, detail: detail }): Observable<{
+        cadastralData: CadastralDataResponse;
+        detail: DetailResponse;
+        geographicalPosition: GeographicalPositionResponse;
+        utility: UtilityResponse;
+      }> => {
+
+        const geographicalPosition = this.geographicalPositionService.getGeographicalPositionById({
+          geographicalpositionid: detail.geographicalPositionId as number
+        });
+
+        const utility = this.utilityService.getUtilityById({
+          utilityid: detail.utilityId as number
+        });
+
+        // forkJoin con tutte le info
+        return forkJoin({
+          cadastralData: of(cadastralData),
+          detail: of(detail),
+          geographicalPosition: geographicalPosition,
+          utility: utility,
+        });
+      }),
+
+      map(({ cadastralData, detail, geographicalPosition, utility }) =>
+        this.toAdVM(realEstateResponse, cadastralData, detail, geographicalPosition, utility)
+      ),
+
+      catchError((err) => {
+        console.error('[AgentDashboardFacade] buildAdVM error', err);
+        return of(this.toAdVM(realEstateResponse, null, null, null, null));
+      })
+    );
   }
 }

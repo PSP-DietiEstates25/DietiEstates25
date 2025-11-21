@@ -5,9 +5,7 @@ import {
   catchError,
   finalize,
   map,
-  mergeMap,
   switchMap,
-  toArray,
 } from 'rxjs/operators';
 
 import {
@@ -28,6 +26,7 @@ import {
 } from '../../services/models';
 
 export type Category = 'SALE' | 'RENT';
+
 export interface BasicsDraft {
   category: Category;
   description: string;
@@ -59,7 +58,7 @@ export interface CadastralDataDraft {
 
 @Injectable()
 export class EditAdFacade {
-
+  // ID degli oggetti già esistenti
   private detailId = signal<number | null>(null);
   private geographicalPositionId = signal<number | null>(null);
   private utilityId = signal<number | null>(null);
@@ -108,7 +107,9 @@ export class EditAdFacade {
     this.utility.set(utilityDraft);
   }
 
-  setGeographicalPosition(geographicalPositionDraft: GeographicalPositionDraft) {
+  setGeographicalPosition(
+    geographicalPositionDraft: GeographicalPositionDraft
+  ) {
     this.geographicalPosition.set(geographicalPositionDraft);
   }
 
@@ -128,10 +129,13 @@ export class EditAdFacade {
     this.images.set([...(this.images() ?? []), ...(files ?? [])]);
   }
 
+  /**
+   * Carica l'annuncio esistente, popola segnali e ID.
+   */
   load(realEstateId: number) {
-
     if (Number.isNaN(realEstateId)) {
-      const realEstateIdParam = this.activatedRoute.snapshot.paramMap.get('realestateId');
+      const realEstateIdParam =
+        this.activatedRoute.snapshot.paramMap.get('realestateId');
       realEstateId = realEstateIdParam ? Number(realEstateIdParam) : NaN;
     }
 
@@ -144,20 +148,23 @@ export class EditAdFacade {
     this.loading.set(true);
     this.error.set(null);
 
-    this.realEstateService.getRealEstateById$Response({ realestateid: realEstateId })
+    this.realEstateService
+      .getRealEstateById$Response({ realestateid: realEstateId })
       .pipe(
-        map((realEstateResponse) => realEstateResponse.body as RealEstateResponse),
+        map(
+          (realEstateResponse) =>
+            realEstateResponse.body as RealEstateResponse
+        ),
         switchMap((realEstateDto) => {
           this.setBasics({
             category: (realEstateDto.category || 'SALE') as Category,
             description: realEstateDto.description || '',
           });
 
-          // Salva ID principali
           this.detailId.set(realEstateDto.detailId ?? null);
           this.cadastralDataId.set(realEstateDto.cadastralDataId ?? null);
 
-          // immagini esistenti -> File (come già fai)
+          // immagini esistenti -> File (come prima)
           const existingImgs = realEstateDto.images ?? [];
           const files = existingImgs.map((b64, index) =>
             this.base64ToFile(b64, `existing-${index}.jpg`)
@@ -167,31 +174,50 @@ export class EditAdFacade {
           const detailId = realEstateDto.detailId;
           const cadastralDataId = realEstateDto.cadastralDataId;
 
-          const loadDetail$ = detailId ? this.detailService.getDetailById$Response({ detailid: detailId })
-                .pipe(map((detailResponse) => detailResponse.body!))
+          const loadDetail$ = detailId
+            ? this.detailService
+                .getDetailById$Response({ detailid: detailId })
+                .pipe((r) => r.pipe(map((detailResponse) => detailResponse.body!)))
             : EMPTY;
 
           const loadCadastralData$ = cadastralDataId
-            ? this.cadsatralDataService.getCadastralDataById$Response({ cadastraldataid: cadastralDataId })
-                .pipe(map((cadastralDataResponse) => cadastralDataResponse.body!))
+            ? this.cadsatralDataService
+                .getCadastralDataById$Response({
+                  cadastraldataid: cadastralDataId,
+                })
+                .pipe(
+                  map((cadastralDataResponse) => cadastralDataResponse.body!)
+                )
             : EMPTY;
 
           return loadDetail$.pipe(
             switchMap((detail: any) => {
-              const geographicalPositionId = detail?.geographicalPositionId ?? null;
+              const geographicalPositionId =
+                detail?.geographicalPositionId ?? null;
               const utilityId = detail?.utilityId ?? null;
 
               this.geographicalPositionId.set(geographicalPositionId);
               this.utilityId.set(utilityId);
 
-              const geographicalPosition$ = geographicalPositionId? this.geographicalPositionService.getGeographicalPositionById$Response({
+              const geographicalPosition$ = geographicalPositionId
+                ? this.geographicalPositionService
+                    .getGeographicalPositionById$Response({
                       geographicalpositionid: geographicalPositionId,
                     })
-                    .pipe(map((geographicalPositionResponse) => geographicalPositionResponse.body!))
+                    .pipe(
+                      map(
+                        (geographicalPositionResponse) =>
+                          geographicalPositionResponse.body!
+                      )
+                    )
                 : EMPTY;
 
-              const utility$ = utilityId? this.utilityService.getUtilityById$Response({ utilityid: utilityId })
-                    .pipe(map((utilityResponse) => utilityResponse.body!))
+              const utility$ = utilityId
+                ? this.utilityService
+                    .getUtilityById$Response({ utilityid: utilityId })
+                    .pipe(
+                      map((utilityResponse) => utilityResponse.body!)
+                    )
                 : EMPTY;
 
               return from([null]).pipe(
@@ -243,7 +269,9 @@ export class EditAdFacade {
         }),
         catchError((error) => {
           this.error.set(
-            error?.error?.message || error?.message || 'Caricamento annuncio fallito'
+            error?.error?.message ||
+              error?.message ||
+              'Caricamento annuncio fallito'
           );
           return EMPTY;
         }),
@@ -252,80 +280,16 @@ export class EditAdFacade {
       .subscribe();
   }
 
-  // ---- utils ----
-  private readFilesAsDataURL$(files: File[]): Observable<string> {
-    return from(files).pipe(mergeMap((file) => this.readFileAsDataURL$(file)));
-  }
-
-  private readFileAsDataURL$(file: File): Observable<string> {
-    return new Observable<string>((observer) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        observer.next(reader.result as string);
-        observer.complete();
-      };
-      reader.onerror = (error) => observer.error(error);
-      reader.readAsDataURL(file);
-    });
-  }
-
-  private dataUrlToBase64(dataUrl: string): string {
-    const i = dataUrl.indexOf(',');
-    const s = i >= 0 ? dataUrl.slice(i + 1) : dataUrl;
-    return s.replace(/\s/g, '');
-  }
-
-  private base64ToFile(
-    base64: string,
-    name: string,
-    mime = 'image/jpeg'
-  ): File {
-    const byteString = atob(base64);
-    const bytes = new Uint8Array(byteString.length);
-    for (let i = 0; i < byteString.length; i++)
-      bytes[i] = byteString.charCodeAt(i);
-    const blob = new Blob([bytes], { type: mime });
-    return new File([blob], name, { type: mime });
-  }
-
-  private extractId(response: any, fallbackKeys: string[] = []): number | null {
-    const body = response?.body ?? response;
-    const keys = ['id', ...fallbackKeys];
-    for (const key of keys) {
-      const value = body?.[key];
-      if (value != null && !Number.isNaN(Number(value))) return Number(value);
-    }
-    const headers = response?.headers;
-    const location = headers?.get?.('Location') || headers?.get?.('location');
-    if (location) {
-      const m = String(location).match(/\/(\d+)(?!.*\d)/);
-      if (m) return Number(m[1]);
-    }
-    return null;
-  }
-
-  private getAgentEmail(): string | null {
-    try {
-      const stored = localStorage.getItem('userEmail');
-      if (stored) return stored;
-      const token = localStorage.getItem('auth.token');
-      if (!token) return null;
-      const base = token.split('.')[1];
-      const json = atob(base.replace(/-/g, '+').replace(/_/g, '/'));
-      const payload = JSON.parse(json);
-      return payload.email || payload.sub || null;
-    } catch {
-      return null;
-    }
-  }
-
+  /**
+   * UPDATE FLOW:
+   * update Utility -> update Geo -> update Detail -> update CadastralData -> update RealEstate (multipart)
+   */
   createAd() {
     const basics = this.basics();
     const utility = this.utility();
     const geographicalPosition = this.geographicalPosition();
     const cadastralData = this.cadastralData();
     const imgs = this.images();
-    const agentEmail = this.getAgentEmail();
 
     const realestateId = this.editingId();
     const detailId = this.detailId();
@@ -338,27 +302,24 @@ export class EditAdFacade {
       return;
     }
 
-    if (!agentEmail) {
-      this.error.set(
-        "Impossibile ottenere l'email dell'agente. Riesegui il login."
-      );
-      return;
-
-    }
-    
     if (realestateId == null || Number.isNaN(realestateId)) {
       this.error.set('ID annuncio mancante o non valido.');
       return;
     }
 
-    if (detailId == null || geographicalPositionId == null || utilityId == null || cadastralDataId == null) {
+    if (
+      detailId == null ||
+      geographicalPositionId == null ||
+      utilityId == null ||
+      cadastralDataId == null
+    ) {
       this.error.set(
         'Struttura annuncio inconsistente: alcuni ID mancanti (detail/geo/utility/cadastral).'
       );
       return;
     }
 
-    const utilityRequest = {
+    const utilityRequest: UtilityRequest = {
       hasElevator: utility.hasElevator,
       hasDoorman: utility.hasDoorman,
       hasAirConditioning: utility.hasAirConditioning,
@@ -388,56 +349,55 @@ export class EditAdFacade {
     this.loading.set(true);
     this.error.set(null);
 
-    // 1) Update Utility
-    this.utilityService.updateUtility$Response({ utilityid: utilityId, body: utilityRequest })
+    this.utilityService
+      .updateUtility$Response({
+        utilityid: utilityId,
+        body: utilityRequest,
+      })
       .pipe(
-        // 2) Update GeographicalPosition
         switchMap(() =>
           this.geographicalPositionService.updateGeographicalPosition$Response({
             geographicalpositionid: geographicalPositionId,
             body: geographicalPositionRequest,
           })
         ),
-        // 3) Update Detail (ricollega a gp/utility esistenti — idempotente)
         switchMap(() =>
           this.detailService.updateDetail$Response({
             detailid: detailId,
             body: {
-              geographicalPositionId: geographicalPositionId,
-              utilityId: utilityId,
+              geographicalPositionId,
+              utilityId,
             } as DetailRequest,
           })
         ),
-        // 4) Update CadastralData
         switchMap(() =>
           this.cadsatralDataService.updateCadastralData$Response({
             cadastraldataid: cadastralDataId,
             body: cadastralDataRequest,
           })
         ),
-        // 5) Ricarica/ricodifica immagini e Update RealEstate
-        switchMap(() =>
-          this.readFilesAsDataURL$(imgs).pipe(
-            map((url) => this.dataUrlToBase64(url)),
-            toArray(),
-            switchMap((imagesBase64: string[]) =>
-              this.realEstateService.updateRealEstate$Response({
-                realestateid: realestateId,
-                body: {
-                  detailId: detailId,
-                  cadastralDataId: cadastralDataId,
-                  category: basics.category,
-                  description: basics.description,
-                  estateAgentEmail: agentEmail,
-                  images: imagesBase64,
-                } as RealEstateRequest,
-              })
-            )
-          )
-        ),
+        // QUI: niente più base64. Inviamo multipart (data + images)
+        switchMap(() => {
+          const realEstateData: RealEstateRequest = {
+            category: basics.category,
+            description: basics.description,
+            detailId,
+            cadastralDataId,
+          };
+
+          return this.realEstateService.updateRealEstate$Response({
+            realestateid: realestateId,
+            body: {
+              data: realEstateData,
+              images: imgs as Blob[],
+            },
+          });
+        }),
         catchError((error) => {
           this.error.set(
-            error?.error?.message || error?.message || 'Salvataggio modifiche fallito'
+            error?.error?.message ||
+              error?.message ||
+              'Salvataggio modifiche fallito'
           );
           return EMPTY;
         }),
@@ -447,5 +407,19 @@ export class EditAdFacade {
         this.savedSubject.next(realestateId);
         this.routerService.navigate(['/agent']);
       });
+  }
+
+  // ---- utils ----
+  private base64ToFile(
+    base64: string,
+    name: string,
+    mime = 'image/jpeg'
+  ): File {
+    const byteString = atob(base64);
+    const bytes = new Uint8Array(byteString.length);
+    for (let i = 0; i < byteString.length; i++)
+      bytes[i] = byteString.charCodeAt(i);
+    const blob = new Blob([bytes], { type: mime });
+    return new File([blob], name, { type: mime });
   }
 }

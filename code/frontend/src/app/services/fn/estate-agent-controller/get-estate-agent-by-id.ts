@@ -11,11 +11,13 @@ import { RequestBuilder } from '../../request-builder';
 import { StafferResponse } from '../../models/staffer-response';
 
 export interface GetEstateAgentById$Params {
+  estateagentid: number;
 }
 
-export function getEstateAgentById(http: HttpClient, rootUrl: string, params?: GetEstateAgentById$Params, context?: HttpContext): Observable<StrictHttpResponse<StafferResponse>> {
+export function getEstateAgentById(http: HttpClient, rootUrl: string, params: GetEstateAgentById$Params, context?: HttpContext): Observable<StrictHttpResponse<StafferResponse>> {
   const rb = new RequestBuilder(rootUrl, getEstateAgentById.PATH, 'get');
   if (params) {
+    rb.path('estateagentid', params.estateagentid, {});
   }
 
   return http.request(
@@ -28,4 +30,4 @@ export function getEstateAgentById(http: HttpClient, rootUrl: string, params?: G
   );
 }
 
-getEstateAgentById.PATH = '/estateagents/{estataeagentid}';
+getEstateAgentById.PATH = '/estateagents/{estateagentid}';

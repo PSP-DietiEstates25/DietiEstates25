@@ -32,6 +32,8 @@ public enum BusinessErrorCodes {
     ROLE_NOT_FOUND(16004, HttpStatus.NOT_FOUND, "Role not found"),
     ACCOUNT_NOT_FOUND(17004, HttpStatus.NOT_FOUND, "Account not found"),
     NEGOTIATION_NOT_FOUND(18004, HttpStatus.NOT_FOUND, "Negotiation not found"),
+    IMAGE_DATA_NOT_FOUND(19004, HttpStatus.NOT_FOUND, "Image not found"),
+    FILE_DATA_NOT_FOUND(20004, HttpStatus.NOT_FOUND, "File data not found"),
 
     //FORBIDDEN ERRORS
     CADASTRAL_DATA_NOT_OWNED_BY_REAL_ESTATE(14003, HttpStatus.FORBIDDEN, "Cadastral data not owned by real estate"),

@@ -19,10 +19,10 @@ import java.util.List;
 public class RealEstateMapperDefaultImpl implements RealEstateMapper {
 
 	@Override
-	public RealEstateSpec toSpec(RealEstateRequest request) {
+	public RealEstateSpec toSpec(RealEstateRequest request, List<String> images) {
 		return RealEstateSpec.builder()
 				.category(request.getCategory())
-				.images(request.getImages())
+				.images(images)
 				.description(request.getDescription())
 				.cadastralDataId(request.getCadastralDataId())
 				.detailId(request.getDetailId())

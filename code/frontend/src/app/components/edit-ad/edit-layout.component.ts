@@ -35,7 +35,7 @@ export class EditLayoutComponent implements OnInit {
     { key: 'basics', label: 'Dati principali', valid: this.basicsValid },
     { key: 'details', label: 'Dettagli', valid: this.detailsValid },
     {
-      key: 'cadastral',
+      key: 'cadastraldata',
       label: 'Catastali',
       valid: computed(() => !!this.facade.cadastralData()),
     },

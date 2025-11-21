@@ -57,6 +57,7 @@ public class SecurityConfig {
                                 "/openapi.json"
                         ).permitAll()
                         .requestMatchers(
+                                "/images/**",
                                 "/estateagents",
                                 "/admins",
                                 "/realestates",

@@ -13,14 +13,17 @@ import { RealEstateResponse } from '../../models/real-estate-response';
 
 export interface UpdateRealEstate$Params {
   realestateid: number;
-      body: RealEstateRequest
+      body?: {
+'data': RealEstateRequest;
+'images'?: Array<Blob>;
+}
 }
 
 export function updateRealEstate(http: HttpClient, rootUrl: string, params: UpdateRealEstate$Params, context?: HttpContext): Observable<StrictHttpResponse<RealEstateResponse>> {
   const rb = new RequestBuilder(rootUrl, updateRealEstate.PATH, 'put');
   if (params) {
     rb.path('realestateid', params.realestateid, {});
-    rb.body(params.body, 'application/json');
+    rb.body(params.body, 'multipart/form-data');
   }
 
   return http.request(

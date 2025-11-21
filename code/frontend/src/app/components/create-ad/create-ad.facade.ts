@@ -1,14 +1,12 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { EMPTY, Observable, Subject } from 'rxjs';
 import {
   catchError,
-  map,
-  mergeMap,
-  switchMap,
-  toArray,
   finalize,
+  map,
+  switchMap,
 } from 'rxjs/operators';
-import { EMPTY, of, from, Observable, Subject } from 'rxjs';
 
 import {
   GeographicalPositionControllerService,
@@ -68,8 +66,8 @@ export class CreateAdFacade {
   private routerService = inject(Router);
 
   private publishedSubject = new Subject<number>();
-
   published$ = this.publishedSubject.asObservable();
+
   basics = signal<BasicsDraft | null>(null);
   utility = signal<UtilitiesDraft | null>(null);
   geographicalPosition = signal<PositionDraft | null>(null);
@@ -86,27 +84,27 @@ export class CreateAdFacade {
         this.utility() &&
         this.geographicalPosition() &&
         this.cadastralData() &&
-        this.images().length
+        this.images().length > 0
       )
   );
 
-  getBasics(){
+  getBasics() {
     return this.basics();
   }
 
-  getUtility(){
+  getUtility() {
     return this.utility();
   }
 
-  getGeographicalPosition(){
+  getGeographicalPosition() {
     return this.geographicalPosition();
   }
 
-  getCadastralData(){
+  getCadastralData() {
     return this.cadastralData();
   }
 
-  getImages(){
+  getImages() {
     return this.images();
   }
 
@@ -140,14 +138,16 @@ export class CreateAdFacade {
     this.images.set(arr);
   }
 
+  /**
+   * CREATE FLOW:
+   * Utility -> GeographicalPosition -> Detail -> CadastralData -> RealEstate (multipart: { data, images })
+   */
   createAd() {
-
     const basics = this.basics();
     const utility = this.utility();
     const geographicalPosition = this.geographicalPosition();
     const cadastralData = this.cadastralData();
     const imgs = this.images();
-    const agentEmail = this.getAgentEmail();
 
     if (!basics || !utility || !geographicalPosition || !cadastralData) {
       this.error.set('Compila tutti gli step prima di pubblicare.');
@@ -183,83 +183,107 @@ export class CreateAdFacade {
     this.loading.set(true);
     this.error.set(null);
 
-    this.utlilityService.createUtility$Response({ body: utilityRequest })
+    this.utlilityService
+      .createUtility$Response({ body: utilityRequest })
       .pipe(
-        // utilityId: number
+        // 1) Utility creata -> utilityId
         map((response): number => {
           const id = this.extractId(response, ['utilityId']);
           if (id == null) throw new Error('Utility creata ma ID non presente');
           return id;
         }),
 
-        // { utilityId, gpId }: entrambi number
+        // 2) GeographicalPosition creata -> { utilityId, geographicalPositionId }
         switchMap((utilityId: number) =>
-          this.geographicalPositionService.createGeographicalPosition$Response({ body: geographicalPositionRequest }).pipe(
-            map((response): { utilityId: number; geographicalPositionId: number } => {
-              const geographicalPositionId = this.extractId(response, ['geographicalPositionId']);
-              if (geographicalPositionId == null)
-                throw new Error(
-                  'GeographicalPosition creata ma ID non presente'
-                );
-              return { utilityId, geographicalPositionId };
-            })
-          )
-        ),
-
-        // { detailId }
-        switchMap(({ utilityId, geographicalPositionId }) =>
-          this.detailService.createDetail$Response({
-              body: { geographicalPositionId: geographicalPositionId, utilityId },
+          this.geographicalPositionService
+            .createGeographicalPosition$Response({
+              body: geographicalPositionRequest,
             })
             .pipe(
-              map((response): { detailId: number } => {
-                const detailId = this.extractId(response, ['detailId']);
-                if (detailId == null)
-                  throw new Error('Detail creato ma ID non presente');
-                return { detailId };
-              })
+              map(
+                (response): {
+                  utilityId: number;
+                  geographicalPositionId: number;
+                } => {
+                  const geographicalPositionId = this.extractId(response, [
+                    'geographicalPositionId',
+                  ]);
+                  if (geographicalPositionId == null)
+                    throw new Error(
+                      'GeographicalPosition creata ma ID non presente'
+                    );
+                  return { utilityId, geographicalPositionId };
+                }
+              )
             )
         ),
 
-        // { detailId, cadastralId }
-        switchMap(({ detailId }) =>
-          this.cadastralDataService.createCadastralData$Response({ body: cadastralDataRequest }).pipe(
-            map((response): { detailId: number; cadastralId: number } => {
-              const cadastralId = this.extractId(response, ['cadastralDataId']);
-              if (cadastralId == null)
-                throw new Error('Cadastral creato ma ID non presente');
-              return { detailId, cadastralId };
+        // 3) Detail creato -> { detailId }
+        switchMap(({ utilityId, geographicalPositionId }) =>
+          this.detailService
+            .createDetail$Response({
+              body: {
+                geographicalPositionId,
+                utilityId,
+              } as DetailRequest,
             })
-          )
+            .pipe(
+              map(
+                (response): {
+                  detailId: number;
+                } => {
+                  const detailId = this.extractId(response, ['detailId']);
+                  if (detailId == null)
+                    throw new Error('Detail creato ma ID non presente');
+                  return { detailId };
+                }
+              )
+            )
         ),
 
-        // realEstateId: number
-        switchMap(({ detailId, cadastralId }) =>
-          this.readFilesAsDataURL$(imgs).pipe(
-            map((url) => this.dataUrlToBase64(url)),
-            toArray(),
-            switchMap((imagesBase64: string[]) =>
-              this.realEstateService.createRealEstate$Response({
-                  body: {
-                    detailId,
-                    cadastralDataId: cadastralId,
-                    category: basics.category,
-                    description: basics.description,
-                    estateAgentEmail: agentEmail,
-                    images: imagesBase64,
-                  } as RealEstateRequest,
-                })
-                .pipe(
-                  map((response): number => {
-                    const realEstateId = this.extractId(response, ['realEstateId']);
-                    if (realEstateId == null)
-                      throw new Error('Annuncio creato ma ID non presente');
-                    return realEstateId;
-                  })
-                )
+        // 4) CadastralData creata -> { detailId, cadastralId }
+        switchMap(({ detailId }) =>
+          this.cadastralDataService
+            .createCadastralData$Response({ body: cadastralDataRequest })
+            .pipe(
+              map(
+                (response): {
+                  detailId: number;
+                  cadastralId: number;
+                } => {
+                  const cadastralId = this.extractId(response, [
+                    'cadastralDataId',
+                  ]);
+                  if (cadastralId == null)
+                    throw new Error('Cadastral creato ma ID non presente');
+                  return { detailId, cadastralId };
+                }
+              )
             )
-          )
         ),
+
+        switchMap(({ detailId, cadastralId }) => {
+          const realEstateData: RealEstateRequest = {
+            category: basics.category,
+            description: basics.description,
+            detailId,
+            cadastralDataId: cadastralId,
+          };
+
+          return this.realEstateService.createRealEstate$Response({
+            body: {
+              data: realEstateData,
+              images: imgs as Blob[],
+            },
+          });
+        }),
+
+        map((response): number => {
+          const realEstateId = this.extractId(response, ['realEstateId']);
+          if (realEstateId == null)
+            throw new Error('Annuncio creato ma ID non presente');
+          return realEstateId;
+        }),
 
         catchError((error) => {
           this.error.set(
@@ -275,7 +299,7 @@ export class CreateAdFacade {
       });
   }
 
-  clearSavedData(){
+  clearSavedData() {
     this.basics.set(null);
     this.utility.set(null);
     this.geographicalPosition.set(null);
@@ -283,45 +307,7 @@ export class CreateAdFacade {
     this.images.set([]);
   }
 
-  //da eliminare, non recuperiamo nulla dal local storage, al massimo il ruolo
-  private getAgentEmail(): string | null {
-    try {
-      const stored = localStorage.getItem('userEmail');
-      if (stored) return stored;
-      const token = localStorage.getItem('auth.token');
-      if (!token) return null;
-      const base = token.split('.')[1];
-      const json = atob(base.replace(/-/g, '+').replace(/_/g, '/'));
-      const payload = JSON.parse(json);
-      return payload.email || payload.sub || null;
-    } catch {
-      return null;
-    }
-  }
-
   // ---- utils ----
-  private readFilesAsDataURL$(files: File[]): Observable<string> {
-    return from(files).pipe(mergeMap((file) => this.readFileAsDataURL$(file)));
-  }
-
-  private readFileAsDataURL$(file: File): Observable<string> {
-    return new Observable<string>((observer) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        observer.next(String(reader.result));
-        observer.complete();
-      };
-      reader.onerror = (error) => observer.error(error);
-      reader.readAsDataURL(file);
-    });
-  }
-
-  private dataUrlToBase64(dataUrl: string): string {
-    const i = dataUrl.indexOf(',');
-    const s = i >= 0 ? dataUrl.slice(i + 1) : dataUrl;
-    return s.replace(/\s/g, '');
-  }
-
   private extractId(response: any, fallbackKeys: string[] = []): number | null {
     const body = response?.body ?? response;
     const keys = ['id', ...fallbackKeys];

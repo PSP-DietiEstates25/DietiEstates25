@@ -7,5 +7,4 @@ export interface RealEstateRequest {
   category: string;
   description: string;
   detailId?: number;
-  images: Array<string>;
 }

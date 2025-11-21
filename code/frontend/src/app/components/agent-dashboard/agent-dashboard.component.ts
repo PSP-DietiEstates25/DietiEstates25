@@ -10,7 +10,7 @@ import {
   VisitVM,
   OfferVM,
 } from './agent-dashboard.facade';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../manual_services/auth.service';
 import { environment } from '../../../environments/environment.development';
 
 @Component({
@@ -31,18 +31,6 @@ export class AgentDashboardComponent {
 
   isAuthenticated = false;
   email = '';
-
-  ngOnInit(): void {
-    this.facade.loadAds().subscribe();
-
-    // ricarica quando viene pubblicato un nuovo annuncio
-    this.createAdFacade.published$
-      .pipe(
-        switchMap(() => this.facade.loadAds()),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe();
-  }
 
   // Tabs
   tabs: Array<{ key: 'visits' | 'ads' | 'offers'; label: string }> = [
@@ -77,6 +65,22 @@ export class AgentDashboardComponent {
   constructor() {
     // carica la prima tab
     this.facade.loadVisits().subscribe();
+  }
+
+  ngOnInit(): void {
+    this.facade.loadAds().subscribe({
+      next: (page) => {
+        console.log(page);
+      }
+    });
+
+    // ricarica quando viene pubblicato un nuovo annuncio
+    this.createAdFacade.published$
+      .pipe(
+        switchMap(() => this.facade.loadAds()),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
   }
 
   setTab(t: 'visits' | 'ads' | 'offers') {
