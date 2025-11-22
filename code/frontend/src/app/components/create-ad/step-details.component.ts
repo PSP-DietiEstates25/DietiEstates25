@@ -145,6 +145,7 @@ export class StepDetailsComponent {
   this.geoapifyService.getLatitudeLongitudeData(latitude, longitude).pipe(
 
     switchMap((response: any) => {
+
       const result = response?.results?.[0];
 
       const newLatitude = result.lat;
@@ -152,7 +153,7 @@ export class StepDetailsComponent {
 
       this.positionForm.patchValue({
         city: result.city,
-        municipality: result.suburb,
+        municipality: result.suburb ?? result.district,
         address: result.formatted,
         latitude: newLatitude,
         longitude: newLongitude,

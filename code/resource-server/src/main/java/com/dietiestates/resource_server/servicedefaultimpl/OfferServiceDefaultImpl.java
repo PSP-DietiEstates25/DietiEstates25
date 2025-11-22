@@ -145,8 +145,10 @@ public class OfferServiceDefaultImpl implements OfferService {
                 message = "Offer accepted";
             else if (offer.getProposalStatus().equals(ProposalStatus.REJECTED))
                 message = "Offer rejected";
+            else if (offer.getProposalStatus().equals(ProposalStatus.COUNTERED))
+                message = "Offer countered";
         } else if (offer.getProposalCategory().equals(ProposalCategory.COUNTER_OFFER)){
-            message = "Offer countered";
+            message = "Offer countered2";
         }
 
         notificationService.createNotification(

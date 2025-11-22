@@ -508,7 +508,7 @@ export class AgentDashboardFacade {
           this.offerService.updateOfferStatus({
             realestateid: realEstateId,
             offerid: offerId,
-            body: { status: 'REJECTED' } as any,
+            body: { status: 'COUNTERED' } as any,
           })
         ),
         switchMap(() => {
