@@ -19,6 +19,8 @@ import { switchMap } from 'rxjs';
 export class FilterPanelComponent {
   facade = inject(SearchFacade);
 
+  isOpen = signal(true);
+
   setCf<K extends keyof CadastralFilterRequest>(
     k: K,
     v: CadastralFilterRequest[K]
@@ -46,7 +48,6 @@ export class FilterPanelComponent {
     address: '',
     latitude: 0,
     longitude: 0,
-    // radius: (omesso)
   });
 
   private cleanGeo(
@@ -100,6 +101,10 @@ export class FilterPanelComponent {
     maxEnergyClass: 9,
   });
 
+  toggleOpen() {
+    this.isOpen.update((open) => !open);
+  }
+
   apply() {
     this.facade.resetContext();
 
@@ -123,6 +128,50 @@ export class FilterPanelComponent {
         )
       )
       .subscribe({ error: () => {} });
+  }
+
+  reset() {
+    // reset campi "metadati"
+    this.category = 'SALE';
+    this.page = 1;
+    this.size = 12;
+    this.userEmail = '';
+
+    // reset posizione
+    this.geo.set({
+      city: '',
+      municipality: '',
+      address: '',
+      latitude: 0,
+      longitude: 0,
+    });
+
+    // reset utilità
+    this.uti.set({
+      hasAirConditioning: false,
+      hasDoorman: false,
+      hasElevator: false,
+      nearPark: false,
+      nearPublicTransport: false,
+      nearSchool: false,
+    });
+
+    // reset filtri catastali
+    this.cf.set({
+      minPrice: 0,
+      maxPrice: 999999999,
+      minSquareMeters: 0,
+      maxSquareMeters: 100000,
+      minRooms: 0,
+      maxRooms: 50,
+      minFloor: -10,
+      maxFloor: 100,
+      minEnergyClass: 0,
+      maxEnergyClass: 9,
+    });
+
+    // fai subito partire una nuova ricerca "pulita"
+    this.apply();
   }
 }
 

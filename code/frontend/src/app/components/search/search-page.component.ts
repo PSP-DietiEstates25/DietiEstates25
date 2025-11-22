@@ -1,5 +1,4 @@
-// search-page.component.ts
-import { Component, inject, signal, OnDestroy } from '@angular/core';
+import { Component, inject, signal, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { HttpBackend, HttpClient } from '@angular/common/http';
@@ -76,6 +75,28 @@ export class SearchPageComponent implements OnDestroy {
     return `data:${mime};base64,${raw}`;
   }
 
+  goNextPage() {
+    const res = this.facade.nextPage();
+    if (res && typeof (res as any).subscribe === 'function') {
+      (res as any).subscribe({
+        error: () => {
+          // gestire errori
+        },
+      });
+    }
+  }
+
+  goPrevPage() {
+    const res = this.facade.prevPage();
+    if (res && typeof (res as any).subscribe === 'function') {
+      (res as any).subscribe({
+        error: () => {
+          // idem
+        },
+      });
+    }
+  }
+
   ngOnDestroy(): void {
     for (const url of this.blobCache.values()) URL.revokeObjectURL(url);
     this.blobCache.clear();
@@ -83,7 +104,8 @@ export class SearchPageComponent implements OnDestroy {
   }
 
   ngOnInit() {
-    this.facade.runFullSearch({
+    this.facade
+      .runFullSearch({
         category: 'SALE',
         page: 1,
         size: 12,
@@ -99,22 +121,21 @@ export class SearchPageComponent implements OnDestroy {
           hasAirConditioning: false,
           hasDoorman: false,
           hasElevator: false,
-
           nearPark: false,
           nearPublicTransport: false,
           nearSchool: false,
         },
         cadastralFilter: {
-          maxPrice: 0,
           minPrice: 0,
-          minRooms: 0,
-          maxRooms: 0,
-          maxEnergyClass: 0,
-          minEnergyClass: 0,
-          maxSquareMeters: 0,
+          maxPrice: 999999999,
           minSquareMeters: 0,
-          maxFloor: 0,
-          minFloor: 0,
+          maxSquareMeters: 100000,
+          minRooms: 0,
+          maxRooms: 50,
+          minFloor: -10,
+          maxFloor: 100,
+          minEnergyClass: 0,
+          maxEnergyClass: 9,
         },
       })
       .subscribe();

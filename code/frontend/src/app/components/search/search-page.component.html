@@ -11,23 +11,31 @@
 
     <!-- RESULTS -->
     <section class="space-y-4">
-      <header class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold">Risultati</h2>
+      <header class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-semibold">Risultati</h2>
+          <p class="text-xs text-gray-500">
+            {{ facade.searchCards().length }} annunci in questa pagina
+          </p>
+        </div>
+
         <div class="flex items-center gap-2">
           <button
-            class="rounded-xl px-3 py-1.5 text-sm bg-blue-300 hover:bg-blue-500 disabled:opacity-50"
-            (click)="facade.prevPage()"
+            type="button"
+            class="rounded-xl px-3 py-1.5 text-sm bg-blue-100 text-blue-900 hover:bg-blue-200 disabled:opacity-50"
+            (click)="goPrevPage()"
             [disabled]="!facade.hasPrev()"
           >
-            ← Prev
+            ← Pagina precedente
           </button>
 
           <button
-            class="rounded-xl px-3 py-1.5 text-sm bg-blue-300 hover:bg-blue-500 disabled:opacity-50"
-            (click)="facade.nextPage()"
+            type="button"
+            class="rounded-xl px-3 py-1.5 text-sm bg-blue-100 text-blue-900 hover:bg-blue-200 disabled:opacity-50"
+            (click)="goNextPage()"
             [disabled]="!facade.hasNext()"
           >
-            Next →
+            Pagina successiva →
           </button>
         </div>
       </header>
@@ -42,9 +50,14 @@
         <div class="h-4 w-3/5 bg-gray-200 rounded"></div>
       </div>
       } @if (!facade.loading() && facade.searchCards().length === 0) {
-      <div class="space-y-3">
-        <p class="text-sm text-gray-600">
-          Nessun risultato. Prova ad ampliare i filtri.
+      <div
+        class="space-y-3 rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-4"
+      >
+        <p class="text-sm text-gray-700 font-medium">
+          Nessun risultato trovato con questi filtri.
+        </p>
+        <p class="text-xs text-gray-500">
+          Prova ad ampliare il prezzo massimo, i metri quadri o la zona.
         </p>
 
         <!-- Annuncio di prova -->
@@ -91,7 +104,9 @@
             <span
               class="absolute left-3 top-3 rounded-full bg-blue-600/90 text-white text-xs font-medium px-2 py-1"
             >
-              {{ c.category || "SALE" }}
+              {{
+                (c.category || "SALE") === "RENT" ? "In affitto" : "In vendita"
+              }}
             </span>
           </div>
 
@@ -100,10 +115,13 @@
             <h3 class="text-base font-semibold text-gray-900">
               {{ c.title || "Immobile #" + c.id }}
             </h3>
-            <p class="text-sm text-gray-600 line-clamp-2">
-              {{ c.description || "Nessuna descrizione disponibile." }}
-            </p>
-
+            <article
+              class="group rounded-2xl border border-black/10 bg-white/90 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+            >
+              <p class="text-sm text-gray-600 line-clamp-2">
+                {{ c.description || "Nessuna descrizione disponibile." }}
+              </p>
+            </article>
             <!-- meta -->
             <div
               class="flex flex-wrap items-center gap-2 text-xs text-gray-500"
