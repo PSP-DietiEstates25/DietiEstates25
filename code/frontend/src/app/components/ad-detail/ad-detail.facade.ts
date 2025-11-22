@@ -270,10 +270,10 @@ export class AdDetailFacade {
     date: string,
     time: string,
     category: 'SALE' | 'RENT',
-    userEmail: string
   ) {
     const vm = this.vm();
     if (!vm) return;
+    
     const body: VisitRequest = {
       category,
       status: 'PENDING',

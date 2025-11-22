@@ -20,9 +20,6 @@ export class VisitFormComponent {
   @Input()
   isLoggedIn = false;
 
-  @Input()
-  auth?: { getEmail: () => string | null };
-
   @Output()
   success = new EventEmitter<void>();
 
@@ -52,18 +49,11 @@ export class VisitFormComponent {
       return;
     }
 
-    const email = this.auth?.getEmail();
-    if (!email) {
-      this.errorMessage = 'Non riesco a leggere la tua email. Rifai login.';
-      return;
-    }
-
     this.loading = true;
     try {
       const body = {
         category: 'VISIT',
         status: 'PENDING',
-        userEmail: email,
         date: this.form.value.date!, // "YYYY-MM-DD"
         time: this.form.value.time!, // "HH:mm"
       };
