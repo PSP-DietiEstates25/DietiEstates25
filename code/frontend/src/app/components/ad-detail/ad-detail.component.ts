@@ -8,6 +8,8 @@ import { NavbarComponent } from '../../shared/components/navbar/navbar.component
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../manual_services/auth.service';
 
+import { environment } from '../../../environments/environment';
+
 const isHttp = (s: string) => /^https?:\/\//i.test(s);
 const isData = (s: string) => /^data:/i.test(s);
 const looksJpeg = (b64: string) => b64.startsWith('/9j/');
@@ -26,7 +28,6 @@ const looksPng = (b64: string) => b64.startsWith('iVBOR');
   templateUrl: './ad-detail.component.html',
 })
 export class AdDetailComponent {
-
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private authService = inject(AuthService);
@@ -47,6 +48,10 @@ export class AdDetailComponent {
     if (!raw) return null;
 
     if (isHttp(raw) || isData(raw)) return raw;
+
+    if (raw.startsWith('/')) {
+      return `${environment.apiBaseUrl}${raw}`;
+    }
 
     if (raw.startsWith('?') || raw.length < 20) return null;
 
