@@ -68,7 +68,7 @@ export class NotificationsFacade {
     this.categoryService
       .getUserNotificationCategories({})
       .pipe(
-        map(res => adaptUserPreferences(res)),
+        map((res) => adaptUserPreferences(res)),
         tap((prefs) => this._preferences.set(prefs)),
         switchMap((prefs) => {
           const enabled = prefs.filter((p) => p.enabled).map((p) => p.category);
@@ -126,16 +126,6 @@ export class NotificationsFacade {
         body,
       })
       .pipe(
-        tap((res) => {
-          const prefs = this._preferences();
-          this._preferences.set(
-            prefs.map((p) =>
-              p.category === category
-                ? { ...p, enabled: Boolean(res.isActive) }
-                : p
-            )
-          );
-        }),
         catchError((err) => {
           console.error('[NotificationsFacade] setCategoryEnabled error', err);
           this.error.set("Errore nell'aggiornare la preferenza.");
