@@ -40,7 +40,6 @@ public class OfferController {
                 .filter(authority -> authority.equals("USER") || authority.equals("ESTATE_AGENT"))
                 .findFirst().get().toString();
 
-        System.out.println("======================================ROLE: " + creatorRole + "===================================================");
         var offer = offerService.createOffer(request, realestateid, creatorEmail, creatorRole);
         return ResponseEntity.status(HttpStatus.CREATED).body(offer);
     }
@@ -68,8 +67,9 @@ public class OfferController {
         var creatorRole = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .filter(authority -> authority.equals("USER") || authority.equals("ESTATE_AGENT"))
-                .findFirst().toString();
+                .findFirst().get().toString();
 
+        System.out.println("======================================ROLE: " + creatorRole + "===================================================");
         var offers = offerService.getRealEstateOffers(realestateid, creatorEmail, creatorRole, page, size);
         return ResponseEntity.status(HttpStatus.OK).body(offers);
     }

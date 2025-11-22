@@ -197,7 +197,7 @@ export class AdDetailFacade {
     this.realEstateService.getRealEstateById({ realestateid: realEstateId }).subscribe({
       next: (realEstate) => {
         this.realEstateResponse.set(realEstate);
-        this.loadMyOffers(userEmail, realEstate.id!);
+        this.loadMyOffers(realEstate.id!);
         const imgs = realEstate.images ?? [];
         const mainImageUrl = `${environment.apiBaseUrl}${imgs[0]}`
         this.mainImage.set(mainImageUrl);
@@ -300,8 +300,9 @@ export class AdDetailFacade {
     };
   }
 
-  loadMyOffers(userEmail: string, realEstateId: number) {
-    if (!userEmail || !realEstateId) {
+  loadMyOffers(realEstateId: number) {
+
+    if (!realEstateId) {
       this.myOffers.set([]);
       return;
     }
@@ -316,29 +317,13 @@ export class AdDetailFacade {
       })
       .subscribe({
         next: (page: PageOfferResponse) => {
-          const list: OfferResponse[] = Array.isArray(page?.content)
+
+          const offers: OfferResponse[] = Array.isArray(page?.content)
             ? (page.content as OfferResponse[])
             : [];
 
-          const email = userEmail.toLowerCase();
-
-          const mine = list.filter((offerResponse: OfferResponse) => {
-            const realEstateId =
-              (offerResponse as any)?.realEstateId ??
-              (offerResponse as any)?.estateId ??
-              (offerResponse as any)?.ad?.id ??
-              (offerResponse as any)?.realestateId;
-            const userEmail = (
-              (offerResponse as any)?.userEmail ??
-              (offerResponse as any)?.buyerEmail ??
-              (offerResponse as any)?.clientEmail ??
-              ''
-            ).toLowerCase();
-            return realEstateId === realEstateId && userEmail === email;
-          });
-
           this.myOffers.set(
-            mine.map((offerResponse: OfferResponse) => this.toMyOfferVM(offerResponse))
+            offers.map((offerResponse: OfferResponse) => this.toMyOfferVM(offerResponse))
           );
           this.myOffersLoading.set(false);
         },
