@@ -88,9 +88,8 @@ export class AdDetailComponent {
   }
 
   onOfferSuccess() {
-    const email = this.authService.getEmail();
     const current = this.ad();
-    if (email && current?.realEstateId != null) {
+    if (current?.realEstateId != null) {
       this.facade.loadMyOffers(current.realEstateId);
     }
   }
