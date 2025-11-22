@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import com.dietiestates.resource_server.dto.request.StafferRequest;
 
 @RestController
-@RequestMapping("users")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -28,7 +28,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
-    @GetMapping("/userid")
+    @GetMapping("/{userid}")
     public ResponseEntity<UserResponse> getUserById(
             @PathVariable Long userid
     ) throws UserNotFoundException {

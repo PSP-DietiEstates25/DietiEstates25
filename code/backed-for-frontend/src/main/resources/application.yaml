@@ -114,8 +114,6 @@ spring:
               predicates:
                 - Path=/users
                 - Method=POST
-              filters:
-                - RelayTokenIfExists=messaging-client-oidc
 
             #GET /users/{userid}
             - id: resource_server_get_user_by_id

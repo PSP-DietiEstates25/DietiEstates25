@@ -12,6 +12,9 @@ import { AuthService } from '../../manual_services/auth.service';
 import { environment } from '../../../environments/environment';
 import { firstValueFrom } from 'rxjs';
 import { AccountRequest } from '../admin-dashboard/admin-dashboard.facade';
+import { UserControllerService } from '../../services/services';
+import { UserRequest } from '../../services/models';
+import { RegisterUser$Params } from '../../services/fn/user-controller/register-user';
 
 function matchPassword(group: AbstractControl): ValidationErrors | null {
   const p = group.get('password')?.value;
@@ -26,8 +29,10 @@ function matchPassword(group: AbstractControl): ValidationErrors | null {
   templateUrl: './register.component.html',
 })
 export class RegisterComponent {
+
   private formBuilder = inject(FormBuilder);
   private authService = inject(AuthService);
+  private userService = inject(UserControllerService);
 
   loading = signal(false);
   errorMsg = signal<string | null>(null);
@@ -48,6 +53,7 @@ export class RegisterComponent {
   }
 
   async submit(): Promise<void> {
+
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       this.errorMsg.set(
@@ -69,7 +75,7 @@ export class RegisterComponent {
     try {
       await firstValueFrom(this.authService.getCsrf());
       await firstValueFrom(this.authService.register(body));
-      // opzionale: attendi il redirect del router, oppure vai al flusso OIDC
+      await firstValueFrom(this.userService.registerUser({body: {email: email}}));
       window.location.href = environment.loginUrl;
     } catch (err: any) {
       this.errorMsg.set(err?.error?.message || 'Registrazione non riuscita');

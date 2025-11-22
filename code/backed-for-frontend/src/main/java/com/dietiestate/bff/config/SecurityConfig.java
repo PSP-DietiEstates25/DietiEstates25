@@ -65,7 +65,11 @@ public class SecurityConfig {
                     return c;
                 }))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.POST,
+                                "/auth/register",
+                                "/users",
+                                "/users/**"
+                        ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/", "/error", "/actuator/health", "/csrf-token").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(

@@ -37,6 +37,8 @@ public class SecurityConfig {
 
         http.cors(Customizer.withDefaults());
         http.csrf(csrf -> csrf.ignoringRequestMatchers(
+                "/users",
+                "/users/**",
                 "/api/v1/swagger-ui/**",
                 "/api/v1/v3/api-docs/**",
                 "/api/v1/openapi.json"
@@ -47,6 +49,8 @@ public class SecurityConfig {
         http.authorizeHttpRequests(
                 req -> req
                         .requestMatchers(
+                                "/users",
+                                "/users/**",
                                 "/api/v1/swagger-ui/**",
                                 "/api/v1/swagger-ui.html",
                                 "/api/v1/v3/api-docs/**",
