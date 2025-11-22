@@ -1,4 +1,12 @@
-import { Component, OnInit, inject, signal, effect, Signal, computed } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  signal,
+  effect,
+  Signal,
+  computed,
+} from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CreateAdFacade, Category, BasicsDraft } from './create-ad.facade';
@@ -12,7 +20,6 @@ import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.
   templateUrl: './step-basics.component.html',
 })
 export class StepBasicsComponent {
-
   private activatedRoute = inject(ActivatedRoute);
   private toastrService = inject(ToastrService);
   private formBuilder = inject(FormBuilder);
@@ -27,17 +34,17 @@ export class StepBasicsComponent {
     description: ['', [Validators.required, Validators.minLength(3)]],
   });
 
-  constructor(){
+  constructor() {
     effect(() => {
       this._savedBasics = computed(() => this.facade.getBasics());
-      if(this._savedBasics()?.category !== null){
+      if (this._savedBasics()?.category !== null) {
         this.form.patchValue({
-          category: this._savedBasics()?.category
+          category: this._savedBasics()?.category,
         });
       }
-      if(this._savedBasics()?.description !== null){
+      if (this._savedBasics()?.description !== null) {
         this.form.patchValue({
-          description: this._savedBasics()?.description
+          description: this._savedBasics()?.description,
         });
       }
     });
@@ -50,19 +57,19 @@ export class StepBasicsComponent {
   }
   */
 
-  openDiscardModal(){
+  openDiscardModal() {
     this.isDiscardModalOpen = true;
   }
 
-  closeDiscardModal(){
+  closeDiscardModal() {
     this.isDiscardModalOpen = false;
   }
 
-  confirmDiscard(){
+  confirmDiscard() {
     this.closeDiscardModal();
     this.facade.clearSavedData();
     this.routerService.navigate(['/']);
-    this.toastrService.error('Creazione annuncio interrotta!', "Cancellazione");
+    this.toastrService.error('Creazione annuncio interrotta!', 'Cancellazione');
   }
 
   next() {
@@ -71,6 +78,9 @@ export class StepBasicsComponent {
       return;
     }
     this.facade.setBasics(this.form.getRawValue());
-    this.routerService.navigate(['/details'], { relativeTo: this.activatedRoute });
+
+    this.routerService.navigate(['../details'], {
+      relativeTo: this.activatedRoute,
+    });
   }
 }

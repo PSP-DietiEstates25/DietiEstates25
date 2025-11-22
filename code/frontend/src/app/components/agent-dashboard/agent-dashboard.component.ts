@@ -20,7 +20,6 @@ import { environment } from '../../../environments/environment.development';
   templateUrl: './agent-dashboard.component.html',
 })
 export class AgentDashboardComponent {
-
   private router = inject(Router);
   private facade = inject(AgentDashboardFacade);
   private destroyRef = inject(DestroyRef);
@@ -71,7 +70,7 @@ export class AgentDashboardComponent {
     this.facade.loadAds().subscribe({
       next: (page) => {
         console.log(page);
-      }
+      },
     });
 
     // ricarica quando viene pubblicato un nuovo annuncio
@@ -108,7 +107,7 @@ export class AgentDashboardComponent {
     this.facade.loadAds().subscribe();
   }
   goToCreateAd() {
-    this.router.navigate(['/agent/ads/new']);
+    this.router.navigate(['/basics']);
   }
 
   deleteAd(adId: number) {
@@ -128,7 +127,7 @@ export class AgentDashboardComponent {
   loadOffers() {
     this.facade.loadOffers().subscribe();
   }
-  
+
   acceptOffer(o: OfferVM) {
     this.facade.acceptOffer(o).subscribe();
   }
@@ -166,7 +165,9 @@ export class AgentDashboardComponent {
     this.authService.logout().subscribe(() => {
       this.isAuthenticated = false;
       this.email = '';
-      this.router.navigateByUrl(`${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`);
+      this.router.navigateByUrl(
+        `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`
+      );
     });
   }
 }

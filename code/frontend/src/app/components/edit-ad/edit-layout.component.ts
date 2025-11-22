@@ -15,9 +15,7 @@ import { CreateAdFacade } from '../create-ad/create-ad.facade';
   imports: [RouterLink, RouterLinkActive, RouterModule],
   templateUrl: './edit-layout.component.html',
 })
-
 export class EditLayoutComponent implements OnInit {
-  
   private facade = inject(EditAdFacade);
   private activatedRoute = inject(ActivatedRoute);
   private routerService = inject(Router);
@@ -44,10 +42,13 @@ export class EditLayoutComponent implements OnInit {
   ] as const;
 
   ngOnInit(): void {
-    this.realestateId = Number(
-      this.activatedRoute.snapshot.paramMap.get('realestateId')
-    );
-    (this.facade as any).load(this.realestateId);
+    const idFromChild =
+      this.activatedRoute.snapshot.firstChild?.paramMap.get('realestateId');
+
+    const realestateId = idFromChild ? Number(idFromChild) : NaN;
+
+    this.realestateId = realestateId;
+    (this.facade as any).load(realestateId);
   }
 
   cancelEdit() {

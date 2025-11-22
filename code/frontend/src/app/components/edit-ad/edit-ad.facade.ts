@@ -1,12 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { EMPTY, from, Observable, Subject } from 'rxjs';
-import {
-  catchError,
-  finalize,
-  map,
-  switchMap,
-} from 'rxjs/operators';
+import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 
 import {
   GeographicalPositionControllerService,
@@ -64,7 +59,9 @@ export class EditAdFacade {
   private utilityId = signal<number | null>(null);
   private cadastralDataId = signal<number | null>(null);
 
-  private geographicalPositionService = inject(GeographicalPositionControllerService);
+  private geographicalPositionService = inject(
+    GeographicalPositionControllerService
+  );
   private cadsatralDataService = inject(CadastralDataControllerService);
   private detailService = inject(DetailControllerService);
   private utilityService = inject(UtilityControllerService);
@@ -98,6 +95,26 @@ export class EditAdFacade {
         this.images().length > 0
       )
   );
+
+  getBasics(): BasicsDraft | null {
+    return this.basics();
+  }
+
+  getUtility(): UtilityDraft | null {
+    return this.utility();
+  }
+
+  getGeographicalPosition(): GeographicalPositionDraft | null {
+    return this.geographicalPosition();
+  }
+
+  getCadastralData(): CadastralDataDraft | null {
+    return this.cadastralData();
+  }
+
+  getImages(): File[] {
+    return this.images();
+  }
 
   setBasics(basicsDraft: BasicsDraft) {
     this.basics.set(basicsDraft);
@@ -152,8 +169,7 @@ export class EditAdFacade {
       .getRealEstateById$Response({ realestateid: realEstateId })
       .pipe(
         map(
-          (realEstateResponse) =>
-            realEstateResponse.body as RealEstateResponse
+          (realEstateResponse) => realEstateResponse.body as RealEstateResponse
         ),
         switchMap((realEstateDto) => {
           this.setBasics({
@@ -177,7 +193,9 @@ export class EditAdFacade {
           const loadDetail$ = detailId
             ? this.detailService
                 .getDetailById$Response({ detailid: detailId })
-                .pipe((r) => r.pipe(map((detailResponse) => detailResponse.body!)))
+                .pipe((r) =>
+                  r.pipe(map((detailResponse) => detailResponse.body!))
+                )
             : EMPTY;
 
           const loadCadastralData$ = cadastralDataId
@@ -215,9 +233,7 @@ export class EditAdFacade {
               const utility$ = utilityId
                 ? this.utilityService
                     .getUtilityById$Response({ utilityid: utilityId })
-                    .pipe(
-                      map((utilityResponse) => utilityResponse.body!)
-                    )
+                    .pipe(map((utilityResponse) => utilityResponse.body!))
                 : EMPTY;
 
               return from([null]).pipe(
