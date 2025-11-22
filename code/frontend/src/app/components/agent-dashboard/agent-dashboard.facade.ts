@@ -8,8 +8,8 @@ import {
   UtilityControllerService,
   CadastralDataControllerService,
 } from '../../services/services';
-import { CadastralData, CadastralDataRequest, OfferRequest, RealEstateResponse } from '../../services/models';
-import { forkJoin, from, of, EMPTY, concat, defer, Observable } from 'rxjs';
+import { OfferRequest, RealEstateResponse } from '../../services/models';
+import { forkJoin, of, Observable } from 'rxjs';
 import {
   map,
   tap,
@@ -100,47 +100,6 @@ export class AgentDashboardFacade {
   private utilityService = inject(UtilityControllerService);
   private visitService = inject(VisitControllerService);
   private offerService = inject(OfferControllerService);
-
-  private callById$<T>(
-    svc: any,
-    methodNames: string[],
-    id: number | string,
-    payload?: any
-  ): Observable<T> {
-    const attempts: Observable<T>[] = [];
-    for (const name of methodNames) {
-      const fn = svc?.[name];
-      if (typeof fn !== 'function') continue;
-
-      if (payload !== undefined) {
-        attempts.push(
-          defer(
-            () => fn.call(svc, { id, body: payload }) as Observable<T>
-          ).pipe(catchError(() => EMPTY))
-        );
-        attempts.push(
-          defer(() => fn.call(svc, { id, ...payload }) as Observable<T>).pipe(
-            catchError(() => EMPTY)
-          )
-        );
-      }
-      attempts.push(
-        defer(() => fn.call(svc, { id }) as Observable<T>).pipe(
-          catchError(() => EMPTY)
-        )
-      );
-      attempts.push(
-        defer(() => fn.call(svc, id) as Observable<T>).pipe(
-          catchError(() => EMPTY)
-        )
-      );
-    }
-    return attempts.length
-      ? concat(...attempts).pipe(take(1))
-      : defer(() => {
-          throw new Error(`Metodo-byId non trovato: ${methodNames.join(', ')}`);
-        });
-  }
 
   // Mappers
   private toVisitVM(visit: any): VisitVM {
@@ -471,6 +430,7 @@ export class AgentDashboardFacade {
   }
 
   createExternalOffer(): Observable<void> {
+
     const adId = this.addOfferForId();
     const amount = this.addOfferAmount();
     const email = (this.addOfferEmail() || '').trim();
@@ -515,36 +475,54 @@ export class AgentDashboardFacade {
   }
 
   sendCounter(): Observable<void> {
-    const id = this.counterId();
-    const realestateid = this.counterRealEstateId();
-    const amount = this.counterAmount();
+
+    const offerId = this.counterId();
+    const realEstateId = this.counterRealEstateId();
+    const counterAmount = this.counterAmount();
     const message = (this.counterMessage() || '').trim();
 
-    if (!id || !realestateid || !amount || amount <= 0) return of(void 0);
+    if (!offerId || !realEstateId || !counterAmount || counterAmount <= 0) {
+      return of(void 0);
+    }
 
     const prev = this.offers();
+
     this.offers.set(
-      prev.map((offerMap) => (offerMap.id === id ? { ...offerMap, status: 'COUNTERED', amount } : offerMap))
+      prev.map((offerMap) =>
+        offerMap.id === offerId
+          ? { ...offerMap, status: 'COUNTERED', amount: counterAmount }
+          : offerMap
+      )
     );
 
-    return this.offerService.updateOfferStatus({
-        realestateid,
-        offerid: id,
-        body: { status: 'COUNTERED', amount, message } as any,
-      })
+    const counterBody: OfferRequest = {
+      amount: counterAmount,
+      category: 'COUNTER_OFFER',
+      status: 'REJECTED',
+      counterOfId: offerId,
+    };
+
+    return this.offerService.createOffer({ realestateid: realEstateId, body: counterBody })
       .pipe(
+        switchMap(() =>
+          this.offerService.updateOfferStatus({
+            realestateid: realEstateId,
+            offerid: offerId,
+            body: { status: 'REJECTED' } as any,
+          })
+        ),
         switchMap(() => {
           this.cancelCounter();
           return this.loadOffers();
         }),
         catchError((error) => {
           console.error('[Facade] sendCounter error', error);
-          // rollback UI se fallisce
           this.offers.set(prev);
           return of(void 0);
         })
       );
   }
+
 
   private buildAdVM(realEstateResponse: RealEstateResponse): Observable<AdVM> {
 

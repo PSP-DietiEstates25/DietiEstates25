@@ -128,18 +128,23 @@ export class AgentDashboardComponent {
   loadOffers() {
     this.facade.loadOffers().subscribe();
   }
+  
   acceptOffer(o: OfferVM) {
     this.facade.acceptOffer(o).subscribe();
   }
+
   declineOffer(o: OfferVM) {
     this.facade.declineOffer(o).subscribe();
   }
+
   startAddOfferFor(adId: number) {
     this.facade.startAddOfferFor(adId);
   }
+
   cancelAddOffer() {
     this.facade.cancelAddOffer();
   }
+
   submitExternalOffer() {
     this.facade.createExternalOffer().subscribe();
   }
@@ -148,9 +153,11 @@ export class AgentDashboardComponent {
   startCounter(o: OfferVM) {
     this.facade.startCounter(o);
   }
+
   cancelCounter() {
     this.facade.cancelCounter();
   }
+
   sendCounter() {
     this.facade.sendCounter().subscribe();
   }
