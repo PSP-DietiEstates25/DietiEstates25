@@ -5,4 +5,6 @@ export const environment = {
     apiKeyParam: "apiKey=",
     geoapifyAPIKey: "secretKey",
     loginUrl: `http://localhost:8080/oauth2/authorization/messaging-client-oidc?prompt=login`,
+    placesRadius: 500,
+    placesLimit: 20
 };

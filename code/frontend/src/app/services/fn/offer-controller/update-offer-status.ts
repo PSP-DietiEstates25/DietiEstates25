@@ -14,7 +14,7 @@ import { OfferResponse } from '../../models/offer-response';
 export interface UpdateOfferStatus$Params {
   realestateid: number;
   offerid: number;
-      body: OfferRequest
+  body: OfferRequest
 }
 
 export function updateOfferStatus(http: HttpClient, rootUrl: string, params: UpdateOfferStatus$Params, context?: HttpContext): Observable<StrictHttpResponse<OfferResponse>> {

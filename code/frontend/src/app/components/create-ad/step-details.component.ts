@@ -6,6 +6,8 @@ import { MapComponent } from '../map/map.component';
 import { ToastrService } from 'ngx-toastr';
 import { GeoapifyService } from '../../manual_services/geoapify.service';
 import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.component';
+import { NearTag } from '../../manual_services/geoapify.service';
+import { switchMap, pipe } from 'rxjs';
 
 @Component({
   selector: 'app-step-details',
@@ -127,32 +129,51 @@ export class StepDetailsComponent {
   }
 
   next() {
-    this.submitted = true;
-    const latitude = this.positionForm.value.latitude as number;
-    const longitude = this.positionForm.value.longitude as number;
+  this.submitted = true;
 
-    /*
-    if (this.utilitiesForm.invalid || this.positionForm.invalid) {
-      this.utilitiesForm.markAllAsTouched();
-      this.positionForm.markAllAsTouched();
-      return;
-    }
-    */
+  const latitude = Number(this.positionForm.value.latitude);
+  const longitude = Number(this.positionForm.value.longitude);
 
-    this.geoapifyService.getLatitudeLongitudeData(latitude, longitude).subscribe({
-      next: (data: any) => {
-        this.positionForm.patchValue({
-          city: data.results[0].city,
-          municipality: data.results[0].suburb,
-          address: data.results[0].formatted,
+  /*
+  if (this.utilitiesForm.invalid || this.positionForm.invalid) {
+    this.utilitiesForm.markAllAsTouched();
+    this.positionForm.markAllAsTouched();
+    return;
+  }
+  */
 
-          //ATTENZIONE: LATITUDE E LONGITUDE VENGONO SOVRASCRITTI CON QUELLI TROVATI DA GEOAPIFY, QUINDI POTREBBERO NON COINCIDERE CON QUELLI ORIGINALI
-          latitude: data.results[0].lat,
-          longitude: data.results[0].lon,
+  this.geoapifyService.getLatitudeLongitudeData(latitude, longitude).pipe(
+
+    switchMap((response: any) => {
+      const result = response?.results?.[0];
+
+      const newLatitude = result.lat;
+      const newLongitude = result.lon;
+
+      this.positionForm.patchValue({
+        city: result.city,
+        municipality: result.suburb,
+        address: result.formatted,
+        latitude: newLatitude,
+        longitude: newLongitude,
+      });
+
+      return this.geoapifyService.getNearPlacesByLatitudeLongitude(newLatitude, newLongitude);
+      
+    })).subscribe({
+      next: (nearTagsResponse: NearTag[]) => {
+
+        this.utilitiesForm.patchValue({
+          nearPark: nearTagsResponse.includes('NEAR_PARKS'),
+          nearPublicTransport: nearTagsResponse.includes('NEAR_PUBLIC_TRANSPORT'),
+          nearSchool: nearTagsResponse.includes('NEAR_SCHOOLS'),
         });
 
         this.saveFormData();
         this.routerService.navigate(['/cadastraldata'], { relativeTo: this.activatedRoute });
+      },
+      error: (error) => {
+        console.error(error);
       },
     });
   }
@@ -162,3 +183,4 @@ export class StepDetailsComponent {
     this.facade.setPosition(this.positionForm.getRawValue());
   }
 }
+

@@ -7,7 +7,8 @@ import lombok.Getter;
 public enum ProposalStatus {
     PENDING(0),
     ACCEPTED(1),
-    REJECTED(2);
+    REJECTED(2),
+    COUNTERED(3);
 
     @Getter
     private final int order;
