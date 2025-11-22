@@ -19,12 +19,24 @@ public class OfferMapperDefaultImpl implements OfferMapper {
 				.category(request.getCategory())
 				.status(request.getStatus())
 				.amount(request.getAmount())
-                .counterOfId(request.getCounterOfId())
+                .counterOfId(request.getCounterOfId() != null ? request.getCounterOfId() : null)
 				.build();
 	}
 	
 	@Override
 	public OfferResponse fromEntity(Offer offer) {
+
+        Long counterOfId = null;
+        Long counterOfferId = null;
+
+        if (offer.getCounterOf() != null) {
+            counterOfId = offer.getCounterOf().getId();
+        }
+
+        if (offer.getCounterOffer() != null) {
+            counterOfferId = offer.getCounterOffer().getId();
+        }
+
 		return OfferResponse.offerResponseBuilder()
 				.id(offer.getId())
 				.createdDate(offer.getCreatedDate())
@@ -35,8 +47,8 @@ public class OfferMapperDefaultImpl implements OfferMapper {
 				.realEstateId(offer.getNegotiation().getRealEstate().getId())
                 .estateAgentEmail(offer.getNegotiation().getEstateAgent().getEmail())
 				.amount(offer.getAmount())
-                .counterOfId(offer.getCounterOf().getId())
-                .counterOfferId(offer.getCounterOffer().getId())
+                .counterOfId(counterOfId)
+                .counterOfferId(counterOfferId)
 				.build();
 	}
 

@@ -18,6 +18,9 @@ export class AuthCallbackComponent implements OnInit {
   ngOnInit(): void {
     this.authService.getUserInfo().subscribe({
       next: (userInfo) => {
+        this.authService.setUserInfo({email: userInfo.sub, role: userInfo.role[0]});
+        console.log(this.authService.getInfo());
+        console.log(this.authService.getEmail());
         this.localStorageService.setItem('role', userInfo.role[0]);
         this.localStorageService.setItem('isAuthenticated', 'true');
         this.routerService.navigateByUrl('/');

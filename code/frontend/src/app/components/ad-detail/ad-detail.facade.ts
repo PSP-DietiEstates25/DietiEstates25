@@ -21,6 +21,8 @@ import {
   UtilityControllerService,
 } from '../../services/services';
 import { UtilityResponse } from '../../services/models/utility-response';
+import { environment } from '../../../environments/environment';
+import { AuthService } from '../../manual_services/auth.service';
 
 export type AdVM = {
   realEstateId: number;
@@ -197,7 +199,8 @@ export class AdDetailFacade {
         this.realEstateResponse.set(realEstate);
         this.loadMyOffers(userEmail, realEstate.id!);
         const imgs = realEstate.images ?? [];
-        this.mainImage.set(imgs[0] ?? null);
+        const mainImageUrl = `${environment.apiBaseUrl}${imgs[0]}`
+        this.mainImage.set(mainImageUrl);
 
         const detailId = realEstate.detailId;
         if (detailId != null) {
@@ -252,7 +255,7 @@ export class AdDetailFacade {
     this.mainImage.set(src);
   }
 
-  submitOffer(amount: number, category: 'SALE' | 'RENT', userEmail: string) {
+  submitOffer(amount: number, category: 'SALE' | 'RENT') {
     const vm = this.vm();
     if (!vm) return;
     const body: OfferRequest = {

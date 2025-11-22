@@ -119,14 +119,12 @@
       <app-offer-form
         [realEstateId]="ad()!.realEstateId"
         [isLoggedIn]="isLogged()"
-        [auth]="auth"
         (loginRequired)="goLogin()"
         (success)="onOfferSuccess()"
       />
       <app-visit-form
         [realEstateId]="ad()!.realEstateId"
         [isLoggedIn]="isLogged()"
-        [auth]="auth"
         (loginRequired)="goLogin()"
         (success)="onVisitSuccess()"
       />

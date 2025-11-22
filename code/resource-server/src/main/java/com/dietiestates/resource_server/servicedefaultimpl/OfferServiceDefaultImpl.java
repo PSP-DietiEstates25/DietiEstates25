@@ -78,7 +78,7 @@ public class OfferServiceDefaultImpl implements OfferService {
 
         var counterOffer = offerFactory.createOfferFromSpec(offerSpec, negotiation);
         counterOffer.setProposalCategory(ProposalCategory.COUNTER_OFFER);
-        userOffer.setCounterOfOffer(counterOffer);
+        counterOffer.setCounterOfOffer(userOffer);
         offerRepository.save(counterOffer);
 
         return offerMapper.fromEntity(counterOffer);
