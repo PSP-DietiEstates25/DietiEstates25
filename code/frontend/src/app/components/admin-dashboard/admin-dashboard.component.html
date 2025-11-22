@@ -104,7 +104,7 @@
               (ngModelChange)="editPrice.set($event === '' ? null : +$event)"
             />
           </div>
-          <div class="sm:col-span-2 flex items-center gap-3">
+          <div class=" flex items-center gap-3">
             <label class="inline-flex items-center gap-2"
               ><input
                 type="checkbox"
@@ -141,8 +141,8 @@
     <div class="grid lg:grid-cols-2 gap-4">
       <article class="rounded-2xl border dark:border-slate-700 p-4">
         <h3 class="font-semibold mb-3">Crea utente</h3>
-        <form [formGroup]="createForm" class="grid sm:grid-cols-2 gap-3">
-          <div class="sm:col-span-2">
+        <form [formGroup]="createForm" class="flex flex-col gap-3 max-w-md mx-auto">
+          <div class="">
             <label for="email" class="block text-sm mb-1">Email</label>
             <input
               id="email"
@@ -167,11 +167,29 @@
               formControlName="password"
             />
           </div>
-          <div class="sm:col-span-2 flex justify-end gap-2 mt-2">
-            <button type="button" class="btn_primary" (click)="createUser()">
-              Crea
-            </button>
+          <div>
+            <label for="pwd2" class="block text-sm mb-1"
+              >Conferma password</label
+            >
+            <input
+              id="pwd2"
+              type="password"
+              class="input_main w-full"
+              formControlName="confirm"
+            />
+            @if ( createForm.hasError('mismatch') && (createForm.dirty ||
+            createForm.touched) ) {
+            <p class="text-xs text-red-500 mt-1">Le password non coincidono.</p>
+            }
           </div>
+          <button
+            type="button"
+            class="btn_primary"
+            (click)="createUser()"
+            [disabled]="createForm.invalid"
+          >
+            Crea
+          </button>
         </form>
       </article>
     </div>

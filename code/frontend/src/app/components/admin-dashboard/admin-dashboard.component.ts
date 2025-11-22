@@ -6,6 +6,7 @@ import {
   FormBuilder,
   Validators,
   AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 import {
   AdminDashboardFacade,
@@ -62,11 +63,15 @@ export class AdminDashboardComponent {
   usersLoading = signal(false);
   roleFilter = signal<Role | ''>('');
 
-  createForm = this.formBuilder.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
-    role: ['ESTATE_AGENT' as Role, [Validators.required]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-  });
+  createForm = this.formBuilder.nonNullable.group(
+    {
+      email: ['', [Validators.required, Validators.email]],
+      role: ['ESTATE_AGENT' as Role, [Validators.required]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirm: ['', [Validators.required]],
+    },
+    { validators: matchPassword }
+  );
 
   constructor() {
     this.loadAds();
@@ -136,12 +141,16 @@ export class AdminDashboardComponent {
       this.createForm.markAllAsTouched();
       return;
     }
-    this.facade.createUser(this.createForm.getRawValue()).subscribe({
+
+    const { email, role, password } = this.createForm.getRawValue();
+
+    this.facade.createUser({ email, role, password }).subscribe({
       next: (_) => {
         this.createForm.reset({
           email: '',
           role: 'ESTATE_AGENT',
           password: '',
+          confirm: '',
         });
       },
     });
@@ -198,4 +207,10 @@ export class AdminDashboardComponent {
       },
     });
   }
+}
+
+function matchPassword(group: AbstractControl): ValidationErrors | null {
+  const p = group.get('password')?.value;
+  const c = group.get('confirm')?.value;
+  return p && c && p !== c ? { mismatch: true } : null;
 }
