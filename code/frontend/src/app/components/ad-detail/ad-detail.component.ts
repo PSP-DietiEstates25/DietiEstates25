@@ -6,6 +6,7 @@ import { VisitFormComponent } from '../visit/visit-form.component';
 import { DecimalPipe, DatePipe } from '@angular/common';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../../manual_services/auth.service';
 
 const isHttp = (s: string) => /^https?:\/\//i.test(s);
 const isData = (s: string) => /^data:/i.test(s);
@@ -25,8 +26,10 @@ const looksPng = (b64: string) => b64.startsWith('iVBOR');
   templateUrl: './ad-detail.component.html',
 })
 export class AdDetailComponent {
+
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private authService = inject(AuthService);
   private facade = inject(AdDetailFacade);
   private http = inject(HttpClient);
 
@@ -55,18 +58,6 @@ export class AdDetailComponent {
     return `data:${mime};base64,${raw}`;
   };
 
-  auth: {
-    getEmail: () => string | null;
-    isAuthenticated: () => boolean;
-  } = {
-    getEmail: () =>
-      localStorage.getItem('userEmail') || localStorage.getItem('auth.email'),
-    isAuthenticated: () =>
-      !!localStorage.getItem('token') ||
-      !!localStorage.getItem('auth.token') ||
-      !!localStorage.getItem('accessToken'),
-  };
-
   constructor() {
     const idParam =
       this.route.snapshot.paramMap.get('detailId') ??
@@ -74,7 +65,7 @@ export class AdDetailComponent {
 
     const detailId = idParam != null ? Number(idParam) : NaN;
 
-    const userEmail = this.auth.getEmail() ?? undefined;
+    const userEmail = this.authService.getEmail();
 
     this.facade.loadByRealEstateId(detailId, { userEmail });
   }
@@ -84,7 +75,7 @@ export class AdDetailComponent {
   }
 
   isLogged() {
-    return !!this.auth.isAuthenticated?.();
+    return !!this.authService.isAuthenticated?.();
   }
 
   goLogin() {
@@ -92,7 +83,7 @@ export class AdDetailComponent {
   }
 
   onOfferSuccess() {
-    const email = this.auth.getEmail();
+    const email = this.authService.getEmail();
     const current = this.ad();
     if (email && current?.realEstateId != null) {
       this.facade.loadMyOffers(email, current.realEstateId);

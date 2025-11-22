@@ -3,6 +3,8 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OfferControllerService } from '../../services/services';
 import { firstValueFrom } from 'rxjs';
+import { AuthService } from '../../manual_services/auth.service';
+
 @Component({
   selector: 'app-offer-form',
   standalone: true,
@@ -13,15 +15,13 @@ export class OfferFormComponent {
 
   private formBuilder = inject(FormBuilder);
   private offerService = inject(OfferControllerService);
+  private authService = inject(AuthService);
 
   @Input()
   realEstateId!: number;
 
   @Input()
   isLoggedIn = false;
-
-  @Input()
-  auth?: { getEmail: () => string | null };
 
   @Output()
   success = new EventEmitter<void>();
@@ -50,18 +50,11 @@ export class OfferFormComponent {
       return;
     }
 
-    const email = this.auth?.getEmail();
-    if (!email) {
-      this.error = 'Non riesco a leggere la tua email. Rifai login.';
-      return;
-    }
-
     this.loading = true;
     try {
       const body = {
         category: 'OFFER',
         status: 'PENDING',
-        userEmail: email,
         amount: Number(this.form.value.amount),
       };
 

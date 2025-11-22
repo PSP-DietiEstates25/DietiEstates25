@@ -1,7 +1,12 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AccountResponse } from '../components/admin-dashboard/admin-dashboard.facade';
 import { LocalStorageService } from './local-storage.service';
+
+export interface UserInfo {
+  email: string,
+  role: string
+}
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +14,7 @@ import { LocalStorageService } from './local-storage.service';
 export class AuthService {
 
   private readonly localStorageService = inject(LocalStorageService);
+  private userInfo = signal<UserInfo | null>(null);
 
   httpClient = inject(HttpClient);
 
@@ -49,6 +55,10 @@ export class AuthService {
     return this.httpClient.patch(url, changeAdminPasswordRequest, this.httpOptions);
   }
 
+  isAuthenticated(){
+    return this.localStorageService.getItem("isAuthenticated") == 'true' ? true : false;
+  }
+
   isEstateAgent(){
     return this.localStorageService.getItem("role") === "ESTATE_AGENT";
   }
@@ -67,5 +77,17 @@ export class AuthService {
 
   getRole(){
     return this.localStorageService.getItem("role");
+  }
+
+  setUserInfo(info: UserInfo | null) {
+    this.userInfo.set(info);
+  }
+
+  getInfo(){
+    return this.userInfo();
+  }
+  
+  getEmail(){
+    return this.userInfo()?.email;
   }
 }

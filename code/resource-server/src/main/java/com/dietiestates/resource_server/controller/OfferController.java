@@ -26,7 +26,7 @@ public class OfferController {
     private final OfferService offerService;
 
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('USER, ESTATE_AGENT')")
+    @PreAuthorize("hasAnyAuthority('USER', 'ESTATE_AGENT')")
     public ResponseEntity<OfferResponse> createOffer(
             @RequestBody OfferRequest request,
             @PathVariable Long realestateid,
@@ -38,8 +38,9 @@ public class OfferController {
         var creatorRole = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .filter(authority -> authority.equals("USER") || authority.equals("ESTATE_AGENT"))
-                .findFirst().toString();
+                .findFirst().get().toString();
 
+        System.out.println("======================================ROLE: " + creatorRole + "===================================================");
         var offer = offerService.createOffer(request, realestateid, creatorEmail, creatorRole);
         return ResponseEntity.status(HttpStatus.CREATED).body(offer);
     }
@@ -54,7 +55,7 @@ public class OfferController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('USER, ESTATE_AGENT')")
+    @PreAuthorize("hasAnyAuthority('USER', 'ESTATE_AGENT')")
     public ResponseEntity<Page<OfferResponse>> getRealEstateOffers(
             @PathVariable Long realestateid,
             @RequestParam(required = false, defaultValue = "1") Integer page,

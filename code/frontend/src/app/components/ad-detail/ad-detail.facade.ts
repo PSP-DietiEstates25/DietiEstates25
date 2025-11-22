@@ -22,6 +22,7 @@ import {
 } from '../../services/services';
 import { UtilityResponse } from '../../services/models/utility-response';
 import { environment } from '../../../environments/environment';
+import { AuthService } from '../../manual_services/auth.service';
 
 export type AdVM = {
   realEstateId: number;
@@ -254,7 +255,7 @@ export class AdDetailFacade {
     this.mainImage.set(src);
   }
 
-  submitOffer(amount: number, category: 'SALE' | 'RENT', userEmail: string) {
+  submitOffer(amount: number, category: 'SALE' | 'RENT') {
     const vm = this.vm();
     if (!vm) return;
     const body: OfferRequest = {
