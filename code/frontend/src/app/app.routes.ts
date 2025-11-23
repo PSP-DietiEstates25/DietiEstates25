@@ -27,11 +27,11 @@ export const routes: Routes = [
     children: [
       {
         path: 'register',
-        component: RegisterComponent
+        component: RegisterComponent,
       },
       {
         path: 'callback',
-        component: AuthCallbackComponent
+        component: AuthCallbackComponent,
       },
     ],
   },
@@ -50,41 +50,42 @@ export const routes: Routes = [
     canActivate: [isEstateAgentGuard],
     component: AgentCreateLayoutComponent,
     children: [
-      { 
+      {
         path: '',
         title: 'Publishing',
         pathMatch: 'full',
-        redirectTo: 'basics'
+        redirectTo: 'basics',
       },
       {
         path: 'basics',
         title: 'Basics info step',
-        component: StepBasicsComponent
+        component: StepBasicsComponent,
       },
       {
         path: 'details',
         title: 'Details step',
-        component: StepDetailsComponent
+        component: StepDetailsComponent,
       },
       {
         path: 'cadastraldata',
         title: 'Cadastral data step',
-        component: StepCadastralComponent 
+        component: StepCadastralComponent,
       },
       {
         path: 'photos',
         title: 'Photos step',
-        component: StepPhotosComponent
+        component: StepPhotosComponent,
       },
       {
-        path: 'reviews',
+        path: 'review',
         title: 'Review',
-        component: StepReviewComponent
+        component: StepReviewComponent,
       },
     ],
   },
+  
   {
-    path: '',
+    path: 'edit/:realestateId',
     canActivate: [isEstateAgentGuard],
     component: EditLayoutComponent,
     providers: [
@@ -92,31 +93,18 @@ export const routes: Routes = [
       { provide: CreateAdFacade, useExisting: EditAdFacade },
     ],
     children: [
-      {
-        path: 'details/:detailId',
-        component: StepDetailsComponent
-      },
-      {
-        path: 'basics/:realestateId',
-        component: StepBasicsComponent
-      },
-      {
-        path: 'cadastraldata/:cadastralId',
-        component: StepCadastralComponent
-      },
-      {
-        path: 'photos/:photoSetId',
-        component: StepPhotosComponent
-      },
-      {
-        path: 'reviews/:realestateId',
-        component: StepReviewComponent
-      },
+      { path: '', pathMatch: 'full', redirectTo: 'basics' },
+      { path: 'basics', component: StepBasicsComponent },
+      { path: 'details', component: StepDetailsComponent },
+      { path: 'cadastraldata', component: StepCadastralComponent },
+      { path: 'photos', component: StepPhotosComponent },
+      { path: 'review', component: StepReviewComponent },
     ],
   },
+
   {
     path: 'ad/:id',
-    component: AdDetailComponent
+    component: AdDetailComponent,
   },
 
   {
@@ -210,7 +198,6 @@ export const routes: Routes = [
     ],
   },
 */
-
 
 /*
 

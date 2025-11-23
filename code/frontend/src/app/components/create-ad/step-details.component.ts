@@ -1,7 +1,24 @@
-import { Component, OnInit, Signal, computed, effect, inject, signal } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
+import {
+  Component,
+  OnInit,
+  Signal,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  Validators,
+  FormGroup,
+} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { CreateAdFacade, PositionDraft, UtilitiesDraft } from './create-ad.facade';
+import {
+  CreateAdFacade,
+  PositionDraft,
+  UtilitiesDraft,
+} from './create-ad.facade';
 import { MapComponent } from '../map/map.component';
 import { ToastrService } from 'ngx-toastr';
 import { GeoapifyService } from '../../manual_services/geoapify.service';
@@ -16,7 +33,6 @@ import { switchMap, pipe } from 'rxjs';
   templateUrl: './step-details.component.html',
 })
 export class StepDetailsComponent {
-
   private activatedRoute = inject(ActivatedRoute);
   private geoapifyService = inject(GeoapifyService);
   private toastrService = inject(ToastrService);
@@ -48,25 +64,39 @@ export class StepDetailsComponent {
     longitude: [14.24641, Validators.required],
     radius: [0],
   });
-  
-  constructor(){
+
+  constructor() {
     effect(() => {
       this._savedUtility = computed(() => this.facade.getUtility());
-      this._savedGeographicalPosition = computed(() => this.facade.getGeographicalPosition());
-      if(this._savedUtility()?.hasAirConditioning !== null){
-        this.utilitiesForm.patchValue({
-          hasAirConditioning: this._savedUtility()?.hasAirConditioning
-        });
+      this._savedGeographicalPosition = computed(() =>
+        this.facade.getGeographicalPosition()
+      );
+
+      const util = this._savedUtility();
+      if (util) {
+        this.utilitiesForm.patchValue(
+          {
+            hasAirConditioning: util.hasAirConditioning,
+            hasDoorman: util.hasDoorman,
+            hasElevator: util.hasElevator,
+          },
+          { emitEvent: false }
+        );
       }
-      if(this._savedUtility()?.hasDoorman !== null){
-        this.utilitiesForm.patchValue({
-          hasDoorman: this._savedUtility()?.hasDoorman
-        });
-      }
-      if(this._savedUtility()?.hasElevator !== null){
-        this.utilitiesForm.patchValue({
-          hasElevator: this._savedUtility()?.hasElevator
-        });
+
+      const pos = this._savedGeographicalPosition();
+      if (pos) {
+        this.positionForm.patchValue(
+          {
+            address: pos.address,
+            city: pos.city,
+            municipality: pos.municipality,
+            latitude: pos.latitude,
+            longitude: pos.longitude,
+            radius: pos.radius ?? 0,
+          },
+          { emitEvent: false }
+        );
       }
     });
   }
@@ -81,23 +111,23 @@ export class StepDetailsComponent {
   }
   */
 
-  get address(){
+  get address() {
     return this.positionForm.get('address');
   }
 
-  get municipality(){
+  get municipality() {
     return this.positionForm.get('municipality');
   }
 
-  get city(){
+  get city() {
     return this.positionForm.get('city');
   }
 
-  get latitude(){
+  get latitude() {
     return this.positionForm.get('latitude');
   }
 
-  get longitude(){
+  get longitude() {
     return this.positionForm.get('longitude');
   }
 
@@ -108,33 +138,35 @@ export class StepDetailsComponent {
     this.positionForm.patchValue({ longitude: longitude });
   }
 
-  openDiscardModal(){
+  openDiscardModal() {
     this.isDiscardModalOpen = true;
   }
 
-  closeDiscardModal(){
+  closeDiscardModal() {
     this.isDiscardModalOpen = false;
   }
 
-  confirmDiscard(){
+  confirmDiscard() {
     this.closeDiscardModal();
     this.facade.clearSavedData();
     this.routerService.navigate(['/']);
-    this.toastrService.error('Creazione annuncio interrotta!', "Cancellazione");
+    this.toastrService.error('Creazione annuncio interrotta!', 'Cancellazione');
   }
 
-  previous(){
+  previous() {
     this.saveFormData();
-    this.routerService.navigateByUrl('/basics');
+    this.routerService.navigate(['../basics'], {
+      relativeTo: this.activatedRoute,
+    });
   }
 
   next() {
-  this.submitted = true;
+    this.submitted = true;
 
-  const latitude = Number(this.positionForm.value.latitude);
-  const longitude = Number(this.positionForm.value.longitude);
+    const latitude = Number(this.positionForm.value.latitude);
+    const longitude = Number(this.positionForm.value.longitude);
 
-  /*
+    /*
   if (this.utilitiesForm.invalid || this.positionForm.invalid) {
     this.utilitiesForm.markAllAsTouched();
     this.positionForm.markAllAsTouched();
@@ -142,46 +174,42 @@ export class StepDetailsComponent {
   }
   */
 
-  this.geoapifyService.getLatitudeLongitudeData(latitude, longitude).pipe(
+    this.geoapifyService
+      .getLatitudeLongitudeData(latitude, longitude)
+      .pipe(
+        switchMap((response: any) => {
+          const result = response?.results?.[0];
 
-    switchMap((response: any) => {
+          const newLatitude = result.lat;
+          const newLongitude = result.lon;
 
-      const result = response?.results?.[0];
+          this.positionForm.patchValue({
+            city: result.city,
+            municipality: result.suburb ?? result.district,
+            address: result.formatted,
+            latitude: newLatitude,
+            longitude: newLongitude,
+          });
 
-      const newLatitude = result.lat;
-      const newLongitude = result.lon;
-
-      this.positionForm.patchValue({
-        city: result.city,
-        municipality: result.suburb ?? result.district,
-        address: result.formatted,
-        latitude: newLatitude,
-        longitude: newLongitude,
+          return this.geoapifyService.getNearPlacesByLatitudeLongitude(
+            newLatitude,
+            newLongitude
+          );
+        })
+      )
+      .subscribe({
+        next: (nearTagsResponse: NearTag[]) => {
+          this.saveFormData();
+          this.routerService.navigate(['../cadastraldata'], {
+            relativeTo: this.activatedRoute,
+          });
+        },
+        error: (error) => console.error(error),
       });
-
-      return this.geoapifyService.getNearPlacesByLatitudeLongitude(newLatitude, newLongitude);
-      
-    })).subscribe({
-      next: (nearTagsResponse: NearTag[]) => {
-
-        this.utilitiesForm.patchValue({
-          nearPark: nearTagsResponse.includes('NEAR_PARKS'),
-          nearPublicTransport: nearTagsResponse.includes('NEAR_PUBLIC_TRANSPORT'),
-          nearSchool: nearTagsResponse.includes('NEAR_SCHOOLS'),
-        });
-
-        this.saveFormData();
-        this.routerService.navigate(['/cadastraldata'], { relativeTo: this.activatedRoute });
-      },
-      error: (error) => {
-        console.error(error);
-      },
-    });
   }
 
-  saveFormData(){
+  saveFormData() {
     this.facade.setUtilities(this.utilitiesForm.getRawValue());
     this.facade.setPosition(this.positionForm.getRawValue());
   }
 }
-

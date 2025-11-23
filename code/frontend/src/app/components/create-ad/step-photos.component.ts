@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CreateAdFacade } from './create-ad.facade';
 import { ToastrService } from 'ngx-toastr';
@@ -11,7 +11,6 @@ import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.
   templateUrl: './step-photos.component.html',
 })
 export class StepPhotosComponent {
-  
   private activatedRoute = inject(ActivatedRoute);
   private toastrService = inject(ToastrService);
   private facade = inject(CreateAdFacade);
@@ -19,6 +18,14 @@ export class StepPhotosComponent {
 
   previews: string[] = [];
   isDiscardModalOpen = false;
+
+  constructor() {
+    effect(() => {
+      const imgs = this.facade.getImages();
+      this.clearPreviews();
+      this.previews = (imgs ?? []).map((file) => URL.createObjectURL(file));
+    });
+  }
 
   ngOnInit() {
     this.rebuildPreviews();
@@ -48,27 +55,31 @@ export class StepPhotosComponent {
     this.rebuildPreviews();
   }
 
-  openDiscardModal(){
+  openDiscardModal() {
     this.isDiscardModalOpen = true;
   }
 
-  closeDiscardModal(){
+  closeDiscardModal() {
     this.isDiscardModalOpen = false;
   }
 
-  confirmDiscard(){
+  confirmDiscard() {
     this.closeDiscardModal();
     this.facade.clearSavedData();
     this.routerService.navigate(['/']);
-    this.toastrService.error('Creazione annuncio interrotta!', "Cancellazione");
+    this.toastrService.error('Creazione annuncio interrotta!', 'Cancellazione');
   }
 
-  previous(){
-    this.routerService.navigate(['/cadastraldata']);
+  previous() {
+    this.routerService.navigate(['../cadastraldata'], {
+      relativeTo: this.activatedRoute,
+    });
   }
 
   next() {
-    this.routerService.navigate(['/reviews'], { relativeTo: this.activatedRoute });
+    this.routerService.navigate(['../review'], {
+      relativeTo: this.activatedRoute,
+    });
   }
 
   private rebuildPreviews() {
