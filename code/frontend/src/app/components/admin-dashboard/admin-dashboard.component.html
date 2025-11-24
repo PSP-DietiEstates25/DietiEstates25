@@ -53,77 +53,36 @@
     <div class="py-12 text-center">Caricamento…</div>
     } @else {
     <div class="grid lg:grid-cols-2 gap-4">
-      @for (a of ads(); track a.id) {
+      @for (ad of ads(); track ad.id) {
       <article class="rounded-2xl border dark:border-slate-700 p-4">
-        @if (editId() !== a.id) {
         <div class="flex items-start justify-between gap-3">
           <div>
             <h3 class="font-semibold text-slate-900 dark:text-white">
-              {{ a.title }}
+              {{ ad.title }}
             </h3>
             <p class="text-sm text-slate-600 dark:text-slate-300">
-              {{ a.city || "—" }} • Creato {{ a.createdAt | date : "short" }}
+              {{ ad.city || "—" }} • Creato {{ ad.createdAt | date : "short" }}
             </p>
             <div class="mt-1 text-sm">
-              @if (a.price != null) { € {{ a.price | number : "1.0-0" }} } @else
-              { Prezzo su richiesta }
+              @if (ad.price != null) { € {{ ad.price | number : "1.0-0" }} }
+              @else { Prezzo su richiesta }
             </div>
             <div class="mt-1 text-xs">
-              <span class="chip">{{ a.active ? "Attivo" : "Inattivo" }}</span>
+              <span class="chip">{{ ad.active ? "Attivo" : "Inattivo" }}</span>
             </div>
           </div>
           <div class="flex gap-2">
-            <button class="btn_ghost cursor-pointer" (click)="startEdit(a)">
+            <button
+              class="btn_ghost cursor-pointer"
+              [routerLink]="['/edit', ad.id]"
+            >
               Modifica
             </button>
-            <button class="btn_ghost cursor-pointer" (click)="deleteAd(a)">
+            <button class="btn_ghost cursor-pointer" (click)="deleteAd(ad)">
               Elimina
             </button>
           </div>
         </div>
-        } @else {
-        <div class="grid sm:grid-cols-2 gap-3">
-          <div>
-            <label for="t-{{ a.id }}" class="block text-sm mb-1">Titolo</label>
-            <input
-              id="t-{{ a.id }}"
-              class="input_main"
-              [ngModel]="editTitle()"
-              (ngModelChange)="editTitle.set($event)"
-            />
-          </div>
-          <div>
-            <label for="p-{{ a.id }}" class="block text-sm mb-1"
-              >Prezzo (€)</label
-            >
-            <input
-              id="p-{{ a.id }}"
-              type="number"
-              class="input_main"
-              [ngModel]="editPrice() ?? ''"
-              (ngModelChange)="editPrice.set($event === '' ? null : +$event)"
-            />
-          </div>
-          <div class=" flex items-center gap-3">
-            <label class="inline-flex items-center gap-2"
-              ><input
-                type="checkbox"
-                [ngModel]="editActive()"
-                (ngModelChange)="editActive.set($event)"
-              />
-              <span>Attivo</span></label
-            >
-            <div class="ml-auto flex gap-2">
-              <button class="btn_ghost cursor-pointer" (click)="cancelEdit()">
-                Annulla
-              </button>
-              <button class="btn_primary cursor-pointer" (click)="saveEdit()">
-                Salva
-              </button>
-            </div>
-          </div>
-        </div>
-        }
       </article>
       } @empty {
       <div class="py-12 text-center text-slate-600 dark:text-slate-300">
@@ -141,7 +100,10 @@
     <div class="grid lg:grid-cols-2 gap-4">
       <article class="rounded-2xl border dark:border-slate-700 p-4">
         <h3 class="font-semibold mb-3">Crea utente</h3>
-        <form [formGroup]="createForm" class="flex flex-col gap-3 max-w-md mx-auto">
+        <form
+          [formGroup]="createForm"
+          class="flex flex-col gap-3 max-w-md mx-auto"
+        >
           <div class="">
             <label for="email" class="block text-sm mb-1">Email</label>
             <input

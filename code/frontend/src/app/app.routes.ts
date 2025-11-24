@@ -20,6 +20,7 @@ import { AdDetailComponent } from './components/ad-detail/ad-detail.component';
 import { NotificationsPageComponent } from './components/notifications/notifications-page.component';
 import { isAdminGuard } from './_guards/admin/is-admin.guard';
 import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
+import { isEstateAgentOrAdminGuard } from './_guards/admin-or-agent/is-estate-agent-or-admin.guard';
 
 export const routes: Routes = [
   {
@@ -83,10 +84,10 @@ export const routes: Routes = [
       },
     ],
   },
-  
+
   {
     path: 'edit/:realestateId',
-    canActivate: [isEstateAgentGuard],
+    canActivate: [isEstateAgentOrAdminGuard],
     component: EditLayoutComponent,
     providers: [
       EditAdFacade,

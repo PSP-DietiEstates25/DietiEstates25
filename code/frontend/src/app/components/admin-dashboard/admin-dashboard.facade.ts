@@ -115,15 +115,6 @@ export class AdminDashboardFacade {
     );
   }
 
-  updateAd(
-    _: number,
-    __: Partial<Pick<AdminAd, 'title' | 'price' | 'active'>>
-  ): Observable<void> {
-    return throwError(
-      () => new Error('updateAd non supportato dagli OpenAPI services.')
-    );
-  }
-
   deleteAd(id: number): Observable<void> {
     return this.realEstateService.deleteRealEstate({ realestateid: id }).pipe(
       switchMap(() => this.listAds({})),
