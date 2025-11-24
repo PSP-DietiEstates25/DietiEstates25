@@ -42,10 +42,8 @@ export class EditLayoutComponent implements OnInit {
   ] as const;
 
   ngOnInit(): void {
-    const idFromChild =
-      this.activatedRoute.snapshot.firstChild?.paramMap.get('realestateId');
-
-    const realestateId = idFromChild ? Number(idFromChild) : NaN;
+    const idParam = this.activatedRoute.snapshot.paramMap.get('realestateId');
+    const realestateId = idParam ? Number(idParam) : NaN;
 
     this.realestateId = realestateId;
     (this.facade as any).load(realestateId);

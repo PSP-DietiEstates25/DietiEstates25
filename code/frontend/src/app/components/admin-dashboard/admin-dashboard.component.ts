@@ -54,10 +54,6 @@ export class AdminDashboardComponent {
   adsLoading = signal(false);
   q = signal('');
   activeFilter = signal<boolean | ''>('');
-  editId = signal<number | null>(null);
-  editTitle = signal('');
-  editPrice = signal<number | null>(null);
-  editActive = signal<boolean>(true);
 
   users = signal<AdminUser[]>([]);
   usersLoading = signal(false);
@@ -103,37 +99,9 @@ export class AdminDashboardComponent {
       });
   }
 
-  startEdit(a: AdminAd) {
-    this.editId.set(a.id);
-    this.editTitle.set(a.title || '');
-    this.editPrice.set(a.price ?? null);
-    this.editActive.set(!!a.active);
-  }
-
-  cancelEdit() {
-    this.editId.set(null);
-  }
-
-  saveEdit() {
-    const id = this.editId();
-    if (!id) return;
-    this.facade
-      .updateAd(id, {
-        title: this.editTitle(),
-        price: this.editPrice(),
-        active: this.editActive(),
-      })
-      .subscribe({
-        next: (_) => {
-          this.cancelEdit();
-          this.loadAds();
-        },
-      });
-  }
-
-  deleteAd(a: AdminAd) {
-    if (!confirm(`Eliminare l'annuncio "${a.title}"?`)) return;
-    this.facade.deleteAd(a.id).subscribe({ next: (_) => this.loadAds() });
+  deleteAd(ad: AdminAd) {
+    if (!confirm(`Eliminare l'annuncio "${ad.title}"?`)) return;
+    this.facade.deleteAd(ad.id).subscribe({ next: (_) => this.loadAds() });
   }
 
   createUser() {

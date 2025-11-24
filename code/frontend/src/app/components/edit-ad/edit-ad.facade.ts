@@ -1,6 +1,6 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { EMPTY, from, Observable, Subject } from 'rxjs';
+import { EMPTY, from, Observable, of, Subject, throwError } from 'rxjs';
 import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 
 import {
@@ -134,6 +134,18 @@ export class EditAdFacade {
     this.cadastralData.set(cadastralDataDraft);
   }
 
+  setUtilities(utilityDraft: UtilityDraft) {
+    this.setUtility(utilityDraft);
+  }
+
+  setPosition(geographicalPositionDraft: GeographicalPositionDraft) {
+    this.setGeographicalPosition(geographicalPositionDraft);
+  }
+
+  setCadastral(cadastralDraft: CadastralDataDraft) {
+    this.setCadastralData(cadastralDraft);
+  }
+
   removeImage(index: number) {
     this.images.update((array) => array.filter((_, idx) => idx !== index));
   }
@@ -180,11 +192,14 @@ export class EditAdFacade {
           this.detailId.set(realEstateDto.detailId ?? null);
           this.cadastralDataId.set(realEstateDto.cadastralDataId ?? null);
 
-          // immagini esistenti -> File (come prima)
+          // immagini esistenti -> File
           const existingImgs = realEstateDto.images ?? [];
-          const files = existingImgs.map((b64, index) =>
-            this.base64ToFile(b64, `existing-${index}.jpg`)
-          );
+          const files = existingImgs
+            .map((b64, index) =>
+              this.base64ToFile(b64, `existing-${index}.jpg`)
+            )
+            .filter((file): file is File => !!file);
+
           this.images.set(files);
 
           const detailId = realEstateDto.detailId;
@@ -193,9 +208,7 @@ export class EditAdFacade {
           const loadDetail$ = detailId
             ? this.detailService
                 .getDetailById$Response({ detailid: detailId })
-                .pipe((r) =>
-                  r.pipe(map((detailResponse) => detailResponse.body!))
-                )
+                .pipe(map((detailResponse) => detailResponse.body!))
             : EMPTY;
 
           const loadCadastralData$ = cadastralDataId
@@ -366,17 +379,22 @@ export class EditAdFacade {
     this.error.set(null);
 
     this.utilityService
-      .updateUtility$Response({
-        utilityid: utilityId,
-        body: utilityRequest,
-      })
+      .updateUtility$Response({ utilityid: utilityId, body: utilityRequest })
       .pipe(
+        catchError((err) => {
+          if (err?.status === 404) {
+            console.warn('Utility non trovata, salto updateUtility', err);
+            return of(null);
+          }
+          return throwError(() => err);
+        }),
         switchMap(() =>
           this.geographicalPositionService.updateGeographicalPosition$Response({
             geographicalpositionid: geographicalPositionId,
             body: geographicalPositionRequest,
           })
         ),
+
         switchMap(() =>
           this.detailService.updateDetail$Response({
             detailid: detailId,
@@ -427,15 +445,39 @@ export class EditAdFacade {
 
   // ---- utils ----
   private base64ToFile(
-    base64: string,
+    base64Like: string,
     name: string,
     mime = 'image/jpeg'
-  ): File {
-    const byteString = atob(base64);
-    const bytes = new Uint8Array(byteString.length);
-    for (let i = 0; i < byteString.length; i++)
-      bytes[i] = byteString.charCodeAt(i);
-    const blob = new Blob([bytes], { type: mime });
-    return new File([blob], name, { type: mime });
+  ): File | null {
+    try {
+      if (!base64Like) return null;
+
+      let base64 = base64Like.trim();
+
+      const dataUrlMatch = /^data:(.*?);base64,(.*)$/.exec(base64);
+      if (dataUrlMatch) {
+        mime = dataUrlMatch[1] || mime;
+        base64 = dataUrlMatch[2];
+      }
+
+      base64 = base64.replace(/[\r\n\s]/g, '');
+
+      const pad = base64.length % 4;
+      if (pad) {
+        base64 = base64 + '='.repeat(4 - pad);
+      }
+
+      const byteString = atob(base64);
+      const bytes = new Uint8Array(byteString.length);
+      for (let i = 0; i < byteString.length; i++) {
+        bytes[i] = byteString.charCodeAt(i);
+      }
+
+      const blob = new Blob([bytes], { type: mime });
+      return new File([blob], name, { type: mime });
+    } catch (e) {
+      console.warn('Immagine non in base64 valido, la salto:', base64Like, e);
+      return null;
+    }
   }
 }

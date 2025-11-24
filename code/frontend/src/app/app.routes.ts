@@ -20,6 +20,7 @@ import { AdDetailComponent } from './components/ad-detail/ad-detail.component';
 import { NotificationsPageComponent } from './components/notifications/notifications-page.component';
 import { isAdminGuard } from './_guards/admin/is-admin.guard';
 import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
+import { isEstateAgentOrAdminGuard } from './_guards/admin-or-agent/is-estate-agent-or-admin.guard';
 
 export const routes: Routes = [
   {
@@ -27,11 +28,11 @@ export const routes: Routes = [
     children: [
       {
         path: 'register',
-        component: RegisterComponent
+        component: RegisterComponent,
       },
       {
         path: 'callback',
-        component: AuthCallbackComponent
+        component: AuthCallbackComponent,
       },
     ],
   },
@@ -50,73 +51,61 @@ export const routes: Routes = [
     canActivate: [isEstateAgentGuard],
     component: AgentCreateLayoutComponent,
     children: [
-      { 
+      {
         path: '',
         title: 'Publishing',
         pathMatch: 'full',
-        redirectTo: 'basics'
+        redirectTo: 'basics',
       },
       {
         path: 'basics',
         title: 'Basics info step',
-        component: StepBasicsComponent
+        component: StepBasicsComponent,
       },
       {
         path: 'details',
         title: 'Details step',
-        component: StepDetailsComponent
+        component: StepDetailsComponent,
       },
       {
         path: 'cadastraldata',
         title: 'Cadastral data step',
-        component: StepCadastralComponent 
+        component: StepCadastralComponent,
       },
       {
         path: 'photos',
         title: 'Photos step',
-        component: StepPhotosComponent
+        component: StepPhotosComponent,
       },
       {
-        path: 'reviews',
+        path: 'review',
         title: 'Review',
-        component: StepReviewComponent
+        component: StepReviewComponent,
       },
     ],
   },
+
   {
-    path: '',
-    canActivate: [isEstateAgentGuard],
+    path: 'edit/:realestateId',
+    canActivate: [isEstateAgentOrAdminGuard],
     component: EditLayoutComponent,
     providers: [
       EditAdFacade,
       { provide: CreateAdFacade, useExisting: EditAdFacade },
     ],
     children: [
-      {
-        path: 'details/:detailId',
-        component: StepDetailsComponent
-      },
-      {
-        path: 'basics/:realestateId',
-        component: StepBasicsComponent
-      },
-      {
-        path: 'cadastraldata/:cadastralId',
-        component: StepCadastralComponent
-      },
-      {
-        path: 'photos/:photoSetId',
-        component: StepPhotosComponent
-      },
-      {
-        path: 'reviews/:realestateId',
-        component: StepReviewComponent
-      },
+      { path: '', pathMatch: 'full', redirectTo: 'basics' },
+      { path: 'basics', component: StepBasicsComponent },
+      { path: 'details', component: StepDetailsComponent },
+      { path: 'cadastraldata', component: StepCadastralComponent },
+      { path: 'photos', component: StepPhotosComponent },
+      { path: 'review', component: StepReviewComponent },
     ],
   },
+
   {
     path: 'ad/:id',
-    component: AdDetailComponent
+    component: AdDetailComponent,
   },
 
   {
@@ -210,7 +199,6 @@ export const routes: Routes = [
     ],
   },
 */
-
 
 /*
 
