@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, Validators } from '@angular/forms';
 import {
   SearchFacade,
   Category,
@@ -9,6 +9,9 @@ import { GeographicalPositionRequest } from '../../../services/models/geographic
 import { UtilityRequest } from '../../../services/models/utility-request';
 import { CadastralFilterRequest } from '../../../services/models/cadastral-filter-request';
 import { switchMap } from 'rxjs';
+import { Toast, ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
+import { SearchGeographicalPosition } from '../../../interfaces/searchGeographicalPosition';
 
 @Component({
   selector: 'app-filter-panel',
@@ -17,88 +20,42 @@ import { switchMap } from 'rxjs';
   templateUrl: './filter-panel.component.html',
 })
 export class FilterPanelComponent {
+
   facade = inject(SearchFacade);
+  formBuilder = inject(FormBuilder);
+  toastrService = inject(ToastrService);
+  routerService = inject(Router);
 
   isOpen = signal(true);
-
-  setCf<K extends keyof CadastralFilterRequest>(
-    k: K,
-    v: CadastralFilterRequest[K]
-  ) {
-    this.cf.update((c) => ({ ...c, [k]: coerceNumberIfNeeded(k, v) } as any));
-  }
-  setGeo<K extends keyof GeographicalPositionRequest>(
-    k: K,
-    v: GeographicalPositionRequest[K]
-  ) {
-    this.geo.update((g) => ({ ...g, [k]: coerceNumberIfNeeded(k, v) } as any));
-  }
-  setUti<K extends keyof UtilityRequest>(k: K, v: UtilityRequest[K]) {
-    this.uti.update((u) => ({ ...u, [k]: v } as any));
-  }
+  submitted = false;
 
   category: Category = 'SALE';
-  page = 1;
-  size = 12;
-  userEmail = '';
 
-  geo = signal<GeographicalPositionRequest>({
-    city: '',
-    municipality: '',
-    address: '',
-    latitude: 0,
-    longitude: 0,
+  geographicalPositionForm = this.formBuilder.nonNullable.group({
+    state: ['' as string, [Validators.required]],
+    city: ['' as string, [Validators.required]]
   });
 
-  private cleanGeo(
-    g: GeographicalPositionRequest
-  ): GeographicalPositionRequest {
-    const city = (g.city ?? '').trim();
-    const municipality = (g.municipality ?? '').trim();
-    const addressIn = (g.address ?? '').trim();
-
-    const address = addressIn || city || municipality || '-';
-
-    const out: any = {
-      address,
-      city,
-      municipality,
-    };
-
-    const lat = Number(g.latitude);
-    const lon = Number(g.longitude);
-    if (Number.isFinite(lat) && Number.isFinite(lon)) {
-      out.latitude = lat;
-      out.longitude = lon;
-    }
-
-    const r = Number((g as any).radius);
-    if (Number.isFinite(r) && r > 0) out.radius = r;
-
-    return out as GeographicalPositionRequest;
-  }
-
-  uti = signal<UtilityRequest>({
-    hasAirConditioning: false,
-    hasDoorman: false,
-    hasElevator: false,
-
-    nearPark: false,
-    nearPublicTransport: false,
-    nearSchool: false,
+  utilityForm = this.formBuilder.nonNullable.group({
+    hasAirConditioning: [false as boolean, [Validators.required]],
+    hasDoorman: [false as boolean, [Validators.required]],
+    hasElevator: [false as boolean, [Validators.required]],
+    nearPark: [false as boolean, [Validators.required]],
+    nearSchool: [false as boolean, [Validators.required]],
+    nearPublicTransport: [false as boolean, [Validators.required]],
   });
 
-  cf = signal<CadastralFilterRequest>({
-    minPrice: 0,
-    maxPrice: 999999999,
-    minSquareMeters: 0,
-    maxSquareMeters: 100000,
-    minRooms: 0,
-    maxRooms: 50,
-    minFloor: -10,
-    maxFloor: 100,
-    minEnergyClass: 0,
-    maxEnergyClass: 9,
+  cadastralFilterForm = this.formBuilder.nonNullable.group({
+    minPrice: [0 as number, [Validators.required, Validators.min(0)]],
+    maxPrice: [0 as number, [Validators.required, Validators.min(0)]],
+    minSquareMeters: [0 as number, [Validators.required, Validators.min(0)]],
+    maxSquareMeters: [0 as number, [Validators.required, Validators.min(0)]],
+    minEnergyClass: [0 as number, [Validators.required, Validators.min(0)]],
+    maxEnergyClass: [0 as number, [Validators.required, Validators.min(0)]],
+    minRooms: [0 as number, [Validators.required, Validators.min(0)]],
+    maxRooms: [0 as number, [Validators.required, Validators.min(0)]],
+    minFloor: [0 as number, [Validators.required, Validators.min(0)]],
+    maxFloor: [0 as number, [Validators.required, Validators.min(0)]],
   });
 
   toggleOpen() {
@@ -106,18 +63,46 @@ export class FilterPanelComponent {
   }
 
   apply() {
-    this.facade.resetContext();
+    this.submitted = true;
+    //this.facade.resetContext();
 
-    const geo = this.cleanGeo(this.geo());
-    const uti = this.uti();
-    const cf = this.cf();
+    if(this.geographicalPositionForm.invalid || this.utilityForm.invalid || this.cadastralFilterForm.invalid){
+      this.utilityForm.markAllAsTouched();
+      this.geographicalPositionForm.markAllAsTouched();
+      this.cadastralFilterForm.markAllAsTouched();
+    }
 
-    this.facade.cacheFilters(geo, uti, cf);
+    //this.facade.cacheFilters(geographicalPosition, utility, cadastralFilter);
+    const geographicalPosition: SearchGeographicalPosition = {
+      state: this.geographicalPositionForm.value.state,
+      city: this.geographicalPositionForm.value.city,
+    };
 
-    this.facade
-      .prepareDetail(geo, uti)
+    const utility: UtilityRequest = {
+      hasAirConditioning: this.utilityForm.value.hasAirConditioning as boolean,
+      hasDoorman: this.utilityForm.value.hasDoorman as boolean,
+      hasElevator: this.utilityForm.value.hasElevator as boolean,
+      nearPark: this.utilityForm.value.nearPark as boolean,
+      nearSchool: this.utilityForm.value.nearSchool as boolean,
+      nearPublicTransport: this.utilityForm.value.nearPublicTransport as boolean
+    };
+
+    const cadastralFilter: CadastralFilterRequest = {
+      minPrice: this.cadastralFilterForm.value.minPrice as number,
+      maxPrice: this.cadastralFilterForm.value.maxPrice as number,
+      minRooms: this.cadastralFilterForm.value.minRooms as number,
+      maxRooms: this.cadastralFilterForm.value.maxRooms as number,
+      minFloor: this.cadastralFilterForm.value.minRooms as number,
+      maxFloor: this.cadastralFilterForm.value.maxRooms as number,
+      minSquareMeters: this.cadastralFilterForm.value.minSquareMeters as number,
+      maxSquareMeters: this.cadastralFilterForm.value.maxSquareMeters as number,
+      minEnergyClass: this.cadastralFilterForm.value.minEnergyClass as number,
+      maxEnergyClass: this.cadastralFilterForm.value.maxSquareMeters as number,
+    };
+
+    this.facade.prepareDetail(geographicalPosition, utility)
       .pipe(
-        switchMap(() => this.facade.prepareCadastralFilter(cf)),
+        switchMap(() => this.facade.prepareCadastralFilter(cadastralFilter)),
         switchMap(() =>
           this.facade.search({
             category: this.category,
@@ -130,24 +115,34 @@ export class FilterPanelComponent {
       .subscribe({ error: () => {} });
   }
 
-  reset() {
-    // reset campi "metadati"
+  /*
+  clear() {
+    this.clearSearch();
+    this.clearGeographicalPosition();
+    this.clearUtility();
+    this.clearCadastralFilter();
+    this.apply();
+  }
+
+  clearSearch(){
     this.category = 'SALE';
     this.page = 1;
     this.size = 12;
     this.userEmail = '';
+  }
 
-    // reset posizione
-    this.geo.set({
+  clearGeographicalPosition(){
+    this.geographicalPosition.set({
       city: '',
       municipality: '',
       address: '',
       latitude: 0,
       longitude: 0,
     });
+  }
 
-    // reset utilità
-    this.uti.set({
+  clearUtility(){
+    this.utility.set({
       hasAirConditioning: false,
       hasDoorman: false,
       hasElevator: false,
@@ -155,9 +150,10 @@ export class FilterPanelComponent {
       nearPublicTransport: false,
       nearSchool: false,
     });
+  }
 
-    // reset filtri catastali
-    this.cf.set({
+  clearCadastralFilter(){
+    this.cadastralFilter.set({
       minPrice: 0,
       maxPrice: 999999999,
       minSquareMeters: 0,
@@ -169,10 +165,8 @@ export class FilterPanelComponent {
       minEnergyClass: 0,
       maxEnergyClass: 9,
     });
-
-    // fai subito partire una nuova ricerca "pulita"
-    this.apply();
   }
+  */
 }
 
 function coerceNumberIfNeeded<K>(k: K, v: any) {

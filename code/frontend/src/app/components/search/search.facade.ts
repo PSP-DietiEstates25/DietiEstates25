@@ -16,6 +16,7 @@ import { GeographicalPositionRequest } from '../../services/models/geographical-
 import { UtilityRequest } from '../../services/models/utility-request';
 import { DetailRequest } from '../../services/models/detail-request';
 import { CadastralFilterRequest } from '../../services/models/cadastral-filter-request';
+import { SearchGeographicalPosition } from '../../interfaces/searchGeographicalPosition';
 
 export type Category = 'SALE' | 'RENT';
 
@@ -223,10 +224,7 @@ export class SearchFacade {
     return `h${(h >>> 0).toString(16)}`;
   }
 
-  prepareDetail(
-    geographicalPosition: GeographicalPositionRequest,
-    utility: UtilityRequest
-  ) {
+  prepareDetail(searchGeographicalPosition: SearchGeographicalPosition,utility: UtilityRequest) {
     this.error.set(null);
     this.loading.set(true);
 

@@ -50,7 +50,6 @@ export class StepDetailsComponent {
     hasElevator: [false],
     hasDoorman: [false],
     hasAirConditioning: [false],
-
     nearPark: [false],
     nearPublicTransport: [false],
     nearSchool: [false],

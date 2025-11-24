@@ -31,7 +31,7 @@
       <button
         class="rounded-xl border border-transparent px-3 py-1.5 text-xs font-medium text-blue-900 hover:border-blue-200 hover:bg-blue-50 dark:text-blue-200 dark:hover:bg-blue-900/10"
         type="button"
-        (click)="reset()"
+        (click)="clear()"
       >
         Reset filtri
       </button>
@@ -85,8 +85,8 @@
             Città
             <input
               class="mt-1 w-full rounded-lg border border-blue-200 bg-white/80 px-2 py-1.5 text-xs placeholder:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 dark:bg-blue-900/30 dark:border-blue-900 dark:text-blue-100"
-              [ngModel]="geo().city"
-              (ngModelChange)="setGeo('city', $event)"
+              [ngModel]="geographicalPosition().city"
+              (ngModelChange)="setGeographicalPosition('city', $event)"
               placeholder="Es. Napoli"
             />
           </label>
@@ -95,8 +95,8 @@
             Comune
             <input
               class="mt-1 w-full rounded-lg border border-blue-200 bg-white/80 px-2 py-1.5 text-xs placeholder:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 dark:bg-blue-900/30 dark:border-blue-900 dark:text-blue-100"
-              [ngModel]="geo().municipality"
-              (ngModelChange)="setGeo('municipality', $event)"
+              [ngModel]="geographicalPosition().municipality"
+              (ngModelChange)="setGeographicalPosition('municipality', $event)"
               placeholder="Es. Vomero"
             />
           </label>
@@ -105,8 +105,8 @@
             Indirizzo
             <input
               class="mt-1 w-full rounded-lg border border-blue-200 bg-white/80 px-2 py-1.5 text-xs placeholder:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 dark:bg-blue-900/30 dark:border-blue-900 dark:text-blue-100"
-              [ngModel]="geo().address"
-              (ngModelChange)="setGeo('address', $event)"
+              [ngModel]="geographicalPosition().address"
+              (ngModelChange)="setGeographicalPosition('address', $event)"
               placeholder="Es. Via Roma 10"
             />
           </label>
@@ -130,8 +130,8 @@
             <input
               type="checkbox"
               class="size-3 accent-blue-600"
-              [ngModel]="uti().hasElevator"
-              (ngModelChange)="setUti('hasElevator', $event)"
+              [ngModel]="utility().hasElevator"
+              (ngModelChange)="setUtility('hasElevator', $event)"
             />
             Ascensore
           </label>
@@ -142,8 +142,8 @@
             <input
               type="checkbox"
               class="size-3 accent-blue-600"
-              [ngModel]="uti().hasDoorman"
-              (ngModelChange)="setUti('hasDoorman', $event)"
+              [ngModel]="utility().hasDoorman"
+              (ngModelChange)="setUtility('hasDoorman', $event)"
             />
             Portineria
           </label>
@@ -154,8 +154,8 @@
             <input
               type="checkbox"
               class="size-3 accent-blue-600"
-              [ngModel]="uti().hasAirConditioning"
-              (ngModelChange)="setUti('hasAirConditioning', $event)"
+              [ngModel]="utility().hasAirConditioning"
+              (ngModelChange)="setUtility('hasAirConditioning', $event)"
             />
             Aria condizionata
           </label>
@@ -178,8 +178,8 @@
               type="number"
               min="1"
               class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-900 dark:bg-blue-900/30 dark:text-blue-100"
-              [ngModel]="cf().minPrice"
-              (ngModelChange)="setCf('minPrice', $event)"
+              [ngModel]="cadastralFilter().minPrice"
+              (ngModelChange)="setCadsatralFilter('minPrice', $event)"
             />
           </label>
           <label
@@ -188,8 +188,8 @@
               type="number"
               min="1"
               class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-900 dark:bg-blue-900/30 dark:text-blue-100"
-              [ngModel]="cf().maxPrice"
-              (ngModelChange)="setCf('maxPrice', $event)"
+              [ngModel]="cadastralFilter().maxPrice"
+              (ngModelChange)="setCadsatralFilter('maxPrice', $event)"
             />
           </label>
 
@@ -199,8 +199,8 @@
               type="number"
               min="1"
               class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-900 dark:bg-blue-900/30 dark:text-blue-100"
-              [ngModel]="cf().minSquareMeters"
-              (ngModelChange)="setCf('minSquareMeters', $event)"
+              [ngModel]="cadastralFilter().minSquareMeters"
+              (ngModelChange)="setCadsatralFilter('minSquareMeters', $event)"
             />
           </label>
           <label
@@ -209,8 +209,8 @@
               type="number"
               min="1"
               class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-900 dark:bg-blue-900/30 dark:text-blue-100"
-              [ngModel]="cf().maxSquareMeters"
-              (ngModelChange)="setCf('maxSquareMeters', $event)"
+              [ngModel]="cadastralFilter().maxSquareMeters"
+              (ngModelChange)="setCadsatralFilter('maxSquareMeters', $event)"
             />
           </label>
 
@@ -218,8 +218,8 @@
             >Classe en. min
             <select
               class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-900 dark:bg-blue-900/30 dark:text-blue-100"
-              [ngModel]="cf().minEnergyClass"
-              (ngModelChange)="setCf('minEnergyClass', $event)"
+              [ngModel]="cadastralFilter().minEnergyClass"
+              (ngModelChange)="setCadsatralFilter('minEnergyClass', $event)"
             >
               <option [ngValue]="1">A4</option>
               <option [ngValue]="2">A3</option>
@@ -238,8 +238,8 @@
             >Classe en. max
             <select
               class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-900 dark:bg-blue-900/30 dark:text-blue-100"
-              [ngModel]="cf().maxEnergyClass"
-              (ngModelChange)="setCf('maxEnergyClass', $event)"
+              [ngModel]="cadastralFilter().maxEnergyClass"
+              (ngModelChange)="setCadsatralFilter('maxEnergyClass', $event)"
             >
               <option [ngValue]="1">A4</option>
               <option [ngValue]="2">A3</option>
@@ -260,8 +260,8 @@
               type="number"
               min="1"
               class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-900 dark:bg-blue-900/30 dark:text-blue-100"
-              [ngModel]="cf().minRooms"
-              (ngModelChange)="setCf('minRooms', $event)"
+              [ngModel]="cadastralFilter().minRooms"
+              (ngModelChange)="setCadsatralFilter('minRooms', $event)"
             />
           </label>
           <label
@@ -270,8 +270,8 @@
               type="number"
               min="1"
               class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-900 dark:bg-blue-900/30 dark:text-blue-100"
-              [ngModel]="cf().maxRooms"
-              (ngModelChange)="setCf('maxRooms', $event)"
+              [ngModel]="cadastralFilter().maxRooms"
+              (ngModelChange)="setCadsatralFilter('maxRooms', $event)"
             />
           </label>
 
@@ -281,8 +281,8 @@
               type="number"
               min="1"
               class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-900 dark:bg-blue-900/30 dark:text-blue-100"
-              [ngModel]="cf().minFloor"
-              (ngModelChange)="setCf('minFloor', $event)"
+              [ngModel]="cadastralFilter().minFloor"
+              (ngModelChange)="setCadsatralFilter('minFloor', $event)"
             />
           </label>
           <label
@@ -291,8 +291,8 @@
               type="number"
               min="1"
               class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-blue-900 dark:bg-blue-900/30 dark:text-blue-100"
-              [ngModel]="cf().maxFloor"
-              (ngModelChange)="setCf('maxFloor', $event)"
+              [ngModel]="cadastralFilter().maxFloor"
+              (ngModelChange)="setCadsatralFilter('maxFloor', $event)"
             />
           </label>
         </div>

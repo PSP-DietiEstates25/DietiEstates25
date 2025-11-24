@@ -20,6 +20,7 @@ import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.
   templateUrl: './step-cadastral.component.html',
 })
 export class StepCadastralComponent {
+  
   private formBuilder = inject(FormBuilder);
   private toastrService = inject(ToastrService);
   private facade = inject(CreateAdFacade);
