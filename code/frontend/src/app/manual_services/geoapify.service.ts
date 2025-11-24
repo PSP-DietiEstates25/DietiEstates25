@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { map } from 'rxjs';
 
@@ -23,6 +23,10 @@ export interface GeoapifyPlacesResponse {
 export class GeoapifyService {
   
   private httpClient = inject(HttpClient);
+  private italyNationId = signal<string>('');
+  private italianStates = signal<string[]>([]);
+  private italianCities = signal<string[]>([]);
+  private italianMunicipalities = signal<string[]>([]);
 
   getLatitudeLongitudeData(latitude: number, longitude: number){
     const url = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&apiKey=${environment.geoapifyAPIKey}`
@@ -32,7 +36,7 @@ export class GeoapifyService {
   getNearPlacesByLatitudeLongitude(latitude: number,longitude: number) {
     const url = `https://api.geoapify.com/v2/places` +
       `?categories=education.school,public_transport,leisure.park` +
-      `&filter=circle:${longitude},${latitude},${environment.placesRadius}` + // attenzione ordine lon,lat
+      `&filter=circle:${longitude},${latitude},${environment.placesRadius}` +
       `&bias=proximity:${longitude},${latitude}` +
       `&limit=${environment.placesLimit}` +
       `&apiKey=${environment.geoapifyAPIKey}`;
@@ -66,5 +70,25 @@ export class GeoapifyService {
           return tags;
         })
       );
-  }
+    }
+
+    getNationIdByGeocodingApi(name: string){
+      const url = `https://api.geoapify.com/v1/geocode/search?REQUEST_PARAMS`;
+    }
+
+    getItalyNationId(){
+      return this.italyNationId();
+    }
+
+    setItalyNationId(id: string){
+      this.italyNationId.set(id);
+    }
+
+    getItalianCities(){
+
+    }
+
+    getItalianMunicipalityByCities(){
+
+    }
 }
