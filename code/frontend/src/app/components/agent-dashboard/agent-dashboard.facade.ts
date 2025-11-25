@@ -182,7 +182,7 @@ export class AgentDashboardFacade {
   // VISITS
   loadVisits(): Observable<void> {
     this.visitsLoading.set(true);
-    return this.realEstateService.getRealEstates({ page: 2, size: 6 }).pipe(
+    return this.realEstateService.getRealEstates({ page: 0, size: 100 }).pipe(
       map((page) => (Array.isArray(page?.content) ? page.content : [])),
       switchMap((realEstates) => {
         if (!realEstates.length) return of([] as VisitVM[]);

@@ -15,5 +15,5 @@ import java.util.Optional;
 public interface VisitRepository extends CrudRepository<Visit, Long>, PagingAndSortingRepository<Visit, Long> {
     boolean existsById(Long id);
     boolean existsByIdAndNegotiationId(Long id, Long negotiationId);
-    Page<Visit> findByNegotiationId(Long negotiationId, Pageable pageable);
+    Page<Visit> findByNegotiation_RealEstate_Id(Long realEstateId, Pageable pageable);
 }

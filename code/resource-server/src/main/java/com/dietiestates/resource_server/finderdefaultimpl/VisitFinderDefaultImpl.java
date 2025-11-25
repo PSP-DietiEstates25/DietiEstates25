@@ -21,9 +21,9 @@ public class VisitFinderDefaultImpl implements VisitFinder {
 				.orElseThrow(VisitNotFoundException::new);
 	}
 
-    @Override
-    public Page<Visit> getRealEstateVisits(Long negotiationId, Pageable pageable) {
-        return visitRepository.findByNegotiationId(negotiationId, pageable);
-    }
+	@Override
+	public Page<Visit> getRealEstateVisits(Long realEstateId, Pageable pageable) {
+		return visitRepository.findByNegotiation_RealEstate_Id(realEstateId, pageable);
+	}
 
 }
