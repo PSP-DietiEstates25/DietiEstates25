@@ -1,71 +1,138 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormsModule,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import {
   SearchFacade,
   Category,
 } from '../../../components/search/search.facade';
-import { GeographicalPositionRequest } from '../../../services/models/geographical-position-request';
-import { UtilityRequest } from '../../../services/models/utility-request';
-import { CadastralFilterRequest } from '../../../services/models/cadastral-filter-request';
-import { switchMap } from 'rxjs';
-import { Toast, ToastrService } from 'ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-import { SearchGeographicalPosition } from '../../../interfaces/searchGeographicalPosition';
+import { LocationsService } from '../../../manual_services/location.service';
+import { AdCategory } from '../../../enums/ad-category.enum';
+import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-filter-panel',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './filter-panel.component.html',
 })
-export class FilterPanelComponent {
-
+export class FilterPanelComponent implements OnInit {
   facade = inject(SearchFacade);
   formBuilder = inject(FormBuilder);
+  locationService = inject(LocationsService);
   toastrService = inject(ToastrService);
   routerService = inject(Router);
 
   isOpen = signal(true);
-  submitted = false;
 
-  category: Category = 'SALE';
+  regions = signal<string[]>([]);
+  cities = signal<string[]>([]);
 
   geographicalPositionForm = this.formBuilder.nonNullable.group({
-    state: ['' as string, [Validators.required]],
-    city: ['' as string, [Validators.required]]
+    region: ['' as string, [Validators.required]],
+    city: [{ value: '' as string, disabled: true }, [Validators.required]],
   });
 
   utilityForm = this.formBuilder.nonNullable.group({
-    hasAirConditioning: [false as boolean, [Validators.required]],
-    hasDoorman: [false as boolean, [Validators.required]],
-    hasElevator: [false as boolean, [Validators.required]],
-    nearPark: [false as boolean, [Validators.required]],
-    nearSchool: [false as boolean, [Validators.required]],
-    nearPublicTransport: [false as boolean, [Validators.required]],
+    hasAirConditioning: [false],
+    hasDoorman: [false],
+    hasElevator: [false],
+    nearPark: [false],
+    nearSchool: [false],
+    nearPublicTransport: [false],
   });
 
   cadastralFilterForm = this.formBuilder.nonNullable.group({
-    minPrice: [0 as number, [Validators.required, Validators.min(0)]],
-    maxPrice: [0 as number, [Validators.required, Validators.min(0)]],
-    minSquareMeters: [0 as number, [Validators.required, Validators.min(0)]],
-    maxSquareMeters: [0 as number, [Validators.required, Validators.min(0)]],
-    minEnergyClass: [0 as number, [Validators.required, Validators.min(0)]],
-    maxEnergyClass: [0 as number, [Validators.required, Validators.min(0)]],
-    minRooms: [0 as number, [Validators.required, Validators.min(0)]],
-    maxRooms: [0 as number, [Validators.required, Validators.min(0)]],
-    minFloor: [0 as number, [Validators.required, Validators.min(0)]],
-    maxFloor: [0 as number, [Validators.required, Validators.min(0)]],
+    minPrice: [0],
+    maxPrice: [0],
+    minSquareMeters: [0],
+    maxSquareMeters: [0],
+    minEnergyClass: [0],
+    maxEnergyClass: [0],
+    minRooms: [0],
+    maxRooms: [0],
+    minFloor: [0],
+    maxFloor: [0],
   });
+
+  mainForm = this.formBuilder.group({
+    geographicalPositionForm: this.geographicalPositionForm,
+    utilityForm: this.utilityForm,
+    cadastralFilterForm: this.cadastralFilterForm,
+    category: [AdCategory.Sale as AdCategory, Validators.required],
+  });
+
+  ngOnInit(): void {
+    this.locationService.getRegions().subscribe({
+      next: (regionsResponse) => {
+        this.regions.set(regionsResponse);
+      },
+    });
+
+    this.geographicalPositionForm.controls.region.valueChanges.subscribe({
+      next: (region) => {
+        const cityControl = this.geographicalPositionForm.controls.city;
+        cityControl.setValue('');
+
+        if (region) {
+          cityControl.enable();
+          this.locationService.getCitiesByRegion(region).subscribe({
+            next: (citiesResponse) => {
+              this.cities.set(citiesResponse);
+            },
+          });
+        } else {
+          cityControl.disable();
+          this.cities.set([]);
+        }
+      },
+    });
+  }
 
   toggleOpen() {
     this.isOpen.update((open) => !open);
   }
 
   apply() {
-    this.submitted = true;
-    //this.facade.resetContext();
+    if (this.geographicalPositionForm.invalid) {
+      this.geographicalPositionForm.markAllAsTouched();
+      return;
+    }
 
+    const geographicalPosition = this.geographicalPositionForm.getRawValue();
+    const utility = this.utilityForm.getRawValue();
+    const cadastralFilter = this.cadastralFilterForm.getRawValue();
+
+    const geographicalPositionRequest = {
+      state: geographicalPosition.region,
+      city: geographicalPosition.city,
+      municipality: '',
+      address: '',
+      latitude: 0,
+      longitude: 0,
+    };
+
+    this.facade.cacheFilters(
+      geographicalPositionRequest,
+      utility,
+      cadastralFilter,
+    );
+
+    this.facade
+      .prepareDetail(geographicalPositionRequest, utility)
+      .pipe(
+        switchMap(() => this.facade.prepareCadastralFilter(cadastralFilter)),
+      );
+
+    this.routerService.navigate(['/search']);
+    //this.facade.resetContext();
+    /*
     if(this.geographicalPositionForm.invalid || this.utilityForm.invalid || this.cadastralFilterForm.invalid){
       this.utilityForm.markAllAsTouched();
       this.geographicalPositionForm.markAllAsTouched();
@@ -113,62 +180,12 @@ export class FilterPanelComponent {
         )
       )
       .subscribe({ error: () => {} });
+    */
   }
 
-  /*
-  clear() {
-    this.clearSearch();
-    this.clearGeographicalPosition();
-    this.clearUtility();
-    this.clearCadastralFilter();
-    this.apply();
+  clearForms() {
+    this.geographicalPositionForm.reset();
+    this.utilityForm.reset();
+    this.cadastralFilterForm.reset();
   }
-
-  clearSearch(){
-    this.category = 'SALE';
-    this.page = 1;
-    this.size = 12;
-    this.userEmail = '';
-  }
-
-  clearGeographicalPosition(){
-    this.geographicalPosition.set({
-      city: '',
-      municipality: '',
-      address: '',
-      latitude: 0,
-      longitude: 0,
-    });
-  }
-
-  clearUtility(){
-    this.utility.set({
-      hasAirConditioning: false,
-      hasDoorman: false,
-      hasElevator: false,
-      nearPark: false,
-      nearPublicTransport: false,
-      nearSchool: false,
-    });
-  }
-
-  clearCadastralFilter(){
-    this.cadastralFilter.set({
-      minPrice: 0,
-      maxPrice: 999999999,
-      minSquareMeters: 0,
-      maxSquareMeters: 100000,
-      minRooms: 0,
-      maxRooms: 50,
-      minFloor: -10,
-      maxFloor: 100,
-      minEnergyClass: 0,
-      maxEnergyClass: 9,
-    });
-  }
-  */
-}
-
-function coerceNumberIfNeeded<K>(k: K, v: any) {
-  return typeof v === 'string' && v.trim() !== '' && !Number.isNaN(+v) ? +v : v;
 }

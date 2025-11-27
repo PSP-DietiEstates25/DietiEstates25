@@ -1,78 +1,80 @@
 <nav
-  class="bg-white dark:bg-slate-950 shadow-xl/30 border-b-2 border-amber-600"
+  class="border-b-2 border-amber-600 bg-white shadow-xl/30 dark:bg-slate-950"
 >
   <div class="container mx-auto">
     <div
-      class="flex justify-between items-center sm:px-6 md:px-4 px-2 sm:py-2 md:py-0 py-2"
+      class="flex items-center justify-between px-2 py-2 sm:px-6 sm:py-2 md:px-4 md:py-0"
     >
       <!-- Brand -->
-      <div class="h-16 flex items-center">
+      <div class="flex h-16 items-center">
         <a routerLink="/" (click)="closeMenu()" class="flex items-center gap-3">
           <img
             src="/assets/logowhite.svg"
             alt="logo"
-            class="shrink-0 size-12"
+            class="size-12 shrink-0"
           />
         </a>
       </div>
 
       <!-- Desktop menu -->
-      <div class="hidden md:flex items-center gap-6">
+      <div class="hidden items-center gap-6 md:flex">
         <ul class="flex items-center gap-5">
           @for (link of allLinks; track link.path) {
-          <li>
-            <a
-              class="link_style inline-flex items-center gap-2"
-              [routerLink]="link.path"
-              routerLinkActive="text-amber-600"
-              [routerLinkActiveOptions]="{ exact: true }"
-              (click)="closeMenu()"
-            >
-              <span>{{ link.label }}</span>
-
-              <!-- Badge Notifiche -->
-              @if (link.path === '/notifications' && isAuthenticated &&
-              (notifBadge() > 0)) {
-              <span
-                class="rounded-full bg-rose-600 px-2 py-0.5 text-xs text-white"
+            <li>
+              <a
+                class="link_style inline-flex items-center gap-2"
+                [routerLink]="link.path"
+                routerLinkActive="text-amber-600"
+                [routerLinkActiveOptions]="{ exact: true }"
+                (click)="closeMenu()"
               >
-                {{ notifBadge() }}
-              </span>
-              }
-            </a>
-          </li>
+                <span>{{ link.label }}</span>
+
+                <!-- Badge Notifiche -->
+                @if (
+                  link.path === "/notifications" &&
+                  isAuthenticated &&
+                  notifBadge() > 0
+                ) {
+                  <span
+                    class="rounded-full bg-rose-600 px-2 py-0.5 text-xs text-white"
+                  >
+                    {{ notifBadge() }}
+                  </span>
+                }
+              </a>
+            </li>
           }
         </ul>
 
         <!-- Auth area -->
         <div
-          class="flex items-center gap-4 pl-2 border-l border-gray-300 dark:border-slate-700"
+          class="flex items-center gap-4 border-l border-gray-300 pl-2 dark:border-slate-700"
         >
           @if (!isAuthenticated) {
-
-          <li>
-            <a
-              class="link_style"
-              routerLink="/auth/register"
-              (click)="closeMenu()"
-            >
-              Registrati
-            </a>
-          </li>
-          <li>
-            <a class="link_style" (click)="onClickLogin()"> Accedi </a>
-          </li>
-
+            <li>
+              <a
+                class="link_style"
+                routerLink="/auth/register"
+                (click)="closeMenu()"
+              >
+                Registrati
+              </a>
+            </li>
+            <li>
+              <a class="link_style" (click)="onClickLogin()"> Accedi </a>
+            </li>
           } @else {
-
-          <h1>Welcome {{ email }}</h1>
-          <button class="logout_button_style" (click)="logout()">Logout</button>
+            <h1>Welcome {{ email }}</h1>
+            <button class="logout_button_style" (click)="logout()">
+              Logout
+            </button>
           }
         </div>
       </div>
 
       <!-- Mobile toggles -->
-      <div class="md:hidden flex items-center gap-2 pr-2">
+      <div class="flex items-center gap-2 pr-2 md:hidden">
         <button (click)="toggleMenu()" aria-label="Apri menu">
           <app-menu-toggle
             [attr.open]="isMenuOpen ? '' : null"
@@ -83,53 +85,56 @@
 
     <!-- Mobile menu -->
     <div
-      class="md:hidden border-t border-gray-300 dark:border-slate-700"
+      class="border-t border-gray-300 md:hidden dark:border-slate-700"
       [class.hidden]="!isMenuOpen"
     >
       <ul class="flex flex-col gap-1 p-3">
         @for (link of allLinks; track link.path) {
-        <li>
-          <a
-            class="link_style inline-flex items-center gap-2"
-            [routerLink]="link.path"
-            routerLinkActive="text-amber-600"
-            [routerLinkActiveOptions]="{ exact: true }"
-            (click)="closeMenu()"
-          >
-            <span>{{ link.label }}</span>
-
-            <!-- Badge Notifiche (mobile) -->
-            @if (link.path === '/notifications' && isAuthenticated &&
-            (notifBadge() > 0)) {
-            <span
-              class="rounded-full bg-rose-600 px-2 py-0.5 text-xs text-white"
+          <li>
+            <a
+              class="link_style inline-flex items-center gap-2"
+              [routerLink]="link.path"
+              routerLinkActive="text-amber-600"
+              [routerLinkActiveOptions]="{ exact: true }"
+              (click)="closeMenu()"
             >
-              {{ notifBadge() }}
-            </span>
-            }
-          </a>
-        </li>
+              <span>{{ link.label }}</span>
+
+              <!-- Badge Notifiche (mobile) -->
+              @if (
+                link.path === "/notifications" &&
+                isAuthenticated &&
+                notifBadge() > 0
+              ) {
+                <span
+                  class="rounded-full bg-rose-600 px-2 py-0.5 text-xs text-white"
+                >
+                  {{ notifBadge() }}
+                </span>
+              }
+            </a>
+          </li>
         }
 
         <li
-          class="mt-2 pt-2 border-t border-gray-200 dark:border-slate-700"
+          class="mt-2 border-t border-gray-200 pt-2 dark:border-slate-700"
         ></li>
 
         @if (!isAuthenticated) {
-        <li>
-          <a class="link_style" routerLink="/auth" (click)="closeMenu()"
-            >Accedi / Registrati</a
-          >
-        </li>
+          <li>
+            <a class="link_style" routerLink="/auth" (click)="closeMenu()"
+              >Accedi / Registrati</a
+            >
+          </li>
         } @else {
-        <li>
-          <button
-            class="logout_button_style w-full text-left"
-            (click)="logout()"
-          >
-            Logout
-          </button>
-        </li>
+          <li>
+            <button
+              class="logout_button_style w-full text-left"
+              (click)="logout()"
+            >
+              Logout
+            </button>
+          </li>
         }
       </ul>
     </div>

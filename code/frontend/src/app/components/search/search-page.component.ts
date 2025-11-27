@@ -70,8 +70,8 @@ export class SearchPageComponent implements OnDestroy {
     const mime = looksJpeg(raw)
       ? 'image/jpeg'
       : looksPng(raw)
-      ? 'image/png'
-      : 'image/*';
+        ? 'image/png'
+        : 'image/*';
     return `data:${mime};base64,${raw}`;
   }
 
@@ -104,6 +104,7 @@ export class SearchPageComponent implements OnDestroy {
   }
 
   ngOnInit() {
+    /*
     this.facade
       .runFullSearch({
         category: 'SALE',
@@ -139,5 +140,6 @@ export class SearchPageComponent implements OnDestroy {
         },
       })
       .subscribe();
+      */
   }
 }

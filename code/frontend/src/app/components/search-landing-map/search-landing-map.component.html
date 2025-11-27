@@ -1,0 +1,28 @@
+<div class="relative h-[calc(100vh-64px)] w-full">
+  <div
+    class="absolute top-5 left-5 z-[1000] w-full max-w-sm rounded-xl border border-blue-100 bg-white/90 p-4 shadow-xl backdrop-blur"
+  >
+    <h1 class="text-xl font-bold text-blue-900">{{ cityName }}</h1>
+    <p class="mb-2 text-xs tracking-wide text-gray-500 uppercase">
+      {{ regionName }}
+    </p>
+
+    <div class="mb-2 flex items-center gap-2">
+      <div
+        *ngIf="loading"
+        class="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"
+      ></div>
+      <p class="text-sm font-medium text-gray-700">{{ infoMessage }}</p>
+    </div>
+
+    <button
+      *ngIf="!loading"
+      (click)="loadBoundaries()"
+      class="mt-1 text-xs text-blue-600 underline hover:text-blue-800"
+    >
+      Resetta mappa
+    </button>
+  </div>
+
+  <div #mapContainer class="z-0 h-full w-full bg-slate-100"></div>
+</div>

@@ -68,7 +68,7 @@ export class StepDetailsComponent {
     effect(() => {
       this._savedUtility = computed(() => this.facade.getUtility());
       this._savedGeographicalPosition = computed(() =>
-        this.facade.getGeographicalPosition()
+        this.facade.getGeographicalPosition(),
       );
 
       const util = this._savedUtility();
@@ -79,7 +79,7 @@ export class StepDetailsComponent {
             hasDoorman: util.hasDoorman,
             hasElevator: util.hasElevator,
           },
-          { emitEvent: false }
+          { emitEvent: false },
         );
       }
 
@@ -94,7 +94,7 @@ export class StepDetailsComponent {
             longitude: pos.longitude,
             radius: pos.radius ?? 0,
           },
-          { emitEvent: false }
+          { emitEvent: false },
         );
       }
     });
@@ -184,17 +184,31 @@ export class StepDetailsComponent {
 
           this.positionForm.patchValue({
             city: result.city,
-            municipality: result.suburb ?? result.district,
+            municipality: result.suburb ?? result.city,
             address: result.formatted,
             latitude: newLatitude,
             longitude: newLongitude,
           });
 
-          return this.geoapifyService.getNearPlacesByLatitudeLongitude(
-            newLatitude,
-            newLongitude
-          );
-        })
+          return this.geoapifyService
+            .getMunicipalityName(newLatitude, newLongitude)
+            .pipe(
+              switchMap((municipalityName: string) => {
+                this.positionForm.patchValue({
+                  city: result.city,
+                  municipality: municipalityName,
+                  address: result.formatted,
+                  latitude: newLatitude,
+                  longitude: newLongitude,
+                });
+
+                return this.geoapifyService.getNearPlacesByLatitudeLongitude(
+                  newLatitude,
+                  newLongitude,
+                );
+              }),
+            );
+        }),
       )
       .subscribe({
         next: (nearTagsResponse: NearTag[]) => {

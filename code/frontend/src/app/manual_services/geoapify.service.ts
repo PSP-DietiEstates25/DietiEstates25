@@ -21,84 +21,127 @@ export interface GeoapifyPlacesResponse {
   providedIn: 'root',
 })
 export class GeoapifyService {
-  
   private httpClient = inject(HttpClient);
 
-  getLatitudeLongitudeData(latitude: number, longitude: number){
-    //const url2 = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&apiKey=${environment.geoapifyAPIKey}`
-    const url = "https://api.geoapify.com/v1/geocode/reverse";
+  getLatitudeLongitudeData(latitude: number, longitude: number) {
+    const url = 'https://api.geoapify.com/v1/geocode/reverse';
     const params = new HttpParams()
       .set('lat', latitude.toString())
       .set('lon', longitude.toString())
       .set('format', 'json')
-      .set('apiKey', environment.geoapifyAPIKey)
+      .set('lang', 'it')
+      .set('apiKey', environment.geoapifyAPIKey);
 
     return this.httpClient.get(url, { params });
   }
 
   getNearPlacesByLatitudeLongitude(latitude: number, longitude: number) {
-
-    /*
-    const url2 = `https://api.geoapify.com/v2/places` +
-      `?categories=education.school,public_transport,leisure.park` +
-      `&filter=circle:${longitude},${latitude},${environment.placesRadius}` + // attenzione ordine lon,lat
-      `&bias=proximity:${longitude},${latitude}` +
-      `&limit=${environment.placesLimit}` +
-      `&apiKey=${environment.geoapifyAPIKey}`;
-    */
-
-    const url = "https://api.geoapify.com/v2/places";
+    const url = 'https://api.geoapify.com/v2/places';
     const params = new HttpParams()
       .set('categories', 'education.school,public_transport,leisure.park')
-      .set('filter', `circle:${longitude.toString()},${latitude.toString()},${environment.placesRadius.toString()}`)
+      .set(
+        'filter',
+        `circle:${longitude.toString()},${latitude.toString()},${environment.placesRadius.toString()}`,
+      )
       .set('bias', `proximity:${longitude.toString()},${latitude.toString()}`)
       .set('limit', environment.placesLimit.toString())
+      .set('lang', 'it')
       .set('apiKey', environment.geoapifyAPIKey);
 
-    return this.httpClient.get<GeoapifyPlacesResponse>(url, { params })
-      .pipe(
-        map((response) => {
-          const features = response.features ?? [];
+    return this.httpClient.get<GeoapifyPlacesResponse>(url, { params }).pipe(
+      map((response) => {
+        const features = response.features ?? [];
 
-          const hasParks = features.some((feature) =>
-            feature.properties.categories.includes('leisure.park')
-          );
+        const hasParks = features.some((feature) =>
+          feature.properties.categories.includes('leisure.park'),
+        );
 
-          const hasPublicTransport = features.some((feature) =>
-            feature.properties.categories.some((category) =>
-              category === 'public_transport' || category.startsWith('public_transport.')
-            )
-          );
+        const hasPublicTransport = features.some((feature) =>
+          feature.properties.categories.some(
+            (category) =>
+              category === 'public_transport' ||
+              category.startsWith('public_transport.'),
+          ),
+        );
 
-          const hasSchools = features.some((feature) =>
-            feature.properties.categories.includes('education.school')
-          );
+        const hasSchools = features.some((feature) =>
+          feature.properties.categories.includes('education.school'),
+        );
 
-          const tags: NearTag[] = [];
+        const tags: NearTag[] = [];
 
-          if (hasParks) tags.push('NEAR_PARKS');
-          if (hasPublicTransport) tags.push('NEAR_PUBLIC_TRANSPORT');
-          if (hasSchools) tags.push('NEAR_SCHOOLS');
+        if (hasParks) tags.push('NEAR_PARKS');
+        if (hasPublicTransport) tags.push('NEAR_PUBLIC_TRANSPORT');
+        if (hasSchools) tags.push('NEAR_SCHOOLS');
 
-          return tags;
-        })
-      );
+        return tags;
+      }),
+    );
   }
 
-  getConsistOfPlaceBoundaries(placeId: number){
-    //const url = `https://api.geoapify.com/v1/boundaries/consists-of?id=${placeId}&geometry=geometry_1000&apiKey=${environment.geoapifyAPIKey}`;
-    const url = `https://api.geoapify.com/v1/boundaries/consists-of`;
+  getPlaceIdByCityAndRegion(cityName: string, regionName: string) {
+    const encodedCityName = encodeURIComponent(cityName);
+    const encodedRegionName = encodeURIComponent(regionName);
+
+    const url = `https://api.geoapify.com/v1/geocode/search`;
     const params = new HttpParams()
-      .set('id', placeId.toString())
+      .set('city', encodedCityName)
+      .set('state', encodedRegionName)
+      .set('country', 'Italy')
+      .set('limit', '1')
+      .set('format', 'json')
+      .set('lang', 'it')
+      .set('apiKey', environment.geoapifyAPIKey);
+
+    return this.httpClient.get<any>(url, { params }).pipe(
+      map((response) => {
+        return response.results?.[0]?.place_id || null;
+      }),
+    );
+  }
+
+  getLatitudeLongitudeByCityAndRegion(cityName: string, regionName: string) {}
+
+  getMunicipalityName(lat: number, lon: number) {
+    const url = `https://api.geoapify.com/v1/boundaries/part-of`;
+    const params = new HttpParams()
+      .set('lat', lat.toString())
+      .set('lon', lon.toString())
+      .set('subType', 'district')
       .set('geometry', 'geometry_1000')
       .set('apiKey', environment.geoapifyAPIKey)
-    
-    return this.httpClient.get(url);
+      .set('lang', 'it');
+
+    return this.httpClient.get<any>(url, { params }).pipe(
+      map((response) => {
+        const features = response.features || [];
+
+        if (features.length > 0) {
+          return features[0].properties.name;
+        } else return features[0].properties.city;
+      }),
+    );
   }
 
-  getCountryPlaceId(placeName: string){
-    const encodedPlaceName = encodeURIComponent(placeName);
-    const url = `https://api.geoapify.com/v1/geocode/search?country=${encodedPlaceName}&apiKey=${environment.geoapifyAPIKey}`;
-    return this.httpClient.get(url);
+  getCityMunicipality(placeId: string) {
+    const url = `https://api.geoapify.com/v1/boundaries/consists-of`;
+    const params = new HttpParams()
+      .set('id', placeId)
+      .set('geometry', 'geometry_1000')
+      .set('lang', 'it')
+      .set('apiKey', environment.geoapifyAPIKey);
+
+    return this.httpClient.get<any>(url, { params });
+  }
+
+  getPlaceDetailsGeometry(placeId: string) {
+    const url = `https://api.geoapify.com/v2/place-details`;
+    const params = new HttpParams()
+      .set('id', placeId)
+      .set('features', 'details,details.geometry')
+      .set('lang', 'it')
+      .set('apiKey', environment.geoapifyAPIKey);
+
+    return this.httpClient.get<any>(url, { params });
   }
 }

@@ -50,7 +50,7 @@ export interface RecentSearchSnapshot {
 export class SearchFacade {
   private searchService = inject(SearchControllerService);
   private geographicalPositionService = inject(
-    GeographicalPositionControllerService
+    GeographicalPositionControllerService,
   );
   private utilityService = inject(UtilityControllerService);
   private detailService = inject(DetailControllerService);
@@ -87,7 +87,7 @@ export class SearchFacade {
   searchCards = signal<SearchCard[]>([]);
 
   hasNext = computed(
-    () => this.searchCards().length >= (this._lastForm()?.size ?? 0)
+    () => this.searchCards().length >= (this._lastForm()?.size ?? 0),
   );
 
   hasPrev = computed(() => (this._lastForm()?.page ?? 1) > 1);
@@ -119,7 +119,7 @@ export class SearchFacade {
           this._authenticated.set(false);
           this.loadRecentFor(null);
           return of(null);
-        })
+        }),
       )
       .subscribe();
   }
@@ -127,7 +127,7 @@ export class SearchFacade {
   cacheFilters(
     geographicalPositionRequest: GeographicalPositionRequest,
     utilityRequest: UtilityRequest,
-    cadastralFilterRequest: CadastralFilterRequest
+    cadastralFilterRequest: CadastralFilterRequest,
   ) {
     this._cachedGeographicalPosition.set(geographicalPositionRequest ?? null);
     this._cachedUtility.set(utilityRequest ?? null);
@@ -137,9 +137,11 @@ export class SearchFacade {
   private _getCachedGeographicalPosition() {
     return this._cachedGeographicalPosition();
   }
+
   private _getCachedUtility() {
     return this._cachedUtility();
   }
+
   private _getCachedCadastralFilter() {
     return this._cachedCadastralFilter();
   }
@@ -173,7 +175,7 @@ export class SearchFacade {
 
     const current = [...this.recent()];
     const without = current.filter(
-      (searchFilter) => searchFilter.id !== search.id
+      (searchFilter) => searchFilter.id !== search.id,
     );
     const next = [search, ...without].slice(0, max);
 
@@ -224,7 +226,10 @@ export class SearchFacade {
     return `h${(h >>> 0).toString(16)}`;
   }
 
-  prepareDetail(searchGeographicalPosition: SearchGeographicalPosition,utility: UtilityRequest) {
+  prepareDetail(
+    geographicalPosition: GeographicalPositionRequest,
+    utility: UtilityRequest,
+  ) {
     this.error.set(null);
     this.loading.set(true);
 
@@ -236,12 +241,12 @@ export class SearchFacade {
         .pipe(
           map(
             (geographicalPositionResponse) =>
-              geographicalPositionResponse?.id ?? null
+              geographicalPositionResponse?.id ?? null,
           ),
           tap((geographicalPositionId) =>
-            this.geographicalPositionId.set(geographicalPositionId)
-          )
-        )
+            this.geographicalPositionId.set(geographicalPositionId),
+          ),
+        ),
     );
 
     const ensureUtility$ = iif(
@@ -249,8 +254,8 @@ export class SearchFacade {
       of(this.utilityId()!),
       this.utilityService.createUtility({ body: utility }).pipe(
         map((utilityResponse) => utilityResponse?.id ?? null),
-        tap((utilityId) => this.utilityId.set(utilityId))
-      )
+        tap((utilityId) => this.utilityId.set(utilityId)),
+      ),
     );
 
     return ensureGeographicalPosition$.pipe(
@@ -269,11 +274,11 @@ export class SearchFacade {
                 })
                 .pipe(
                   map((detailResponse) => detailResponse?.id ?? null),
-                  tap((detailId) => this.detailId.set(detailId))
-                )
-            )
-          )
-        )
+                  tap((detailId) => this.detailId.set(detailId)),
+                ),
+            ),
+          ),
+        ),
       ),
       tap((detailId) => {
         if (detailId == null) throw new Error('Creazione detailId fallita');
@@ -282,7 +287,7 @@ export class SearchFacade {
         this.error.set(this._msg(error));
         throw error;
       }),
-      finalize(() => this.loading.set(false))
+      finalize(() => this.loading.set(false)),
     );
   }
 
@@ -298,9 +303,9 @@ export class SearchFacade {
         .pipe(
           map((cadastralFilterResponse) => cadastralFilterResponse?.id ?? null),
           tap((cadastralFilterId) =>
-            this.cadastralFilterId.set(cadastralFilterId)
-          )
-        )
+            this.cadastralFilterId.set(cadastralFilterId),
+          ),
+        ),
     ).pipe(
       tap((cadastralFilterId) => {
         if (cadastralFilterId == null)
@@ -310,7 +315,7 @@ export class SearchFacade {
         this.error.set(this._msg(error));
         throw error;
       }),
-      finalize(() => this.loading.set(false))
+      finalize(() => this.loading.set(false)),
     );
   }
 
@@ -334,9 +339,9 @@ export class SearchFacade {
           page: params.page,
           size: params.size,
           userEmail: params.userEmail,
-        })
+        }),
       ),
-      finalize(() => this.loading.set(false))
+      finalize(() => this.loading.set(false)),
     );
   }
 
@@ -360,7 +365,7 @@ export class SearchFacade {
     const guard$ = defer(() => {
       if (!this.detailId() || !this.cadastralFilterId()) {
         throw new Error(
-          'Mancano gli ID necessari (detailId o cadastralFilterId).'
+          'Mancano gli ID necessari (detailId o cadastralFilterId).',
         );
       }
       return of(true);
@@ -410,7 +415,7 @@ export class SearchFacade {
           const category = this._normalizeCategory(
             response?.category ??
               response?.realEstateCategory ??
-              response?.adCategory
+              response?.adCategory,
           );
 
           return {
@@ -422,7 +427,7 @@ export class SearchFacade {
             lat: Number.isFinite(lat) ? lat : undefined,
             lon: Number.isFinite(lon) ? lon : undefined,
           } as SearchCardGeo;
-        })
+        }),
       ),
 
       switchMap((searchCards) => {
@@ -430,7 +435,7 @@ export class SearchFacade {
           (searchCard) =>
             !Number.isFinite(searchCard.lat as any) ||
             !Number.isFinite(searchCard.lon as any) ||
-            (!searchCard.address && !searchCard.city)
+            (!searchCard.address && !searchCard.city),
         );
         if (missing.length === 0) return of(searchCards);
 
@@ -438,13 +443,13 @@ export class SearchFacade {
           new Set(
             missing
               .map((searchCard) => Number((searchCard as any).detailId))
-              .filter(Number.isFinite)
-          )
+              .filter(Number.isFinite),
+          ),
         ) as number[];
         if (detailIds.length === 0) return of(searchCards);
 
         return forkJoin(
-          detailIds.map((detailId) => this._getDetail(detailId))
+          detailIds.map((detailId) => this._getDetail(detailId)),
         ).pipe(
           switchMap((details) => {
             const mapDetailToGeographicalPosition = new Map<number, number>();
@@ -452,21 +457,21 @@ export class SearchFacade {
             details.forEach((detail, idx) => {
               const detailId = detailIds[idx];
               const geographicalPositionId = Number(
-                detail?.geographicalPositionId
+                detail?.geographicalPositionId,
               );
               if (Number.isFinite(geographicalPositionId))
                 mapDetailToGeographicalPosition.set(
                   detailId,
-                  geographicalPositionId
+                  geographicalPositionId,
                 );
             });
 
             const geographicalPositionIds = Array.from(
               new Set(
                 Array.from(mapDetailToGeographicalPosition.values()).filter(
-                  Number.isFinite
-                )
-              )
+                  Number.isFinite,
+                ),
+              ),
             ) as number[];
 
             if (geographicalPositionIds.length === 0)
@@ -474,23 +479,23 @@ export class SearchFacade {
 
             return forkJoin(
               geographicalPositionIds.map((geographicalPositionId) =>
-                this._getGeographicalPosition(geographicalPositionId)
-              )
+                this._getGeographicalPosition(geographicalPositionId),
+              ),
             ).pipe(
               map((geographicalPositions) => {
                 const mapGeographicalPosition = new Map<number, any>();
                 geographicalPositions.forEach((geographicalPosition, idx) =>
                   mapGeographicalPosition.set(
                     geographicalPositionIds[idx],
-                    geographicalPosition
-                  )
+                    geographicalPosition,
+                  ),
                 );
                 return {
                   searchCards,
                   mapDetailToGeographicalPosition,
                   mapGeographicalPosition,
                 };
-              })
+              }),
             );
           }),
 
@@ -526,15 +531,15 @@ export class SearchFacade {
                   address,
                   city,
                 } as SearchCardGeo;
-              })
-          )
+              }),
+          ),
         );
       }),
 
       map((searchCards: SearchCardWithCat[]) =>
         searchCards.filter((searchCard): searchCard is SearchCardWithCat =>
-          this._isRequestedCategory(searchCard, requestedCategory)
-        )
+          this._isRequestedCategory(searchCard, requestedCategory),
+        ),
       ),
 
       tap((mapped) => {
@@ -580,7 +585,7 @@ export class SearchFacade {
         this.searchCards.set([]);
         throw error;
       }),
-      finalize(() => this.loading.set(false))
+      finalize(() => this.loading.set(false)),
     );
   }
 
@@ -614,13 +619,13 @@ export class SearchFacade {
         };
         this._detailCache.set(detailId, output);
         return output;
-      })
+      }),
     );
   }
 
   private _getGeographicalPosition(geographicalPositionId: number) {
     const _cachedGeographicalPosition = this._geographicalPositionCache.get(
-      geographicalPositionId
+      geographicalPositionId,
     );
     if (_cachedGeographicalPosition) return of(_cachedGeographicalPosition);
 
@@ -638,7 +643,7 @@ export class SearchFacade {
           };
           this._geographicalPositionCache.set(geographicalPositionId, output);
           return output;
-        })
+        }),
       );
   }
 
@@ -649,7 +654,7 @@ export class SearchFacade {
 
   private _isRequestedCategory(
     c: { category?: Category | null },
-    req: Category
+    req: Category,
   ): c is { category: Category } {
     return this._normalizeCategory(c.category) === req;
   }

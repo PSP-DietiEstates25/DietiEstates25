@@ -21,6 +21,7 @@ import { NotificationsPageComponent } from './components/notifications/notificat
 import { isAdminGuard } from './_guards/admin/is-admin.guard';
 import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
 import { isEstateAgentOrAdminGuard } from './_guards/admin-or-agent/is-estate-agent-or-admin.guard';
+import { SearchLandingMapComponent } from './components/search-landing-map/search-landing-map.component';
 
 export const routes: Routes = [
   {
@@ -43,8 +44,14 @@ export const routes: Routes = [
     component: HomeSelectorComponent,
   },
   {
-    path: 'search',
+    path: 'searches',
+    title: 'Searches',
     component: SearchPageComponent,
+  },
+  {
+    path: 'search',
+    title: 'Search',
+    component: SearchLandingMapComponent
   },
   {
     path: '',
