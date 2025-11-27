@@ -1,12 +1,26 @@
-<section class="container mx-auto px-4 py-6">
-  <header class="mb-6 flex items-center justify-between">
-    <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
-      Area Admin
-    </h1>
-    <nav class="flex gap-2">
+<section class="container mx-auto px-4 py-6 space-y-6">
+  <!-- HEADER + TABS -->
+  <header
+    class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
+  >
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+        Area Admin
+      </h1>
+      <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+        Gestisci annunci, utenti e impostazioni dell’account amministratore.
+      </p>
+    </div>
+
+    <nav
+      class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50/70 px-1 py-1 dark:border-slate-700 dark:bg-slate-900/70"
+      aria-label="Navigazione area admin"
+    >
       @for (t of tabs; track t.key) {
       <button
-        class="btn_ghost cursor-pointer"
+        type="button"
+        class="btn_ghost rounded-full px-3 py-1.5 text-xs sm:text-sm font-medium transition data-[active=true]:btn_primary data-[active=true]:shadow-sm"
+        [attr.data-active]="active() === t.key"
         [class.btn_primary]="active() === t.key"
         (click)="setTab(t.key)"
       >
@@ -14,7 +28,11 @@
       </button>
       }
 
-      <button class="btn_ghost cursor-pointer" (click)="logout()">
+      <button
+        type="button"
+        class="btn_ghost rounded-full text-xs sm:text-sm cursor-pointer"
+        (click)="logout()"
+      >
         Logout
       </button>
     </nav>
@@ -22,10 +40,18 @@
 
   <!-- ADS TAB -->
   @if (active() === 'ads') {
-  <section>
-    <div class="mb-4 flex flex-wrap items-end gap-3">
+  <section class="space-y-4">
+    <!-- Filtro -->
+    <div
+      class="flex flex-wrap items-end gap-3 rounded-2xl border border-slate-200 bg-white/70 px-3 py-3 dark:border-slate-700 dark:bg-slate-900/70"
+    >
       <div>
-        <label for="q" class="block text-sm mb-1">Cerca</label>
+        <label
+          for="q"
+          class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-200"
+        >
+          Cerca
+        </label>
         <input
           id="q"
           class="input_main w-72"
@@ -34,8 +60,14 @@
           placeholder="Titolo o città"
         />
       </div>
+
       <div>
-        <label for="active" class="block text-sm mb-1">Stato</label>
+        <label
+          for="active"
+          class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-200"
+        >
+          Stato
+        </label>
         <select
           id="active"
           class="input_main w-44"
@@ -47,46 +79,68 @@
           <option [ngValue]="false">Solo inattivi</option>
         </select>
       </div>
+
+      <div class="ml-auto text-xs text-slate-500 dark:text-slate-400">
+        Usa i filtri per affinare la lista degli annunci.
+      </div>
     </div>
 
+    <!-- Lista annunci -->
     @if (adsLoading()) {
-    <div class="py-12 text-center">Caricamento…</div>
+    <div class="py-12 text-center text-sm text-slate-600 dark:text-slate-300">
+      Caricamento annunci…
+    </div>
     } @else {
     <div class="grid lg:grid-cols-2 gap-4">
       @for (ad of ads(); track ad.id) {
-      <article class="rounded-2xl border dark:border-slate-700 p-4">
+      <article
+        class="rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-900/70"
+      >
         <div class="flex items-start justify-between gap-3">
-          <div>
-            <h3 class="font-semibold text-slate-900 dark:text-white">
+          <div class="space-y-1">
+            <h3
+              class="font-semibold text-slate-900 dark:text-white line-clamp-2"
+            >
               {{ ad.title }}
             </h3>
-            <p class="text-sm text-slate-600 dark:text-slate-300">
-              {{ ad.city || "—" }} • Creato {{ ad.createdAt | date : "short" }}
+            <p class="text-xs text-slate-600 dark:text-slate-300">
+              {{ ad.city || "—" }} •
+              <span class="text-slate-500">Creato</span>
+              {{ ad.createdAt | date : "short" }}
             </p>
-            <div class="mt-1 text-sm">
-              @if (ad.price != null) { € {{ ad.price | number : "1.0-0" }} }
-              @else { Prezzo su richiesta }
-            </div>
-            <div class="mt-1 text-xs">
-              <span class="chip">{{ ad.active ? "Attivo" : "Inattivo" }}</span>
+            <div class="text-sm text-slate-800 dark:text-slate-100">
+              <span class="font-semibold">
+                € {{ ad.price | number : "1.0-0" }}
+              </span>
             </div>
           </div>
-          <div class="flex gap-2">
+
+          <div class="flex flex-col gap-2">
             <button
+              type="button"
               class="btn_ghost cursor-pointer"
               [routerLink]="['/edit', ad.id]"
             >
               Modifica
             </button>
-            <button class="btn_ghost cursor-pointer" (click)="deleteAd(ad)">
+            <button
+              type="button"
+              class="btn_ghost cursor-pointer text-red-600 hover:text-red-700"
+              (click)="deleteAd(ad)"
+            >
               Elimina
             </button>
           </div>
         </div>
       </article>
       } @empty {
-      <div class="py-12 text-center text-slate-600 dark:text-slate-300">
-        Nessun annuncio
+      <div
+        class="col-span-full py-12 text-center text-slate-600 dark:text-slate-300"
+      >
+        <p class="text-sm">Nessun annuncio trovato.</p>
+        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          Prova a rimuovere o modificare i filtri di ricerca.
+        </p>
       </div>
       }
     </div>
@@ -96,32 +150,60 @@
 
   <!-- USERS TAB -->
   @if (active() === 'users') {
-  <section>
+  <section class="space-y-4">
+    <div>
+      <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+        Gestione utenti
+      </h2>
+      <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+        Crea rapidamente nuovi account amministratore o agenti.
+      </p>
+    </div>
+
     <div class="grid lg:grid-cols-2 gap-4">
-      <article class="rounded-2xl border dark:border-slate-700 p-4">
-        <h3 class="font-semibold mb-3">Crea utente</h3>
-        <form
-          [formGroup]="createForm"
-          class="flex flex-col gap-3 max-w-md mx-auto"
-        >
-          <div class="">
-            <label for="email" class="block text-sm mb-1">Email</label>
+      <article
+        class="rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/70"
+      >
+        <h3 class="font-semibold mb-3 text-slate-900 dark:text-white">
+          Crea nuovo utente
+        </h3>
+        <form [formGroup]="createForm" class="flex flex-col gap-3 max-w-md">
+          <div>
+            <label
+              for="email"
+              class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-200"
+            >
+              Email
+            </label>
             <input
               id="email"
               type="email"
               class="input_main"
               formControlName="email"
+              placeholder="es. admin@azienda.it"
             />
           </div>
+
           <div>
-            <label for="role2" class="block text-sm mb-1">Ruolo</label>
+            <label
+              for="role2"
+              class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-200"
+            >
+              Ruolo
+            </label>
             <select id="role2" class="input_main" formControlName="role">
               <option value="ESTATE_AGENT">Agente</option>
               <option value="ADMIN">Admin</option>
             </select>
           </div>
+
           <div>
-            <label for="pwd" class="block text-sm mb-1">Password</label>
+            <label
+              for="pwd"
+              class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-200"
+            >
+              Password
+            </label>
             <input
               id="pwd"
               type="password"
@@ -129,10 +211,14 @@
               formControlName="password"
             />
           </div>
+
           <div>
-            <label for="pwd2" class="block text-sm mb-1"
-              >Conferma password</label
+            <label
+              for="pwd2"
+              class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-200"
             >
+              Conferma password
+            </label>
             <input
               id="pwd2"
               type="password"
@@ -144,13 +230,14 @@
             <p class="text-xs text-red-500 mt-1">Le password non coincidono.</p>
             }
           </div>
+
           <button
             type="button"
-            class="btn_primary"
+            class="btn_primary mt-1 w-fit"
             (click)="createUser()"
             [disabled]="createForm.invalid"
           >
-            Crea
+            Crea utente
           </button>
         </form>
       </article>
@@ -160,16 +247,28 @@
 
   <!-- PASSWORD TAB -->
   @if (active() === 'passwords') {
-  <section class="container mx-auto px-4 py-6 max-w-xl">
-    <h1 class="text-2xl font-bold mb-4">Cambia password</h1>
+  <section class="space-y-4 max-w-xl">
+    <div>
+      <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+        Cambia password
+      </h2>
+      <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+        Aggiorna la password del tuo account amministratore.
+      </p>
+    </div>
 
     <form
       [formGroup]="form"
       (ngSubmit)="submit()"
-      class="grid gap-3 rounded-2xl border dark:border-slate-700 p-4"
+      class="grid gap-3 rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/70"
     >
       <div>
-        <label for="cur" class="text-sm block mb-1">Password attuale</label>
+        <label
+          for="cur"
+          class="text-sm font-medium block mb-1 text-slate-700 dark:text-slate-200"
+        >
+          Password attuale
+        </label>
         <input
           id="cur"
           type="password"
@@ -179,12 +278,17 @@
         />
         @if (formControls.currentPassword.touched &&
         formControls.currentPassword.invalid) {
-        <p class="text-xs text-red-600 mt-1">Obbligatoria.</p>
+        <p class="text-xs text-red-600 mt-1">Campo obbligatorio.</p>
         }
       </div>
 
       <div>
-        <label for="new" class="text-sm block mb-1">Nuova password</label>
+        <label
+          for="new"
+          class="text-sm font-medium block mb-1 text-slate-700 dark:text-slate-200"
+        >
+          Nuova password
+        </label>
         <input
           id="new"
           type="password"
@@ -198,15 +302,18 @@
         } @if (formControls.newPassword.touched &&
         formControls.newPassword.hasError('pattern')) {
         <p class="text-xs text-red-600 mt-1">
-          Deve includere maiuscola, minuscola e numero.
+          Deve includere almeno una maiuscola, una minuscola e un numero.
         </p>
         }
       </div>
 
       <div>
-        <label for="conf" class="text-sm block mb-1"
-          >Conferma nuova password</label
+        <label
+          for="conf"
+          class="text-sm font-medium block mb-1 text-slate-700 dark:text-slate-200"
         >
+          Conferma nuova password
+        </label>
         <input
           id="conf"
           type="password"
@@ -219,19 +326,31 @@
         }
       </div>
 
-      <button class="btn_primary" [disabled]="loading() || form.invalid">
+      <button
+        class="btn_primary mt-1 w-fit"
+        [disabled]="loading() || form.invalid"
+      >
         {{ loading() ? "Salvataggio…" : "Aggiorna password" }}
       </button>
 
       @if (success()) {
-      <p class="text-green-600 text-sm mt-1">{{ success() }}</p>
+      <p class="text-green-600 text-sm mt-1">
+        {{ success() }}
+      </p>
       } @if (error()) {
-      <p class="text-red-600 text-sm mt-1">{{ error() }}</p>
+      <p class="text-red-600 text-sm mt-1">
+        {{ error() }}
+      </p>
       }
     </form>
 
-    <div class="mt-4">
-      <a routerLink="/admin" class="text-sm underline">Torna alla dashboard</a>
+    <div class="mt-2">
+      <a
+        routerLink="/admin"
+        class="text-xs underline text-slate-600 dark:text-slate-300"
+      >
+        Torna alla dashboard
+      </a>
     </div>
   </section>
   }

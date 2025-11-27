@@ -1,26 +1,62 @@
-<form [formGroup]="form" (ngSubmit)="submitVisit()" class="grid gap-2">
-  <div class="grid grid-cols-2 gap-2">
-    <div>
-      <label for="visit-date" class="text-sm">Data</label>
+<form [formGroup]="form" (ngSubmit)="submitVisit()" class="grid gap-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div class="grid gap-1.5">
+      <label for="visit-date" class="text-sm font-medium">Data</label>
       <input
         id="visit-date"
         type="date"
         class="input_main"
         formControlName="date"
         [min]="today"
+        [class.ring-2]="form.get('date')?.touched && form.get('date')?.invalid"
+        [class.ring-red-500]="
+          form.get('date')?.touched && form.get('date')?.invalid
+        "
       />
+      <p class="text-xs text-slate-500 dark:text-slate-400">
+        Seleziona una data disponibile a partire da oggi.
+      </p>
+
+      @if (form.get('date')?.touched && form.get('date')?.invalid) {
+      <p class="text-xs text-red-600">Inserisci una data valida.</p>
+      }
     </div>
-    <div>
-      <label for="visit-time" class="text-sm">Orario</label>
+
+    <div class="grid gap-1.5">
+      <label for="visit-time" class="text-sm font-medium">Orario</label>
       <input
         id="visit-time"
         type="time"
         class="input_main"
         formControlName="time"
+        [class.ring-2]="form.get('time')?.touched && form.get('time')?.invalid"
+        [class.ring-red-500]="
+          form.get('time')?.touched && form.get('time')?.invalid
+        "
       />
+      <p class="text-xs text-slate-500 dark:text-slate-400">
+        Esempio: 10:30, 16:00.
+      </p>
+
+      @if (form.get('time')?.touched && form.get('time')?.invalid) {
+      <p class="text-xs text-red-600">Inserisci un orario valido.</p>
+      }
     </div>
   </div>
-  <button type="submit" class="btn_primary" [disabled]="loading || !isLoggedIn">
+
+  @if (!isLoggedIn) {
+  <div
+    class="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-900/40 dark:bg-amber-900/10 dark:text-amber-200"
+  >
+    Per richiedere una visita devi accedere.
+  </div>
+  }
+
+  <button
+    type="submit"
+    class="btn_primary w-full"
+    [disabled]="loading || !isLoggedIn || form.invalid"
+  >
     {{ loading ? "Invio…" : "Richiedi visita" }}
   </button>
 </form>

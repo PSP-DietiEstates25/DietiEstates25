@@ -1,23 +1,69 @@
-<h2 class="font-semibold mb-2">Fai un'offerta</h2>
-<form [formGroup]="form" (ngSubmit)="submitOffer()" class="grid gap-2">
-  <label for="offer-amount" class="text-sm">Importo (€)</label>
-  <input
-    id="offer-amount"
-    type="number"
-    class="input_main"
-    formControlName="amount"
-    placeholder="Es. 250000"
-  />
-  <button type="submit" class="btn_primary" [disabled]="loading">
+<h2 class="text-base font-semibold">Fai un'offerta</h2>
+
+<form [formGroup]="form" (ngSubmit)="submitOffer()" class="mt-3 grid gap-4">
+  <div class="grid gap-1.5">
+    <label for="offer-amount" class="text-sm font-medium">Importo (€)</label>
+
+    <div class="relative">
+      <span
+        class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500"
+      >
+        €
+      </span>
+
+      <input
+        id="offer-amount"
+        type="number"
+        inputmode="numeric"
+        class="input_main pl-8"
+        formControlName="amount"
+        placeholder="Es. 250000"
+        [class.ring-2]="
+          form.get('amount')?.touched && form.get('amount')?.invalid
+        "
+        [class.ring-red-500]="
+          form.get('amount')?.touched && form.get('amount')?.invalid
+        "
+      />
+    </div>
+
+    <p class="text-xs text-slate-500 dark:text-slate-400">
+      Inserisci un importo positivo.
+    </p>
+
+    @if (form.get('amount')?.touched && form.get('amount')?.invalid) {
+    <p class="text-xs text-red-600">Inserisci un importo valido.</p>
+    }
+  </div>
+
+  <button
+    type="submit"
+    class="btn_primary w-full"
+    [disabled]="loading || !isLoggedIn || form.invalid"
+  >
     {{ loading ? "Invio…" : "Invia offerta" }}
   </button>
 </form>
-@if (form.touched && form.invalid) {
-<p class="text-sm text-red-600 mt-1">Inserisci un importo valido.</p>
-} @if (!isLoggedIn) {
-<p class="text-xs mt-2">Per inviare un'offerta devi accedere.</p>
-} @if (successMessage) {
-<p class="text-green-600 mt-2">{{ successMessage }}</p>
-} @if (error) {
-<p class="text-red-600 mt-2">{{ error }}</p>
-}
+
+<!-- Feedback area (compatta e ordinata) -->
+<div class="mt-3 grid gap-2">
+  @if (!isLoggedIn) {
+  <div
+    class="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-900/40 dark:bg-amber-900/10 dark:text-amber-200"
+  >
+    Per inviare un'offerta devi accedere.
+  </div>
+  } @if (successMessage) {
+  <div
+    class="rounded-xl border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800 dark:border-green-900/40 dark:bg-green-900/10 dark:text-green-200"
+  >
+    {{ successMessage }}
+  </div>
+  } @if (error) {
+  <div
+    class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800 dark:border-red-900/40 dark:bg-red-900/10 dark:text-red-200"
+  >
+    {{ error }}
+  </div>
+  }
+</div>

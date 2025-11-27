@@ -1,19 +1,39 @@
-<section class="container mx-auto px-4 py-6">
-  <header class="mb-6 flex items-center justify-between">
-    <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
-      Area Agente
-    </h1>
-    <nav class="flex gap-2">
+<section class="container mx-auto px-4 py-6 space-y-6">
+  <!-- HEADER + TABS -->
+  <header
+    class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
+  >
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+        Area Agente
+      </h1>
+      <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+        Gestisci richieste di visita, annunci pubblicati e offerte ricevute in
+        un unico posto.
+      </p>
+    </div>
+
+    <nav
+      class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50/70 px-1 py-1 dark:border-slate-700 dark:bg-slate-900/70"
+      aria-label="Navigazione area agente"
+    >
       @for (t of tabs; track t.key) {
       <button
-        class="btn_ghost"
+        type="button"
+        class="btn_ghost rounded-full px-3 py-1.5 text-xs sm:text-sm font-medium transition data-[active=true]:btn_primary data-[active=true]:shadow-sm"
+        [attr.data-active]="active() === t.key"
         [class.btn_primary]="active() === t.key"
         (click)="setTab(t.key)"
       >
         {{ t.label }}
       </button>
       }
-      <button class="btn_ghost cursor-pointer" (click)="logout()">
+
+      <button
+        type="button"
+        class="btn_ghost rounded-full text-xs sm:text-sm cursor-pointer"
+        (click)="logout()"
+      >
         Logout
       </button>
     </nav>
@@ -21,60 +41,97 @@
 
   <!-- VISITS -->
   @if (active() === 'visits') {
-  <section>
-    <div class="mb-4 flex items-center gap-3">
-      <label for="visit-status" class="text-sm dark:text-slate-300"
-        >Stato</label
+  <section class="space-y-4">
+    <!-- Filtro -->
+    <div
+      class="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 bg-white/70 px-3 py-3 dark:border-slate-700 dark:bg-slate-900/70"
+    >
+      <div class="flex items-center gap-2">
+        <label
+          for="visit-status"
+          class="text-sm font-medium text-slate-700 dark:text-slate-200"
+        >
+          Stato visite
+        </label>
+        <select
+          id="visit-status"
+          class="input_main w-52"
+          [ngModel]="visitFilter()"
+          (ngModelChange)="visitFilter.set($any($event))"
+        >
+          <option value="">Tutte</option>
+          <option value="PENDING">In attesa</option>
+        </select>
+      </div>
+      <button
+        type="button"
+        class="btn_primary cursor-pointer ml-auto"
+        (click)="loadVisits()"
       >
-      <select
-        id="visit-status"
-        class="input_main w-52"
-        [ngModel]="visitFilter()"
-        (ngModelChange)="visitFilter.set($any($event))"
-      >
-        <option value="">Tutte</option>
-        <option value="PENDING">In attesa</option>
-      </select>
-      <button class="btn_primary cursor-pointer" (click)="loadVisits()">
         Aggiorna
       </button>
     </div>
 
+    <!-- Lista -->
     @if (visitsLoading()) {
-    <div class="py-12 text-center">Caricamento…</div>
+    <div class="py-12 text-center text-sm text-slate-600 dark:text-slate-300">
+      Caricamento richieste di visita…
+    </div>
     } @else {
     <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
       @for (v of visits(); track v.id) {
       <article
-        class="rounded-2xl border dark:border-slate-700 p-4 bg-white/60 dark:bg-slate-900/60"
+        class="rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-900/70"
       >
-        <h3 class="font-semibold text-slate-900 dark:text-white">
+        <h3 class="font-semibold text-slate-900 dark:text-white line-clamp-2">
           {{ v.adTitle }}
         </h3>
-        <p class="text-sm text-slate-600 dark:text-slate-300">
-          Richiesta da {{ v.requesterName }} •
+        <p class="mt-1 text-xs text-slate-500 dark:text-slate-300">
+          Richiesta da <span class="font-medium">{{ v.requesterName }}</span> •
           {{ v.requestedAt | date : "short" }}
         </p>
+
         @if (v.preferredDate) {
-        <p class="text-sm text-slate-600 dark:text-slate-300">
-          Preferenza: {{ v.preferredDate | date : "short" }}
+        <p class="mt-1 text-xs text-slate-500 dark:text-slate-300">
+          Preferenza visita:
+          <span class="font-medium">
+            {{ v.preferredDate | date : "short" }}
+          </span>
         </p>
         }
-        <div class="mt-3 flex items-center gap-2">
-          <span class="chip">{{ v.status }}</span>
+
+        <div class="mt-3 flex flex-wrap items-center gap-2">
+          <span class="chip text-xs uppercase tracking-wide">
+            {{ v.status }}
+          </span>
+
           @if (v.status === 'PENDING') {
-          <button class="btn_primary cursor-pointer" (click)="approveVisit(v)">
+          <button
+            type="button"
+            class="btn_primary cursor-pointer"
+            (click)="approveVisit(v)"
+          >
             Approva
           </button>
-          <button class="btn_ghost cursor-pointer" (click)="declineVisit(v)">
+          <button
+            type="button"
+            class="btn_ghost cursor-pointer"
+            (click)="declineVisit(v)"
+          >
             Rifiuta
           </button>
           }
         </div>
       </article>
       } @empty {
-      <div class="py-12 text-center text-slate-600 dark:text-slate-300">
-        Nessuna richiesta
+      <div
+        class="col-span-full py-12 text-center text-slate-600 dark:text-slate-300"
+      >
+        <p class="text-sm">Nessuna richiesta di visita al momento.</p>
+        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          Quando gli utenti richiederanno una visita ai tuoi annunci, le vedrai
+          qui.
+        </p>
       </div>
       }
     </div>
@@ -84,47 +141,61 @@
 
   <!-- ADS -->
   @if (active() === 'ads') {
-  <section>
-    <div class="mb-4 flex justify-between items-center">
-      <h2 class="text-xl font-bold text-slate-900 dark:text-white">
-        I tuoi annunci
-      </h2>
-      <a class="btn_primary cursor-pointer" routerLink="/basics"
-        >Nuovo annuncio</a
-      >
+  <section class="space-y-4">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+          I tuoi annunci
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+          Gestisci la lista degli immobili pubblicati come agente.
+        </p>
+      </div>
+      <a class="btn_primary cursor-pointer" routerLink="/basics">
+        Nuovo annuncio
+      </a>
     </div>
 
     @if (adsLoading()) {
-    <div class="py-12 text-center">Caricamento…</div>
+    <div class="py-12 text-center text-sm text-slate-600 dark:text-slate-300">
+      Caricamento annunci…
+    </div>
     } @else {
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
       @for (ad of ads(); track ad.id) {
-      <article class="rounded-2xl border dark:border-slate-700 overflow-hidden">
+      <article
+        class="rounded-2xl border border-slate-200 bg-white/70 overflow-hidden shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-900/70"
+      >
         @if (ad.coverSrc) {
-        <img
-          [src]="ad.coverSrc"
-          alt=""
-          class="w-full h-48 object-cover rounded-xl mb-3"
-        />
+        <img [src]="ad.coverSrc" alt="" class="w-full h-40 object-cover" />
         }
-        <div class="p-4">
+
+        <div class="p-4 space-y-2">
           <h3 class="font-semibold text-slate-900 dark:text-white line-clamp-2">
             {{ ad.title }}
           </h3>
+
           <div
-            class="text-sm text-slate-600 dark:text-slate-300 flex justify-between mt-2"
+            class="text-xs text-slate-600 dark:text-slate-300 flex justify-between items-center"
           >
-            <span>{{ ad.city || "—" }}</span>
+            <span class="truncate">
+              {{ ad.city || "Località non specificata" }}
+            </span>
             @if (ad.price != null) {
-            <span>€ {{ ad.price | number : "1.0-0" }}</span> }
+            <span class="font-semibold">
+              € {{ ad.price | number : "1.0-0" }}
+            </span>
+            }
           </div>
-          <div class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+
+          <div class="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
             Creato: {{ ad.createdAt | date : "short" }}
           </div>
 
-          <!-- aggiungi offerta manuale -->
-          <div class="mt-3 flex items-center gap-2">
+          <!-- azioni principali -->
+          <div class="mt-3 flex flex-wrap items-center gap-2">
             <button
+              type="button"
               class="btn_primary cursor-pointer"
               (click)="startAddOfferFor(ad.id)"
             >
@@ -135,14 +206,19 @@
             </a>
           </div>
 
-          <div class="mt-2 flex items-center gap-2">
+          <div class="mt-2 flex flex-wrap items-center gap-2">
             <button
+              type="button"
               class="btn_ghost cursor-pointer"
               [routerLink]="['/edit', ad.id]"
             >
               Modifica
             </button>
-            <button class="btn_danger cursor-pointer" (click)="deleteAd(ad.id)">
+            <button
+              type="button"
+              class="btn_danger cursor-pointer"
+              (click)="deleteAd(ad.id)"
+            >
               Elimina
             </button>
           </div>
@@ -150,10 +226,12 @@
           <!-- form inline visibile solo per l'ad selezionato -->
           @if (addOfferForId() === ad.id) {
           <div
-            class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2 p-3 rounded-xl border dark:border-slate-700 bg-white/50 dark:bg-slate-900/50"
+            class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2 p-3 rounded-xl border border-slate-200 bg-slate-50/70 dark:border-slate-700 dark:bg-slate-900/60"
           >
-            <div class="col-span-1">
-              <label class="text-sm block mb-1">Email offerente</label>
+            <div class="col-span-1 sm:col-span-2">
+              <label class="text-xs font-medium block mb-1">
+                Email offerente
+              </label>
               <input
                 type="email"
                 class="input_main w-full"
@@ -163,7 +241,9 @@
               />
             </div>
             <div class="col-span-1">
-              <label class="text-sm block mb-1">Importo (€)</label>
+              <label class="text-xs font-medium block mb-1">
+                Importo (€)
+              </label>
               <input
                 type="number"
                 class="input_main w-full"
@@ -176,8 +256,9 @@
                 placeholder="es. 250000"
               />
             </div>
-            <div class="col-span-1 sm:col-span-3 flex gap-2 mt-2">
+            <div class="col-span-1 sm:col-span-3 flex gap-2 mt-1 justify-end">
               <button
+                type="button"
                 class="btn_primary cursor-pointer"
                 [disabled]="addOfferLoading()"
                 (click)="submitExternalOffer()"
@@ -185,6 +266,7 @@
                 {{ addOfferLoading() ? "Invio…" : "Salva offerta" }}
               </button>
               <button
+                type="button"
                 class="btn_ghost cursor-pointer"
                 (click)="cancelAddOffer()"
               >
@@ -196,8 +278,13 @@
         </div>
       </article>
       } @empty {
-      <div class="py-12 text-center text-slate-600 dark:text-slate-300">
-        Non hai ancora annunci.
+      <div
+        class="col-span-full py-12 text-center text-slate-600 dark:text-slate-300"
+      >
+        <p class="text-sm">Non hai ancora annunci.</p>
+        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          Crea il tuo primo annuncio per iniziare a ricevere visite e offerte.
+        </p>
       </div>
       }
     </div>
@@ -207,79 +294,124 @@
 
   <!-- OFFERS -->
   @if (active() === 'offers') {
-  <section>
-    <div class="mb-4 flex items-center gap-3">
-      <label for="offer-status" class="text-sm dark:text-slate-300"
-        >Stato</label
+  <section class="space-y-4">
+    <!-- Filtro -->
+    <div
+      class="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 bg-white/70 px-3 py-3 dark:border-slate-700 dark:bg-slate-900/70"
+    >
+      <div class="flex items-center gap-2">
+        <label
+          for="offer-status"
+          class="text-sm font-medium dark:text-slate-200 text-slate-700"
+        >
+          Stato offerte
+        </label>
+        <select
+          id="offer-status"
+          class="input_main w-52"
+          [ngModel]="offerFilter()"
+          (ngModelChange)="offerFilter.set($any($event))"
+        >
+          <option value="">Tutte</option>
+          <option value="PENDING">In attesa</option>
+          <option value="ACCEPTED">Accettate</option>
+          <option value="DECLINED">Rifiutate</option>
+          <option value="COUNTERED">Controfferte</option>
+        </select>
+      </div>
+      <button
+        type="button"
+        class="btn_primary cursor-pointer ml-auto"
+        (click)="loadOffers()"
       >
-      <select
-        id="offer-status"
-        class="input_main w-52"
-        [ngModel]="offerFilter()"
-        (ngModelChange)="offerFilter.set($any($event))"
-      >
-        <option value="">Tutte</option>
-        <option value="PENDING">In attesa</option>
-        <option value="ACCEPTED">Accettate</option>
-        <option value="DECLINED">Rifiutate</option>
-        <option value="COUNTERED">Controfferte</option>
-      </select>
-      <button class="btn_primary cursor-pointer" (click)="loadOffers()">
         Aggiorna
       </button>
     </div>
 
+    <!-- Lista -->
     @if (offersLoading()) {
-    <div class="py-12 text-center">Caricamento…</div>
+    <div class="py-12 text-center text-sm text-slate-600 dark:text-slate-300">
+      Caricamento offerte…
+    </div>
     } @else {
     <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
       @for (o of offers(); track o.id) {
       <article
-        class="rounded-2xl border dark:border-slate-700 p-4 bg-white/60 dark:bg-slate-900/60"
+        class="rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-900/70"
       >
-        <h3 class="font-semibold text-slate-900 dark:text-white">
+        <h3 class="font-semibold text-slate-900 dark:text-white line-clamp-2">
           {{ o.adTitle }}
         </h3>
-        <p class="text-sm text-slate-600 dark:text-slate-300">
-          Da {{ o.bidderName }} • {{ o.createdAt | date : "short" }}
+        <p class="mt-1 text-xs text-slate-600 dark:text-slate-300">
+          Da
+          <span class="font-medium">{{ o.bidderName }}</span>
+          • {{ o.createdAt | date : "short" }}
         </p>
-        <div class="mt-2 text-lg font-bold">
+        <div class="mt-2 text-lg font-bold text-slate-900 dark:text-slate-50">
           € {{ o.amount | number : "1.0-0" }}
         </div>
-        <div class="mt-3 flex items-center gap-2">
-          <span class="chip">{{ o.status }}</span>
+
+        <div class="mt-3 flex flex-wrap items-center gap-2">
+          <span class="chip text-xs uppercase tracking-wide">
+            {{ o.status }}
+          </span>
+
           @if (o.status === 'PENDING') {
-          <button class="btn_primary cursor-pointer" (click)="acceptOffer(o)">
+          <button
+            type="button"
+            class="btn_primary cursor-pointer"
+            (click)="acceptOffer(o)"
+          >
             Accetta
           </button>
-          <button class="btn_ghost cursor-pointer" (click)="declineOffer(o)">
+          <button
+            type="button"
+            class="btn_ghost cursor-pointer"
+            (click)="declineOffer(o)"
+          >
             Rifiuta
           </button>
-          <button class="btn_ghost cursor-pointer" (click)="startCounter(o)">
+          <button
+            type="button"
+            class="btn_ghost cursor-pointer"
+            (click)="startCounter(o)"
+          >
             Controofferta
           </button>
           }
         </div>
 
         @if (counterId() === o.id) {
-        <div class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
-          <input
-            type="number"
-            class="input_main"
-            [ngModel]="counterAmount() ?? ''"
-            (ngModelChange)="
-              counterAmount.set(
-                $event === '' || $event == null ? null : +$event
-              )
-            "
-            placeholder="Nuovo importo"
-          />
+        <div
+          class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2 p-3 rounded-xl border border-slate-200 bg-slate-50/70 dark:border-slate-700 dark:bg-slate-900/60"
+        >
+          <div class="sm:col-span-2">
+            <input
+              type="number"
+              class="input_main w-full"
+              [ngModel]="counterAmount() ?? ''"
+              (ngModelChange)="
+                counterAmount.set(
+                  $event === '' || $event == null ? null : +$event
+                )
+              "
+              placeholder="Nuovo importo"
+            />
+          </div>
 
           <div class="sm:col-span-3 flex justify-end gap-2">
-            <button class="btn_ghost cursor-pointer" (click)="cancelCounter()">
+            <button
+              type="button"
+              class="btn_ghost cursor-pointer"
+              (click)="cancelCounter()"
+            >
               Annulla
             </button>
-            <button class="btn_primary cursor-pointer" (click)="sendCounter()">
+            <button
+              type="button"
+              class="btn_primary cursor-pointer"
+              (click)="sendCounter()"
+            >
               Invia
             </button>
           </div>
@@ -287,8 +419,13 @@
         }
       </article>
       } @empty {
-      <div class="py-12 text-center text-slate-600 dark:text-slate-300">
-        Nessuna offerta
+      <div
+        class="col-span-full py-12 text-center text-slate-600 dark:text-slate-300"
+      >
+        <p class="text-sm">Nessuna offerta al momento.</p>
+        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          Quando gli utenti faranno offerte sui tuoi annunci, le vedrai qui.
+        </p>
       </div>
       }
     </div>
