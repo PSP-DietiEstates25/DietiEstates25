@@ -131,56 +131,6 @@ export class FilterPanelComponent implements OnInit {
       );
 
     this.routerService.navigate(['/search']);
-    //this.facade.resetContext();
-    /*
-    if(this.geographicalPositionForm.invalid || this.utilityForm.invalid || this.cadastralFilterForm.invalid){
-      this.utilityForm.markAllAsTouched();
-      this.geographicalPositionForm.markAllAsTouched();
-      this.cadastralFilterForm.markAllAsTouched();
-    }
-
-    //this.facade.cacheFilters(geographicalPosition, utility, cadastralFilter);
-    const geographicalPosition: SearchGeographicalPosition = {
-      state: this.geographicalPositionForm.value.state,
-      city: this.geographicalPositionForm.value.city,
-    };
-
-    const utility: UtilityRequest = {
-      hasAirConditioning: this.utilityForm.value.hasAirConditioning as boolean,
-      hasDoorman: this.utilityForm.value.hasDoorman as boolean,
-      hasElevator: this.utilityForm.value.hasElevator as boolean,
-      nearPark: this.utilityForm.value.nearPark as boolean,
-      nearSchool: this.utilityForm.value.nearSchool as boolean,
-      nearPublicTransport: this.utilityForm.value.nearPublicTransport as boolean
-    };
-
-    const cadastralFilter: CadastralFilterRequest = {
-      minPrice: this.cadastralFilterForm.value.minPrice as number,
-      maxPrice: this.cadastralFilterForm.value.maxPrice as number,
-      minRooms: this.cadastralFilterForm.value.minRooms as number,
-      maxRooms: this.cadastralFilterForm.value.maxRooms as number,
-      minFloor: this.cadastralFilterForm.value.minRooms as number,
-      maxFloor: this.cadastralFilterForm.value.maxRooms as number,
-      minSquareMeters: this.cadastralFilterForm.value.minSquareMeters as number,
-      maxSquareMeters: this.cadastralFilterForm.value.maxSquareMeters as number,
-      minEnergyClass: this.cadastralFilterForm.value.minEnergyClass as number,
-      maxEnergyClass: this.cadastralFilterForm.value.maxSquareMeters as number,
-    };
-
-    this.facade.prepareDetail(geographicalPosition, utility)
-      .pipe(
-        switchMap(() => this.facade.prepareCadastralFilter(cadastralFilter)),
-        switchMap(() =>
-          this.facade.search({
-            category: this.category,
-            page: this.page,
-            size: this.size,
-            userEmail: this.userEmail,
-          })
-        )
-      )
-      .subscribe({ error: () => {} });
-    */
   }
 
   clearForms() {

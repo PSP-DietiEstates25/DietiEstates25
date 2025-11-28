@@ -212,6 +212,15 @@ export class StepDetailsComponent {
       )
       .subscribe({
         next: (nearTagsResponse: NearTag[]) => {
+          this.utilitiesForm.patchValue({
+            nearPark: nearTagsResponse.includes('NEAR_PARKS'),
+            nearPublicTransport: nearTagsResponse.includes(
+              'NEAR_PUBLIC_TRANSPORT',
+            ),
+            nearSchool: nearTagsResponse.includes('NEAR_SCHOOLS'),
+          });
+
+          this.saveFormData();
           this.saveFormData();
           this.routerService.navigate(['../cadastraldata'], {
             relativeTo: this.activatedRoute,

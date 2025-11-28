@@ -167,12 +167,10 @@ export class SearchLandingMapComponent
   }
 
   handleZoneClick(zoneName: string, layer: any) {
-    // Evidenzia visivamente la selezione (resetta gli altri)
     this.boundariesLayer.eachLayer((l: any) => {
       // Reset stile
       //this.boundariesLayer.(l);
     });
-    // Applica stile attivo
     (layer as L.Path).setStyle({
       color: '#dc2626',
       fillColor: '#ef4444',
@@ -186,14 +184,9 @@ export class SearchLandingMapComponent
   performSearch(municipality: string | null) {
     this.markersLayer.clearLayers();
 
-    // Recupera i filtri salvati
-
     const geo = (this.facade as any)._getCachedGeographicalPosition();
     const util = (this.facade as any)._getCachedUtility();
     const cad = (this.facade as any)._getCachedCadastralFilter();
-
-    // Aggiorna la municipalità nella richiesta
-    // Se municipality è null (caso città intera), passiamo stringa vuota o null al backend
 
     const updatedGeo = { ...geo, municipality: municipality || '' };
 
@@ -202,9 +195,9 @@ export class SearchLandingMapComponent
 
     this.facade
       .runFullSearch({
-        category: 'SALE', // O parametrizzato
+        category: 'SALE',
         page: 1,
-        size: 100, // Prendiamo un po' di risultati per popolare la mappa
+        size: 100,
         geographicalPosition: updatedGeo,
         utility: util,
         cadastralFilter: cad,
