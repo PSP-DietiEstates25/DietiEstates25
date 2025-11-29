@@ -8,12 +8,14 @@ import {
   ElementRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, TitleStrategy } from '@angular/router';
 import * as L from 'leaflet'; // Importa Leaflet
 
 import { SearchFacade } from '../search/search.facade'; // Verifica path
 import { GeoapifyService } from '../../manual_services/geoapify.service';
-import { filter, lastValueFrom } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { Geometry } from 'geojson';
 
 @Component({
   selector: 'app-search-landing-map',
@@ -30,11 +32,13 @@ export class SearchLandingMapComponent
   private router = inject(Router);
 
   @ViewChild('mapContainer') mapContainer!: ElementRef;
-  private map: L.Map | undefined;
+  private map!: L.Map;
 
   // Layer Groups
   private boundariesLayer: L.LayerGroup = L.layerGroup();
   private markersLayer: L.LayerGroup = L.layerGroup();
+  private geojson!: L.GeoJSON<any, Geometry>;
+  private selectedLayer: L.Path | null = null;
 
   loading = true;
   infoMessage = 'Inizializzazione mappa...';
@@ -54,12 +58,26 @@ export class SearchLandingMapComponent
       6,
     ); //centrato su italia
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-    }).addTo(this.map);
+    L.control.zoom({ position: 'bottomright' }).addTo(this.map);
+
+    this.map.attributionControl
+      .setPrefix('')
+      .addAttribution(
+        'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © OpenStreetMap <a href="https://www.openstreetmap.org/copyright" target="_blank">contributors</a>',
+      );
+
+    L.tileLayer(
+      `https://maps.geoapify.com/v1/tile/klokantech-basic/{z}/{x}/{y}@2x.png?apiKey=${environment.geoapifyAPIKey}`,
+      {
+        attribution:
+          'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © OpenStreetMap <a href="https://www.openstreetmap.org/copyright" target="_blank">contributors</a>',
+        maxZoom: 20,
+      },
+    ).addTo(this.map);
 
     this.boundariesLayer.addTo(this.map);
     this.markersLayer.addTo(this.map);
+
     this.loadBoundaries();
   }
 
@@ -76,10 +94,32 @@ export class SearchLandingMapComponent
       const subdivisions = await lastValueFrom(
         this.geoapifyService.getCityMunicipality(placeId),
       );
-      const features = subdivisions?.features || [];
-      const districts = this.filterPolygonalFeatures(features);
 
-      await this.choosePolygonsDrawing(districts, placeId);
+      const features: any[] = subdivisions.features;
+
+      if (features.length == 0) {
+        const response = await lastValueFrom(
+          this.geoapifyService.getPlaceDetailsGeometry(placeId),
+        );
+        this.geojson = L.geoJson(response, {
+          style: () => this.getDefaultStyle(),
+          onEachFeature: this.onEachFeature,
+        }).addTo(this.map);
+      } else {
+        this.geojson = L.geoJson(features, {
+          style: () => this.getDefaultStyle(),
+          onEachFeature: this.onEachFeature,
+        }).addTo(this.map);
+        //const districts = this.filterPolygonalFeatures(features);
+        //await this.choosePolygonsDrawing(districts, placeId);
+      }
+
+      this.map.fitBounds(this.geojson.getBounds(), {
+        padding: [50, 50],
+        animate: true,
+      });
+
+      this.boundariesLayer.addLayer(this.geojson);
     } catch (err) {
       console.error(err);
       this.infoMessage = 'Errore nel caricamento della mappa. Riprova.';
@@ -88,10 +128,90 @@ export class SearchLandingMapComponent
     }
   }
 
+  highlightFeature = (mouseEvent: any) => {
+    const layer = mouseEvent.target;
+    if (layer !== this.selectedLayer) {
+      layer.setStyle(this.getHoverStyle());
+      layer.bringToFront();
+    }
+  };
+
+  resetHighlight = (mouseEvent: any) => {
+    const layer = mouseEvent.target;
+    if (layer !== this.selectedLayer) {
+      this.geojson.resetStyle(layer);
+    }
+  };
+
+  handleLayerClick = (e: any) => {
+    const clickedLayer = e.target;
+
+    if (this.selectedLayer === clickedLayer) {
+      this.geojson.resetStyle(clickedLayer);
+      this.selectedLayer = null;
+
+      this.infoMessage = `Mostro annunci per tutta la città di ${this.cityName}.`;
+      this.performSearch(null);
+
+      this.map.fitBounds(this.geojson.getBounds());
+    } else {
+      if (this.selectedLayer) {
+        this.geojson.resetStyle(this.selectedLayer);
+      }
+      this.selectedLayer = clickedLayer;
+      clickedLayer.setStyle(this.getSelectedStyle());
+      clickedLayer.bringToFront();
+      this.map.fitBounds(clickedLayer.getBounds());
+      /*
+      const zoneName =
+        clickedLayer.feature.properties.name || 'Zona selezionata';
+      this.handleZoneClick(zoneName, clickedLayer); // La tua funzione esistente per cercare
+      */
+    }
+  };
+
+  onEachFeature = (feature: any, layer: L.Layer) => {
+    layer.on({
+      mouseover: this.highlightFeature,
+      mouseout: this.resetHighlight,
+      click: this.handleLayerClick,
+    });
+  };
+
+  getDefaultStyle() {
+    return {
+      fillColor: '',
+      weight: 2,
+      opacity: 1,
+      color: '#094585',
+      dashArray: '1',
+      fillOpacity: 0,
+    };
+  }
+
+  getHoverStyle() {
+    return {
+      weight: 2,
+      fillColor: '#5ea8f7',
+      dashArray: '',
+      fillOpacity: 0.2,
+    };
+  }
+
+  getSelectedStyle() {
+    return {
+      weight: 2,
+      fillColor: '#5ea8f7',
+      dashArray: '',
+      fillOpacity: 0.2,
+    };
+  }
+
+  //----------------VECCHI--------------------
   async choosePolygonsDrawing(districts: any[], placeId: string) {
     if (districts.length > 0) {
       this.infoMessage = `Trovate ${districts.length} zone. Clicca su una zona per vedere gli annunci.`;
-      this.drawPolygons(districts, true);
+      this.drawDistricts(districts, true);
     } else {
       this.infoMessage = `Mostro annunci per tutta la città di ${this.cityName}.`;
       const cityDetails = await lastValueFrom(
@@ -100,15 +220,14 @@ export class SearchLandingMapComponent
       const cityFeature = cityDetails.features?.[0];
 
       if (cityFeature) {
-        this.drawPolygons([cityFeature], false); // Disegna confine non cliccabile
+        this.drawDistricts([cityFeature], false);
       }
 
-      // Carica subito gli annunci (municipalità null)
       this.performSearch(null);
     }
   }
 
-  drawPolygons(features: any[], interactive: boolean) {
+  drawDistricts(features: any[], interactive: boolean) {
     if (!this.map) return;
     this.boundariesLayer.clearLayers();
 
@@ -117,7 +236,7 @@ export class SearchLandingMapComponent
         color: '#2563eb', // Blue-600
         weight: 6,
         opacity: 0.7,
-        fillColor: '#3b82f6',
+        fillColor: '#094585',
         fillOpacity: 0.1,
       },
       onEachFeature: (feature, layer) => {
@@ -169,7 +288,7 @@ export class SearchLandingMapComponent
   handleZoneClick(zoneName: string, layer: any) {
     this.boundariesLayer.eachLayer((l: any) => {
       // Reset stile
-      //this.boundariesLayer.(l);
+      //this.boundariesLayer(l);
     });
     (layer as L.Path).setStyle({
       color: '#dc2626',
