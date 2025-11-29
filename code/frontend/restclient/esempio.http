@@ -1,0 +1,5 @@
+//GET https://api.geoapify.com/v1/geocode/search?city=Torre%20del%20Greco&state=Campania&country=Italy&limit=1&format=json&apiKey=d6ef1142975941368b3831ce8487681b&lang=it
+
+//GET https://api.geoapify.com/v1/boundaries/consists-of?id=51ec74d65d8fbc2c4059072a3e99da644440f00101f901339f000000000000c0020792030838303035392b6974&geometry=geometry_1000&apiKey=d6ef1142975941368b3831ce8487681b
+
+GET https://api.geoapify.com/v2/place-details?id=51ec74d65d8fbc2c4059072a3e99da644440f00101f901339f000000000000c0020792030838303035392b6974&apiKey=b8568cb9afc64fad861a69edbddb2658

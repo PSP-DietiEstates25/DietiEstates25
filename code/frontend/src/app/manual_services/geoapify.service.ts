@@ -79,22 +79,24 @@ export class GeoapifyService {
     );
   }
 
-  getPlaceIdByCityAndRegion(cityName: string, regionName: string) {
-    const encodedCityName = encodeURIComponent(cityName);
-    const encodedRegionName = encodeURIComponent(regionName);
-
+  getPlaceByCityAndRegion(cityName: string, regionName: string) {
     const url = `https://api.geoapify.com/v1/geocode/search`;
     const params = new HttpParams()
-      .set('city', encodedCityName)
-      .set('state', encodedRegionName)
+      .set('city', cityName)
+      .set('state', regionName)
       .set('country', 'Italy')
       .set('limit', '1')
       .set('format', 'json')
       .set('lang', 'it')
       .set('apiKey', environment.geoapifyAPIKey);
 
-    return this.httpClient.get<any>(url, { params }).pipe(
+    return this.httpClient.get<any>(url, { params });
+  }
+
+  getPlaceIdByCityAndRegion(cityName: string, regionName: string) {
+    return this.getPlaceByCityAndRegion(cityName, regionName).pipe(
       map((response) => {
+        console.log('place_id: ' + response.results?.[0]?.place_id);
         return response.results?.[0]?.place_id || null;
       }),
     );
