@@ -13,6 +13,7 @@ import { environment } from '../../../environments/environment';
 import { GeocoderAutocomplete } from '@geoapify/geocoder-autocomplete';
 import * as L from 'leaflet';
 import 'mapbox-gl-leaflet';
+import { environmentMap } from '../../../environments/environment.map';
 
 @Component({
   selector: 'app-map',
@@ -80,14 +81,11 @@ export class MapComponent implements AfterViewInit {
       );
 
     //map style and attribution
-    L.tileLayer(
-      `https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}@2x.png?apiKey=${environment.geoapifyAPIKey}`,
-      {
-        attribution:
-          'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © OpenStreetMap <a href="https://www.openstreetmap.org/copyright" target="_blank">contributors</a>',
-        maxZoom: 20,
-      },
-    ).addTo(this.map);
+    L.tileLayer(environmentMap.map_osm_bright, {
+      attribution:
+        'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © OpenStreetMap <a href="https://www.openstreetmap.org/copyright" target="_blank">contributors</a>',
+      maxZoom: 20,
+    }).addTo(this.map);
 
     if (this.isNotEditable()) {
       if (this.marker) {
@@ -117,9 +115,9 @@ export class MapComponent implements AfterViewInit {
   setMarkerIcon() {
     this.markerIcon = L.icon({
       iconUrl: `https://api.geoapify.com/v1/icon/?type=awesome&color=%232ea2ff&size=large&scaleFactor=2&apiKey=${environment.geoapifyAPIKey}`,
-      iconSize: [38, 56], // size of the icon
-      iconAnchor: [19, 51], // point of the icon which will correspond to marker's location
-      popupAnchor: [0, -60], // point from which the popup should open relative to the iconAnchor
+      iconSize: [38, 56],
+      iconAnchor: [19, 51],
+      popupAnchor: [0, -60],
     });
   }
 

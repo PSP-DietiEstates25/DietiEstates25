@@ -6,6 +6,8 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
+  NgZone,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, TitleStrategy } from '@angular/router';
@@ -16,6 +18,12 @@ import { GeoapifyService } from '../../manual_services/geoapify.service';
 import { lastValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Geometry } from 'geojson';
+import { environmentMap } from '../../../environments/environment.map';
+
+export interface MunicipalityToSelect {
+  name: string;
+  isSelected: boolean;
+}
 
 @Component({
   selector: 'app-search-landing-map',
@@ -29,19 +37,25 @@ export class SearchLandingMapComponent
 {
   private facade = inject(SearchFacade);
   private geoapifyService = inject(GeoapifyService);
+  private ngZone = inject(NgZone);
+  private changeDetector = inject(ChangeDetectorRef);
   private router = inject(Router);
 
   @ViewChild('mapContainer') mapContainer!: ElementRef;
   private map!: L.Map;
+  private marker!: L.Marker;
+  private markerIcon!: L.Icon;
 
   // Layer Groups
   private boundariesLayer: L.LayerGroup = L.layerGroup();
   private markersLayer: L.LayerGroup = L.layerGroup();
   private geojson!: L.GeoJSON<any, Geometry>;
-  private selectedLayer: L.Path | null = null;
+  municipalitiesSelection: MunicipalityToSelect[] = [];
+  selectedLayer: L.Path | null = null;
 
   loading = true;
   infoMessage = 'Inizializzazione mappa...';
+  selectedMunicipality!: string;
 
   cityName = '';
   regionName = '';
@@ -53,37 +67,42 @@ export class SearchLandingMapComponent
   }
 
   ngAfterViewInit(): void {
-    this.map = L.map(this.mapContainer.nativeElement).setView(
-      [41.9028, 12.4964],
-      6,
-    ); //centrato su italia
-
-    L.control.zoom({ position: 'bottomright' }).addTo(this.map);
-
-    this.map.attributionControl
-      .setPrefix('')
-      .addAttribution(
-        'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © OpenStreetMap <a href="https://www.openstreetmap.org/copyright" target="_blank">contributors</a>',
-      );
-
-    L.tileLayer(
-      `https://maps.geoapify.com/v1/tile/klokantech-basic/{z}/{x}/{y}@2x.png?apiKey=${environment.geoapifyAPIKey}`,
-      {
-        attribution:
-          'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © OpenStreetMap <a href="https://www.openstreetmap.org/copyright" target="_blank">contributors</a>',
-        maxZoom: 20,
-      },
-    ).addTo(this.map);
-
+    this.setMarkerIcon();
+    this.setMap();
     this.boundariesLayer.addTo(this.map);
     this.markersLayer.addTo(this.map);
 
     this.loadBoundaries();
   }
 
+  setMarkerIcon() {
+    this.markerIcon = L.icon({
+      iconUrl: environmentMap.map_house_marker_shadow,
+      iconSize: [31, 46],
+      iconAnchor: [15.5, 46],
+      popupAnchor: [0, -46],
+    });
+  }
+
+  setMap() {
+    this.map = new L.Map(this.mapContainer.nativeElement, {
+      center: [41.9028, 12.4964],
+      zoom: 6,
+      doubleClickZoom: false,
+    }); //centrato su italia
+
+    L.tileLayer(environmentMap.map_klokantech_basic, {
+      attribution:
+        'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © OpenStreetMap <a href="https://www.openstreetmap.org/copyright" target="_blank">contributors</a>',
+      maxZoom: 20,
+    }).addTo(this.map);
+
+    L.control.zoom({ position: 'bottomright' }).addTo(this.map);
+  }
+
   async loadBoundaries() {
     this.loading = true;
-    this.infoMessage = `Cerco i confini per ${this.cityName}...`;
+    this.infoMessage = `Ricerca dei confini per ${this.cityName}...`;
     try {
       const placeId = await lastValueFrom(
         this.geoapifyService.getPlaceIdByCityAndRegion(
@@ -105,13 +124,13 @@ export class SearchLandingMapComponent
           style: () => this.getDefaultStyle(),
           onEachFeature: this.onEachFeature,
         }).addTo(this.map);
+        this.showSelections(response, false);
       } else {
         this.geojson = L.geoJson(features, {
           style: () => this.getDefaultStyle(),
           onEachFeature: this.onEachFeature,
         }).addTo(this.map);
-        //const districts = this.filterPolygonalFeatures(features);
-        //await this.choosePolygonsDrawing(districts, placeId);
+        this.showSelections(features, true);
       }
 
       this.map.fitBounds(this.geojson.getBounds(), {
@@ -120,12 +139,80 @@ export class SearchLandingMapComponent
       });
 
       this.boundariesLayer.addLayer(this.geojson);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
       this.infoMessage = 'Errore nel caricamento della mappa. Riprova.';
     } finally {
       this.loading = false;
     }
+  }
+
+  onMunicipalityChange(name: string) {
+    this.selectMunicipality(name);
+  }
+
+  showSelections(features: any, hasMunicitpalities: boolean) {
+    //se viene passata la città, viene mostrata solo la città intera da selezionare
+    //altrimenti vengono messe tutte le municipalità
+    if (hasMunicitpalities) this.showMunicipalitiesSelection(features);
+    else this.showCitySelection(features);
+  }
+
+  showMunicipalitiesSelection(features: any) {
+    for (const feature of features) {
+      const municipalityToSelect: MunicipalityToSelect = {
+        name: feature.properties.name,
+        isSelected: false,
+      };
+      this.municipalitiesSelection.push(municipalityToSelect);
+    }
+
+    this.municipalitiesSelection.sort((a, b) => {
+      return a.name.localeCompare(b.name, undefined, { numeric: true });
+    });
+  }
+
+  showCitySelection(response: any) {
+    const municipalityToSelect: MunicipalityToSelect = {
+      name: response.features[0].properties.name,
+      isSelected: false,
+    };
+    this.municipalitiesSelection.push(municipalityToSelect);
+  }
+
+  selectMunicipality(name: string | null) {
+    this.selectedMunicipality = name || '';
+
+    this.municipalitiesSelection.forEach((municipality) => {
+      municipality.isSelected = municipality.name === name;
+    });
+
+    let foundLayer: any = null;
+
+    if (this.geojson) {
+      this.geojson.eachLayer((layer: any) => {
+        const featureName =
+          layer.feature.properties.name || layer.feature.properties['name:it'];
+
+        if (featureName === name) {
+          this.selectedLayer = layer;
+          layer.setStyle(this.getSelectedStyle());
+          layer.bringToFront();
+          foundLayer = layer;
+        } else {
+          this.geojson.resetStyle(layer);
+        }
+      });
+    }
+
+    if (!name) {
+      this.selectedLayer = null;
+      this.markersLayer.clearLayers();
+      this.infoMessage = `Seleziona una municipalità.`;
+    } else {
+      //this.handleZoneClick(name, foundLayer);
+    }
+
+    this.changeDetector.detectChanges();
   }
 
   highlightFeature = (mouseEvent: any) => {
@@ -143,30 +230,16 @@ export class SearchLandingMapComponent
     }
   };
 
-  handleLayerClick = (e: any) => {
-    const clickedLayer = e.target;
+  handleLayerClick = (mouseEvent: any, feature: any) => {
+    const clickedLayer = mouseEvent.target;
+
+    const zoneName =
+      feature.properties.name || feature.properties['name:it'] || '';
 
     if (this.selectedLayer === clickedLayer) {
-      this.geojson.resetStyle(clickedLayer);
-      this.selectedLayer = null;
-
-      this.infoMessage = `Mostro annunci per tutta la città di ${this.cityName}.`;
-      this.performSearch(null);
-
-      this.map.fitBounds(this.geojson.getBounds());
+      this.selectMunicipality(null);
     } else {
-      if (this.selectedLayer) {
-        this.geojson.resetStyle(this.selectedLayer);
-      }
-      this.selectedLayer = clickedLayer;
-      clickedLayer.setStyle(this.getSelectedStyle());
-      clickedLayer.bringToFront();
-      this.map.fitBounds(clickedLayer.getBounds());
-      /*
-      const zoneName =
-        clickedLayer.feature.properties.name || 'Zona selezionata';
-      this.handleZoneClick(zoneName, clickedLayer); // La tua funzione esistente per cercare
-      */
+      this.selectMunicipality(zoneName);
     }
   };
 
@@ -174,7 +247,14 @@ export class SearchLandingMapComponent
     layer.on({
       mouseover: this.highlightFeature,
       mouseout: this.resetHighlight,
-      click: this.handleLayerClick,
+      click: (mouseEvent: L.LeafletMouseEvent) => {
+        this.ngZone.run(() => {
+          this.handleLayerClick(mouseEvent, feature);
+        });
+      },
+      dblclick: (mouseEvent: L.LeafletMouseEvent) => {
+        L.DomEvent.stopPropagation(mouseEvent);
+      },
     });
   };
 
@@ -207,95 +287,7 @@ export class SearchLandingMapComponent
     };
   }
 
-  //----------------VECCHI--------------------
-  async choosePolygonsDrawing(districts: any[], placeId: string) {
-    if (districts.length > 0) {
-      this.infoMessage = `Trovate ${districts.length} zone. Clicca su una zona per vedere gli annunci.`;
-      this.drawDistricts(districts, true);
-    } else {
-      this.infoMessage = `Mostro annunci per tutta la città di ${this.cityName}.`;
-      const cityDetails = await lastValueFrom(
-        this.geoapifyService.getPlaceDetailsGeometry(placeId),
-      );
-      const cityFeature = cityDetails.features?.[0];
-
-      if (cityFeature) {
-        this.drawDistricts([cityFeature], false);
-      }
-
-      this.performSearch(null);
-    }
-  }
-
-  drawDistricts(features: any[], interactive: boolean) {
-    if (!this.map) return;
-    this.boundariesLayer.clearLayers();
-
-    const geoJson = L.geoJSON(features as any, {
-      style: {
-        color: '#2563eb', // Blue-600
-        weight: 6,
-        opacity: 0.7,
-        fillColor: '#094585',
-        fillOpacity: 0.1,
-      },
-      onEachFeature: (feature, layer) => {
-        if (interactive) {
-          // Eventi Mouse
-          layer.on('mouseover', () =>
-            (layer as L.Path).setStyle({ weight: 4, fillOpacity: 0.3 }),
-          );
-          layer.on('mouseout', () =>
-            (layer as L.Path).setStyle({ weight: 2, fillOpacity: 0.1 }),
-          );
-
-          // Click sulla zona
-          layer.on('click', () => {
-            // Nome zona spesso in 'name' o 'name:it'
-            const zoneName =
-              feature.properties.name ||
-              feature.properties['name:it'] ||
-              'Zona selezionata';
-            this.handleZoneClick(zoneName, layer);
-          });
-
-          if (feature.properties.name) {
-            layer.bindTooltip(feature.properties.name, {
-              sticky: true,
-              direction: 'center',
-            });
-          }
-        }
-      },
-    });
-
-    this.boundariesLayer.addLayer(geoJson);
-
-    // Zoomma per vedere tutti i poligoni
-    if (geoJson.getBounds().isValid()) {
-      this.map.fitBounds(geoJson.getBounds());
-    }
-  }
-
-  filterPolygonalFeatures(features: any[]) {
-    return features.filter(
-      (feature: any) =>
-        feature.geometry.type === 'Polygon' ||
-        feature.geometry.type === 'MultiPolygon',
-    );
-  }
-
   handleZoneClick(zoneName: string, layer: any) {
-    this.boundariesLayer.eachLayer((l: any) => {
-      // Reset stile
-      //this.boundariesLayer(l);
-    });
-    (layer as L.Path).setStyle({
-      color: '#dc2626',
-      fillColor: '#ef4444',
-      fillOpacity: 0.3,
-    }); // Rosso
-
     this.infoMessage = `Caricamento annunci a: ${zoneName}...`;
     this.performSearch(zoneName);
   }
@@ -334,22 +326,11 @@ export class SearchLandingMapComponent
   }
 
   addMarkers(cards: any[]) {
-    // Icona personalizzata (opzionale)
-    const defaultIcon = L.icon({
-      iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-      iconRetinaUrl:
-        'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
-      shadowUrl:
-        'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-    });
-
     cards.forEach((card) => {
-      // Assicuriamoci che abbia coordinate
       if (card.lat && card.lon) {
-        const marker = L.marker([card.lat, card.lon], { icon: defaultIcon });
+        const marker = L.marker([card.lat, card.lon], {
+          icon: this.markerIcon,
+        });
         marker.bindPopup(`
           <div style="font-family: sans-serif; font-size: 14px;">
             <strong>${card.title}</strong><br>
@@ -364,7 +345,7 @@ export class SearchLandingMapComponent
 
   ngOnDestroy(): void {
     if (this.map) {
-      this.map.remove(); // Pulisci la mappa per evitare memory leak
+      this.map.remove();
     }
   }
 }
