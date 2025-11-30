@@ -88,11 +88,21 @@ export class SearchFacade {
     () => this.searchCards().length >= (this._lastForm()?.size ?? 0),
   );
   hasPrev = computed(() => (this._lastForm()?.page ?? 1) > 1);
-
+  
   private _cachedGeographicalPosition =
-    signal<GeographicalPositionRequest | null>(null);
+  signal<GeographicalPositionRequest | null>(null);
   private _cachedUtility = signal<UtilityRequest | null>(null);
   private _cachedCadastralFilter = signal<CadastralFilterRequest | null>(null);
+  private _cachedCategory = signal<Category>('SALE');
+
+  readonly cachedCategory = this._cachedCategory.asReadonly();
+  readonly cachedGeographicalPosition = this._cachedGeographicalPosition.asReadonly();
+  readonly cachedUtility = this._cachedUtility.asReadonly();
+  readonly cachedCadastralFilter = this._cachedCadastralFilter.asReadonly();
+
+  setCategory(category: Category) {
+    this._cachedCategory.set(category);
+  }
 
   recent = signal<RecentSearchSnapshot[]>([]);
 
@@ -125,10 +135,12 @@ export class SearchFacade {
     geographicalPositionRequest: GeographicalPositionRequest,
     utilityRequest: UtilityRequest,
     cadastralFilterRequest: CadastralFilterRequest,
+    category?: Category
   ) {
     this._cachedGeographicalPosition.set(geographicalPositionRequest ?? null);
     this._cachedUtility.set(utilityRequest ?? null);
     this._cachedCadastralFilter.set(cadastralFilterRequest ?? null);
+    if (category) this._cachedCategory.set(category);
   }
 
   private _getCachedGeographicalPosition() {
@@ -198,6 +210,7 @@ export class SearchFacade {
     this._cachedGeographicalPosition.set(search.geographicalPosition);
     this._cachedUtility.set(search.utility);
     this._cachedCadastralFilter.set(search.cadastralFilter);
+    this._cachedCategory.set(search.category);
 
     const email = this._currentEmail() ?? search.userEmail ?? '';
 
@@ -209,7 +222,7 @@ export class SearchFacade {
       geographicalPosition: search.geographicalPosition,
       utility: search.utility,
       cadastralFilter: search.cadastralFilter,
-    }).subscribe();
+    });
   }
 
   private _hash(object: unknown): string {

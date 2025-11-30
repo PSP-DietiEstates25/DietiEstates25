@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -6,10 +6,7 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import {
-  SearchFacade,
-  Category,
-} from '../../../components/search/search.facade';
+import { SearchFacade, Category } from '../../../components/search/search.facade';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { LocationsService } from '../../../manual_services/location.service';
@@ -68,11 +65,52 @@ export class FilterPanelComponent implements OnInit {
     category: [AdCategory.Sale as AdCategory, Validators.required],
   });
 
+  private readonly _syncFromFacade = effect(() => {
+    const gp = this.facade.cachedGeographicalPosition();
+    const util = this.facade.cachedUtility();
+    const cad = this.facade.cachedCadastralFilter();
+    const cat = this.facade.cachedCategory();
+
+    if (!gp || !util || !cad) return;
+
+    this.mainForm.controls.category.setValue(
+      cat === 'RENT' ? AdCategory.Rent : AdCategory.Sale,
+      { emitEvent: false }
+    );
+
+    const regionCtrl = this.geographicalPositionForm.controls.region;
+    const cityCtrl = this.geographicalPositionForm.controls.city;
+
+    const region = ((gp as any).state ?? (gp as any).region ?? '') as string;
+    const city = ((gp as any).city ?? '') as string;
+
+    regionCtrl.setValue(region, { emitEvent: false });
+
+    if (region) {
+      cityCtrl.enable({ emitEvent: false });
+
+      this.locationService.getCitiesByRegion(region).subscribe({
+        next: (citiesResponse) => {
+          this.cities.set(citiesResponse ?? []);
+          cityCtrl.setValue(city, { emitEvent: false });
+        },
+        error: () => {
+          cityCtrl.setValue(city, { emitEvent: false });
+        },
+      });
+    } else {
+      cityCtrl.disable({ emitEvent: false });
+      cityCtrl.setValue('', { emitEvent: false });
+      this.cities.set([]);
+    }
+
+    this.utilityForm.patchValue(util as any, { emitEvent: false });
+    this.cadastralFilterForm.patchValue(cad as any, { emitEvent: false });
+  });
+
   ngOnInit(): void {
     this.locationService.getRegions().subscribe({
-      next: (regionsResponse) => {
-        this.regions.set(regionsResponse);
-      },
+      next: (regionsResponse) => this.regions.set(regionsResponse),
     });
 
     this.geographicalPositionForm.controls.region.valueChanges.subscribe({
@@ -83,9 +121,7 @@ export class FilterPanelComponent implements OnInit {
         if (region) {
           cityControl.enable();
           this.locationService.getCitiesByRegion(region).subscribe({
-            next: (citiesResponse) => {
-              this.cities.set(citiesResponse);
-            },
+            next: (citiesResponse) => this.cities.set(citiesResponse),
           });
         } else {
           cityControl.disable();
@@ -118,17 +154,11 @@ export class FilterPanelComponent implements OnInit {
       longitude: 0,
     };
 
-    this.facade.cacheFilters(
-      geographicalPositionRequest,
-      utility,
-      cadastralFilter,
-    );
+    const cat: Category =
+      this.mainForm.controls.category.value === AdCategory.Rent ? 'RENT' : 'SALE';
 
-    this.facade
-      .prepareDetail(geographicalPositionRequest, utility)
-      .pipe(
-        switchMap(() => this.facade.prepareCadastralFilter(cadastralFilter)),
-      );
+    this.facade.cacheFilters(geographicalPositionRequest, utility, cadastralFilter, cat);
+    this.facade.setCategory(cat);
 
     this.routerService.navigate(['/search']);
   }

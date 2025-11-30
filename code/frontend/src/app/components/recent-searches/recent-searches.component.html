@@ -1,71 +1,157 @@
-<div class="space-y-2">
-  <div class="flex items-center justify-between">
-    <h3 class="text-sm font-semibold">Ricerche salvate</h3>
-    @if (total()) {
-    <div class="flex items-center gap-2">
-      <span class="text-xs text-gray-500"
-        >{{ start() + 1 }}–{{ math.min(start() + pageSize, total()) }} /
-        {{ total() }}</span
-      >
-      <button type="button" class="text-xs underline" (click)="clearAll()">
-        Svuota
-      </button>
+<section
+  class="rounded-2xl border border-black/10 bg-white p-4 shadow-sm"
+  aria-label="Storico ricerche"
+>
+  <!-- Header -->
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0">
+      <h3 class="text-sm font-semibold text-gray-900">Ricerche recenti</h3>
+      <p class="mt-0.5 text-xs text-gray-500">
+        Riprendi una ricerca con un click oppure rimuovila dallo storico.
+      </p>
     </div>
+
+    @if (total()) {
+      <div class="shrink-0 flex items-center gap-2">
+        <span
+          class="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-600"
+          aria-label="Range ricerche visibili"
+        >
+          {{ start() + 1 }}–{{ math.min(start() + pageSize, total()) }} / {{ total() }}
+        </span>
+
+        <button
+          type="button"
+          class="rounded-xl border border-black/10 bg-white px-2.5 py-1.5 text-xs text-gray-700
+                 hover:bg-gray-50 active:scale-[0.99]"
+          (click)="clearAll()"
+          title="Svuota lo storico"
+        >
+          Svuota
+        </button>
+      </div>
     }
   </div>
 
+  <!-- Empty -->
   @if (!total()) {
-  <div class="text-xs text-gray-500">Nessuna ricerca salvata.</div>
+    <div class="mt-4 rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-4">
+      <div class="text-sm font-medium text-gray-800">Nessuna ricerca salvata</div>
+      <div class="mt-1 text-xs text-gray-500">
+        Esegui una ricerca: la salveremo qui per riprenderla velocemente.
+      </div>
+    </div>
   } @else {
-  <div class="flex items-stretch gap-2">
-    <button
-      type="button"
-      class="px-2 text-xs border rounded disabled:opacity-50"
-      (click)="prev()"
-      [disabled]="!canPrev()"
-    >
-      ‹
-    </button>
+    <!-- Controls + list -->
+    <div class="mt-4 flex items-stretch gap-2">
+      <!-- Prev -->
+      <button
+        type="button"
+        class="grid w-9 place-items-center rounded-xl border border-black/10 bg-white text-gray-700
+               hover:bg-gray-50 disabled:opacity-40 disabled:hover:bg-white"
+        (click)="prev()"
+        [disabled]="!canPrev()"
+        aria-label="Ricerche precedenti"
+        title="Precedenti"
+      >
+        <span class="text-lg leading-none">‹</span>
+      </button>
 
-    <ul class="flex-1 grid grid-cols-1 gap-2">
-      @for (s of visible(); track s.id) {
-      <li class="p-2 border rounded">
-        <div class="flex items-center justify-between gap-2">
-          <div class="min-w-0">
-            <div class="text-sm font-medium truncate">{{ s.label }}</div>
-            <div class="text-xs text-gray-500 truncate">
-              {{ s.category }} • {{ s.when | date : "short" }}
+      <!-- List -->
+      <ul class="flex-1 space-y-2">
+        @for (s of visible(); track s.id) {
+          <li
+            class="group rounded-2xl border border-black/10 bg-white p-3 shadow-sm transition
+                   hover:-translate-y-[1px] hover:shadow-md"
+          >
+            <div class="flex items-start justify-between gap-3">
+              <!-- Main -->
+              <div class="min-w-0">
+                <!-- label -->
+                <div class="flex flex-wrap items-center gap-2">
+                  <div class="min-w-0">
+                    <div class="text-sm font-semibold text-gray-900 truncate">
+                      {{ s.label || 'Ricerca' }}
+                    </div>
+                  </div>
+
+                  <!-- category pill -->
+                  <span
+                    class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
+                    [class.bg-blue-50]="s.category === 'SALE'"
+                    [class.text-blue-800]="s.category === 'SALE'"
+                    [class.bg-emerald-50]="s.category === 'RENT'"
+                    [class.text-emerald-800]="s.category === 'RENT'"
+                  >
+                    {{ s.category === 'RENT' ? 'Affitto' : 'Vendita' }}
+                  </span>
+                </div>
+
+                <!-- meta -->
+                <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+                  <span class="inline-flex items-center gap-1">
+                    <span class="opacity-70">🕒</span>
+                    {{ s.when | date : "short" }}
+                  </span>
+
+                  <span class="inline-flex items-center gap-1">
+                    <span class="opacity-70">📄</span>
+                    Pagina {{ s.page }} · {{ s.size }}/pag
+                  </span>
+
+                  @if (s.geographicalPosition?.city || s.geographicalPosition?.municipality) {
+                    <span class="inline-flex items-center gap-1 truncate">
+                      <span class="opacity-70">📍</span>
+                      {{ s.geographicalPosition?.city || s.geographicalPosition?.municipality }}
+                    </span>
+                  }
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="shrink-0 flex items-center gap-2">
+                <button
+                  type="button"
+                  class="rounded-xl bg-blue-600 px-3 py-1.5 text-xs font-medium text-white
+                         hover:bg-blue-700 active:scale-[0.99]"
+                  (click)="replay(s)"
+                  title="Riesegui ricerca"
+                >
+                  Riesegui
+                </button>
+
+                <button
+                  type="button"
+                  class="rounded-xl border border-black/10 bg-white px-3 py-1.5 text-xs text-gray-700
+                         hover:bg-gray-50 active:scale-[0.99]"
+                  (click)="remove(s)"
+                  title="Rimuovi dallo storico"
+                >
+                  Rimuovi
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="shrink-0 flex items-center gap-2">
-            <button
-              type="button"
-              class="text-xs px-2 py-1 border rounded"
-              (click)="replay(s)"
-            >
-              Riesegui
-            </button>
-            <button
-              type="button"
-              class="text-xs px-2 py-1 border rounded"
-              (click)="remove(s)"
-            >
-              Rimuovi
-            </button>
-          </div>
-        </div>
-      </li>
-      }
-    </ul>
 
-    <button
-      type="button"
-      class="px-2 text-xs border rounded disabled:opacity-50"
-      (click)="next()"
-      [disabled]="!canNext()"
-    >
-      ›
-    </button>
-  </div>
+            <!-- subtle footer hint on hover -->
+            <div class="mt-2 hidden text-[11px] text-gray-500 group-hover:block">
+              Suggerimento: usa “Riesegui” per ripartire dagli stessi filtri.
+            </div>
+          </li>
+        }
+      </ul>
+
+      <!-- Next -->
+      <button
+        type="button"
+        class="grid w-9 place-items-center rounded-xl border border-black/10 bg-white text-gray-700
+               hover:bg-gray-50 disabled:opacity-40 disabled:hover:bg-white"
+        (click)="next()"
+        [disabled]="!canNext()"
+        aria-label="Ricerche successive"
+        title="Successive"
+      >
+        <span class="text-lg leading-none">›</span>
+      </button>
+    </div>
   }
-</div>
+</section>
