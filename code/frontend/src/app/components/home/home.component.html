@@ -1,74 +1,161 @@
 <app-navbar></app-navbar>
+
 <section
   class="relative overflow-hidden bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900"
 >
+  <!-- decorative blobs -->
+  <div class="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-amber-300/20 blur-3xl dark:bg-blue-500/18"></div>
+  <div class="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-emerald-300/16 blur-3xl dark:bg-emerald-500/10"></div>
+
   <!-- Hero -->
-  <div class="container mx-auto px-4 py-16 sm:py-20 md:py-24">
-    <div class="grid md:grid-cols-2 items-center gap-8">
+  <div class="container mx-auto px-4 py-14 sm:py-18 md:py-22">
+    <div class="grid md:grid-cols-2 items-center gap-10">
       <div>
-        <h1
-          class="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight text-slate-900 dark:text-white"
+        <div
+          class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-xs text-slate-700 shadow-sm backdrop-blur
+                 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-200"
         >
-          Trova la tua prossima
-          <span class="text-amber-600 dark:text-blue-400">casa</span> in pochi
-          secondi
-        </h1>
-        <p class="mt-4 text-slate-600 dark:text-slate-300 text-base sm:text-lg">
-          Cerca per città, indirizzo. Filtri avanzati disponibili nella pagina
-          risultati.
-        </p>
-        <div class="mt-6">
-          <app-search-bar></app-search-bar>
+          <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+          Annunci verificati • Flussi tracciabili
         </div>
 
-        <div class="mt-4 flex flex-wrap gap-3 text-sm">
-          <a
-            routerLink="/search"
-            [queryParams]="{ q: 'Napoli' }"
-            class="link_style"
-            >Napoli</a
-          >
-          <a
-            routerLink="/search"
-            [queryParams]="{ q: 'Milano' }"
-            class="link_style"
-            >Milano</a
-          >
-          <a
-            routerLink="/search"
-            [queryParams]="{ q: 'Roma' }"
-            class="link_style"
-            >Roma</a
-          >
+        <h1
+          class="mt-4 text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight text-slate-900 dark:text-white"
+        >
+          DietiEstates per annunci,
+          <span class="text-amber-600 dark:text-blue-400">offerte</span> e
+          <span class="text-amber-600 dark:text-blue-400">visite</span>
+        </h1>
+
+        <p class="mt-4 text-slate-600 dark:text-slate-300 text-base sm:text-lg">
+          Esplora immobili, contatta l’agente e segui l’avanzamento della
+          negoziazione senza perdere pezzi.
+        </p>
+
+        <!-- CTA (solo qui, non ripetute sotto) -->
+        <div class="mt-7 flex flex-wrap items-center gap-3">
+          <a routerLink="/search" class="btn_primary">
+            Esplora immobili
+          </a>
+          <a routerLink="/searches" class="btn_ghost">
+            Filtri e risultati
+          </a>
+          <a routerLink="/notifications" class="btn_ghost">
+            Notifiche
+          </a>
+        </div>
+
+        <!-- micro copy “che cosa trovi dentro” -->
+        <div class="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-600 dark:text-slate-300">
+          <span class="inline-flex items-center gap-2">
+            Mappa e zone
+          </span>
+          <span class="inline-flex items-center gap-2">
+            Stati sempre aggiornati
+          </span>
+          <span class="inline-flex items-center gap-2">
+            Flusso semplice
+          </span>
         </div>
       </div>
 
-      <!-- Illustrazione placeholder -->
+      <!-- Visual (senza overlay finto) -->
       <div class="hidden md:block">
-        <img
-          src="/assets/hero-houses.jpg"
-          alt="case"
-          class="w-full max-w-md mx-auto"
-        />
+        <figure
+          class="relative mx-auto max-w-md rounded-3xl border border-slate-200 bg-white/80 p-3 shadow-xl backdrop-blur
+                 dark:border-slate-700 dark:bg-slate-900/50"
+        >
+          <img
+            src="/assets/hero-houses.jpg"
+            alt="Anteprima immobili"
+            class="w-full rounded-2xl"
+          />
+          <figcaption class="px-2 pt-3 text-xs text-slate-500 dark:text-slate-400">
+            Anteprima: annunci con foto e dettagli, con mappa e filtri nelle sezioni dedicate.
+          </figcaption>
+        </figure>
       </div>
     </div>
   </div>
 
-  <!-- fascia info -->
+  <!-- Fascia: non CTA ripetute, ma “come funziona” + “perché” -->
   <div
-    class="border-t border-amber-600/30 dark:border-blue-500/30 bg-slate-100/60 dark:bg-slate-900/50 backdrop-blur"
+    class="border-t border-amber-600/25 dark:border-blue-500/25 bg-slate-100/60 dark:bg-slate-900/50 backdrop-blur"
   >
-    <div
-      class="container mx-auto px-4 py-6 grid sm:grid-cols-3 gap-4 text-sm text-slate-700 dark:text-slate-300"
-    >
-      <div>
-        <span class="font-semibold">Aggiornato</span>: annunci verificati
-      </div>
-      <div>
-        <span class="font-semibold">Filtri</span>: prezzo, stanze, tipologia...
-      </div>
-      <div>
-        <span class="font-semibold">Mappa</span>: esplora le zone più richieste
+    <div class="container mx-auto px-4 py-7">
+      <div class="grid gap-4 lg:grid-cols-2">
+        <!-- Come funziona -->
+        <div
+          class="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-sm backdrop-blur
+                 dark:border-slate-700 dark:bg-slate-950/30"
+        >
+          <div class="text-sm font-semibold text-slate-900 dark:text-white">
+            Come funziona
+          </div>
+
+          <ol class="mt-3 space-y-3 text-sm text-slate-700 dark:text-slate-300">
+            <li class="flex gap-3">
+              <span class="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-xl bg-slate-900/10 dark:bg-white/10">1</span>
+              <div>
+                <div class="font-medium text-slate-900 dark:text-white">Esplora</div>
+                <div class="text-slate-600 dark:text-slate-300">
+                  usa mappa e risultati per individuare l’immobile giusto
+                </div>
+              </div>
+            </li>
+            <li class="flex gap-3">
+              <span class="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-xl bg-slate-900/10 dark:bg-white/10">2</span>
+              <div>
+                <div class="font-medium text-slate-900 dark:text-white">Interagisci</div>
+                <div class="text-slate-600 dark:text-slate-300">
+                  invia offerte o richiedi una visita in pochi passaggi
+                </div>
+              </div>
+            </li>
+            <li class="flex gap-3">
+              <span class="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-xl bg-slate-900/10 dark:bg-white/10">3</span>
+              <div>
+                <div class="font-medium text-slate-900 dark:text-white">Segui lo stato</div>
+                <div class="text-slate-600 dark:text-slate-300">
+                  ricevi aggiornamenti e tieni traccia della trattativa
+                </div>
+              </div>
+            </li>
+          </ol>
+        </div>
+
+        <!-- Perché -->
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div
+            class="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-sm backdrop-blur
+                   dark:border-slate-700 dark:bg-slate-950/30"
+          >
+            <div class="text-sm font-semibold text-slate-900 dark:text-white">Trasparenza</div>
+            <div class="mt-1 text-sm text-slate-600 dark:text-slate-300">
+              ogni evento (offerta/visita) è leggibile e ordinato, niente “messaggi persi”.
+            </div>
+          </div>
+
+          <div
+            class="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-sm backdrop-blur
+                   dark:border-slate-700 dark:bg-slate-950/30"
+          >
+            <div class="text-sm font-semibold text-slate-900 dark:text-white">Controllo</div>
+            <div class="mt-1 text-sm text-slate-600 dark:text-slate-300">
+              preferenze notifiche per categoria, così vedi solo ciò che ti interessa.
+            </div>
+          </div>
+
+          <div
+            class="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-sm backdrop-blur
+                   dark:border-slate-700 dark:bg-slate-950/30 sm:col-span-2"
+          >
+            <div class="text-sm font-semibold text-slate-900 dark:text-white">Esperienza</div>
+            <div class="mt-1 text-sm text-slate-600 dark:text-slate-300">
+              mappa e filtri stanno dove servono: nella pagina risultati, non nella home.
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

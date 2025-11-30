@@ -21,7 +21,10 @@ export interface NotificationItemVM {
   message: string;
   createdDate: string;
   category: NotificationCategory;
+  realEstateId?: number;
+  realEstateLabel?: string;
 }
+
 
 @Injectable({ providedIn: 'root' })
 export class NotificationsFacade {
@@ -37,6 +40,7 @@ export class NotificationsFacade {
   private readonly _notifications = signal<NotificationItemVM[]>([]);
 
   readonly unreadCount = computed(() => this._notifications().length);
+  readonly filterCategories = computed(() => this._filterCategories());
 
   private readonly _query = signal('');
   private readonly _filterCategories = signal<NotificationCategory[]>([]);
