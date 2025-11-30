@@ -42,7 +42,7 @@ export class RecentSearchesComponent {
     );
   }
 
-  replay = (s: RecentSearchSnapshot) => this.facade.replaySearch(s).subscribe();
+  replay = (search: RecentSearchSnapshot) => this.facade.replaySearch(search);
 
   remove = (search: RecentSearchSnapshot) => {
     this.facade.removeRecent(search.id);
