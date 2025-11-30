@@ -47,15 +47,15 @@ export class FilterPanelComponent implements OnInit {
 
   cadastralFilterForm = this.formBuilder.nonNullable.group({
     minPrice: [0],
-    maxPrice: [0],
+    maxPrice: [1000000],
     minSquareMeters: [0],
-    maxSquareMeters: [0],
+    maxSquareMeters: [300],
     minEnergyClass: [0],
-    maxEnergyClass: [0],
+    maxEnergyClass: [9],
     minRooms: [0],
-    maxRooms: [0],
+    maxRooms: [10],
     minFloor: [0],
-    maxFloor: [0],
+    maxFloor: [30],
   });
 
   mainForm = this.formBuilder.group({
