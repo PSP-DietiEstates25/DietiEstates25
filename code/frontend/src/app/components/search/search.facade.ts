@@ -83,13 +83,10 @@ export class SearchFacade {
   } | null>(null);
 
   lastForm = this._lastForm.asReadonly();
-
   searchCards = signal<SearchCard[]>([]);
-
   hasNext = computed(
     () => this.searchCards().length >= (this._lastForm()?.size ?? 0),
   );
-
   hasPrev = computed(() => (this._lastForm()?.page ?? 1) > 1);
 
   private _cachedGeographicalPosition =
@@ -389,7 +386,6 @@ export class SearchFacade {
     this.loading.set(true);
     this._lastForm.set({ ...params, userEmail: resolvedEmail });
 
-    console.log('[SEARCH] body', body);
     return guard$.pipe(
       switchMap(() => this.searchService.createSearch({ body })),
       map((list) =>

@@ -14,35 +14,154 @@
     </div>
 
     <div class="flex flex-col items-start justify-center gap-2">
-      @for (
-        municipality of municipalitiesSelection;
-        track municipality.name;
-        let i = $index
-      ) {
-        <div
-          class="group flex cursor-pointer items-center space-x-3 rounded-md p-2 transition-colors hover:bg-slate-50"
-        >
-          <input
-            [id]="'municipality_radio_' + i"
-            type="radio"
-            name="municipality_group"
-            [value]="municipality.name"
-            [checked]="municipality.isSelected"
-            (change)="onMunicipalityChange(municipality.name)"
-            class="peer relative h-5 w-5 cursor-pointer appearance-none rounded-full border-2 border-slate-300 bg-white transition-all duration-200 checked:border-[6px] checked:border-blue-600 checked:bg-white hover:border-blue-400 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
-          />
-
-          <label
-            [for]="'municipality_radio_' + i"
-            class="cursor-pointer font-medium text-slate-600 transition-colors select-none group-hover:text-blue-600 peer-checked:font-bold peer-checked:text-blue-700"
+      @if (isSelectingMunicipalities) {
+        @for (
+          municipality of municipalitiesSelection;
+          track municipality.name;
+          let i = $index
+        ) {
+          <div
+            class="group flex cursor-pointer items-center space-x-3 rounded-md p-2 transition-colors hover:bg-slate-50"
           >
-            {{ municipality.name }}
-          </label>
-        </div>
+            <input
+              [id]="'municipality_radio_' + i"
+              type="radio"
+              name="municipality_group"
+              [value]="municipality.name"
+              [checked]="municipality.isSelected"
+              (change)="onMunicipalityChange(municipality.name)"
+              class="peer relative h-5 w-5 cursor-pointer appearance-none rounded-full border-2 border-slate-300 bg-white transition-all duration-200 checked:border-[6px] checked:border-blue-600 checked:bg-white hover:border-blue-400 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+            />
+
+            <label
+              [for]="'municipality_radio_' + i"
+              class="cursor-pointer font-medium text-slate-600 transition-colors select-none group-hover:text-blue-600 peer-checked:font-bold peer-checked:text-blue-700"
+            >
+              {{ municipality.name }}
+            </label>
+          </div>
+        }
+
+        <button type="submit" class="publish_button" (click)="onSearch()">
+          Cerca
+        </button>
+      } @else {
+        @for (searchCard of this.facade.searchCards(); track $index) {
+          <article
+            class="group overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm transition-all duration-200 hover:shadow-lg"
+          >
+            <!-- immagine -->
+            <div class="relative aspect-[16/10] overflow-hidden bg-gray-100">
+              <!--
+              <img
+                [src]=""
+                alt="Anteprima immobile"
+                class="h-40 w-full rounded-xl object-cover"
+              />
+              -->
+              <span
+                class="absolute top-3 left-3 rounded-full bg-blue-600/90 px-2 py-1 text-xs font-medium text-white"
+              >
+                {{
+                  (searchCard.category || "SALE") === "RENT"
+                    ? "In affitto"
+                    : "In vendita"
+                }}
+              </span>
+            </div>
+
+            <!-- contenuto -->
+            <div class="space-y-2 p-4">
+              <h3 class="text-base font-semibold text-gray-900">
+                {{ searchCard.title || "Immobile #" + searchCard.id }}
+              </h3>
+              <article
+                class="group rounded-2xl border border-black/10 bg-white/90 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+              >
+                <p class="line-clamp-2 text-sm text-gray-600">
+                  {{
+                    searchCard.description || "Nessuna descrizione disponibile."
+                  }}
+                </p>
+              </article>
+              <!-- meta -->
+              <div
+                class="flex flex-wrap items-center gap-2 text-xs text-gray-500"
+              >
+                <span class="inline-flex items-center gap-1">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    class="opacity-70"
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M12 2C8.13 2 5 5.04 5 8.9c0 5.06 6.37 12.35 6.64 12.66c.2.23.52.23.72 0C12.63 21.25 19 13.96 19 8.9C19 5.04 15.87 2 12 2m0 9.9a3 3 0 1 1 0-6a3 3 0 0 1 0 6"
+                    />
+                  </svg>
+                  {{ searchCard.city || "—" }}
+                </span>
+                <span class="inline-flex items-center gap-1">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    class="opacity-70"
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M13 2v2h3v2h-3v2h3v2h-5V2h2M3 13v-2h6v2H3m0 4v-2h9v2H3m0 4v-2h6v2H3Z"
+                    />
+                  </svg>
+                  ID: {{ searchCard.id }}
+                </span>
+                <span class="inline-flex items-center gap-1">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    class="opacity-70"
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M12 8a4 4 0 1 1 0 8a4 4 0 0 1 0-8m0-6a2 2 0 0 1 2 2v1h4a2 2 0 0 1 2 2v2h-2V7h-4v2h-4V7H6v6H4V7a2 2 0 0 1 2-2h4V4a2 2 0 0 1 2-2Z"
+                    />
+                  </svg>
+                  {{ searchCard.estateAgentEmail || "—" }}
+                </span>
+                <span class="inline-flex items-center gap-1">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    class="opacity-70"
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M12 7a1 1 0 0 1 1 1v3h2a1 1 0 1 1 0 2h-3a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1m0-5a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"
+                    />
+                  </svg>
+                  {{ searchCard.createdDate | date: "short" }}
+                </span>
+              </div>
+
+              <div class="pt-2">
+                <a
+                  class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
+                  [routerLink]="['/ad', searchCard.id]"
+                >
+                  Dettagli
+                  <svg width="16" height="16" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="m10 17l5-5l-5-5v10Z" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </article>
+        }
       }
     </div>
-
-    <button type="submit" class="publish_button">Cerca</button>
   </div>
 
   <div #mapContainer class="z-0 h-full w-full bg-slate-100"></div>

@@ -19,6 +19,7 @@ import { lastValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Geometry } from 'geojson';
 import { environmentMap } from '../../../environments/environment.map';
+import { RouterLink } from '@angular/router';
 
 export interface MunicipalityToSelect {
   name: string;
@@ -28,14 +29,14 @@ export interface MunicipalityToSelect {
 @Component({
   selector: 'app-search-landing-map',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './search-landing-map.component.html',
   styleUrls: ['./search-landing-map.component.scss'], // Assicurati che il file scss esista anche se vuoto
 })
 export class SearchLandingMapComponent
   implements OnInit, AfterViewInit, OnDestroy
 {
-  private facade = inject(SearchFacade);
+  facade = inject(SearchFacade);
   private geoapifyService = inject(GeoapifyService);
   private ngZone = inject(NgZone);
   private changeDetector = inject(ChangeDetectorRef);
@@ -52,6 +53,7 @@ export class SearchLandingMapComponent
   private geojson!: L.GeoJSON<any, Geometry>;
   municipalitiesSelection: MunicipalityToSelect[] = [];
   selectedLayer: L.Path | null = null;
+  isSelectingMunicipalities = false;
 
   loading = true;
   infoMessage = 'Inizializzazione mappa...';
@@ -151,6 +153,7 @@ export class SearchLandingMapComponent
   }
 
   showSelections(features: any, hasMunicitpalities: boolean) {
+    this.isSelectingMunicipalities = true;
     //se viene passata la città, viene mostrata solo la città intera da selezionare
     //altrimenti vengono messe tutte le municipalità
     if (hasMunicitpalities) this.showMunicipalitiesSelection(features);
@@ -183,7 +186,9 @@ export class SearchLandingMapComponent
     this.selectedMunicipality = name || '';
 
     this.municipalitiesSelection.forEach((municipality) => {
-      municipality.isSelected = municipality.name === name;
+      if (municipality.name === name) {
+        municipality.isSelected = true;
+      } else municipality.isSelected = false;
     });
 
     let foundLayer: any = null;
@@ -208,8 +213,6 @@ export class SearchLandingMapComponent
       this.selectedLayer = null;
       this.markersLayer.clearLayers();
       this.infoMessage = `Seleziona una municipalità.`;
-    } else {
-      //this.handleZoneClick(name, foundLayer);
     }
 
     this.changeDetector.detectChanges();
@@ -287,19 +290,30 @@ export class SearchLandingMapComponent
     };
   }
 
-  handleZoneClick(zoneName: string, layer: any) {
-    this.infoMessage = `Caricamento annunci a: ${zoneName}...`;
-    this.performSearch(zoneName);
+  onSearch() {
+    this.isSelectingMunicipalities = false;
+    let selectedMunicipality: MunicipalityToSelect;
+    this.municipalitiesSelection.forEach((municipality) => {
+      if (municipality.isSelected) selectedMunicipality = municipality;
+    });
+    this.infoMessage = `Caricamento annunci a: ${selectedMunicipality!.name}...`;
+    console.log(selectedMunicipality!);
+    this.performSearch(selectedMunicipality!.name);
   }
 
   performSearch(municipality: string | null) {
     this.markersLayer.clearLayers();
 
-    const geo = (this.facade as any)._getCachedGeographicalPosition();
-    const util = (this.facade as any)._getCachedUtility();
-    const cad = (this.facade as any)._getCachedCadastralFilter();
+    const geographicalPosition = (
+      this.facade as any
+    )._getCachedGeographicalPosition();
+    const utility = (this.facade as any)._getCachedUtility();
+    const cadastralFilter = (this.facade as any)._getCachedCadastralFilter();
 
-    const updatedGeo = { ...geo, municipality: municipality || '' };
+    const updatedGeo = {
+      ...geographicalPosition,
+      municipality: municipality || '',
+    };
 
     this.facade.geographicalPositionId.set(null);
     this.facade.detailId.set(null);
@@ -310,8 +324,8 @@ export class SearchLandingMapComponent
         page: 1,
         size: 100,
         geographicalPosition: updatedGeo,
-        utility: util,
-        cadastralFilter: cad,
+        utility: utility,
+        cadastralFilter: cadastralFilter,
       })
       .subscribe({
         next: () => {
