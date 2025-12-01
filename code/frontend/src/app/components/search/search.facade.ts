@@ -16,7 +16,6 @@ import { GeographicalPositionRequest } from '../../services/models/geographical-
 import { UtilityRequest } from '../../services/models/utility-request';
 import { DetailRequest } from '../../services/models/detail-request';
 import { CadastralFilterRequest } from '../../services/models/cadastral-filter-request';
-import { SearchGeographicalPosition } from '../../interfaces/searchGeographicalPosition';
 
 export type Category = 'SALE' | 'RENT';
 
