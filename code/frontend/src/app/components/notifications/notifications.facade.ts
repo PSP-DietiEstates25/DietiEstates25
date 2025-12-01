@@ -1,6 +1,7 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
+import { LocalStorageService } from '../../manual_services/local-storage.service';
 
 import { NotificationControllerService } from '../../services/services/notification-controller.service';
 import { NotificationCategoryControllerService } from '../../services/services/notification-category-controller.service';
@@ -39,7 +40,17 @@ export class NotificationsFacade {
   private readonly _preferences = signal<NotificationPreferenceVM[]>([]);
   private readonly _notifications = signal<NotificationItemVM[]>([]);
 
-  readonly unreadCount = computed(() => this._notifications().length);
+  readonly unreadCount = computed(() => {
+    const lastSeenIso = this._lastSeen();
+    if (!lastSeenIso) return this._notifications().length;
+
+    const last = new Date(lastSeenIso).getTime();
+    return this._notifications().filter((n) => {
+      const t = new Date(n.createdDate).getTime();
+      return !Number.isNaN(t) && t > last;
+    }).length;
+  });
+
   readonly filterCategories = computed(() => this._filterCategories());
 
   private readonly _query = signal('');
@@ -61,6 +72,13 @@ export class NotificationsFacade {
       return true;
     });
   });
+
+  private readonly localStorage = inject(LocalStorageService);
+  private readonly LAST_SEEN_KEY = 'notifications_last_seen';
+  private readonly _lastSeen = signal<string | null>(
+    this.localStorage.getItem(this.LAST_SEEN_KEY)
+  );
+
 
   init(): void {
     this.loading.set(true);
@@ -93,6 +111,12 @@ export class NotificationsFacade {
         finalize(() => this.loading.set(false))
       )
       .subscribe();
+  }
+
+  markAllSeen(): void {
+    const now = new Date().toISOString();
+    this._lastSeen.set(now);
+    this.localStorage.setItem(this.LAST_SEEN_KEY, now);
   }
 
   loadMore(): void {

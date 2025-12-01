@@ -30,6 +30,7 @@ export class NotificationsPageComponent {
   ];
 
   constructor() {
+    this.facade.markAllSeen();
     this.facade.init();
   }
 

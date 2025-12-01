@@ -28,7 +28,8 @@ export class NavbarComponent implements OnInit {
   private readonly localStorageService = inject(LocalStorageService)
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly notifications = inject(NotificationsFacade);
+  
+  readonly notifications = inject(NotificationsFacade);
 
   isMenuOpen = false;
   isAuthenticated = false;
