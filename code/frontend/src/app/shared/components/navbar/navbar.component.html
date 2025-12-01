@@ -22,10 +22,10 @@
               @if (
               link.path === "/notifications" &&
               isAuthenticated &&
-              notifBadge() > 0
+              notifications.unreadCount() > 0
               ) {
               <span class="rounded-full bg-rose-600 px-2 py-0.5 text-xs text-white">
-                {{ notifBadge() }}
+                {{ notifications.unreadCount() }}
               </span>
               }
             </a>
