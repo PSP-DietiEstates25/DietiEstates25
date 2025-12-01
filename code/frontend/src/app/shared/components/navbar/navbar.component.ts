@@ -39,6 +39,7 @@ export class NavbarComponent implements OnInit {
   readonly allLinks: NavLink[] = [
     { label: 'Home', path: '/' },
     { label: 'Ricerca', path: '/searches' },
+    { label: 'Le mie offerte', path: '/offers' },
     { label: 'Notifiche', path: '/notifications' },
   ];
 
