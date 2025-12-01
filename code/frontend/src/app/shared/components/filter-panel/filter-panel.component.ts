@@ -11,7 +11,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { LocationsService } from '../../../manual_services/location.service';
 import { AdCategory } from '../../../enums/ad-category.enum';
-import { switchMap } from 'rxjs';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 @Component({
   selector: 'app-filter-panel',
@@ -45,18 +45,33 @@ export class FilterPanelComponent implements OnInit {
     nearPublicTransport: [false],
   });
 
-  cadastralFilterForm = this.formBuilder.nonNullable.group({
-    minPrice: [0],
-    maxPrice: [1000000],
-    minSquareMeters: [0],
-    maxSquareMeters: [300],
-    minEnergyClass: [0],
-    maxEnergyClass: [9],
-    minRooms: [0],
-    maxRooms: [10],
-    minFloor: [0],
-    maxFloor: [30],
-  });
+  cadastralFilterForm = this.formBuilder.nonNullable.group(
+    {
+      minPrice: [0, [Validators.min(0), Validators.max(50_000_000)]],
+      maxPrice: [1_000_000, [Validators.min(0), Validators.max(50_000_000)]],
+
+      minSquareMeters: [0, [Validators.min(0), Validators.max(10_000)]],
+      maxSquareMeters: [300, [Validators.min(0), Validators.max(10_000)]],
+
+      minEnergyClass: [1, [Validators.min(1), Validators.max(10)]],
+      maxEnergyClass: [10, [Validators.min(1), Validators.max(10)]],
+
+      minRooms: [0, [Validators.min(0), Validators.max(50)]],
+      maxRooms: [10, [Validators.min(0), Validators.max(50)]],
+
+      minFloor: [0, [Validators.min(0), Validators.max(200)]],
+      maxFloor: [30, [Validators.min(0), Validators.max(200)]],
+    },
+    {
+      validators: [
+        this.minLEmax('minPrice', 'maxPrice', 'priceRange'),
+        this.minLEmax('minSquareMeters', 'maxSquareMeters', 'mqRange'),
+        this.minLEmax('minEnergyClass', 'maxEnergyClass', 'energyRange'),
+        this.minLEmax('minRooms', 'maxRooms', 'roomsRange'),
+        this.minLEmax('minFloor', 'maxFloor', 'floorRange'),
+      ],
+    }
+  );
 
   mainForm = this.formBuilder.group({
     geographicalPositionForm: this.geographicalPositionForm,
@@ -135,7 +150,42 @@ export class FilterPanelComponent implements OnInit {
     this.isOpen.update((open) => !open);
   }
 
+  touchedOrSubmitted = signal(false);
+
+  private minLEmax(minKey: string, maxKey: string, errKey = 'range'): ValidatorFn {
+    return (group: AbstractControl): ValidationErrors | null => {
+      const g = group as any;
+      const min = Number(g?.controls?.[minKey]?.value);
+      const max = Number(g?.controls?.[maxKey]?.value);
+      if (Number.isNaN(min) || Number.isNaN(max)) return null;
+      return min <= max ? null : { [errKey]: true };
+    };  
+  }
+
+  isInvalid(ctrl: AbstractControl | null | undefined): boolean {
+    if (!ctrl) return false;
+    return ctrl.invalid && (ctrl.touched || ctrl.dirty || this.touchedOrSubmitted());
+  }
+
+  errMsg(ctrl: AbstractControl | null | undefined, label = 'Campo'): string | null {
+    if (!ctrl || !this.isInvalid(ctrl)) return null;
+
+    const e = ctrl.errors ?? {};
+    if (e['required']) return `${label} obbligatorio.`;
+    if (e['min']) return `${label} deve essere ≥ ${e['min'].min}.`;
+    if (e['max']) return `${label} deve essere ≤ ${e['max'].max}.`;
+    if (e['pattern']) return `${label} non valido.`;
+    return `${label} non valido.`;
+  }
+
   apply() {
+    this.touchedOrSubmitted.set(true);
+
+    if (this.mainForm.invalid) {
+      this.mainForm.markAllAsTouched();
+      return;
+    }
+
     if (this.geographicalPositionForm.invalid) {
       this.geographicalPositionForm.markAllAsTouched();
       return;
