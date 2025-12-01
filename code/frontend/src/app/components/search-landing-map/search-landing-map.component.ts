@@ -10,28 +10,32 @@ import {
   ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, TitleStrategy } from '@angular/router';
-import * as L from 'leaflet'; // Importa Leaflet
+import { Router, RouterLink } from '@angular/router';
+import { HttpBackend, HttpClient } from '@angular/common/http';
+import * as L from 'leaflet';
 
-import { SearchFacade } from '../search/search.facade'; // Verifica path
+import { SearchFacade } from '../search/search.facade';
 import { GeoapifyService } from '../../manual_services/geoapify.service';
 import { lastValueFrom } from 'rxjs';
-import { environment } from '../../../environments/environment';
 import { Geometry } from 'geojson';
 import { environmentMap } from '../../../environments/environment.map';
-import { RouterLink } from '@angular/router';
 
 export interface MunicipalityToSelect {
   name: string;
   isSelected: boolean;
 }
 
+const isHttp = (s: string) => /^https?:\/\//i.test(s);
+const isData = (s: string) => /^data:/i.test(s);
+const looksJpeg = (b64: string) => b64?.startsWith('/9j/');
+const looksPng = (b64: string) => b64?.startsWith('iVBOR');
+
 @Component({
   selector: 'app-search-landing-map',
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './search-landing-map.component.html',
-  styleUrls: ['./search-landing-map.component.scss'], // Assicurati che il file scss esista anche se vuoto
+  styleUrls: ['./search-landing-map.component.scss'],
 })
 export class SearchLandingMapComponent
   implements OnInit, AfterViewInit, OnDestroy
@@ -41,6 +45,12 @@ export class SearchLandingMapComponent
   private ngZone = inject(NgZone);
   private changeDetector = inject(ChangeDetectorRef);
   private router = inject(Router);
+
+  private httpBackend = inject(HttpBackend);
+  private httpNoInter = new HttpClient(this.httpBackend);
+  private blobCache = new Map<string, string>();
+  private pending = new Set<string>();
+  readonly placeholder = '/assets/placeholder.jpg';
 
   @ViewChild('mapContainer') mapContainer!: ElementRef;
   private map!: L.Map;
@@ -64,8 +74,8 @@ export class SearchLandingMapComponent
 
   ngOnInit(): void {
     const cachedGeo = (this.facade as any)._getCachedGeographicalPosition();
-    this.cityName = cachedGeo.city;
-    this.regionName = cachedGeo.state;
+    this.cityName = cachedGeo?.city ?? '';
+    this.regionName = cachedGeo?.state ?? cachedGeo?.region ?? '';
   }
 
   ngAfterViewInit(): void {
@@ -75,6 +85,47 @@ export class SearchLandingMapComponent
     this.markersLayer.addTo(this.map);
 
     this.loadBoundaries();
+  }
+
+  imgSrc(raw?: string | null): string | null {
+    if (!raw) return null;
+
+    if (isData(raw)) return raw;
+
+    if (isHttp(raw)) {
+      const cached = this.blobCache.get(raw);
+      if (cached) return cached;
+
+      if (!this.pending.has(raw)) {
+        this.pending.add(raw);
+        this.httpNoInter
+          .get(raw, { responseType: 'blob', withCredentials: false })
+          .subscribe({
+            next: (blob) => {
+              const obj = URL.createObjectURL(blob);
+              this.blobCache.set(raw, obj);
+              this.pending.delete(raw);
+              this.changeDetector.detectChanges();
+            },
+            error: () => {
+              this.pending.delete(raw);
+            },
+          });
+      }
+      return this.placeholder;
+    }
+
+    // se è un path relativo assoluto
+    if (raw.startsWith('/')) return raw;
+
+    // base64 “nudo”
+    if (raw.startsWith('?') || raw.length < 20) return null;
+    const mime = looksJpeg(raw)
+      ? 'image/jpeg'
+      : looksPng(raw)
+        ? 'image/png'
+        : 'image/*';
+    return `data:${mime};base64,${raw}`;
   }
 
   setMarkerIcon() {
@@ -91,7 +142,7 @@ export class SearchLandingMapComponent
       center: [41.9028, 12.4964],
       zoom: 6,
       doubleClickZoom: false,
-    }); //centrato su italia
+    }); // centrato su italia
 
     L.tileLayer(environmentMap.map_klokantech_basic, {
       attribution:
@@ -154,8 +205,6 @@ export class SearchLandingMapComponent
 
   showSelections(features: any, hasMunicitpalities: boolean) {
     this.isSelectingMunicipalities = true;
-    //se viene passata la città, viene mostrata solo la città intera da selezionare
-    //altrimenti vengono messe tutte le municipalità
     if (hasMunicitpalities) this.showMunicipalitiesSelection(features);
     else this.showCitySelection(features);
   }
@@ -332,9 +381,11 @@ export class SearchLandingMapComponent
           const cards = this.facade.searchCards();
           this.infoMessage = `Trovati ${cards.length} immobili a ${municipality || this.cityName}.`;
           this.addMarkers(cards);
+          this.changeDetector.detectChanges();
         },
         error: () => {
           this.infoMessage = 'Nessun immobile trovato in questa zona.';
+          this.changeDetector.detectChanges();
         },
       });
   }
@@ -345,6 +396,7 @@ export class SearchLandingMapComponent
         const marker = L.marker([card.lat, card.lon], {
           icon: this.markerIcon,
         });
+
         marker.bindPopup(`
           <div style="font-family: sans-serif; font-size: 14px;">
             <strong>${card.title}</strong><br>
@@ -352,14 +404,19 @@ export class SearchLandingMapComponent
             <a href="/ad/${card.id}" style="color: blue; text-decoration: underline;">Vedi dettagli</a>
           </div>
         `);
+
         this.markersLayer.addLayer(marker);
       }
     });
   }
 
   ngOnDestroy(): void {
-    if (this.map) {
-      this.map.remove();
-    }
+    try {
+      if (this.map) this.map.remove();
+    } catch {}
+
+    for (const url of this.blobCache.values()) URL.revokeObjectURL(url);
+    this.blobCache.clear();
+    this.pending.clear();
   }
 }

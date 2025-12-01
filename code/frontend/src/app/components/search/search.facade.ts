@@ -430,7 +430,7 @@ export class SearchFacade {
           return {
             ...response,
             category,
-            title: response.title ?? `Immobile #${response.id}`,
+            title: response.title ?? `${response.description}`,
             address: response.address ?? geographicalPosition?.address ?? '',
             city: response.city ?? geographicalPosition?.city ?? '',
             lat: Number.isFinite(lat) ? lat : undefined,
