@@ -19,6 +19,7 @@ import { GeoapifyService } from '../../manual_services/geoapify.service';
 import { lastValueFrom } from 'rxjs';
 import { Geometry } from 'geojson';
 import { environmentMap } from '../../../environments/environment.map';
+import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 
 export interface MunicipalityToSelect {
   name: string;
@@ -33,7 +34,7 @@ const looksPng = (b64: string) => b64?.startsWith('iVBOR');
 @Component({
   selector: 'app-search-landing-map',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, NavbarComponent],
   templateUrl: './search-landing-map.component.html',
   styleUrls: ['./search-landing-map.component.scss'],
 })
@@ -71,6 +72,7 @@ export class SearchLandingMapComponent
 
   cityName = '';
   regionName = '';
+  query = '';
 
   ngOnInit(): void {
     const cachedGeo = (this.facade as any)._getCachedGeographicalPosition();
@@ -409,6 +411,49 @@ export class SearchLandingMapComponent
       }
     });
   }
+
+  filteredMunicipalities(): MunicipalityToSelect[] {
+    const q = (this.query || '').trim().toLowerCase();
+    if (!q) return this.municipalitiesSelection;
+    return this.municipalitiesSelection.filter((m) =>
+      (m.name || '').toLowerCase().includes(q),
+    );
+  }
+
+  resetToMunicipalities() {
+    this.isSelectingMunicipalities = true;
+    this.selectedMunicipality = '';
+    this.query = '';
+    this.markersLayer.clearLayers();
+
+    try {
+      if (this.geojson) {
+        this.geojson.eachLayer((layer: any) => {
+        this.geojson.resetStyle(layer);
+      });
+      }
+    } catch {}
+
+    this.selectedLayer = null;
+    this.infoMessage = 'Seleziona una municipalità.';
+    this.changeDetector.detectChanges();
+  }
+  zoomToMarkers() {
+    try {
+      const latlngs: L.LatLng[] = [];
+
+      for (const layer of this.markersLayer.getLayers()) {
+        const m: any = layer;
+        if (m?.getLatLng) latlngs.push(m.getLatLng());
+      }
+
+      if (!latlngs.length) return;
+
+      const bounds = L.latLngBounds(latlngs);
+      this.map.fitBounds(bounds, { padding: [40, 40], animate: true });
+    } catch {}
+  }
+
 
   ngOnDestroy(): void {
     try {

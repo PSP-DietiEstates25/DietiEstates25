@@ -41,7 +41,7 @@
       <div class="space-y-2">
         <input class="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm outline-none
                    focus:ring-2 focus:ring-blue-500/40" placeholder="Cerca municipalità…"
-          (input)="query.set(($any($event.target).value || ''))" />
+          (input)="query = ($any($event.target).value || '')" />
 
         <div class="text-xs text-gray-500">
           Puoi selezionare anche cliccando una zona sulla mappa.
@@ -191,12 +191,6 @@
                   <path fill="currentColor" d="m10 17l5-5l-5-5v10Z" />
                 </svg>
               </a>
-
-              <button type="button" class="rounded-xl border border-black/10 bg-white px-2.5 py-1.5 text-xs text-gray-700
-                             hover:bg-gray-50 active:scale-[0.99]" (click)="focusOnCard(searchCard)"
-                title="Centra sulla mappa">
-                Mappa
-              </button>
             </div>
           </div>
         </article>
