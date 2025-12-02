@@ -30,8 +30,8 @@ export class NotificationsPageComponent {
   ];
 
   constructor() {
-    this.facade.markAllSeen();
     this.facade.init();
+    this.facade.markAllSeen();
   }
 
   onToggle(category: string, ev: Event) {
