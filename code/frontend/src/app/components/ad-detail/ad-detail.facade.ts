@@ -22,7 +22,7 @@ import {
 } from '../../services/services';
 import { UtilityResponse } from '../../services/models/utility-response';
 import { environment } from '../../../environments/environment';
-import { AuthService } from '../../manual_services/auth.service';
+import { AuthService } from '../../manual_services/auth/auth.service';
 
 export type AdVM = {
   realEstateId: number;
@@ -72,7 +72,9 @@ export class AdDetailFacade {
 
   private searchService = inject(SearchControllerService);
   private detailService = inject(DetailControllerService);
-  private geographicalPositionService = inject(GeographicalPositionControllerService);
+  private geographicalPositionService = inject(
+    GeographicalPositionControllerService,
+  );
   private cadastralDataService = inject(CadastralDataControllerService);
   private realEstateService = inject(RealEstateControllerService);
 
@@ -87,7 +89,9 @@ export class AdDetailFacade {
   realEstateResponse = signal<RealEstateResponse | null>(null);
   detailResponse = signal<DetailResponse | null>(null);
   cadastralDataResponse = signal<CadastralDataResponse | null>(null);
-  geographicalPositionResponse = signal<GeographicalPositionResponse | null>(null);
+  geographicalPositionResponse = signal<GeographicalPositionResponse | null>(
+    null,
+  );
   utilityResponse = signal<UtilityResponse | null>(null);
 
   mainImage = signal<string | null>(null);
@@ -101,13 +105,21 @@ export class AdDetailFacade {
     const cadastralDataResponse = this.cadastralDataResponse();
     const geographicalPositionResponse = this.geographicalPositionResponse();
     const utilityResponse = this.utilityResponse();
-    if (!realEstateResponse || !realEstateResponse.id || !realEstateResponse.detailId) return null;
+    if (
+      !realEstateResponse ||
+      !realEstateResponse.id ||
+      !realEstateResponse.detailId
+    )
+      return null;
 
     const images = realEstateResponse.images ?? [];
     const cover = images[0] ?? null;
 
     // preferisci det → cad → re
-    const price = (realEstateResponse as any)?.price ?? cadastralDataResponse?.price ?? null;
+    const price =
+      (realEstateResponse as any)?.price ??
+      cadastralDataResponse?.price ??
+      null;
 
     const surface =
       (detailResponse as any)?.surface ??
@@ -116,7 +128,10 @@ export class AdDetailFacade {
       null;
 
     const rooms =
-      (detailResponse as any)?.rooms ?? cadastralDataResponse?.rooms ?? (realEstateResponse as any)?.rooms ?? null;
+      (detailResponse as any)?.rooms ??
+      cadastralDataResponse?.rooms ??
+      (realEstateResponse as any)?.rooms ??
+      null;
 
     const city = geographicalPositionResponse?.city ?? null;
 
@@ -128,9 +143,15 @@ export class AdDetailFacade {
     const title = titleParts.length ? titleParts.join(' ') : 'Annuncio';
 
     const type =
-      (realEstateResponse as any)?.type ?? (detailResponse as any)?.type ?? (cadastralDataResponse as any)?.type ?? null;
+      (realEstateResponse as any)?.type ??
+      (detailResponse as any)?.type ??
+      (cadastralDataResponse as any)?.type ??
+      null;
     const floor =
-      (cadastralDataResponse as any)?.floor ?? (detailResponse as any)?.floor ?? (realEstateResponse as any)?.floor ?? null;
+      (cadastralDataResponse as any)?.floor ??
+      (detailResponse as any)?.floor ??
+      (realEstateResponse as any)?.floor ??
+      null;
     const energyClass =
       (cadastralDataResponse as any)?.energyClass ??
       (detailResponse as any)?.energyClass ??
@@ -153,7 +174,10 @@ export class AdDetailFacade {
       realEstateId: realEstateResponse.id!,
       detailId: realEstateResponse.detailId!,
       title,
-      description: (detailResponse as any)?.description ?? realEstateResponse.description ?? null,
+      description:
+        (detailResponse as any)?.description ??
+        realEstateResponse.description ??
+        null,
       price,
       city,
       surface,
@@ -176,7 +200,7 @@ export class AdDetailFacade {
 
   loadByRealEstateId(
     realEstateId: number,
-    opts?: { userEmail?: string; category?: 'SALE' | 'RENT' }
+    opts?: { userEmail?: string; category?: 'SALE' | 'RENT' },
   ) {
     if (!realEstateId || Number.isNaN(realEstateId)) {
       this.error.set('ID annuncio non valido.');
@@ -194,61 +218,71 @@ export class AdDetailFacade {
 
     const userEmail = opts?.userEmail ?? 'guest@public.local';
 
-    this.realEstateService.getRealEstateById({ realestateid: realEstateId }).subscribe({
-      next: (realEstate) => {
-        this.realEstateResponse.set(realEstate);
-        this.loadMyOffers(realEstate.id!);
-        const imgs = realEstate.images ?? [];
-        const mainImageUrl = `${environment.apiBaseUrl}${imgs[0]}`
-        this.mainImage.set(mainImageUrl);
+    this.realEstateService
+      .getRealEstateById({ realestateid: realEstateId })
+      .subscribe({
+        next: (realEstate) => {
+          this.realEstateResponse.set(realEstate);
+          this.loadMyOffers(realEstate.id!);
+          const imgs = realEstate.images ?? [];
+          const mainImageUrl = `${environment.apiBaseUrl}${imgs[0]}`;
+          this.mainImage.set(mainImageUrl);
 
-        const detailId = realEstate.detailId;
-        if (detailId != null) {
-          this.detailService.getDetailById({ detailid: detailId }).subscribe({
-            next: (detail) => {
-              this.detailResponse.set(detail);
+          const detailId = realEstate.detailId;
+          if (detailId != null) {
+            this.detailService.getDetailById({ detailid: detailId }).subscribe({
+              next: (detail) => {
+                this.detailResponse.set(detail);
 
-              console.log('[DETAIL]', detail);
+                console.log('[DETAIL]', detail);
 
-              const utilityId =
-                (detail as any)?.utilityId ?? (detail as any)?.utility?.id;
-              if (utilityId != null) {
-                this.utilityService.getUtilityById({ utilityid: utilityId }).subscribe({
-                  next: (utility) => this.utilityResponse.set(utility),
-                  error: () => {},
-                });
-              }
+                const utilityId =
+                  (detail as any)?.utilityId ?? (detail as any)?.utility?.id;
+                if (utilityId != null) {
+                  this.utilityService
+                    .getUtilityById({ utilityid: utilityId })
+                    .subscribe({
+                      next: (utility) => this.utilityResponse.set(utility),
+                      error: () => {},
+                    });
+                }
 
-              if (detail.geographicalPositionId != null) {
-                this.geographicalPositionService
-                  .getGeographicalPositionById({
-                    geographicalpositionid: detail.geographicalPositionId,
-                  })
-                  .subscribe({
-                    next: (geographicalPosition) => this.geographicalPositionResponse.set(geographicalPosition),
-                    error: () => {},
-                  });
-              }
+                if (detail.geographicalPositionId != null) {
+                  this.geographicalPositionService
+                    .getGeographicalPositionById({
+                      geographicalpositionid: detail.geographicalPositionId,
+                    })
+                    .subscribe({
+                      next: (geographicalPosition) =>
+                        this.geographicalPositionResponse.set(
+                          geographicalPosition,
+                        ),
+                      error: () => {},
+                    });
+                }
 
-              if (realEstate.cadastralDataId != null) {
-                this.cadastralDataService
-                  .getCadastralDataById({ cadastraldataid: realEstate.cadastralDataId })
-                  .subscribe({
-                    next: (cadastralData) => this.cadastralDataResponse.set(cadastralData),
-                    error: () => {},
-                  });
-              }
-              this.loading.set(false);
-            },
-            error: (error) => this.fail(error),
-          });
-        } else {
-          this.loading.set(false);
-          this.error.set('Annuncio non trovato.');
-        }
-      },
-      error: (error) => this.fail(error),
-    });
+                if (realEstate.cadastralDataId != null) {
+                  this.cadastralDataService
+                    .getCadastralDataById({
+                      cadastraldataid: realEstate.cadastralDataId,
+                    })
+                    .subscribe({
+                      next: (cadastralData) =>
+                        this.cadastralDataResponse.set(cadastralData),
+                      error: () => {},
+                    });
+                }
+                this.loading.set(false);
+              },
+              error: (error) => this.fail(error),
+            });
+          } else {
+            this.loading.set(false);
+            this.error.set('Annuncio non trovato.');
+          }
+        },
+        error: (error) => this.fail(error),
+      });
   }
 
   setMain(src: string) {
@@ -263,30 +297,32 @@ export class AdDetailFacade {
       category,
       status: 'PENDING',
     };
-    return this.offerService.createOffer({ realestateid: vm.realEstateId, body });
+    return this.offerService.createOffer({
+      realestateid: vm.realEstateId,
+      body,
+    });
   }
 
-  submitVisit(
-    date: string,
-    time: string,
-    category: 'SALE' | 'RENT',
-  ) {
+  submitVisit(date: string, time: string, category: 'SALE' | 'RENT') {
     const vm = this.vm();
     if (!vm) return;
-    
+
     const body: VisitRequest = {
       category,
       status: 'PENDING',
       date,
       time,
     };
-    return this.visitService.createVisit({ realestateid: vm.realEstateId, body });
+    return this.visitService.createVisit({
+      realestateid: vm.realEstateId,
+      body,
+    });
   }
 
   private fail(error: unknown) {
     console.error(error);
     this.error.set(
-      typeof error === 'string' ? error : 'Errore durante il caricamento.'
+      typeof error === 'string' ? error : 'Errore durante il caricamento.',
     );
     this.loading.set(false);
   }
@@ -296,12 +332,14 @@ export class AdDetailFacade {
       id: (offerResponse as any)?.id ?? 0,
       amount: (offerResponse as any)?.amount ?? 0,
       status: ((offerResponse as any)?.status ?? 'PENDING') as any,
-      createdAt: (offerResponse as any)?.createdAt ?? (offerResponse as any)?.createdDate ?? null,
+      createdAt:
+        (offerResponse as any)?.createdAt ??
+        (offerResponse as any)?.createdDate ??
+        null,
     };
   }
 
   loadMyOffers(realEstateId: number) {
-
     if (!realEstateId) {
       this.myOffers.set([]);
       return;
@@ -317,13 +355,14 @@ export class AdDetailFacade {
       })
       .subscribe({
         next: (page: PageOfferResponse) => {
-
           const offers: OfferResponse[] = Array.isArray(page?.content)
             ? (page.content as OfferResponse[])
             : [];
 
           this.myOffers.set(
-            offers.map((offerResponse: OfferResponse) => this.toMyOfferVM(offerResponse))
+            offers.map((offerResponse: OfferResponse) =>
+              this.toMyOfferVM(offerResponse),
+            ),
           );
           this.myOffersLoading.set(false);
         },

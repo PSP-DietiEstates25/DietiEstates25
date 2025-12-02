@@ -14,12 +14,13 @@ import { Router, TitleStrategy } from '@angular/router';
 import * as L from 'leaflet'; // Importa Leaflet
 
 import { SearchFacade } from '../search/search.facade'; // Verifica path
-import { GeoapifyService } from '../../manual_services/geoapify.service';
+import { GeoapifyService } from '../../manual_services/geoapify/geoapify.service';
 import { lastValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Geometry } from 'geojson';
 import { environmentMap } from '../../../environments/environment.map';
 import { RouterLink } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 export interface MunicipalityToSelect {
   name: string;
@@ -41,6 +42,7 @@ export class SearchLandingMapComponent
   private ngZone = inject(NgZone);
   private changeDetector = inject(ChangeDetectorRef);
   private router = inject(Router);
+  private toastrService = inject(ToastrService);
 
   @ViewChild('mapContainer') mapContainer!: ElementRef;
   private map!: L.Map;
@@ -355,6 +357,11 @@ export class SearchLandingMapComponent
         this.markersLayer.addLayer(marker);
       }
     });
+  }
+
+  onCancel() {
+    this.router.navigate(['/searches']);
+    this.toastrService.error('Ricerca interrotta');
   }
 
   ngOnDestroy(): void {

@@ -8,9 +8,9 @@ import {
 import { CommonModule } from '@angular/common';
 import { MenuToggleComponent } from '../../buttons/menu_toggle/menu-toggle.component';
 import { NotificationsFacade } from '../../../components/notifications/notifications.facade';
-import { AuthService } from '../../../manual_services/auth.service';
+import { AuthService } from '../../../manual_services/auth/auth.service';
 import { environment } from '../../../../environments/environment.development';
-import { LocalStorageService } from '../../../manual_services/local-storage.service';
+import { LocalStorageService } from '../../../manual_services/local-storage/local-storage.service';
 
 interface NavLink {
   label: string;
@@ -25,7 +25,7 @@ interface NavLink {
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit {
-  private readonly localStorageService = inject(LocalStorageService)
+  private readonly localStorageService = inject(LocalStorageService);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly notifications = inject(NotificationsFacade);
@@ -77,7 +77,7 @@ export class NavbarComponent implements OnInit {
     this.authService.getUserInfo().subscribe({
       next: (userInfo) => {
         this.isAuthenticated = true;
-        this.localStorageService.setItem("role", userInfo.role[0]);
+        this.localStorageService.setItem('role', userInfo.role[0]);
         this.email = userInfo.sub;
       },
       error: (error) => {

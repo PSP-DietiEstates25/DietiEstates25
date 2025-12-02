@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 import { map } from 'rxjs';
 
 export type NearTag = 'NEAR_PARKS' | 'NEAR_PUBLIC_TRANSPORT' | 'NEAR_SCHOOLS';

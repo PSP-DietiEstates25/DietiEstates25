@@ -11,11 +11,13 @@ import { RequestBuilder } from '../../request-builder';
 import { UserResponse } from '../../models/user-response';
 
 export interface GetUserById$Params {
+  userid: number;
 }
 
-export function getUserById(http: HttpClient, rootUrl: string, params?: GetUserById$Params, context?: HttpContext): Observable<StrictHttpResponse<UserResponse>> {
+export function getUserById(http: HttpClient, rootUrl: string, params: GetUserById$Params, context?: HttpContext): Observable<StrictHttpResponse<UserResponse>> {
   const rb = new RequestBuilder(rootUrl, getUserById.PATH, 'get');
   if (params) {
+    rb.path('userid', params.userid, {});
   }
 
   return http.request(
@@ -28,4 +30,4 @@ export function getUserById(http: HttpClient, rootUrl: string, params?: GetUserB
   );
 }
 
-getUserById.PATH = '/users/userid';
+getUserById.PATH = '/users/{userid}';

@@ -4,11 +4,10 @@
 
 export interface SearchResponse {
   cadastralFilterId?: number;
+  category?: string;
   createdDate?: string;
   detailId?: number;
   id?: number;
   lastModifiedDate?: string;
-  page?: number;
-  size?: number;
   userEmail?: string;
 }

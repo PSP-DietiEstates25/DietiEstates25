@@ -21,9 +21,9 @@ import {
 } from './create-ad.facade';
 import { MapComponent } from '../map/map.component';
 import { ToastrService } from 'ngx-toastr';
-import { GeoapifyService } from '../../manual_services/geoapify.service';
+import { GeoapifyService } from '../../manual_services/geoapify/geoapify.service';
 import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.component';
-import { NearTag } from '../../manual_services/geoapify.service';
+import { NearTag } from '../../manual_services/geoapify/geoapify.service';
 import { switchMap, pipe } from 'rxjs';
 
 @Component({

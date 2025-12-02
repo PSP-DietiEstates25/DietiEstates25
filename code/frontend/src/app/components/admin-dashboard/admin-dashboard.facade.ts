@@ -12,7 +12,7 @@ import { GetRealEstates$Params } from '../../services/fn/real-estate-controller/
 import { RealEstateResponse } from '../../services/models/real-estate-response';
 import { PageRealEstateResponse } from '../../services/models/page-real-estate-response';
 
-import { AuthService } from '../../manual_services/auth.service';
+import { AuthService } from '../../manual_services/auth/auth.service';
 
 import { StafferRequest, StafferResponse } from '../../services/models';
 
@@ -69,7 +69,7 @@ export class AdminDashboardFacade {
   // ===== ADS =====
   listAds(
     arg1?: string | ListAdsOpts,
-    activeParam?: boolean | ''
+    activeParam?: boolean | '',
   ): Observable<AdminAd[]> {
     let q: string | undefined;
     let active: boolean | '' | undefined;
@@ -100,7 +100,7 @@ export class AdminDashboardFacade {
           res = res.filter((a) =>
             [a.title, a.city, String(a.price ?? ''), String(a.id)]
               .filter(Boolean)
-              .some((v) => String(v).toLowerCase().includes(qNorm))
+              .some((v) => String(v).toLowerCase().includes(qNorm)),
           );
         }
         if (active !== '' && active !== undefined) {
@@ -111,7 +111,7 @@ export class AdminDashboardFacade {
       catchError((e) => {
         console.error('[AdminDashboard] listAds error', e);
         return of([]);
-      })
+      }),
     );
   }
 
@@ -122,7 +122,7 @@ export class AdminDashboardFacade {
         console.error('[AdminDashboard] deleteAd error', e);
         return of([]);
       }),
-      map(() => void 0)
+      map(() => void 0),
     );
   }
 
@@ -141,7 +141,7 @@ export class AdminDashboardFacade {
   private authRegister(
     email: string,
     password: string,
-    role?: Role
+    role?: Role,
   ): Observable<AccountResponse> {
     const body: AccountRequest = { email, password, role };
     return this.authService.register(body);
@@ -173,7 +173,7 @@ export class AdminDashboardFacade {
           catchError((error) => {
             console.error('[AdminDashboard] createUser(AGENT) error', error);
             return throwError(() => error);
-          })
+          }),
         );
 
       case 'ADMIN':
@@ -191,12 +191,12 @@ export class AdminDashboardFacade {
           catchError((e) => {
             console.error('[AdminDashboard] createUser(ADMIN) error', e);
             return throwError(() => e);
-          })
+          }),
         );
 
       default:
         return throwError(
-          () => new Error(`Ruolo non supportato: ${role as string}`)
+          () => new Error(`Ruolo non supportato: ${role as string}`),
         );
     }
   }
@@ -205,7 +205,7 @@ export class AdminDashboardFacade {
 
   changePassword(
     currentPassword: string,
-    newPassword: string
+    newPassword: string,
   ): Observable<void> {
     this.loading.set(true);
     this.success.set(null);
@@ -231,7 +231,7 @@ export class AdminDashboardFacade {
           }
           return EMPTY;
         }),
-        finalize(() => this.loading.set(false))
+        finalize(() => this.loading.set(false)),
       );
   }
 }

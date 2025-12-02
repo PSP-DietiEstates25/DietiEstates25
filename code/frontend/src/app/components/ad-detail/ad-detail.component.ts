@@ -6,7 +6,7 @@ import { VisitFormComponent } from '../visit/visit-form.component';
 import { DecimalPipe, DatePipe } from '@angular/common';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { HttpClient } from '@angular/common/http';
-import { AuthService } from '../../manual_services/auth.service';
+import { AuthService } from '../../manual_services/auth/auth.service';
 
 import { environment } from '../../../environments/environment';
 
@@ -58,8 +58,8 @@ export class AdDetailComponent {
     const mime = looksJpeg(raw)
       ? 'image/jpeg'
       : looksPng(raw)
-      ? 'image/png'
-      : 'image/*';
+        ? 'image/png'
+        : 'image/*';
     return `data:${mime};base64,${raw}`;
   };
 

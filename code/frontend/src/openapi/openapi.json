@@ -13,9 +13,7 @@
   "paths": {
     "/utilities/{utilityid}": {
       "get": {
-        "tags": [
-          "utility-controller"
-        ],
+        "tags": ["utility-controller"],
         "operationId": "getUtilityById",
         "parameters": [
           {
@@ -42,9 +40,7 @@
         }
       },
       "put": {
-        "tags": [
-          "utility-controller"
-        ],
+        "tags": ["utility-controller"],
         "operationId": "updateUtility",
         "parameters": [
           {
@@ -83,9 +79,7 @@
     },
     "/realestates/{realestateid}": {
       "get": {
-        "tags": [
-          "real-estate-controller"
-        ],
+        "tags": ["real-estate-controller"],
         "operationId": "getRealEstateById",
         "parameters": [
           {
@@ -112,9 +106,7 @@
         }
       },
       "put": {
-        "tags": [
-          "real-estate-controller"
-        ],
+        "tags": ["real-estate-controller"],
         "operationId": "updateRealEstate",
         "parameters": [
           {
@@ -144,9 +136,7 @@
                     }
                   }
                 },
-                "required": [
-                  "data"
-                ]
+                "required": ["data"]
               }
             }
           }
@@ -165,9 +155,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "real-estate-controller"
-        ],
+        "tags": ["real-estate-controller"],
         "operationId": "deleteRealEstate",
         "parameters": [
           {
@@ -189,9 +177,7 @@
     },
     "/notificationcategories/{notificationcategoryname}": {
       "get": {
-        "tags": [
-          "notification-category-controller"
-        ],
+        "tags": ["notification-category-controller"],
         "operationId": "getNotificationCategoryByName",
         "parameters": [
           {
@@ -217,9 +203,7 @@
         }
       },
       "put": {
-        "tags": [
-          "notification-category-controller"
-        ],
+        "tags": ["notification-category-controller"],
         "operationId": "updateIsActive",
         "parameters": [
           {
@@ -257,9 +241,7 @@
     },
     "/geographicalpositions/{geographicalpositionid}": {
       "get": {
-        "tags": [
-          "geographical-position-controller"
-        ],
+        "tags": ["geographical-position-controller"],
         "operationId": "getGeographicalPositionById",
         "parameters": [
           {
@@ -286,9 +268,7 @@
         }
       },
       "put": {
-        "tags": [
-          "geographical-position-controller"
-        ],
+        "tags": ["geographical-position-controller"],
         "operationId": "updateGeographicalPosition",
         "parameters": [
           {
@@ -327,9 +307,7 @@
     },
     "/details/{detailid}": {
       "get": {
-        "tags": [
-          "detail-controller"
-        ],
+        "tags": ["detail-controller"],
         "operationId": "getDetailById",
         "parameters": [
           {
@@ -356,9 +334,7 @@
         }
       },
       "put": {
-        "tags": [
-          "detail-controller"
-        ],
+        "tags": ["detail-controller"],
         "operationId": "updateDetail",
         "parameters": [
           {
@@ -397,9 +373,7 @@
     },
     "/cadastraldata/{cadastraldataid}": {
       "get": {
-        "tags": [
-          "cadastral-data-controller"
-        ],
+        "tags": ["cadastral-data-controller"],
         "operationId": "getCadastralDataById",
         "parameters": [
           {
@@ -426,9 +400,7 @@
         }
       },
       "put": {
-        "tags": [
-          "cadastral-data-controller"
-        ],
+        "tags": ["cadastral-data-controller"],
         "operationId": "updateCadastralData",
         "parameters": [
           {
@@ -467,9 +439,7 @@
     },
     "/utilities": {
       "get": {
-        "tags": [
-          "utility-controller"
-        ],
+        "tags": ["utility-controller"],
         "operationId": "getDetailUtility",
         "parameters": [
           {
@@ -496,9 +466,7 @@
         }
       },
       "post": {
-        "tags": [
-          "utility-controller"
-        ],
+        "tags": ["utility-controller"],
         "operationId": "createUtility",
         "requestBody": {
           "content": {
@@ -526,9 +494,7 @@
     },
     "/users": {
       "post": {
-        "tags": [
-          "user-controller"
-        ],
+        "tags": ["user-controller"],
         "operationId": "registerUser",
         "requestBody": {
           "content": {
@@ -556,9 +522,7 @@
     },
     "/searches": {
       "get": {
-        "tags": [
-          "search-controller"
-        ],
+        "tags": ["search-controller"],
         "operationId": "getUserSearches",
         "parameters": [
           {
@@ -596,9 +560,7 @@
         }
       },
       "post": {
-        "tags": [
-          "search-controller"
-        ],
+        "tags": ["search-controller"],
         "operationId": "createSearch",
         "requestBody": {
           "content": {
@@ -629,9 +591,7 @@
     },
     "/realestates": {
       "get": {
-        "tags": [
-          "real-estate-controller"
-        ],
+        "tags": ["real-estate-controller"],
         "operationId": "getRealEstates",
         "parameters": [
           {
@@ -678,9 +638,7 @@
         }
       },
       "post": {
-        "tags": [
-          "real-estate-controller"
-        ],
+        "tags": ["real-estate-controller"],
         "operationId": "createRealEstate",
         "requestBody": {
           "content": {
@@ -699,9 +657,7 @@
                     }
                   }
                 },
-                "required": [
-                  "data"
-                ]
+                "required": ["data"]
               }
             }
           }
@@ -722,9 +678,7 @@
     },
     "/realestates/{realestateid}/visits": {
       "get": {
-        "tags": [
-          "visit-controller"
-        ],
+        "tags": ["visit-controller"],
         "operationId": "getRealEstateVisits",
         "parameters": [
           {
@@ -771,9 +725,7 @@
         }
       },
       "post": {
-        "tags": [
-          "visit-controller"
-        ],
+        "tags": ["visit-controller"],
         "operationId": "createVisit",
         "parameters": [
           {
@@ -812,9 +764,7 @@
     },
     "/realestates/{realestateid}/offers": {
       "get": {
-        "tags": [
-          "offer-controller"
-        ],
+        "tags": ["offer-controller"],
         "operationId": "getRealEstateOffers",
         "parameters": [
           {
@@ -861,9 +811,7 @@
         }
       },
       "post": {
-        "tags": [
-          "offer-controller"
-        ],
+        "tags": ["offer-controller"],
         "operationId": "createOffer",
         "parameters": [
           {
@@ -902,9 +850,7 @@
     },
     "/notificationcategories": {
       "get": {
-        "tags": [
-          "notification-category-controller"
-        ],
+        "tags": ["notification-category-controller"],
         "operationId": "getUserNotificationCategories",
         "responses": {
           "200": {
@@ -923,9 +869,7 @@
         }
       },
       "post": {
-        "tags": [
-          "notification-category-controller"
-        ],
+        "tags": ["notification-category-controller"],
         "operationId": "createNotificationCategory",
         "requestBody": {
           "content": {
@@ -953,9 +897,7 @@
     },
     "/notificationcategories/{notificationcategoryname}/notifications": {
       "get": {
-        "tags": [
-          "notification-controller"
-        ],
+        "tags": ["notification-controller"],
         "operationId": "getNotificationCategoryNotifications",
         "parameters": [
           {
@@ -1001,9 +943,7 @@
         }
       },
       "post": {
-        "tags": [
-          "notification-controller"
-        ],
+        "tags": ["notification-controller"],
         "operationId": "createNotification",
         "parameters": [
           {
@@ -1041,9 +981,7 @@
     },
     "/geographicalpositions": {
       "get": {
-        "tags": [
-          "geographical-position-controller"
-        ],
+        "tags": ["geographical-position-controller"],
         "operationId": "getDetailGeographicalPosition",
         "parameters": [
           {
@@ -1070,9 +1008,7 @@
         }
       },
       "post": {
-        "tags": [
-          "geographical-position-controller"
-        ],
+        "tags": ["geographical-position-controller"],
         "operationId": "createGeographicalPosition",
         "requestBody": {
           "content": {
@@ -1100,9 +1036,7 @@
     },
     "/estateagents": {
       "post": {
-        "tags": [
-          "estate-agent-controller"
-        ],
+        "tags": ["estate-agent-controller"],
         "operationId": "registerEstateAgent",
         "requestBody": {
           "content": {
@@ -1130,9 +1064,7 @@
     },
     "/details": {
       "post": {
-        "tags": [
-          "detail-controller"
-        ],
+        "tags": ["detail-controller"],
         "operationId": "createDetail",
         "requestBody": {
           "content": {
@@ -1160,9 +1092,7 @@
     },
     "/cadastralfilters": {
       "get": {
-        "tags": [
-          "cadastral-filter-controller"
-        ],
+        "tags": ["cadastral-filter-controller"],
         "operationId": "getSearchCadastralFilter",
         "parameters": [
           {
@@ -1189,9 +1119,7 @@
         }
       },
       "post": {
-        "tags": [
-          "cadastral-filter-controller"
-        ],
+        "tags": ["cadastral-filter-controller"],
         "operationId": "createCadastralFilter",
         "requestBody": {
           "content": {
@@ -1219,9 +1147,7 @@
     },
     "/cadastraldata": {
       "get": {
-        "tags": [
-          "cadastral-data-controller"
-        ],
+        "tags": ["cadastral-data-controller"],
         "operationId": "getRealEstateCadastralData",
         "parameters": [
           {
@@ -1248,9 +1174,7 @@
         }
       },
       "post": {
-        "tags": [
-          "cadastral-data-controller"
-        ],
+        "tags": ["cadastral-data-controller"],
         "operationId": "createCadastralData",
         "requestBody": {
           "content": {
@@ -1278,9 +1202,7 @@
     },
     "/admins": {
       "get": {
-        "tags": [
-          "admin-controller"
-        ],
+        "tags": ["admin-controller"],
         "operationId": "getCreatedStaffers",
         "parameters": [
           {
@@ -1316,9 +1238,7 @@
         }
       },
       "post": {
-        "tags": [
-          "admin-controller"
-        ],
+        "tags": ["admin-controller"],
         "operationId": "registerAdmin",
         "requestBody": {
           "content": {
@@ -1346,9 +1266,7 @@
     },
     "/realestates/{realestateid}/visits/{visitid}": {
       "get": {
-        "tags": [
-          "visit-controller"
-        ],
+        "tags": ["visit-controller"],
         "operationId": "getVisitById",
         "parameters": [
           {
@@ -1384,9 +1302,7 @@
         }
       },
       "patch": {
-        "tags": [
-          "visit-controller"
-        ],
+        "tags": ["visit-controller"],
         "operationId": "updateVisitStatus",
         "parameters": [
           {
@@ -1434,9 +1350,7 @@
     },
     "/realestates/{realestateid}/offers/{offerid}": {
       "get": {
-        "tags": [
-          "offer-controller"
-        ],
+        "tags": ["offer-controller"],
         "operationId": "getOfferById",
         "parameters": [
           {
@@ -1472,9 +1386,7 @@
         }
       },
       "patch": {
-        "tags": [
-          "offer-controller"
-        ],
+        "tags": ["offer-controller"],
         "operationId": "updateOfferStatus",
         "parameters": [
           {
@@ -1520,13 +1432,21 @@
         }
       }
     },
-    "/users/userid": {
+    "/users/{userid}": {
       "get": {
-        "tags": [
-          "user-controller"
-        ],
+        "tags": ["user-controller"],
         "operationId": "getUserById",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -1543,9 +1463,7 @@
     },
     "/notificationcategories/{notificationcategoryname}/notifications/{notificationid}": {
       "get": {
-        "tags": [
-          "notification-controller"
-        ],
+        "tags": ["notification-controller"],
         "operationId": "getNotificationById",
         "parameters": [
           {
@@ -1582,9 +1500,7 @@
     },
     "/estateagents/{estateagentid}": {
       "get": {
-        "tags": [
-          "estate-agent-controller"
-        ],
+        "tags": ["estate-agent-controller"],
         "operationId": "getEstateAgentById",
         "parameters": [
           {
@@ -1613,9 +1529,7 @@
     },
     "/cadastralfilters/{cadastralfilterid}": {
       "get": {
-        "tags": [
-          "cadastral-filter-controller"
-        ],
+        "tags": ["cadastral-filter-controller"],
         "operationId": "getCadastralFilterById",
         "parameters": [
           {
@@ -1644,9 +1558,7 @@
     },
     "/admins/{adminid}": {
       "get": {
-        "tags": [
-          "admin-controller"
-        ],
+        "tags": ["admin-controller"],
         "operationId": "getAdminById",
         "parameters": [
           {
@@ -1766,10 +1678,7 @@
             "format": "int64"
           }
         },
-        "required": [
-          "category",
-          "description"
-        ]
+        "required": ["category", "description"]
       },
       "RealEstateResponse": {
         "type": "object",
@@ -1822,10 +1731,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "isActive",
-          "name"
-        ]
+        "required": ["isActive", "name"]
       },
       "NotificationCategoryResponse": {
         "type": "object",
@@ -1883,13 +1789,7 @@
             "format": "int32"
           }
         },
-        "required": [
-          "address",
-          "city",
-          "latitude",
-          "longitude",
-          "municipality"
-        ]
+        "required": ["address", "city", "latitude", "longitude", "municipality"]
       },
       "GeographicalPositionResponse": {
         "type": "object",
@@ -1994,13 +1894,7 @@
             "format": "int32"
           }
         },
-        "required": [
-          "energyClass",
-          "floor",
-          "price",
-          "rooms",
-          "squareMeters"
-        ]
+        "required": ["energyClass", "floor", "price", "rooms", "squareMeters"]
       },
       "CadastralDataResponse": {
         "type": "object",
@@ -2049,9 +1943,7 @@
             "minLength": 1
           }
         },
-        "required": [
-          "email"
-        ]
+        "required": ["email"]
       },
       "UserResponse": {
         "type": "object",
@@ -2080,14 +1972,6 @@
             "type": "string",
             "minLength": 1
           },
-          "size": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "page": {
-            "type": "integer",
-            "format": "int32"
-          },
           "cadastralFilterId": {
             "type": "integer",
             "format": "int64"
@@ -2097,11 +1981,7 @@
             "format": "int64"
           }
         },
-        "required": [
-          "category",
-          "page",
-          "size"
-        ]
+        "required": ["category"]
       },
       "VisitRequest": {
         "type": "object",
@@ -2123,12 +2003,7 @@
             "minLength": 1
           }
         },
-        "required": [
-          "category",
-          "date",
-          "status",
-          "time"
-        ]
+        "required": ["category", "date", "status", "time"]
       },
       "VisitResponse": {
         "type": "object",
@@ -2189,11 +2064,7 @@
             "format": "int64"
           }
         },
-        "required": [
-          "amount",
-          "category",
-          "status"
-        ]
+        "required": ["amount", "category", "status"]
       },
       "OfferResponse": {
         "type": "object",
@@ -2254,11 +2125,7 @@
             "minLength": 1
           }
         },
-        "required": [
-          "isActive",
-          "name",
-          "userEmail"
-        ]
+        "required": ["isActive", "name", "userEmail"]
       },
       "NotificationRequest": {
         "type": "object",
@@ -2268,9 +2135,7 @@
             "minLength": 1
           }
         },
-        "required": [
-          "message"
-        ]
+        "required": ["message"]
       },
       "NotificationResponse": {
         "type": "object",
@@ -2304,9 +2169,7 @@
             "minLength": 1
           }
         },
-        "required": [
-          "email"
-        ]
+        "required": ["email"]
       },
       "StafferResponse": {
         "type": "object",
@@ -2524,13 +2387,8 @@
             "type": "string",
             "format": "date-time"
           },
-          "size": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "page": {
-            "type": "integer",
-            "format": "int32"
+          "category": {
+            "type": "string"
           },
           "userEmail": {
             "type": "string"
@@ -2786,18 +2644,7 @@
           },
           "energyClass": {
             "type": "string",
-            "enum": [
-              "A4",
-              "A3",
-              "A2",
-              "A1",
-              "B",
-              "C",
-              "D",
-              "E",
-              "F",
-              "G"
-            ]
+            "enum": ["A4", "A3", "A2", "A1", "B", "C", "D", "E", "F", "G"]
           },
           "rooms": {
             "type": "integer",
@@ -3051,12 +2898,7 @@
           },
           "name": {
             "type": "string",
-            "enum": [
-              "NEW_PROPERTIES",
-              "PROMOTIONAL",
-              "VISIT",
-              "OFFER"
-            ]
+            "enum": ["NEW_PROPERTIES", "PROMOTIONAL", "VISIT", "OFFER"]
           },
           "isActive": {
             "type": "boolean"
@@ -3089,19 +2931,11 @@
           },
           "proposalCategory": {
             "type": "string",
-            "enum": [
-              "OFFER",
-              "COUNTER_OFFER",
-              "VISIT"
-            ]
+            "enum": ["OFFER", "COUNTER_OFFER", "VISIT"]
           },
           "proposalStatus": {
             "type": "string",
-            "enum": [
-              "PENDING",
-              "ACCEPTED",
-              "REJECTED"
-            ]
+            "enum": ["PENDING", "ACCEPTED", "REJECTED", "COUNTERED"]
           },
           "createdDate": {
             "type": "string",
@@ -3238,19 +3072,11 @@
           },
           "proposalCategory": {
             "type": "string",
-            "enum": [
-              "OFFER",
-              "COUNTER_OFFER",
-              "VISIT"
-            ]
+            "enum": ["OFFER", "COUNTER_OFFER", "VISIT"]
           },
           "proposalStatus": {
             "type": "string",
-            "enum": [
-              "PENDING",
-              "ACCEPTED",
-              "REJECTED"
-            ]
+            "enum": ["PENDING", "ACCEPTED", "REJECTED", "COUNTERED"]
           },
           "createdDate": {
             "type": "string",
@@ -3274,10 +3100,7 @@
           },
           "category": {
             "type": "string",
-            "enum": [
-              "SALE",
-              "RENT"
-            ]
+            "enum": ["SALE", "RENT"]
           },
           "images": {
             "type": "array",
@@ -3341,10 +3164,7 @@
           },
           "category": {
             "type": "string",
-            "enum": [
-              "SALE",
-              "RENT"
-            ]
+            "enum": ["SALE", "RENT"]
           },
           "createdDate": {
             "type": "string",
@@ -3517,19 +3337,11 @@
           },
           "proposalCategory": {
             "type": "string",
-            "enum": [
-              "OFFER",
-              "COUNTER_OFFER",
-              "VISIT"
-            ]
+            "enum": ["OFFER", "COUNTER_OFFER", "VISIT"]
           },
           "proposalStatus": {
             "type": "string",
-            "enum": [
-              "PENDING",
-              "ACCEPTED",
-              "REJECTED"
-            ]
+            "enum": ["PENDING", "ACCEPTED", "REJECTED", "COUNTERED"]
           },
           "createdDate": {
             "type": "string",

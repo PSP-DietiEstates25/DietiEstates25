@@ -12,7 +12,7 @@ import {
 } from '../../../components/search/search.facade';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-import { LocationsService } from '../../../manual_services/location.service';
+import { LocationsService } from '../../../manual_services/location/location.service';
 import { AdCategory } from '../../../enums/ad-category.enum';
 import { switchMap } from 'rxjs';
 

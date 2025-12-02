@@ -6,6 +6,4 @@ export interface SearchRequest {
   cadastralFilterId?: number;
   category: string;
   detailId?: number;
-  page: number;
-  size: number;
 }

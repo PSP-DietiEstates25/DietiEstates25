@@ -9,6 +9,6 @@ export interface Visit {
   lastModifiedDate?: string;
   negotiation?: any;
   proposalCategory?: 'OFFER' | 'COUNTER_OFFER' | 'VISIT';
-  proposalStatus?: 'PENDING' | 'ACCEPTED' | 'REJECTED';
+  proposalStatus?: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'COUNTERED';
   time?: string;
 }

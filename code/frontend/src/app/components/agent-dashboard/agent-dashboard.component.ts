@@ -10,7 +10,7 @@ import {
   VisitVM,
   OfferVM,
 } from './agent-dashboard.facade';
-import { AuthService } from '../../manual_services/auth.service';
+import { AuthService } from '../../manual_services/auth/auth.service';
 import { environment } from '../../../environments/environment.development';
 
 @Component({
@@ -77,7 +77,7 @@ export class AgentDashboardComponent {
     this.createAdFacade.published$
       .pipe(
         switchMap(() => this.facade.loadAds()),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
@@ -166,7 +166,7 @@ export class AgentDashboardComponent {
       this.isAuthenticated = false;
       this.email = '';
       this.router.navigateByUrl(
-        `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`
+        `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`,
       );
     });
   }

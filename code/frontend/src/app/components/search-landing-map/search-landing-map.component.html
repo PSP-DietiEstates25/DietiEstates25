@@ -2,10 +2,37 @@
   <div
     class="absolute top-5 left-5 z-[1000] w-full max-w-sm rounded-xl border border-blue-100 bg-white/90 p-4 shadow-xl backdrop-blur"
   >
-    <h1 class="text-xl font-bold text-blue-900">{{ cityName }}</h1>
-    <p class="mb-2 text-xs tracking-wide text-gray-500 uppercase">
-      {{ regionName }}
-    </p>
+    <div class="flex w-full justify-between">
+      <div class="flex flex-col items-start justify-center">
+        <h1 class="text-xl font-bold text-blue-900">{{ cityName }}</h1>
+        <p class="mb-2 text-xs tracking-wide text-gray-500 uppercase">
+          {{ regionName }}
+        </p>
+      </div>
+
+      <button
+        type="button"
+        (click)="onCancel()"
+        class="ml-2 inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:hover:bg-slate-800 dark:hover:text-slate-100"
+      >
+        <span class="sr-only">Chiudi</span>
+        <svg
+          class="h-4 w-4"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 14 14"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+          />
+        </svg>
+      </button>
+    </div>
 
     <div class="mb-2 flex items-center gap-2">
       @if (loading) {
@@ -52,13 +79,11 @@
           >
             <!-- immagine -->
             <div class="relative aspect-[16/10] overflow-hidden bg-gray-100">
-              <!--
               <img
-                [src]=""
+                [src]="searchCard.images![0]"
                 alt="Anteprima immobile"
                 class="h-40 w-full rounded-xl object-cover"
               />
-              -->
               <span
                 class="absolute top-3 left-3 rounded-full bg-blue-600/90 px-2 py-1 text-xs font-medium text-white"
               >
@@ -151,7 +176,7 @@
                   class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
                   [routerLink]="['/ad', searchCard.id]"
                 >
-                  Dettagli
+                  Vai all'annuncio
                   <svg width="16" height="16" viewBox="0 0 24 24">
                     <path fill="currentColor" d="m10 17l5-5l-5-5v10Z" />
                   </svg>

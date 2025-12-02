@@ -1,0 +1,91 @@
+<div
+  class="sm:flew-row flex w-full flex-col items-center justify-between gap-4 px-6 sm:px-8 md:flex-row md:px-10"
+>
+  <!--INFO-->
+  <div>
+    <h1 class="italic">
+      Pagina <strong>{{ this.page }}</strong> di
+      <strong>{{ this.totalPages }}</strong>
+    </h1>
+  </div>
+  <!-- PAGER -->
+  <div class="flex items-center justify-center gap-2 sm:gap-4 md:gap-6">
+    <div class="flex items-center justify-center gap-3">
+      <label
+        for="goToPage"
+        (click)="handlePageNumberClick(goToPage)"
+        class="text-xs text-blue-600 hover:cursor-pointer hover:text-blue-800 hover:underline sm:text-sm md:text-base"
+        >Vai alla pagina</label
+      >
+      <input
+        class="w-8 rounded border border-black bg-white text-sm text-black sm:w-10 md:w-12 dark:border-gray-400 dark:bg-gray-800 dark:text-white"
+        [(ngModel)]="goToPage"
+        type="number"
+        id="goToPage"
+        name="page"
+        min="1"
+        max="{{ this.totalPages }}"
+      />
+    </div>
+    <ul class="flex h-8 items-center -space-x-px text-sm">
+      <li>
+        <a
+          (click)="onPrev($event)"
+          [class.opacity-50]="this.page <= 1"
+          class="search_footer_prev_button"
+        >
+          <svg
+            class="h-2.5 w-2.5 rtl:rotate-180"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 6 10"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 1 1 5l4 4"
+            />
+          </svg>
+        </a>
+      </li>
+      <div class="hidden items-center justify-center sm:flex md:flex">
+        @for (num of this.displayedPages; track num) {
+          <li>
+            <a
+              (click)="handlePageNumberClick(num)"
+              class="search_footer_page_button"
+            >
+              {{ num }}</a
+            >
+          </li>
+        }
+      </div>
+      <li>
+        <a
+          (click)="onNext($event)"
+          [class.opacity-50]="page >= totalPages"
+          class="search_footer_next_button"
+        >
+          <svg
+            class="h-2.5 w-2.5 rtl:rotate-180"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 6 10"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m1 9 4-4-4-4"
+            />
+          </svg>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>

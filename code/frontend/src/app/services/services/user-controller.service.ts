@@ -49,7 +49,7 @@ export class UserControllerService extends BaseService {
   }
 
   /** Path part for operation `getUserById()` */
-  static readonly GetUserByIdPath = '/users/userid';
+  static readonly GetUserByIdPath = '/users/{userid}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -57,7 +57,7 @@ export class UserControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getUserById$Response(params?: GetUserById$Params, context?: HttpContext): Observable<StrictHttpResponse<UserResponse>> {
+  getUserById$Response(params: GetUserById$Params, context?: HttpContext): Observable<StrictHttpResponse<UserResponse>> {
     return getUserById(this.http, this.rootUrl, params, context);
   }
 
@@ -67,7 +67,7 @@ export class UserControllerService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getUserById(params?: GetUserById$Params, context?: HttpContext): Observable<UserResponse> {
+  getUserById(params: GetUserById$Params, context?: HttpContext): Observable<UserResponse> {
     return this.getUserById$Response(params, context).pipe(
       map((r: StrictHttpResponse<UserResponse>): UserResponse => r.body)
     );

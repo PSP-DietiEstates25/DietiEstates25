@@ -9,6 +9,8 @@ import { FilterPanelComponent } from '../../shared/components/filter-panel/filte
 import { RecentSearchesComponent } from '../recent-searches/recent-searches.component';
 
 import { SearchFacade } from './search.facade';
+import { SearchesPaginatorComponent } from '../searches-paginator/searches-paginator.component';
+import { SavedSearchesListComponent } from '../saved-searches-list/saved-searches-list.component';
 
 const isHttp = (s: string) => /^https?:\/\//i.test(s);
 const isData = (s: string) => /^data:/i.test(s);
@@ -25,6 +27,8 @@ const looksPng = (b64: string) => b64?.startsWith('iVBOR');
     ResultsMapComponent,
     FilterPanelComponent,
     RecentSearchesComponent,
+    SearchesPaginatorComponent,
+    SavedSearchesListComponent,
   ],
   templateUrl: './search-page.component.html',
 })

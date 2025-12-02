@@ -13,7 +13,7 @@ import { OfferResponse } from '../../models/offer-response';
 
 export interface CreateOffer$Params {
   realestateid: number;
-  body: OfferRequest
+      body: OfferRequest
 }
 
 export function createOffer(http: HttpClient, rootUrl: string, params: CreateOffer$Params, context?: HttpContext): Observable<StrictHttpResponse<OfferResponse>> {

@@ -16,7 +16,7 @@ import {
 } from './admin-dashboard.facade';
 import { Router, RouterLink } from '@angular/router';
 
-import { AuthService } from '../../manual_services/auth.service';
+import { AuthService } from '../../manual_services/auth/auth.service';
 import { environment } from '../../../environments/environment.development';
 
 function matchValidator(a: string, b: string) {
@@ -66,7 +66,7 @@ export class AdminDashboardComponent {
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirm: ['', [Validators.required]],
     },
-    { validators: matchPassword }
+    { validators: matchPassword },
   );
 
   constructor() {
@@ -129,7 +129,7 @@ export class AdminDashboardComponent {
       this.isAuthenticated = false;
       this.email = '';
       this.routerService.navigateByUrl(
-        `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`
+        `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`,
       );
     });
   }
@@ -147,7 +147,7 @@ export class AdminDashboardComponent {
       ],
       confirmNewPassword: ['', [Validators.required]],
     },
-    { validators: matchValidator('newPassword', 'confirmNewPassword') }
+    { validators: matchValidator('newPassword', 'confirmNewPassword') },
   );
 
   loading = this.facade.loading;

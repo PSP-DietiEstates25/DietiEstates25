@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 
 import { Router } from '@angular/router';
-import { AuthService } from '../../manual_services/auth.service';
+import { AuthService } from '../../manual_services/auth/auth.service';
 import { environment } from '../../../environments/environment';
 import { firstValueFrom } from 'rxjs';
 import { AccountRequest } from '../admin-dashboard/admin-dashboard.facade';
@@ -29,7 +29,6 @@ function matchPassword(group: AbstractControl): ValidationErrors | null {
   templateUrl: './register.component.html',
 })
 export class RegisterComponent {
-
   private formBuilder = inject(FormBuilder);
   private authService = inject(AuthService);
   private userService = inject(UserControllerService);
@@ -44,7 +43,7 @@ export class RegisterComponent {
         password: ['', Validators.required],
         confirm: ['', Validators.required],
       },
-      { validators: matchPassword }
+      { validators: matchPassword },
     ),
   });
 
@@ -53,13 +52,12 @@ export class RegisterComponent {
   }
 
   async submit(): Promise<void> {
-
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       this.errorMsg.set(
         this.registerForm.get('passwords')?.errors?.['mismatch']
           ? 'Le password non coincidono'
-          : null
+          : null,
       );
       return;
     }
@@ -75,7 +73,9 @@ export class RegisterComponent {
     try {
       await firstValueFrom(this.authService.getCsrf());
       await firstValueFrom(this.authService.register(body));
-      await firstValueFrom(this.userService.registerUser({body: {email: email}}));
+      await firstValueFrom(
+        this.userService.registerUser({ body: { email: email } }),
+      );
       window.location.href = environment.loginUrl;
     } catch (err: any) {
       this.errorMsg.set(err?.error?.message || 'Registrazione non riuscita');

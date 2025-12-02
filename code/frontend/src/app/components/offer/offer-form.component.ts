@@ -3,7 +3,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OfferControllerService } from '../../services/services';
 import { firstValueFrom } from 'rxjs';
-import { AuthService } from '../../manual_services/auth.service';
+import { AuthService } from '../../manual_services/auth/auth.service';
 
 @Component({
   selector: 'app-offer-form',
@@ -12,7 +12,6 @@ import { AuthService } from '../../manual_services/auth.service';
   templateUrl: './offer-form.component.html',
 })
 export class OfferFormComponent {
-
   private formBuilder = inject(FormBuilder);
   private offerService = inject(OfferControllerService);
   private authService = inject(AuthService);
@@ -28,7 +27,7 @@ export class OfferFormComponent {
 
   @Output()
   loginRequired = new EventEmitter<void>();
-  
+
   loading = false;
   successMessage = '';
   error = '';
@@ -59,15 +58,18 @@ export class OfferFormComponent {
       };
 
       await firstValueFrom(
-        this.offerService.createOffer({ realestateid: this.realEstateId, body })
+        this.offerService.createOffer({
+          realestateid: this.realEstateId,
+          body,
+        }),
       );
 
       this.successMessage = 'Offerta inviata!';
       this.success.emit();
       this.form.reset();
-
     } catch (error: any) {
-      this.error = error?.error?.message ?? 'Errore durante l’invio dell’offerta.';
+      this.error =
+        error?.error?.message ?? 'Errore durante l’invio dell’offerta.';
     } finally {
       this.loading = false;
     }
