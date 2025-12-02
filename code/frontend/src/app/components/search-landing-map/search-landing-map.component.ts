@@ -392,24 +392,57 @@ export class SearchLandingMapComponent
       });
   }
 
+  private popupHtml(c: any) {
+    const title = c?.title ?? 'Immobile';
+    const addr =
+      [c?.address, c?.city].filter(Boolean).join(', ') || 'Indirizzo non disponibile';
+
+    return `
+    <div class="de-popup">
+      <div class="de-title">${this.escapeHtml(title)}</div>
+      <div class="de-addr">${this.escapeHtml(addr)}</div>
+      <button class="de-btn" data-id="${c?.id ?? ''}">Apri annuncio</button>
+    </div>`;
+  }
+
+
+
   addMarkers(cards: any[]) {
-    cards.forEach((card) => {
-      if (card.lat && card.lon) {
-        const marker = L.marker([card.lat, card.lon], {
-          icon: this.markerIcon,
+    this.markersLayer.clearLayers();
+
+    for (const c of cards ?? []) {
+      const lat = Number(c?.lat), lon = Number(c?.lon);
+      if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+
+      const m = L.marker([lat, lon], { icon: this.markerIcon });
+
+      m.bindPopup(this.popupHtml(c), { className: 'de-leaflet-popup', minWidth: 260 });
+
+      // click bottone dentro al popup 
+      m.on('popupopen', (e: any) => {
+        const el = e.popup.getElement() as HTMLElement | null;
+        const btn = el?.querySelector<HTMLButtonElement>('.de-btn');
+        btn?.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const id = (btn.dataset['id'] ?? '').trim();
+          if (!id) return;
+            this.ngZone.run(() => this.router.navigate(['/ad', id]));
+          });
         });
 
-        marker.bindPopup(`
-          <div style="font-family: sans-serif; font-size: 14px;">
-            <strong>${card.title}</strong><br>
-            Prezzo: €${card.price || 'N/D'}<br>
-            <a href="/ad/${card.id}" style="color: blue; text-decoration: underline;">Vedi dettagli</a>
-          </div>
-        `);
+      this.markersLayer.addLayer(m);
+    }
+  }
 
-        this.markersLayer.addLayer(marker);
-      }
-    });
+  // evitare XSS in popup
+  private escapeHtml(s: string) {
+    return s
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
   }
 
   filteredMunicipalities(): MunicipalityToSelect[] {
