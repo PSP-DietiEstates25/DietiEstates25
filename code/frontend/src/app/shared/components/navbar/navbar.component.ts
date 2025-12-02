@@ -28,7 +28,8 @@ export class NavbarComponent implements OnInit {
   private readonly localStorageService = inject(LocalStorageService);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly notifications = inject(NotificationsFacade);
+  
+  readonly notifications = inject(NotificationsFacade);
 
   isMenuOpen = false;
   isAuthenticated = false;
@@ -39,6 +40,7 @@ export class NavbarComponent implements OnInit {
   readonly allLinks: NavLink[] = [
     { label: 'Home', path: '/' },
     { label: 'Ricerca', path: '/searches' },
+    { label: 'Le mie offerte', path: '/offers' },
     { label: 'Notifiche', path: '/notifications' },
   ];
 
@@ -68,10 +70,14 @@ export class NavbarComponent implements OnInit {
     this.authService.logout().subscribe(() => {
       this.isAuthenticated = false;
       this.email = '';
-      this.localStorageService.clear();
+
+      this.localStorageService.removeItem('isAuthenticated');
+      this.localStorageService.removeItem('role');
+
       this.router.navigateByUrl('/');
     });
   }
+
 
   getUserInfo(): void {
     this.authService.getUserInfo().subscribe({

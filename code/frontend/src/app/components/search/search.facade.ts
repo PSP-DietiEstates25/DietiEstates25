@@ -1,5 +1,5 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
-import { of, defer, iif, forkJoin, from } from 'rxjs';
+import { of, defer, iif, forkJoin, from, VirtualTimeScheduler } from 'rxjs';
 import { map, switchMap, tap, catchError, finalize } from 'rxjs/operators';
 
 import { SearchControllerService } from '../../services/services/search-controller.service';
@@ -14,9 +14,7 @@ import { RealEstateResponse } from '../../services/models/real-estate-response';
 import { SearchRequest } from '../../services/models/search-request';
 import { GeographicalPositionRequest } from '../../services/models/geographical-position-request';
 import { UtilityRequest } from '../../services/models/utility-request';
-import { DetailRequest } from '../../services/models/detail-request';
 import { CadastralFilterRequest } from '../../services/models/cadastral-filter-request';
-import { environment } from '../../../environments/environment.development';
 import {
   CadastralFilter,
   CadastralFilterResponse,
@@ -26,9 +24,8 @@ import {
   Search,
   Utility,
 } from '../../services/models';
-import { GetDetailGeographicalPosition$Params } from '../../services/fn/geographical-position-controller/get-detail-geographical-position';
 import { AdCategory } from '../../enums/ad-category.enum';
-import { ReactiveFormsModule } from '@angular/forms';
+import { CadastralDataControllerService } from '../../services/services';
 
 export type SearchCard = RealEstateResponse & {
   title?: string;
@@ -45,7 +42,11 @@ export class SearchFacade {
   private utilityService = inject(UtilityControllerService);
   private detailService = inject(DetailControllerService);
   private cadastralFilterService = inject(CadastralFilterControllerService);
+  private cadastralDataService = inject(CadastralDataControllerService);
   private authService = inject(AuthService);
+
+  private _categoryCache = new Map<number, AdCategory>();
+  private _cachedCategory = signal<AdCategory | null>(null);
 
   private _detailCache = new Map<number, Detail>();
   private _cachedDetail = signal<Detail | null>(null);
@@ -63,12 +64,6 @@ export class SearchFacade {
 
   private _userEmail = signal<string | null>(null);
   private _authenticated = signal(false);
-  private _lastForm = signal<{
-    category: AdCategory;
-    page: number; // 1-based
-    size: number; // >0
-    userEmail: string;
-  } | null>(null);
 
   loading = signal(false);
   error = signal<string | null>(null);
@@ -78,12 +73,7 @@ export class SearchFacade {
   cadastralFilterId = signal<number | null>(null);
   savedSearches = signal<Search[]>([]);
 
-  lastForm = this._lastForm.asReadonly();
   searchCards = signal<SearchCard[]>([]);
-  hasNext = computed(
-    () => this.searchCards().length >= (this._lastForm()?.size ?? 0),
-  );
-  hasPrev = computed(() => (this._lastForm()?.page ?? 1) > 1);
 
   constructor() {
     this.authService
@@ -93,12 +83,10 @@ export class SearchFacade {
           const email = userInfo?.email?.trim();
           this._userEmail.set(email);
           this._authenticated.set(this.authService.isAuthenticated());
-          this.loadRecentFor(email);
         }),
         catchError(() => {
           this._userEmail.set(null);
           this._authenticated.set(this.authService.isAuthenticated());
-          this.loadRecentFor(null);
           return of(null);
         }),
       )
@@ -106,81 +94,15 @@ export class SearchFacade {
   }
 
   cacheFilters(
-    geographicalPosition: GeographicalPosition,
-    utility: Utility,
-    cadastralFilter: CadastralFilter,
+    geographicalPositionRequest: GeographicalPositionRequest,
+    utilityRequest: UtilityRequest,
+    cadastralFilterRequest: CadastralFilterRequest,
+    category?: AdCategory,
   ) {
-    this._cachedGeographicalPosition.set(geographicalPosition);
-    this._cachedUtility.set(utility);
-    this._cachedCadastralFilter.set(cadastralFilter);
-  }
-
-  private _getCachedGeographicalPosition() {
-    return this._cachedGeographicalPosition();
-  }
-
-  private _getCachedUtility() {
-    return this._cachedUtility();
-  }
-
-  private _getCachedCadastralFilter() {
-    return this._cachedCadastralFilter();
-  }
-
-  private _persistSavedSearches(search: Search, max = 10) {
-    const email = this._currentEmail();
-    const key = this._recentKey(email);
-
-    const current = [...this.savedSearches()];
-    const without = current.filter(
-      (searchFilter) => searchFilter.id !== search.id,
-    );
-    const next = [search, ...without].slice(0, max);
-
-    this.savedSearches.set(next);
-    try {
-      localStorage.setItem(key, JSON.stringify(next));
-    } catch {}
-  }
-
-  private _getDetail(detailId: number) {
-    const cachedDetail = this._detailCache.get(detailId);
-    if (cachedDetail) return of(cachedDetail);
-
-    return this.detailService.getDetailById({ detailid: detailId }).pipe(
-      map((detail: any) => {
-        const output = {
-          geographicalPositionId:
-            detail?.geographicalPositionId ?? detail?.geographicalPosition?.id,
-        };
-        this._detailCache.set(detailId, output);
-        return output;
-      }),
-    );
-  }
-
-  private _getGeographicalPosition(geographicalPositionId: number) {
-    const _cachedGeographicalPosition = this._geographicalPositionCache.get(
-      geographicalPositionId,
-    );
-    if (_cachedGeographicalPosition) return of(_cachedGeographicalPosition);
-
-    return this.geographicalPositionService
-      .getGeographicalPositionById({
-        geographicalpositionid: geographicalPositionId,
-      })
-      .pipe(
-        map((geographicalPosition: any) => {
-          const output = {
-            latitude: Number(geographicalPosition?.latitude),
-            longitude: Number(geographicalPosition?.longitude),
-            address: geographicalPosition?.address ?? '',
-            city: geographicalPosition?.city ?? '',
-          };
-          this._geographicalPositionCache.set(geographicalPositionId, output);
-          return output;
-        }),
-      );
+    this._cachedGeographicalPosition.set(geographicalPositionRequest);
+    this._cachedUtility.set(utilityRequest);
+    //this._cachedCadastralFilter.set(cadastralFilterRequest);
+    if (category) this._cachedCategory.set(category);
   }
 
   replaySearch(search: Search) {
@@ -189,13 +111,15 @@ export class SearchFacade {
     this._cachedGeographicalPosition.set(search.detail?.geographicalPosition!);
     this._cachedUtility.set(search.detail?.utility!);
     this._cachedCadastralFilter.set(search.cadastralFilter!);
+    this._cachedCategory.set(search.category as AdCategory);
 
     return this.runFullSearch({
-      category: search.category,
-      geographicalPosition: search.detail?.geographicalPosition,
-      utility: search.detail?.utility,
-      cadastralFilter: search.cadastralFilter,
-    }).subscribe();
+      category: search.category as AdCategory,
+      geographicalPosition: search.detail
+        ?.geographicalPosition as GeographicalPositionRequest,
+      utility: search.detail?.utility as UtilityRequest,
+      cadastralFilter: search.cadastralFilter as CadastralFilterRequest,
+    });
   }
 
   prepareDetail(
@@ -228,7 +152,7 @@ export class SearchFacade {
         this.detailId.set(detailResponse.id!);
       }),
       catchError((error) => {
-        this.error.set(this._msg(error));
+        this.error.set(error);
         throw error;
       }),
       finalize(() => this.loading.set(false)),
@@ -248,7 +172,7 @@ export class SearchFacade {
           this.cadastralFilterId.set(cadastralFilterResponse.id!);
         }),
         catchError((error) => {
-          this.error.set(this._msg(error));
+          this.error.set(error);
           throw error;
         }),
         finalize(() => this.loading.set(false)),
@@ -279,37 +203,14 @@ export class SearchFacade {
     this.utilityId.set(null);
     this.detailId.set(null);
     this.cadastralFilterId.set(null);
-    this._lastForm.set(null);
   }
 
-  createSearchCard(
-    category: AdCategory,
-    realEstateImages: string[],
-    geographicalPosition: GeographicalPosition,
-  ) {
-    const latitude = geographicalPosition.latitude;
-    const longitude = geographicalPosition.longitude;
-
-    const images = [];
-    for (const realEstateImage of realEstateImages) {
-      images.push(`${environment.apiBaseUrl}${realEstateImage}`);
-    }
-
-    return {
-      images: images,
-      category,
-      title: geographicalPosition.address,
-      address: geographicalPosition.address,
-      city: geographicalPosition.city,
-    } as SearchCardGeo;
-  }
-
-  createSearchDetailAndCadastralFilter(
+  getSearchDetailAndCadastralFilter(
     detailId: number,
     cadastralFilterId: number,
   ) {
     return forkJoin({
-      searchDetail: this.detailService.getDetailById({
+      detail: this.detailService.getDetailById({
         detailid: detailId,
       }),
       cadastralFilter: this.cadastralFilterService.getCadastralFilterById({
@@ -323,11 +224,11 @@ export class SearchFacade {
     cadastralFilter: CadastralFilterResponse,
   ) {
     return forkJoin({
-      searchGeographicalPosition:
+      geographicalPosition:
         this.geographicalPositionService.getGeographicalPositionById({
           geographicalpositionid: detail.geographicalPositionId!,
         }),
-      searchUtility: this.utilityService.getUtilityById({
+      utility: this.utilityService.getUtilityById({
         utilityid: detail.utilityId!,
       }),
       cadastralFilter: of(cadastralFilter),
@@ -337,198 +238,76 @@ export class SearchFacade {
   search(params: { category: AdCategory }) {
     this.error.set(null);
 
-    const body: SearchRequest = {
+    const searchBody: SearchRequest = {
       category: params.category,
       detailId: this.detailId()!,
       cadastralFilterId: this.cadastralFilterId()!,
     };
 
     this.loading.set(true);
-    this._lastForm.set({ ...params, userEmail: resolvedEmail });
 
-    this.createSearchDetailAndCadastralFilter(
-      this.detailId()!,
-      this.cadastralFilterId()!,
-    ).pipe(
-      switchMap((fetched) =>
-        this.getDetailUtilityAndGeographicalPosition(
-          fetched.searchDetail,
-          fetched.cadastralFilter,
-        ),
-      ),
-      switchMap((fetched) => {
-        return this.searchService.createSearch({ body }).pipe(
-          map((realEstateList) => {
-            return realEstateList.map((realEstate) =>
-              this.createSearchCard(
-                realEstate.category as AdCategory,
-                realEstate.images!,
-                fetched.geographicalPosition,
-              ),
-            );
-          }),
-        );
-      }),
-      switchMap((searchCards) => {
-        const missing = searchCards.fil;
-      }),
-    );
+    return this.searchService.createSearch({ body: searchBody }).pipe(
+      switchMap((realEstateList) => {
+        const requests = realEstateList.map((realEstate) => {
+          const cadastralData = this.cadastralDataService.getCadastralDataById({
+            cadastraldataid: realEstate.cadastralDataId!,
+          });
 
-    return guard$.pipe(
-      switchMap(() => this.searchService.createSearch({ body })),
-
-      switchMap((searchCards) => {
-        const detailIds = Array.from(
-          new Set(
-            missing
-              .map((searchCard) => Number((searchCard as any).detailId))
-              .filter(Number.isFinite),
-          ),
-        ) as number[];
-        if (detailIds.length === 0) return of(searchCards);
-
-        return forkJoin(
-          detailIds.map((detailId) => this._getDetail(detailId)),
-        ).pipe(
-          switchMap((details) => {
-            const mapDetailToGeographicalPosition = new Map<number, number>();
-
-            details.forEach((detail, idx) => {
-              const detailId = detailIds[idx];
-              const geographicalPositionId = Number(
-                detail?.geographicalPositionId,
-              );
-              if (Number.isFinite(geographicalPositionId))
-                mapDetailToGeographicalPosition.set(
-                  detailId,
-                  geographicalPositionId,
-                );
-            });
-
-            const geographicalPositionIds = Array.from(
-              new Set(
-                Array.from(mapDetailToGeographicalPosition.values()).filter(
-                  Number.isFinite,
-                ),
-              ),
-            ) as number[];
-
-            if (geographicalPositionIds.length === 0)
-              return of({ searchCards, mapDetailToGeographicalPosition });
-
-            return forkJoin(
-              geographicalPositionIds.map((geographicalPositionId) =>
-                this._getGeographicalPosition(geographicalPositionId),
-              ),
-            ).pipe(
-              map((geographicalPositions) => {
-                const mapGeographicalPosition = new Map<number, any>();
-                geographicalPositions.forEach((geographicalPosition, idx) =>
-                  mapGeographicalPosition.set(
-                    geographicalPositionIds[idx],
-                    geographicalPosition,
-                  ),
-                );
-                return {
-                  searchCards,
-                  mapDetailToGeographicalPosition,
-                  mapGeographicalPosition,
-                };
+          const details = this.detailService
+            .getDetailById({
+              detailid: realEstate.detailId!,
+            })
+            .pipe(
+              switchMap((detail) => {
+                return forkJoin({
+                  geographicalPosition:
+                    this.geographicalPositionService.getGeographicalPositionById(
+                      {
+                        geographicalpositionid: detail.geographicalPositionId!,
+                      },
+                    ),
+                  utility: this.utilityService.getUtilityById({
+                    utilityid: detail.utilityId!,
+                  }),
+                });
               }),
             );
-          }),
 
-          map(
-            ({
-              searchCards,
-              mapDetailToGeographicalPosition,
-              mapGeographicalPosition,
-            }: any) =>
-              searchCards.map((search: any) => {
-                const detailId = Number(search.detailId);
-                const geographicalPositionId =
-                  mapDetailToGeographicalPosition?.get(detailId);
-                const geographicalPosition =
-                  geographicalPositionId != null
-                    ? mapGeographicalPosition?.get(geographicalPositionId)
-                    : null;
+          return forkJoin({
+            realEstate: of(realEstate),
+            cadastralData: cadastralData,
+            details: details,
+          }).pipe(
+            map((result) => {
+              return {
+                ...result.realEstate,
+                cadastralData: result.cadastralData,
+                geographicalPosition: result.details.geographicalPosition,
+                utility: result.details.utility,
+              };
+            }),
+          );
+        });
 
-                const lat = Number.isFinite(search.lat)
-                  ? search.lat
-                  : Number(geographicalPosition?.latitude);
-                const lon = Number.isFinite(search.lon)
-                  ? search.lon
-                  : Number(geographicalPosition?.longitude);
-                const address =
-                  search.address || geographicalPosition?.address || '';
-                const city = search.city || geographicalPosition?.city || '';
-
-                return {
-                  ...search,
-                  lat: Number.isFinite(lat) ? lat : undefined,
-                  lon: Number.isFinite(lon) ? lon : undefined,
-                  address,
-                  city,
-                } as SearchCardGeo;
-              }),
-          ),
-        );
+        return forkJoin(requests);
       }),
-
-      map((searchCards: SearchCardWithCat[]) =>
-        searchCards.filter((searchCard): searchCard is SearchCardWithCat =>
-          this._isRequestedCategory(searchCard, requestedCategory),
-        ),
-      ),
-
-      tap((mapped) => {
-        this.searchCards.set(mapped);
-        const geographicalPosition = this._cachedGeographicalPosition();
-        const utility = this._cachedUtility();
-        const cadastralFilter = this._cachedCadastralFilter();
-        const last = this._lastForm();
-        if (geographicalPosition && utility && cadastralFilter && last) {
-          const label = [
-            geographicalPosition.city ||
-              geographicalPosition.municipality ||
-              geographicalPosition.address ||
-              'Ricerca',
-            (last.category || '').toString(),
-            cadastralFilter.priceRange?.minPrice
-              ? `≥€${cadastralFilter.priceRange.minPrice}`
-              : '',
-            cadastralFilter.priceRange?.maxPrice
-              ? `≤€${cadastralFilter.priceRange.maxPrice}`
-              : '',
-          ]
-            .filter(Boolean)
-            .join(' · ');
-          const snapshot: Search = {
-            id: `${this._hash({
-              geographicalPosition,
-              utility,
-              cadastralFilter,
-              category: last.category,
-            })}-${Date.now()}`, // univoco
-            when: new Date().toISOString(),
-            category: last.category,
-            size: last.size,
-            page: last.page,
-            userEmail: last.userEmail,
-            geographicalPosition,
-            utility,
-            cadastralFilter,
-            label,
-          };
-          this._persistSavedSearches(snapshot);
-        }
+      map((realEstateObservables) => {
+        return realEstateObservables.map((realEstate) => {
+          return {
+            category: realEstate.category,
+            createdDate: realEstate.createdDate,
+            description: realEstate.description,
+            estateAgentEmail: realEstate.estateAgentEmail,
+            images: realEstate.images,
+            title: '',
+            address: realEstate.geographicalPosition.address,
+            city: realEstate.geographicalPosition.city,
+          } as SearchCard;
+        });
       }),
-      catchError((error) => {
-        this.error.set(this._msg(error));
-        this.searchCards.set([]);
-        throw error;
+      tap((searchCards) => {
+        this.searchCards.set(searchCards);
       }),
-      finalize(() => this.loading.set(false)),
     );
   }
 

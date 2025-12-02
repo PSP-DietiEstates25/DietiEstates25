@@ -1,13 +1,13 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
+import { LocalStorageService } from '../../manual_services/local-storage/local-storage.service';
 
 import { NotificationControllerService } from '../../services/services/notification-controller.service';
 import { NotificationCategoryControllerService } from '../../services/services/notification-category-controller.service';
 
 import { PageNotificationResponse } from '../../services/models/page-notification-response';
 import { NotificationResponse } from '../../services/models/notification-response';
-import { NotificationCategoryResponse } from '../../services/models/notification-category-response';
 import { UpdateNotificationCategoryStatusRequest } from '../../services/models/update-notification-category-status-request';
 
 import {
@@ -21,13 +21,15 @@ export interface NotificationItemVM {
   message: string;
   createdDate: string;
   category: NotificationCategory;
+  realEstateId?: number;
+  realEstateLabel?: string;
 }
 
 @Injectable({ providedIn: 'root' })
 export class NotificationsFacade {
   private readonly notificationService = inject(NotificationControllerService);
   private readonly categoryService = inject(
-    NotificationCategoryControllerService
+    NotificationCategoryControllerService,
   );
 
   readonly loading = signal(false);
@@ -36,7 +38,18 @@ export class NotificationsFacade {
   private readonly _preferences = signal<NotificationPreferenceVM[]>([]);
   private readonly _notifications = signal<NotificationItemVM[]>([]);
 
-  readonly unreadCount = computed(() => this._notifications().length);
+  readonly unreadCount = computed(() => {
+    const lastSeenIso = this._lastSeen();
+    if (!lastSeenIso) return this._notifications().length;
+
+    const last = new Date(lastSeenIso).getTime();
+    return this._notifications().filter((n) => {
+      const t = new Date(n.createdDate).getTime();
+      return !Number.isNaN(t) && t > last;
+    }).length;
+  });
+
+  readonly filterCategories = computed(() => this._filterCategories());
 
   private readonly _query = signal('');
   private readonly _filterCategories = signal<NotificationCategory[]>([]);
@@ -57,6 +70,12 @@ export class NotificationsFacade {
       return true;
     });
   });
+
+  private readonly localStorage = inject(LocalStorageService);
+  private readonly LAST_SEEN_KEY = 'notifications_last_seen';
+  private readonly _lastSeen = signal<string | null>(
+    this.localStorage.getItem(this.LAST_SEEN_KEY),
+  );
 
   init(): void {
     this.loading.set(true);
@@ -86,9 +105,15 @@ export class NotificationsFacade {
           this._hasMore.set(false);
           return of<void>(undefined);
         }),
-        finalize(() => this.loading.set(false))
+        finalize(() => this.loading.set(false)),
       )
       .subscribe();
+  }
+
+  markAllSeen(): void {
+    const now = new Date().toISOString();
+    this._lastSeen.set(now);
+    this.localStorage.setItem(this.LAST_SEEN_KEY, now);
   }
 
   loadMore(): void {
@@ -112,7 +137,7 @@ export class NotificationsFacade {
     const before = this._preferences();
 
     this._preferences.set(
-      before.map((p) => (p.category === category ? { ...p, enabled } : p))
+      before.map((p) => (p.category === category ? { ...p, enabled } : p)),
     );
 
     const body: UpdateNotificationCategoryStatusRequest = {
@@ -131,7 +156,7 @@ export class NotificationsFacade {
           this.error.set("Errore nell'aggiornare la preferenza.");
           this._preferences.set(before);
           return of(null);
-        })
+        }),
       )
       .subscribe();
   }
@@ -140,7 +165,7 @@ export class NotificationsFacade {
     const current = this._filterCategories();
     const exists = current.includes(category);
     this._filterCategories.set(
-      exists ? current.filter((c) => c !== category) : [...current, category]
+      exists ? current.filter((c) => c !== category) : [...current, category],
     );
   }
 
@@ -172,7 +197,7 @@ export class NotificationsFacade {
             console.error(
               '[NotificationsFacade] error loading notifications for category',
               cat,
-              err
+              err,
             );
             const empty: PageNotificationResponse = {
               content: [],
@@ -185,8 +210,8 @@ export class NotificationsFacade {
               totalPages: 0,
             };
             return of(empty);
-          })
-        )
+          }),
+        ),
     );
 
     return forkJoin(calls).pipe(
@@ -210,7 +235,7 @@ export class NotificationsFacade {
         const merged = Array.from(byId.values()).sort(
           (a, b) =>
             new Date(b.createdDate).getTime() -
-            new Date(a.createdDate).getTime()
+            new Date(a.createdDate).getTime(),
         );
 
         this._notifications.set(merged);
@@ -221,13 +246,13 @@ export class NotificationsFacade {
           this._page.set(page);
         }
       }),
-      map(() => void 0)
+      map(() => void 0),
     );
   }
 
   private toNotificationItemVM(
     res: NotificationResponse,
-    category: NotificationCategory
+    category: NotificationCategory,
   ): NotificationItemVM {
     const created =
       res.createdDate ?? res.lastModifiedDate ?? new Date().toISOString();
