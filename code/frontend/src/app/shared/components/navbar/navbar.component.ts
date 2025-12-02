@@ -70,10 +70,14 @@ export class NavbarComponent implements OnInit {
     this.authService.logout().subscribe(() => {
       this.isAuthenticated = false;
       this.email = '';
-      this.localStorageService.clear();
+
+      this.localStorageService.removeItem('isAuthenticated');
+      this.localStorageService.removeItem('role');
+
       this.router.navigateByUrl('/');
     });
   }
+
 
   getUserInfo(): void {
     this.authService.getUserInfo().subscribe({
