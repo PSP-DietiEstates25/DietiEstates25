@@ -1,6 +1,13 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, Signal, computed, effect } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { SearchFacade } from '../../components/search/search.facade';
+import { Search, SearchResponse } from '../../services/models';
+import { SearchPaginatorService } from '../../manual_services/search-paginator/search-paginator.service';
+import { SearchControllerService } from '../../services/services';
+import { ToastrService } from 'ngx-toastr';
+import { environment } from '../../../environments/environment.development';
+import { FullRealEstate } from '../../interfaces/full-real-estate';
+import { FullSearch } from '../../interfaces/full-search';
 
 @Component({
   selector: 'app-recent-searches',
@@ -10,44 +17,25 @@ import { SearchFacade } from '../../components/search/search.facade';
 })
 export class RecentSearchesComponent {
   facade = inject(SearchFacade);
+  savedSearches!: Signal<FullSearch[]>;
+  searchService = inject(SearchControllerService);
+  searchPaginatorService = inject(SearchPaginatorService);
+  toastrService = inject(ToastrService);
 
-  readonly pageSize = 3;
-  public start = signal(0);
-
-  total = computed(() => null);
-  canPrev = computed(() => this.start() > 0);
-  canNext = computed(() => this.start() + this.pageSize < this.total());
-  math = Math;
-
-  visible = computed<RecentSearchSnapshot[]>(() =>
-    this.facade.recent().slice(this.start(), this.start() + this.pageSize),
-  );
-
-  prev() {
-    if (!this.canPrev()) return;
-    this.start.set(Math.max(0, this.start() - this.pageSize));
+  constructor() {
+    effect(() => {
+      this.savedSearches = computed(() => this.facade.savedSearches());
+      console.log(this.savedSearches());
+    });
   }
 
-  next() {
-    if (!this.canNext()) return;
-    this.start.set(
-      Math.min(
-        Math.max(0, this.total() - this.pageSize),
-        this.start() + this.pageSize,
-      ),
-    );
+  getImageUrl(path?: string) {
+    return `${environment.apiBaseUrl}${path}`;
   }
 
-  replay = (search: RecentSearchSnapshot) => this.facade.replaySearch(search);
+  onClick() {}
 
-  remove = (search: RecentSearchSnapshot) => {
-    this.facade.removeRecent(search.id);
-    if (this.start() >= this.total())
-      this.start.set(Math.max(0, this.total() - this.pageSize));
-  };
-
-  clearAll = () => {
-    this.facade.forgetRecent();
-    this.start.set(0);
-  };
+  replay(search: FullSearch) {
+    this.facade.replaySearch(search);
+  }
 }

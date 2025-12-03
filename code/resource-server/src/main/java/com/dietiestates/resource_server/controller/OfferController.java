@@ -57,7 +57,7 @@ public class OfferController {
     @PreAuthorize("hasAnyAuthority('USER', 'ESTATE_AGENT')")
     public ResponseEntity<Page<OfferResponse>> getRealEstateOffers(
             @PathVariable Long realestateid,
-            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "5") Integer size,
             @AuthenticationPrincipal Jwt jwt,
             Authentication authentication

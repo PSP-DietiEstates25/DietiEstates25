@@ -47,7 +47,7 @@ public class NotificationController {
     @GetMapping
     public ResponseEntity<Page<NotificationResponse>> getNotificationCategoryNotifications(
             @PathVariable String notificationcategoryname,
-            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "5") Integer size
     ){
         var notifications = notificationService.getNotificationCategoryNotifications(notificationcategoryname, page, size);

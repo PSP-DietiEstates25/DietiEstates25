@@ -16,8 +16,7 @@ public class SearchResponse {
     private Long id;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
-    private Integer size;
-    private Integer page;
+    private String category;
     private String userEmail;
     private Long cadastralFilterId;
     private Long detailId;

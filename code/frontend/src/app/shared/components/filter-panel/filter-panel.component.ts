@@ -6,7 +6,7 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { SearchFacade, Category } from '../../../components/search/search.facade';
+import { SearchFacade } from '../../../components/search/search.facade';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { LocationsService } from '../../../manual_services/location/location.service';
@@ -70,7 +70,7 @@ export class FilterPanelComponent implements OnInit {
         this.minLEmax('minRooms', 'maxRooms', 'roomsRange'),
         this.minLEmax('minFloor', 'maxFloor', 'floorRange'),
       ],
-    }
+    },
   );
 
   mainForm = this.formBuilder.group({
@@ -90,7 +90,7 @@ export class FilterPanelComponent implements OnInit {
 
     this.mainForm.controls.category.setValue(
       cat === 'RENT' ? AdCategory.Rent : AdCategory.Sale,
-      { emitEvent: false }
+      { emitEvent: false },
     );
 
     const regionCtrl = this.geographicalPositionForm.controls.region;
@@ -152,22 +152,31 @@ export class FilterPanelComponent implements OnInit {
 
   touchedOrSubmitted = signal(false);
 
-  private minLEmax(minKey: string, maxKey: string, errKey = 'range'): ValidatorFn {
+  private minLEmax(
+    minKey: string,
+    maxKey: string,
+    errKey = 'range',
+  ): ValidatorFn {
     return (group: AbstractControl): ValidationErrors | null => {
       const g = group as any;
       const min = Number(g?.controls?.[minKey]?.value);
       const max = Number(g?.controls?.[maxKey]?.value);
       if (Number.isNaN(min) || Number.isNaN(max)) return null;
       return min <= max ? null : { [errKey]: true };
-    };  
+    };
   }
 
   isInvalid(ctrl: AbstractControl | null | undefined): boolean {
     if (!ctrl) return false;
-    return ctrl.invalid && (ctrl.touched || ctrl.dirty || this.touchedOrSubmitted());
+    return (
+      ctrl.invalid && (ctrl.touched || ctrl.dirty || this.touchedOrSubmitted())
+    );
   }
 
-  errMsg(ctrl: AbstractControl | null | undefined, label = 'Campo'): string | null {
+  errMsg(
+    ctrl: AbstractControl | null | undefined,
+    label = 'Campo',
+  ): string | null {
     if (!ctrl || !this.isInvalid(ctrl)) return null;
 
     const e = ctrl.errors ?? {};
@@ -204,11 +213,17 @@ export class FilterPanelComponent implements OnInit {
       longitude: 0,
     };
 
-    const cat: Category =
-      this.mainForm.controls.category.value === AdCategory.Rent ? 'RENT' : 'SALE';
+    const cat: AdCategory =
+      this.mainForm.controls.category.value === AdCategory.Rent
+        ? AdCategory.Rent
+        : AdCategory.Sale;
 
-    this.facade.cacheFilters(geographicalPositionRequest, utility, cadastralFilter, cat);
-    this.facade.setCategory(cat);
+    this.facade.cacheFilters(
+      geographicalPositionRequest,
+      utility,
+      cadastralFilter,
+      cat,
+    );
 
     this.routerService.navigate(['/search']);
   }

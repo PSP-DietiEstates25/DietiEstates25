@@ -180,7 +180,10 @@
                 <!-- contenuto -->
                 <div class="space-y-2 p-4">
                   <h3 class="text-base font-semibold text-gray-900">
-                    {{ searchCard.title || "Immobile #" + searchCard.id }}
+                    {{
+                      searchCard.geographicalPosition.address ||
+                        "Immobile #" + searchCard.id
+                    }}
                   </h3>
 
                   <article
@@ -210,7 +213,7 @@
                           d="M12 2C8.13 2 5 5.04 5 8.9c0 5.06 6.37 12.35 6.64 12.66c.2.23.52.23.72 0C12.63 21.25 19 13.96 19 8.9C19 5.04 15.87 2 12 2m0 9.9a3 3 0 1 1 0-6a3 3 0 0 1 0 6"
                         />
                       </svg>
-                      {{ searchCard.city || "—" }}
+                      {{ searchCard.geographicalPosition.city || "—" }}
                     </span>
 
                     <span class="inline-flex items-center gap-1">
@@ -240,7 +243,7 @@
                           d="M12 8a4 4 0 1 1 0 8a4 4 0 0 1 0-8m0-6a2 2 0 0 1 2 2v1h4a2 2 0 0 1 2 2v2h-2V7h-4v2h-4V7H6v6H4V7a2 2 0 0 1 2-2h4V4a2 2 0 0 1 2-2Z"
                         />
                       </svg>
-                      {{ searchCard.estateAgentEmail || "—" }}
+                      EstateAgentEmail
                     </span>
 
                     <span class="inline-flex items-center gap-1">

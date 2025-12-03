@@ -48,7 +48,7 @@ public class VisitController {
     @PreAuthorize("hasAnyAuthority('USER', 'ESTATE_AGENT')")
     public ResponseEntity<Page<VisitResponse>> getRealEstateVisits(
             @PathVariable Long realestateid,
-            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "5") Integer size
     ) {
         var visits = visitService.getRealEstateVisits(realestateid, page, size);

@@ -1,31 +1,28 @@
 import { computed, Injectable, signal, WritableSignal } from '@angular/core';
-import { SearchPaginatorRequest } from '../../interfaces/search-paginator-request';
+import { PaginatorRequest } from '../../interfaces/paginator-request';
 
 @Injectable({
   providedIn: 'root',
 })
-export class SearchPaginatorService {
+export class OffersPaginatorService {
   private _defaultSize = 5;
   private _defaultPage = 1;
-  private _defaultSearchCategory = 'SALE';
-  private _searchRequest: WritableSignal<SearchPaginatorRequest> = signal({
+  private _offerPaginatorRequest: WritableSignal<PaginatorRequest> = signal({
     size: this._defaultSize,
     page: this._defaultPage,
-    category: this._defaultSearchCategory,
   });
   private _totalPagesNumber = signal(1);
-  private _searchPaginatorRefresher = signal(0);
+  private _offerPaginatorRefresher = signal(0);
 
-  size = computed(() => this._searchRequest().size);
-  page = computed(() => this._searchRequest().page);
-  searchCategory = computed(() => this._defaultSearchCategory);
-  searchRequest = computed(() => this._searchRequest());
+  size = computed(() => this._offerPaginatorRequest().size);
+  page = computed(() => this._offerPaginatorRequest().page);
+  offerPaginatorRequest = computed(() => this._offerPaginatorRequest());
   totalPagesNumber = computed(() => this._totalPagesNumber());
-  searchPaginatorTracker = computed(() => this._searchPaginatorRefresher());
+  searchPaginatorTracker = computed(() => this._offerPaginatorRefresher());
 
   setSize(size: string) {
-    this._searchRequest.update((searchRequest) => ({
-      ...searchRequest,
+    this._offerPaginatorRequest.update((offerPaginatorRequest) => ({
+      ...offerPaginatorRequest,
       size: Number(size),
     }));
   }
@@ -45,12 +42,12 @@ export class SearchPaginatorService {
   }
 
   setSearchFooterTracker(value: number) {
-    this._searchPaginatorRefresher.set(value);
+    this._offerPaginatorRefresher.set(value);
   }
 
   setPage(page: number) {
-    this._searchRequest.update((searchRequest) => ({
-      ...searchRequest,
+    this._offerPaginatorRequest.update((offerPaginatorRequest) => ({
+      ...offerPaginatorRequest,
       page: Number(page),
     }));
   }
@@ -60,10 +57,9 @@ export class SearchPaginatorService {
   }
 
   refresh() {
-    this._searchRequest.set({
+    this._offerPaginatorRequest.set({
       size: this._defaultSize,
       page: this._defaultPage,
-      category: this._defaultSearchCategory,
     });
   }
 }

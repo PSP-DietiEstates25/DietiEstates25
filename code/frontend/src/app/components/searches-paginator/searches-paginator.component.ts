@@ -1,10 +1,10 @@
-import { Component, inject, input, effect } from '@angular/core';
+import { Component, inject, effect } from '@angular/core';
 import { SearchControllerService } from '../../services/services';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { FormsModule } from '@angular/forms';
 import { SearchPaginatorService } from '../../manual_services/search-paginator/search-paginator.service';
-import { SearchRequest } from '../../services/models';
+import { SearchPaginatorRequest } from '../../interfaces/search-paginator-request';
 
 @Component({
   selector: 'app-searches-paginator',
@@ -17,7 +17,7 @@ export class SearchesPaginatorComponent {
   searchPaginatorService = inject(SearchPaginatorService);
   routerService = inject(Router);
 
-  searchRequest!: SearchRequest;
+  searchRequest!: SearchPaginatorRequest;
   goToPage!: number;
   page!: number;
   totalPages!: number;
@@ -72,22 +72,23 @@ export class SearchesPaginatorComponent {
   onPrev(event: Event) {
     event.preventDefault();
     if (this.page > 1) {
-      this.handleSearchFooterPageClick(this.page - 1);
+      this.handleSearchPaginatorPageClick(this.page - 1);
     }
   }
 
   onNext(event: Event) {
     event.preventDefault();
     if (this.page < this.totalPages) {
-      this.handleSearchFooterPageClick(this.page + 1);
+      this.handleSearchPaginatorPageClick(this.page + 1);
     }
   }
 
   handlePageNumberClick(newPage: number) {
-    this.handleSearchFooterPageClick(newPage);
+    this.handleSearchPaginatorPageClick(newPage);
   }
 
-  handleSearchFooterPageClick(newPage: number) {
+  handleSearchPaginatorPageClick(newPage: number) {
+    this.searchPaginatorService.setPage(newPage);
     const params: Record<string, string> = {
       size: String(5),
       page: String(this.page),

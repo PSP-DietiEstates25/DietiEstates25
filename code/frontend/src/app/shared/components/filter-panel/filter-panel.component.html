@@ -1,12 +1,19 @@
 <section
-  class="rounded-2xl border border-blue-300 bg-white/10 p-4 shadow-sm md:p-5 dark:border-blue-900 dark:bg-blue-950/10">
+  class="rounded-2xl border border-blue-300 bg-white/10 p-4 shadow-sm md:p-5 dark:border-blue-900 dark:bg-blue-950/10"
+>
   <form [formGroup]="mainForm" (ngSubmit)="apply()">
     <header class="mb-4 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-2">
-        <button type="button"
+        <button
+          type="button"
           class="inline-flex h-7 w-7 items-center justify-center rounded-full border border-blue-200 bg-white/80 text-xs hover:bg-blue-50 dark:border-blue-900 dark:bg-blue-900/10"
-          (click)="toggleOpen()" aria-label="Mostra o nascondi i filtri">
-          <span class="inline-block transition-transform" [class.rotate-90]="isOpen()">
+          (click)="toggleOpen()"
+          aria-label="Mostra o nascondi i filtri"
+        >
+          <span
+            class="inline-block transition-transform"
+            [class.rotate-90]="isOpen()"
+          >
             ▶
           </span>
         </button>
@@ -24,30 +31,23 @@
       <div class="flex items-center gap-2">
         <button
           class="rounded-xl border border-transparent px-3 py-1.5 text-xs font-medium text-blue-900 hover:border-blue-200 hover:bg-blue-50 dark:text-blue-200 dark:hover:bg-blue-900/10"
-          type="button" (click)="clearForms()">
+          type="button"
+          (click)="clearForms()"
+        >
           Reset filtri
         </button>
 
-<<<<<<< HEAD
         <button
           class="rounded-xl bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-900 disabled:opacity-50"
           type="submit"
-          [disabled]="facade.loading()"
         >
-          Cerca
-=======
-        <button class="rounded-xl bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-900 disabled:opacity-50"
-          type="submit">
           Applica
->>>>>>> 8a5aaa48525a3a5821bfde526ef7bac3e0255de6
         </button>
       </div>
     </header>
 
     @if (isOpen()) {
-<<<<<<< HEAD
       <div class="space-y-4">
-        <!--
         @if (facade.error()) {
           <p
             class="mb-3 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-900 dark:bg-red-900/30 dark:text-red-200"
@@ -55,17 +55,7 @@
             {{ facade.error() }}
           </p>
         }
-        @if (facade.loading()) {
-          <p
-            class="mb-3 flex items-center gap-2 rounded-xl bg-blue-50 px-3 py-2 text-xs text-blue-900 dark:bg-blue-900/10 dark:text-blue-100"
-          >
-            <span
-              class="inline-block size-2 animate-pulse rounded-full bg-blue-500"
-            ></span>
-            Caricamento dei risultati…
-          </p>
-        }
-        -->
+
         <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <div
             [formGroup]="geographicalPositionForm"
@@ -74,284 +64,454 @@
             <h3 class="mb-1 font-medium text-blue-900 dark:text-blue-100">
               Posizione
             </h3>
-=======
-    <div class="space-y-4">
-      @if (facade.error()) {
-      <p class="mb-3 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-900 dark:bg-red-900/30 dark:text-red-200">
-        {{ facade.error() }}
-      </p>
-      }
 
-      <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div [formGroup]="geographicalPositionForm"
-          class="rounded-xl border border-blue-200 bg-white/90 p-3 dark:border-blue-900/10 dark:bg-blue-900/10">
-          <h3 class="mb-1 font-medium text-blue-900 dark:text-blue-100">
-            Posizione
-          </h3>
->>>>>>> 8a5aaa48525a3a5821bfde526ef7bac3e0255de6
+            <div class="grid grid-cols-1 gap-3 text-xs">
+              <label class="dark:text-gray-200">
+                Regione
+                <select
+                  formControlName="region"
+                  class="mt-1 w-full rounded-lg border border-blue-200 bg-white px-2 py-2 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-gray-400 dark:hover:bg-slate-600"
+                  style="color-scheme: light dark"
+                >
+                  <option value="" class="text-gray-500 dark:text-gray-400">
+                    -- Seleziona Regione --
+                  </option>
+                  @for (reg of regions(); track reg) {
+                    <option [value]="reg">{{ reg }}</option>
+                  }
+                </select>
+              </label>
 
-          <div class="grid grid-cols-1 gap-3 text-xs">
-            <label class="dark:text-gray-200">
-              Regione
-              <select formControlName="region"
-                class="mt-1 w-full rounded-lg border border-blue-200 bg-white px-2 py-2 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-gray-400 dark:hover:bg-slate-600"
-                style="color-scheme: light dark">
-                <option value="" class="text-gray-500 dark:text-gray-400">
-                  -- Seleziona Regione --
-                </option>
-                @for (reg of regions(); track reg) {
-                <option [value]="reg">{{ reg }}</option>
+              <label class="dark:text-gray-200">
+                Città
+                <select
+                  formControlName="city"
+                  class="mt-1 w-full rounded-lg border border-blue-200 bg-white px-2 py-2 disabled:opacity-50 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:hover:bg-slate-600"
+                  style="color-scheme: light dark"
+                >
+                  <option value="" class="text-gray-500 dark:text-gray-400">
+                    -- Seleziona Città --
+                  </option>
+                  @for (city of cities(); track city) {
+                    <option [value]="city">{{ city }}</option>
+                  }
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div
+            class="rounded-xl border border-blue-200 bg-white/90 p-3 dark:border-blue-900/10 dark:bg-blue-900/10"
+          >
+            <h3 class="mb-2 font-medium text-blue-900 dark:text-blue-100">
+              Utilità
+            </h3>
+
+            <div
+              formGroupName="utilityForm"
+              class="grid grid-cols-1 gap-2 text-xs text-blue-950 dark:text-blue-100"
+            >
+              <label
+                class="flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/60 px-3 py-1.5 dark:border-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600"
+              >
+                <input
+                  type="checkbox"
+                  class="size-3 accent-blue-600"
+                  formControlName="hasElevator"
+                />
+                Ascensore
+              </label>
+
+              <label
+                class="flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/60 px-3 py-1.5 dark:border-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600"
+              >
+                <input
+                  type="checkbox"
+                  class="size-3 accent-blue-600"
+                  formControlName="hasDoorman"
+                />
+                Portineria
+              </label>
+
+              <label
+                class="flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/60 px-3 py-1.5 dark:border-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600"
+              >
+                <input
+                  type="checkbox"
+                  class="size-3 accent-blue-600"
+                  formControlName="hasAirConditioning"
+                />
+                Aria condizionata
+              </label>
+
+              <label
+                class="flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/60 px-3 py-1.5 dark:border-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600"
+              >
+                <input
+                  type="checkbox"
+                  class="size-3 accent-blue-600"
+                  formControlName="nearSchool"
+                />
+                Vicino a scuole
+              </label>
+
+              <label
+                class="flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/60 px-3 py-1.5 dark:border-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600"
+              >
+                <input
+                  type="checkbox"
+                  class="size-3 accent-blue-600"
+                  formControlName="nearPark"
+                />
+                Vicino a parchi
+              </label>
+
+              <label
+                class="flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/60 px-3 py-1.5 dark:border-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600"
+              >
+                <input
+                  type="checkbox"
+                  class="size-3 accent-blue-600"
+                  formControlName="nearPublicTransport"
+                />
+                Vicino a trasporto pubblico
+              </label>
+            </div>
+          </div>
+
+          <div
+            class="rounded-xl border border-blue-200 bg-white/90 p-3 dark:border-blue-900/10 dark:bg-blue-900/10"
+          >
+            <h3 class="mb-2 font-medium text-blue-900 dark:text-blue-100">
+              Filtri catastali
+            </h3>
+
+            <div
+              formGroupName="cadastralFilterForm"
+              class="grid grid-cols-2 gap-2 text-xs text-blue-950 dark:text-blue-100"
+            >
+              <label
+                >Prezzo minimo
+                <input
+                  type="number"
+                  min="0"
+                  class="mt-1 w-full rounded-lg border px-2 py-1.5 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
+                  [class.border-rose-400]="
+                    isInvalid(cadastralFilterForm.controls.minPrice)
+                  "
+                  [class.border-blue-200]="
+                    !isInvalid(cadastralFilterForm.controls.minPrice)
+                  "
+                  [class.dark:border-rose-500]="
+                    isInvalid(cadastralFilterForm.controls.minPrice)
+                  "
+                  [class.dark:border-slate-600]="
+                    !isInvalid(cadastralFilterForm.controls.minPrice)
+                  "
+                  formControlName="minPrice"
+                />
+
+                @if (
+                  errMsg(
+                    cadastralFilterForm.controls.minPrice,
+                    "Prezzo minimo"
+                  );
+                  as m
+                ) {
+                  <p class="mt-1 text-[11px] text-rose-300">{{ m }}</p>
                 }
-              </select>
-            </label>
+              </label>
+              <label
+                >Prezzo massimo
+                <input
+                  type="number"
+                  min="0"
+                  class="mt-1 w-full rounded-lg border px-2 py-1.5 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
+                  [class.border-rose-400]="
+                    isInvalid(cadastralFilterForm.controls.maxPrice)
+                  "
+                  [class.border-blue-200]="
+                    !isInvalid(cadastralFilterForm.controls.maxPrice)
+                  "
+                  [class.dark:border-rose-500]="
+                    isInvalid(cadastralFilterForm.controls.maxPrice)
+                  "
+                  [class.dark:border-slate-600]="
+                    !isInvalid(cadastralFilterForm.controls.maxPrice)
+                  "
+                  formControlName="maxPrice"
+                />
 
-            <label class="dark:text-gray-200">
-              Città
-              <select formControlName="city"
-                class="mt-1 w-full rounded-lg border border-blue-200 bg-white px-2 py-2 disabled:opacity-50 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:hover:bg-slate-600"
-                style="color-scheme: light dark">
-                <option value="" class="text-gray-500 dark:text-gray-400">
-                  -- Seleziona Città --
-                </option>
-                @for (city of cities(); track city) {
-                <option [value]="city">{{ city }}</option>
+                @if (
+                  errMsg(
+                    cadastralFilterForm.controls.maxPrice,
+                    "Prezzo massimo"
+                  );
+                  as m
+                ) {
+                  <p class="mt-1 text-[11px] text-rose-300">{{ m }}</p>
                 }
-              </select>
-            </label>
+              </label>
+
+              @if (
+                cadastralFilterForm.errors?.["priceRange"] &&
+                (touchedOrSubmitted() || cadastralFilterForm.touched)
+              ) {
+                <p class="col-span-2 -mt-1 text-[11px] text-rose-300">
+                  Il prezzo minimo non può essere maggiore del prezzo massimo.
+                </p>
+              }
+
+              <label
+                >Mq minimi
+                <input
+                  type="number"
+                  min="0"
+                  class="mt-1 w-full rounded-lg border px-2 py-1.5 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
+                  [class.border-rose-400]="
+                    isInvalid(cadastralFilterForm.controls.minSquareMeters)
+                  "
+                  [class.border-blue-200]="
+                    !isInvalid(cadastralFilterForm.controls.minSquareMeters)
+                  "
+                  [class.dark:border-rose-500]="
+                    isInvalid(cadastralFilterForm.controls.minSquareMeters)
+                  "
+                  [class.dark:border-slate-600]="
+                    !isInvalid(cadastralFilterForm.controls.minSquareMeters)
+                  "
+                  formControlName="minSquareMeters"
+                />
+
+                @if (
+                  errMsg(
+                    cadastralFilterForm.controls.minSquareMeters,
+                    "minSquareMeters"
+                  );
+                  as m
+                ) {
+                  <p class="mt-1 text-[11px] text-rose-300">{{ m }}</p>
+                }
+              </label>
+              <label
+                >Mq massimi
+                <input
+                  type="number"
+                  min="0"
+                  class="mt-1 w-full rounded-lg border px-2 py-1.5 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
+                  [class.border-rose-400]="
+                    isInvalid(cadastralFilterForm.controls.maxSquareMeters)
+                  "
+                  [class.border-blue-200]="
+                    !isInvalid(cadastralFilterForm.controls.maxSquareMeters)
+                  "
+                  [class.dark:border-rose-500]="
+                    isInvalid(cadastralFilterForm.controls.maxSquareMeters)
+                  "
+                  [class.dark:border-slate-600]="
+                    !isInvalid(cadastralFilterForm.controls.maxSquareMeters)
+                  "
+                  formControlName="maxSquareMeters"
+                />
+
+                @if (
+                  errMsg(
+                    cadastralFilterForm.controls.maxSquareMeters,
+                    "maxSquareMeters"
+                  );
+                  as m
+                ) {
+                  <p class="mt-1 text-[11px] text-rose-300">{{ m }}</p>
+                }
+              </label>
+
+              @if (
+                cadastralFilterForm.errors?.["mqRange"] &&
+                (touchedOrSubmitted() || cadastralFilterForm.touched)
+              ) {
+                <p class="col-span-2 -mt-1 text-[11px] text-rose-300">
+                  I mq minimi non possono essere maggiori dei mq massimi.
+                </p>
+              }
+
+              <label
+                >Classe Energetica min
+                <select
+                  class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
+                  formControlName="minEnergyClass"
+                >
+                  <option [ngValue]="1">A4</option>
+                  <option [ngValue]="2">A3</option>
+                  <option [ngValue]="3">A2</option>
+                  <option [ngValue]="4">A1</option>
+                  <option [ngValue]="5">B</option>
+                  <option [ngValue]="6">C</option>
+                  <option [ngValue]="7">D</option>
+                  <option [ngValue]="8">E</option>
+                  <option [ngValue]="9">F</option>
+                  <option [ngValue]="10">G</option>
+                </select>
+              </label>
+
+              <label
+                >Classe Energetica max
+                <select
+                  class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
+                  formControlName="maxEnergyClass"
+                >
+                  <option [ngValue]="1">A4</option>
+                  <option [ngValue]="2">A3</option>
+                  <option [ngValue]="3">A2</option>
+                  <option [ngValue]="4">A1</option>
+                  <option [ngValue]="5">B</option>
+                  <option [ngValue]="6">C</option>
+                  <option [ngValue]="7">D</option>
+                  <option [ngValue]="8">E</option>
+                  <option [ngValue]="9">F</option>
+                  <option [ngValue]="10">G</option>
+                </select>
+              </label>
+
+              @if (
+                cadastralFilterForm.errors?.["energyRange"] &&
+                (touchedOrSubmitted() || cadastralFilterForm.touched)
+              ) {
+                <p class="col-span-2 -mt-1 text-[11px] text-rose-300">
+                  La classe energetica min non può essere “peggiore” della max.
+                </p>
+              }
+
+              <label
+                >Stanze minime
+                <input
+                  type="number"
+                  min="0"
+                  class="mt-1 w-full rounded-lg border px-2 py-1.5 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
+                  [class.border-rose-400]="
+                    isInvalid(cadastralFilterForm.controls.minRooms)
+                  "
+                  [class.border-blue-200]="
+                    !isInvalid(cadastralFilterForm.controls.minRooms)
+                  "
+                  [class.dark:border-rose-500]="
+                    isInvalid(cadastralFilterForm.controls.minRooms)
+                  "
+                  [class.dark:border-slate-600]="
+                    !isInvalid(cadastralFilterForm.controls.minRooms)
+                  "
+                  formControlName="minRooms"
+                />
+
+                @if (
+                  errMsg(cadastralFilterForm.controls.minRooms, "minRooms");
+                  as m
+                ) {
+                  <p class="mt-1 text-[11px] text-rose-300">{{ m }}</p>
+                }
+              </label>
+              <label
+                >Stanze massime
+                <input
+                  type="number"
+                  min="0"
+                  class="mt-1 w-full rounded-lg border px-2 py-1.5 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
+                  [class.border-rose-400]="
+                    isInvalid(cadastralFilterForm.controls.maxRooms)
+                  "
+                  [class.border-blue-200]="
+                    !isInvalid(cadastralFilterForm.controls.maxRooms)
+                  "
+                  [class.dark:border-rose-500]="
+                    isInvalid(cadastralFilterForm.controls.maxRooms)
+                  "
+                  [class.dark:border-slate-600]="
+                    !isInvalid(cadastralFilterForm.controls.maxRooms)
+                  "
+                  formControlName="maxRooms"
+                />
+
+                @if (
+                  errMsg(cadastralFilterForm.controls.maxRooms, "maxRooms");
+                  as m
+                ) {
+                  <p class="mt-1 text-[11px] text-rose-300">{{ m }}</p>
+                }
+              </label>
+
+              <label
+                >Piano minimo
+                <input
+                  type="number"
+                  min="0"
+                  class="mt-1 w-full rounded-lg border px-2 py-1.5 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
+                  [class.border-rose-400]="
+                    isInvalid(cadastralFilterForm.controls.minFloor)
+                  "
+                  [class.border-blue-200]="
+                    !isInvalid(cadastralFilterForm.controls.minFloor)
+                  "
+                  [class.dark:border-rose-500]="
+                    isInvalid(cadastralFilterForm.controls.minFloor)
+                  "
+                  [class.dark:border-slate-600]="
+                    !isInvalid(cadastralFilterForm.controls.minFloor)
+                  "
+                  formControlName="minFloor"
+                />
+
+                @if (
+                  errMsg(cadastralFilterForm.controls.minFloor, "minFloor");
+                  as m
+                ) {
+                  <p class="mt-1 text-[11px] text-rose-300">{{ m }}</p>
+                }
+              </label>
+              <label
+                >Piano massimo
+                <input
+                  type="number"
+                  min="0"
+                  class="mt-1 w-full rounded-lg border px-2 py-1.5 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
+                  [class.border-rose-400]="
+                    isInvalid(cadastralFilterForm.controls.maxFloor)
+                  "
+                  [class.border-blue-200]="
+                    !isInvalid(cadastralFilterForm.controls.maxFloor)
+                  "
+                  [class.dark:border-rose-500]="
+                    isInvalid(cadastralFilterForm.controls.maxFloor)
+                  "
+                  [class.dark:border-slate-600]="
+                    !isInvalid(cadastralFilterForm.controls.maxFloor)
+                  "
+                  formControlName="maxFloor"
+                />
+
+                @if (
+                  errMsg(cadastralFilterForm.controls.maxFloor, "maxFloor");
+                  as m
+                ) {
+                  <p class="mt-1 text-[11px] text-rose-300">{{ m }}</p>
+                }
+              </label>
+            </div>
           </div>
         </div>
 
-        <div class="rounded-xl border border-blue-200 bg-white/90 p-3 dark:border-blue-900/10 dark:bg-blue-900/10">
-          <h3 class="mb-2 font-medium text-blue-900 dark:text-blue-100">
-            Utilità
-          </h3>
+        <footer class="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <span class="text-xs font-medium text-blue-900 dark:text-blue-200">
+            Tipo di annuncio
+          </span>
 
-          <div formGroupName="utilityForm" class="grid grid-cols-1 gap-2 text-xs text-blue-950 dark:text-blue-100">
-            <label
-              class="flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/60 px-3 py-1.5 dark:border-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600">
-              <input type="checkbox" class="size-3 accent-blue-600" formControlName="hasElevator" />
-              Ascensore
-            </label>
-
-            <label
-              class="flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/60 px-3 py-1.5 dark:border-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600">
-              <input type="checkbox" class="size-3 accent-blue-600" formControlName="hasDoorman" />
-              Portineria
-            </label>
-
-            <label
-              class="flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/60 px-3 py-1.5 dark:border-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600">
-              <input type="checkbox" class="size-3 accent-blue-600" formControlName="hasAirConditioning" />
-              Aria condizionata
-            </label>
-
-            <label
-              class="flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/60 px-3 py-1.5 dark:border-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600">
-              <input type="checkbox" class="size-3 accent-blue-600" formControlName="nearSchool" />
-              Vicino a scuole
-            </label>
-
-            <label
-              class="flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/60 px-3 py-1.5 dark:border-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600">
-              <input type="checkbox" class="size-3 accent-blue-600" formControlName="nearPark" />
-              Vicino a parchi
-            </label>
-
-            <label
-              class="flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/60 px-3 py-1.5 dark:border-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600">
-              <input type="checkbox" class="size-3 accent-blue-600" formControlName="nearPublicTransport" />
-              Vicino a trasporto pubblico
-            </label>
-          </div>
-        </div>
-
-        <div class="rounded-xl border border-blue-200 bg-white/90 p-3 dark:border-blue-900/10 dark:bg-blue-900/10">
-          <h3 class="mb-2 font-medium text-blue-900 dark:text-blue-100">
-            Filtri catastali
-          </h3>
-
-          <div formGroupName="cadastralFilterForm"
-            class="grid grid-cols-2 gap-2 text-xs text-blue-950 dark:text-blue-100">
-            <label>Prezzo minimo
-              <input type="number" min="0"
-                class="mt-1 w-full rounded-lg border px-2 py-1.5 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
-                [class.border-rose-400]="isInvalid(cadastralFilterForm.controls.minPrice)"
-                [class.border-blue-200]="!isInvalid(cadastralFilterForm.controls.minPrice)"
-                [class.dark:border-rose-500]="isInvalid(cadastralFilterForm.controls.minPrice)"
-                [class.dark:border-slate-600]="!isInvalid(cadastralFilterForm.controls.minPrice)"
-                formControlName="minPrice" />
-
-              @if (errMsg(cadastralFilterForm.controls.minPrice, 'Prezzo minimo'); as m) {
-              <p class="mt-1 text-[11px] text-rose-300">{{ m }}</p>
-              }
-            </label>
-            <label>Prezzo massimo
-              <input type="number" min="0"
-                class="mt-1 w-full rounded-lg border px-2 py-1.5 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
-                [class.border-rose-400]="isInvalid(cadastralFilterForm.controls.maxPrice)"
-                [class.border-blue-200]="!isInvalid(cadastralFilterForm.controls.maxPrice)"
-                [class.dark:border-rose-500]="isInvalid(cadastralFilterForm.controls.maxPrice)"
-                [class.dark:border-slate-600]="!isInvalid(cadastralFilterForm.controls.maxPrice)"
-                formControlName="maxPrice" />
-
-              @if (errMsg(cadastralFilterForm.controls.maxPrice, 'Prezzo massimo'); as m) {
-              <p class="mt-1 text-[11px] text-rose-300">{{ m }}</p>
-              }
-            </label>
-
-            @if (cadastralFilterForm.errors?.['priceRange'] && (touchedOrSubmitted() || cadastralFilterForm.touched)) {
-            <p class="col-span-2 -mt-1 text-[11px] text-rose-300">
-              Il prezzo minimo non può essere maggiore del prezzo massimo.
-            </p>
-            }
-
-            <label>Mq minimi
-              <input type="number" min="0"
-                class="mt-1 w-full rounded-lg border px-2 py-1.5 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
-                [class.border-rose-400]="isInvalid(cadastralFilterForm.controls.minSquareMeters)"
-                [class.border-blue-200]="!isInvalid(cadastralFilterForm.controls.minSquareMeters)"
-                [class.dark:border-rose-500]="isInvalid(cadastralFilterForm.controls.minSquareMeters)"
-                [class.dark:border-slate-600]="!isInvalid(cadastralFilterForm.controls.minSquareMeters)"
-                formControlName="minSquareMeters" />
-
-              @if (errMsg(cadastralFilterForm.controls.minSquareMeters, 'minSquareMeters'); as m) {
-              <p class="mt-1 text-[11px] text-rose-300">{{ m }}</p>
-              }
-            </label>
-            <label>Mq massimi
-              <input type="number" min="0"
-                class="mt-1 w-full rounded-lg border px-2 py-1.5 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
-                [class.border-rose-400]="isInvalid(cadastralFilterForm.controls.maxSquareMeters)"
-                [class.border-blue-200]="!isInvalid(cadastralFilterForm.controls.maxSquareMeters)"
-                [class.dark:border-rose-500]="isInvalid(cadastralFilterForm.controls.maxSquareMeters)"
-                [class.dark:border-slate-600]="!isInvalid(cadastralFilterForm.controls.maxSquareMeters)"
-                formControlName="maxSquareMeters" />
-
-              @if (errMsg(cadastralFilterForm.controls.maxSquareMeters, 'maxSquareMeters'); as m) {
-              <p class="mt-1 text-[11px] text-rose-300">{{ m }}</p>
-              }
-            </label>
-
-            @if (cadastralFilterForm.errors?.['mqRange'] && (touchedOrSubmitted() || cadastralFilterForm.touched)) {
-            <p class="col-span-2 -mt-1 text-[11px] text-rose-300">
-              I mq minimi non possono essere maggiori dei mq massimi.
-            </p>
-            }
-
-            <label>Classe Energetica min
-              <select
-                class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
-                formControlName="minEnergyClass">
-                <option [ngValue]="1">A4</option>
-                <option [ngValue]="2">A3</option>
-                <option [ngValue]="3">A2</option>
-                <option [ngValue]="4">A1</option>
-                <option [ngValue]="5">B</option>
-                <option [ngValue]="6">C</option>
-                <option [ngValue]="7">D</option>
-                <option [ngValue]="8">E</option>
-                <option [ngValue]="9">F</option>
-                <option [ngValue]="10">G</option>
-              </select>
-            </label>
-
-            <label>Classe Energetica max
-              <select
-                class="mt-1 w-full rounded-lg border border-blue-200 px-2 py-1.5 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
-                formControlName="maxEnergyClass">
-                <option [ngValue]="1">A4</option>
-                <option [ngValue]="2">A3</option>
-                <option [ngValue]="3">A2</option>
-                <option [ngValue]="4">A1</option>
-                <option [ngValue]="5">B</option>
-                <option [ngValue]="6">C</option>
-                <option [ngValue]="7">D</option>
-                <option [ngValue]="8">E</option>
-                <option [ngValue]="9">F</option>
-                <option [ngValue]="10">G</option>
-              </select>
-            </label>
-
-            @if (cadastralFilterForm.errors?.['energyRange'] && (touchedOrSubmitted() || cadastralFilterForm.touched)) {
-            <p class="col-span-2 -mt-1 text-[11px] text-rose-300">
-              La classe energetica min non può essere “peggiore” della max.
-            </p>
-            }
-
-            <label>Stanze minime
-              <input type="number" min="0"
-                class="mt-1 w-full rounded-lg border px-2 py-1.5 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
-                [class.border-rose-400]="isInvalid(cadastralFilterForm.controls.minRooms)"
-                [class.border-blue-200]="!isInvalid(cadastralFilterForm.controls.minRooms)"
-                [class.dark:border-rose-500]="isInvalid(cadastralFilterForm.controls.minRooms)"
-                [class.dark:border-slate-600]="!isInvalid(cadastralFilterForm.controls.minRooms)"
-                formControlName="minRooms" />
-
-              @if (errMsg(cadastralFilterForm.controls.minRooms, 'minRooms'); as m) {
-              <p class="mt-1 text-[11px] text-rose-300">{{ m }}</p>
-              }
-
-            </label>
-            <label>Stanze massime
-              <input type="number" min="0"
-                class="mt-1 w-full rounded-lg border px-2 py-1.5 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
-                [class.border-rose-400]="isInvalid(cadastralFilterForm.controls.maxRooms)"
-                [class.border-blue-200]="!isInvalid(cadastralFilterForm.controls.maxRooms)"
-                [class.dark:border-rose-500]="isInvalid(cadastralFilterForm.controls.maxRooms)"
-                [class.dark:border-slate-600]="!isInvalid(cadastralFilterForm.controls.maxRooms)"
-                formControlName="maxRooms" />
-
-              @if (errMsg(cadastralFilterForm.controls.maxRooms, 'maxRooms'); as m) {
-              <p class="mt-1 text-[11px] text-rose-300">{{ m }}</p>
-              }
-
-            </label>
-
-            <label>Piano minimo
-              <input type="number" min="0"
-                class="mt-1 w-full rounded-lg border px-2 py-1.5 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
-                [class.border-rose-400]="isInvalid(cadastralFilterForm.controls.minFloor)"
-                [class.border-blue-200]="!isInvalid(cadastralFilterForm.controls.minFloor)"
-                [class.dark:border-rose-500]="isInvalid(cadastralFilterForm.controls.minFloor)"
-                [class.dark:border-slate-600]="!isInvalid(cadastralFilterForm.controls.minFloor)"
-                formControlName="minFloor" />
-
-              @if (errMsg(cadastralFilterForm.controls.minFloor, 'minFloor'); as m) {
-              <p class="mt-1 text-[11px] text-rose-300">{{ m }}</p>
-              }
-
-            </label>
-            <label>Piano massimo
-              <input type="number" min="0"
-                class="mt-1 w-full rounded-lg border px-2 py-1.5 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
-                [class.border-rose-400]="isInvalid(cadastralFilterForm.controls.maxFloor)"
-                [class.border-blue-200]="!isInvalid(cadastralFilterForm.controls.maxFloor)"
-                [class.dark:border-rose-500]="isInvalid(cadastralFilterForm.controls.maxFloor)"
-                [class.dark:border-slate-600]="!isInvalid(cadastralFilterForm.controls.maxFloor)"
-                formControlName="maxFloor" />
-
-              @if (errMsg(cadastralFilterForm.controls.maxFloor, 'maxFloor'); as m) {
-              <p class="mt-1 text-[11px] text-rose-300">{{ m }}</p>
-              }
-
-            </label>
-          </div>
-        </div>
+          <select
+            class="rounded-lg border border-blue-200 bg-white/90 px-3 py-1.5 text-xs text-blue-950 focus:border-blue-400 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
+            formControlName="category"
+          >
+            <option value="SALE">Vendita</option>
+            <option value="RENT">Affitto</option>
+          </select>
+        </footer>
       </div>
-
-      <footer class="mt-4 flex flex-wrap items-center justify-between gap-3">
-        <span class="text-xs font-medium text-blue-900 dark:text-blue-200">
-          Tipo di annuncio
-        </span>
-
-        <select
-          class="rounded-lg border border-blue-200 bg-white/90 px-3 py-1.5 text-xs text-blue-950 focus:border-blue-400 focus:ring-1 focus:ring-slate-400 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-blue-100 dark:hover:bg-slate-600"
-          formControlName="category">
-          <option value="SALE">Vendita</option>
-          <option value="RENT">Affitto</option>
-        </select>
-      </footer>
-    </div>
     }
   </form>
 </section>

@@ -24,14 +24,6 @@ public class SearchRequest {
     @NotBlank(message = "Category is mandatory")
     private String category;
 
-    @NotNull(message = "Size is mandatory")
-    @Positive(message = "Size must be a positive number")
-    private Integer size;
-
-    @NotNull(message = "Page is mandatory")
-    @Positive(message = "Page must be a positive number")
-    private Integer page;
-
     @Positive(message = "Cadastral filter id must be a positive number")
     private Long cadastralFilterId;
 

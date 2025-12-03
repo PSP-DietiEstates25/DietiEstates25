@@ -38,7 +38,7 @@ public class SearchController {
 
     @GetMapping
     public ResponseEntity<Page<SearchResponse>> getUserSearches(
-            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "5") Integer size,
             @AuthenticationPrincipal Jwt jwt
     ){

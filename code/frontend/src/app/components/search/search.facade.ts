@@ -1,4 +1,4 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
+import { Injectable, inject, signal, computed, Sanitizer } from '@angular/core';
 import { of, defer, iif, forkJoin, from, VirtualTimeScheduler } from 'rxjs';
 import { map, switchMap, tap, catchError, finalize } from 'rxjs/operators';
 
@@ -26,12 +26,9 @@ import {
 } from '../../services/models';
 import { AdCategory } from '../../enums/ad-category.enum';
 import { CadastralDataControllerService } from '../../services/services';
-
-export type SearchCard = RealEstateResponse & {
-  title?: string;
-  address?: string;
-  city?: string;
-};
+import { FullRealEstate } from '../../interfaces/full-real-estate';
+import { SearchPaginatorRequest } from '../../interfaces/search-paginator-request';
+import { FullSearch } from '../../interfaces/full-search';
 
 @Injectable({ providedIn: 'root' })
 export class SearchFacade {
@@ -65,15 +62,21 @@ export class SearchFacade {
   private _userEmail = signal<string | null>(null);
   private _authenticated = signal(false);
 
+  readonly cachedCategory = this._cachedCategory.asReadonly();
+  readonly cachedGeographicalPosition =
+    this._cachedGeographicalPosition.asReadonly();
+  readonly cachedUtility = this._cachedUtility.asReadonly();
+  readonly cachedCadastralFilter = this._cachedCadastralFilter.asReadonly();
+
   loading = signal(false);
   error = signal<string | null>(null);
   geographicalPositionId = signal<number | null>(null);
   utilityId = signal<number | null>(null);
   detailId = signal<number | null>(null);
   cadastralFilterId = signal<number | null>(null);
-  savedSearches = signal<Search[]>([]);
+  savedSearches = signal<FullSearch[]>([]);
 
-  searchCards = signal<SearchCard[]>([]);
+  searchCards = signal<FullRealEstate[]>([]);
 
   constructor() {
     this.authService
@@ -101,23 +104,23 @@ export class SearchFacade {
   ) {
     this._cachedGeographicalPosition.set(geographicalPositionRequest);
     this._cachedUtility.set(utilityRequest);
-    //this._cachedCadastralFilter.set(cadastralFilterRequest);
+    this._cachedCadastralFilter.set(cadastralFilterRequest as CadastralFilter);
     if (category) this._cachedCategory.set(category);
   }
 
-  replaySearch(search: Search) {
+  replaySearch(search: FullSearch) {
     this.resetContext();
 
-    this._cachedGeographicalPosition.set(search.detail?.geographicalPosition!);
-    this._cachedUtility.set(search.detail?.utility!);
+    this._cachedGeographicalPosition.set(search.geographicalPosition);
+    this._cachedUtility.set(search.utility);
     this._cachedCadastralFilter.set(search.cadastralFilter!);
     this._cachedCategory.set(search.category as AdCategory);
 
     return this.runFullSearch({
       category: search.category as AdCategory,
-      geographicalPosition: search.detail
-        ?.geographicalPosition as GeographicalPositionRequest,
-      utility: search.detail?.utility as UtilityRequest,
+      geographicalPosition:
+        search.geographicalPosition as GeographicalPositionRequest,
+      utility: search.utility as UtilityRequest,
       cadastralFilter: search.cadastralFilter as CadastralFilterRequest,
     });
   }
@@ -139,6 +142,11 @@ export class SearchFacade {
       tap((results) => {
         this.geographicalPositionId.set(results.geographicalPosition.id!);
         this.utilityId.set(results.utility.id!);
+        this._geographicalPositionCache.set(
+          results.geographicalPosition.id!,
+          results.geographicalPosition,
+        );
+        this._utilityCache.set(results.utility.id!, results.utility);
       }),
       switchMap((results) => {
         return this.detailService.createDetail({
@@ -150,6 +158,7 @@ export class SearchFacade {
       }),
       tap((detailResponse) => {
         this.detailId.set(detailResponse.id!);
+        this._detailCache.set(detailResponse.id!, detailResponse);
       }),
       catchError((error) => {
         this.error.set(error);
@@ -170,6 +179,10 @@ export class SearchFacade {
       .pipe(
         tap((cadastralFilterResponse) => {
           this.cadastralFilterId.set(cadastralFilterResponse.id!);
+          this._cadastralFilterCache.set(
+            cadastralFilterResponse.id!,
+            cadastralFilterResponse,
+          );
         }),
         catchError((error) => {
           this.error.set(error);
@@ -192,6 +205,12 @@ export class SearchFacade {
       detail: this.prepareDetail(params.geographicalPosition, params.utility),
       cadastralFilter: this.prepareCadastralFilter(params.cadastralFilter),
     }).pipe(
+      switchMap((results) =>
+        this.getDetailUtilityAndGeographicalPosition(
+          results.detail,
+          results.cadastralFilter,
+        ),
+      ),
       switchMap((results) => {
         return this.search({ category: params.category });
       }),
@@ -203,20 +222,6 @@ export class SearchFacade {
     this.utilityId.set(null);
     this.detailId.set(null);
     this.cadastralFilterId.set(null);
-  }
-
-  getSearchDetailAndCadastralFilter(
-    detailId: number,
-    cadastralFilterId: number,
-  ) {
-    return forkJoin({
-      detail: this.detailService.getDetailById({
-        detailid: detailId,
-      }),
-      cadastralFilter: this.cadastralFilterService.getCadastralFilterById({
-        cadastralfilterid: cadastralFilterId,
-      }),
-    });
   }
 
   getDetailUtilityAndGeographicalPosition(
@@ -252,7 +257,6 @@ export class SearchFacade {
           const cadastralData = this.cadastralDataService.getCadastralDataById({
             cadastraldataid: realEstate.cadastralDataId!,
           });
-
           const details = this.detailService
             .getDetailById({
               detailid: realEstate.detailId!,
@@ -294,22 +298,94 @@ export class SearchFacade {
       map((realEstateObservables) => {
         return realEstateObservables.map((realEstate) => {
           return {
+            geographicalPosition: realEstate.geographicalPosition,
+            utility: realEstate.utility,
+            cadastralData: realEstate.cadastralData,
             category: realEstate.category,
-            createdDate: realEstate.createdDate,
+            createdDate: realEstate.category,
             description: realEstate.description,
-            estateAgentEmail: realEstate.estateAgentEmail,
+            id: realEstate.id,
             images: realEstate.images,
-            title: '',
-            address: realEstate.geographicalPosition.address,
-            city: realEstate.geographicalPosition.city,
-          } as SearchCard;
+          } as FullRealEstate;
         });
       }),
       tap((searchCards) => {
+        this.savedSearches.set(searchCards);
         this.searchCards.set(searchCards);
       }),
     );
   }
 
-  loadUserSearches() {}
+  fetchUserSearches(request: SearchPaginatorRequest) {
+    const params = {
+      page: request.page,
+      size: request.size,
+    };
+    return this.searchService.getUserSearches(params).pipe(
+      switchMap((response) => {
+        const requests = response.content!.map((search) => {
+          const cadastralFilter =
+            this.cadastralFilterService.getCadastralFilterById({
+              cadastralfilterid: search.cadastralFilterId!,
+            });
+
+          const details = this.detailService
+            .getDetailById({ detailid: search.detailId! })
+            .pipe(
+              switchMap((detail) => {
+                return forkJoin({
+                  geographicalPosition:
+                    this.geographicalPositionService.getGeographicalPositionById(
+                      {
+                        geographicalpositionid: detail.geographicalPositionId!,
+                      },
+                    ),
+                  utility: this.utilityService.getUtilityById({
+                    utilityid: detail.utilityId!,
+                  }),
+                });
+              }),
+            );
+
+          return forkJoin({
+            search: of(search),
+            cadastralFilter: cadastralFilter,
+            details: details,
+          }).pipe(
+            map((result) => {
+              return {
+                ...result.search,
+                cadastralFilter: result.cadastralFilter,
+                geographicalPosition: result.details.geographicalPosition,
+                utility: result.details.utility,
+              };
+            }),
+          );
+        });
+
+        return forkJoin(requests).pipe(
+          map((searchObservables) => {
+            return {
+              ...response,
+              fullSerches: searchObservables,
+            };
+          }),
+        );
+      }),
+      tap((responseFullSearches) => {
+        const newSavedSearches: FullSearch[] =
+          responseFullSearches.fullSerches.map((search) => {
+            return {
+              geographicalPosition: search.geographicalPosition,
+              utility: search.utility,
+              cadastralFilter: search.cadastralFilter,
+              category: search.category as AdCategory,
+              createdDate: search.createdDate,
+              id: search.id,
+            };
+          });
+        this.savedSearches.set(newSavedSearches);
+      }),
+    );
+  }
 }

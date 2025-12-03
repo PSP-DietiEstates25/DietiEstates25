@@ -28,6 +28,7 @@ public class SearchMapperDefaultImpl implements SearchMapper {
 				.id(search.getId())
 				.createdDate(search.getCreatedDate())
 				.lastModifiedDate(search.getLastModifiedDate())
+                .category(search.getCategory().toString())
 				.detailId(search.getDetail().getId())
 				.cadastralFilterId(search.getCadastralFilter().getId())
 				.userEmail(search.getUser().getEmail())

@@ -1,6 +1,18 @@
-import { Component, inject, signal, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  OnDestroy,
+  OnInit,
+  effect,
+  Sanitizer,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpBackend, HttpClient } from '@angular/common/http';
+import {
+  HttpBackend,
+  HttpClient,
+  HttpErrorResponse,
+} from '@angular/common/http';
 
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { FilterPanelComponent } from '../../shared/components/filter-panel/filter-panel.component';
@@ -8,7 +20,12 @@ import { RecentSearchesComponent } from '../recent-searches/recent-searches.comp
 
 import { SearchFacade } from './search.facade';
 import { SearchesPaginatorComponent } from '../searches-paginator/searches-paginator.component';
-import { SavedSearchesListComponent } from '../saved-searches-list/saved-searches-list.component';
+import { SearchPaginatorService } from '../../manual_services/search-paginator/search-paginator.service';
+import { SearchControllerService } from '../../services/services';
+import { Router, TitleStrategy } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { Search, SearchResponse } from '../../services/models';
+import { SearchPaginatorRequest } from '../../interfaces/search-paginator-request';
 
 const isHttp = (s: string) => /^https?:\/\//i.test(s);
 const isData = (s: string) => /^data:/i.test(s);
@@ -24,122 +41,55 @@ const looksPng = (b64: string) => b64?.startsWith('iVBOR');
     FilterPanelComponent,
     RecentSearchesComponent,
     SearchesPaginatorComponent,
-    SavedSearchesListComponent,
   ],
   templateUrl: './search-page.component.html',
 })
 export class SearchPageComponent implements OnDestroy {
   facade = inject(SearchFacade);
+  searchPaginatorService = inject(SearchPaginatorService);
+  searchService = inject(SearchControllerService);
+  routerService = inject(Router);
+  toastrService = inject(ToastrService);
 
-  private httpBackend = inject(HttpBackend);
-  private httpNoInter = new HttpClient(this.httpBackend);
+  savedSearches: SearchResponse[] = [];
+  searchPaginatorRequest!: SearchPaginatorRequest;
+  totalPages!: number;
+  page!: number;
 
-  private blobCache = new Map<string, string>();
+  constructor() {
+    effect(() => {
+      this.searchPaginatorRequest = this.searchPaginatorService.searchRequest();
+      this.fetchSavedSearches();
+    });
+  }
+
+  fetchSavedSearches() {
+    this.facade.fetchUserSearches(this.searchPaginatorRequest).subscribe({
+      next: (results) => {
+        this.totalPages = results.totalPages!;
+        this.savedSearches = results.content!;
+        this.initPages();
+      },
+      error: (response: HttpErrorResponse) => {
+        if (response.error === 500) {
+          this.toastrService.error('Contatta un admin', 'Errore interno');
+          this.routerService.navigateByUrl('/');
+        }
+      },
+    });
+  }
+
+  initPages() {
+    this.searchPaginatorService.setPagesNumber(this.totalPages);
+    this.page = this.searchPaginatorService.page();
+  }
+
   private pending = new Set<string>();
 
-  readonly placeholder = '/assets/placeholder.jpg';
-
-  imgSrc(raw?: string | null): string | null {
-    if (!raw) return null;
-
-    if (isHttp(raw)) {
-      const cached = this.blobCache.get(raw);
-      if (cached) return cached;
-
-      if (!this.pending.has(raw)) {
-        this.pending.add(raw);
-        this.httpNoInter
-          .get(raw, { responseType: 'blob', withCredentials: false })
-          .subscribe({
-            next: (blob) => {
-              const obj = URL.createObjectURL(blob);
-              this.blobCache.set(raw, obj);
-              this.pending.delete(raw);
-            },
-            error: () => {
-              this.pending.delete(raw);
-            },
-          });
-      }
-      return this.placeholder;
-    }
-
-    if (isData(raw)) return raw;
-
-    if (raw.startsWith('?') || raw.length < 20) return null;
-    const mime = looksJpeg(raw)
-      ? 'image/jpeg'
-      : looksPng(raw)
-        ? 'image/png'
-        : 'image/*';
-    return `data:${mime};base64,${raw}`;
-  }
-
-  goNextPage() {
-    const res = this.facade.nextPage();
-    if (res && typeof (res as any).subscribe === 'function') {
-      (res as any).subscribe({
-        error: () => {
-          // gestire errori
-        },
-      });
-    }
-  }
-
-  goPrevPage() {
-    const res = this.facade.prevPage();
-    if (res && typeof (res as any).subscribe === 'function') {
-      (res as any).subscribe({
-        error: () => {
-          // idem
-        },
-      });
-    }
-  }
-
   ngOnDestroy(): void {
-    for (const url of this.blobCache.values()) URL.revokeObjectURL(url);
-    this.blobCache.clear();
     this.pending.clear();
+    this.searchPaginatorService.refresh();
   }
 
-  ngOnInit() {
-    /*
-    this.facade
-      .runFullSearch({
-        category: 'SALE',
-        page: 1,
-        size: 12,
-        userEmail: '',
-        geographicalPosition: {
-          address: '',
-          city: '',
-          latitude: 0,
-          longitude: 0,
-          municipality: '',
-        },
-        utility: {
-          hasAirConditioning: false,
-          hasDoorman: false,
-          hasElevator: false,
-          nearPark: false,
-          nearPublicTransport: false,
-          nearSchool: false,
-        },
-        cadastralFilter: {
-          minPrice: 0,
-          maxPrice: 999999999,
-          minSquareMeters: 0,
-          maxSquareMeters: 100000,
-          minRooms: 0,
-          maxRooms: 50,
-          minFloor: -10,
-          maxFloor: 100,
-          minEnergyClass: 0,
-          maxEnergyClass: 9,
-        },
-      })
-      .subscribe();
-      */
-  }
+  ngOnInit() {}
 }
