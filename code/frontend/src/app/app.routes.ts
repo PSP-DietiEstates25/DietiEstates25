@@ -52,13 +52,13 @@ export const routes: Routes = [
   {
     path: 'search',
     title: 'Search',
-    component: SearchLandingMapComponent
+    component: SearchLandingMapComponent,
   },
   {
     path: 'offers',
     title: 'Offers',
     component: OffersPageComponent,
-    canActivate: [isUserGuard]
+    canActivate: [isUserGuard],
   },
   {
     path: '',

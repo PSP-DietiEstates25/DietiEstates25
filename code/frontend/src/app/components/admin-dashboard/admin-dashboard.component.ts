@@ -15,9 +15,11 @@ import {
   Role,
 } from './admin-dashboard.facade';
 import { Router, RouterLink } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 import { AuthService } from '../../manual_services/auth/auth.service';
 import { environment } from '../../../environments/environment.development';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 
 function matchValidator(a: string, b: string) {
   return (ctrl: AbstractControl) => {
@@ -35,6 +37,7 @@ function matchValidator(a: string, b: string) {
 })
 export class AdminDashboardComponent {
   private facade = inject(AdminDashboardFacade);
+  private toastrService = inject(ToastrService);
   private formBuilder = inject(FormBuilder);
   private routerService = inject(Router);
 
@@ -113,13 +116,25 @@ export class AdminDashboardComponent {
     const { email, role, password } = this.createForm.getRawValue();
 
     this.facade.createUser({ email, role, password }).subscribe({
-      next: (_) => {
+      next: (response) => {
         this.createForm.reset({
           email: '',
           role: 'ESTATE_AGENT',
           password: '',
           confirm: '',
         });
+
+        if (response.role === 'ESTATE_AGENT')
+          this.toastrService.success('Account agente creato', 'Account creato');
+        else if (response.role === 'ADMIN')
+          this.toastrService.success('Account admin creato', 'Account creato');
+      },
+      error: (response: HttpErrorResponse) => {
+        if (response.error === 501)
+          this.toastrService.error(
+            'Errore interno del server',
+            'Contatta un Admin',
+          );
       },
     });
   }

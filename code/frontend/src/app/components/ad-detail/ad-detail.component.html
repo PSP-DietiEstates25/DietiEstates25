@@ -1,350 +1,524 @@
-<!DOCTYPE html>
+<!doctype html>
 
 <app-navbar></app-navbar>
 
 <section class="container mx-auto px-4 py-6">
   <!-- Loading -->
   @if (loading()) {
-  <div class="grid gap-4 lg:grid-cols-3">
-    <div class="lg:col-span-2 space-y-4">
-      <div
-        class="rounded-2xl border dark:border-slate-700 overflow-hidden bg-black/5 dark:bg-white/5"
-      >
+    <div class="grid gap-4 lg:grid-cols-3">
+      <div class="space-y-4 lg:col-span-2">
         <div
-          class="w-full aspect-video animate-pulse bg-black/10 dark:bg-white/10"
-        ></div>
+          class="overflow-hidden rounded-2xl border bg-black/5 dark:border-slate-700 dark:bg-white/5"
+        >
+          <div
+            class="aspect-video w-full animate-pulse bg-black/10 dark:bg-white/10"
+          ></div>
+        </div>
+        <div class="space-y-3 rounded-2xl border p-4 dark:border-slate-700">
+          <div
+            class="h-7 w-2/3 animate-pulse rounded bg-black/10 dark:bg-white/10"
+          ></div>
+          <div
+            class="h-4 w-1/2 animate-pulse rounded bg-black/10 dark:bg-white/10"
+          ></div>
+          <div
+            class="h-24 w-full animate-pulse rounded bg-black/10 dark:bg-white/10"
+          ></div>
+        </div>
       </div>
-      <div class="rounded-2xl border dark:border-slate-700 p-4 space-y-3">
-        <div
-          class="h-7 w-2/3 animate-pulse rounded bg-black/10 dark:bg-white/10"
-        ></div>
-        <div
-          class="h-4 w-1/2 animate-pulse rounded bg-black/10 dark:bg-white/10"
-        ></div>
-        <div
-          class="h-24 w-full animate-pulse rounded bg-black/10 dark:bg-white/10"
-        ></div>
-      </div>
-    </div>
 
-    <aside class="space-y-4">
-      <div class="rounded-2xl border dark:border-slate-700 p-4">
-        <div
-          class="h-8 w-1/2 animate-pulse rounded bg-black/10 dark:bg-white/10"
-        ></div>
-        <div
-          class="mt-2 h-4 w-2/3 animate-pulse rounded bg-black/10 dark:bg-white/10"
-        ></div>
-      </div>
-      <div class="rounded-2xl border dark:border-slate-700 p-4">
-        <div
-          class="h-40 w-full animate-pulse rounded bg-black/10 dark:bg-white/10"
-        ></div>
-      </div>
-    </aside>
-  </div>
+      <aside class="space-y-4">
+        <div class="rounded-2xl border p-4 dark:border-slate-700">
+          <div
+            class="h-8 w-1/2 animate-pulse rounded bg-black/10 dark:bg-white/10"
+          ></div>
+          <div
+            class="mt-2 h-4 w-2/3 animate-pulse rounded bg-black/10 dark:bg-white/10"
+          ></div>
+        </div>
+        <div class="rounded-2xl border p-4 dark:border-slate-700">
+          <div
+            class="h-40 w-full animate-pulse rounded bg-black/10 dark:bg-white/10"
+          ></div>
+        </div>
+      </aside>
+    </div>
   }
 
   <!-- Error -->
   @else if (error()) {
-  <div class="py-16">
-    <div
-      class="mx-auto max-w-xl rounded-2xl border border-red-200 bg-red-50 p-5 text-red-700 dark:border-red-900/40 dark:bg-red-900/10 dark:text-red-200"
-    >
-      <div class="font-semibold">Ops, qualcosa è andato storto.</div>
-      <div class="mt-1 text-sm opacity-90">{{ error() }}</div>
-      <div class="mt-4 flex gap-2">
-        <button type="button" class="btn_ghost" routerlink="/">
-          Torna alla home
-        </button>
+    <div class="py-16">
+      <div
+        class="mx-auto max-w-xl rounded-2xl border border-red-200 bg-red-50 p-5 text-red-700 dark:border-red-900/40 dark:bg-red-900/10 dark:text-red-200"
+      >
+        <div class="font-semibold">Ops, qualcosa è andato storto.</div>
+        <div class="mt-1 text-sm opacity-90">{{ error() }}</div>
+        <div class="mt-4 flex gap-2">
+          <button type="button" class="btn_ghost" routerlink="/">
+            Torna alla home
+          </button>
+        </div>
       </div>
     </div>
-  </div>
   }
 
   <!-- Content -->
   @else if (ad()) {
-  <div class="grid gap-6 lg:grid-cols-3">
-    <!-- LEFT -->
-    <div class="lg:col-span-2 space-y-6">
-      <!-- Gallery -->
-      <section
-        class="rounded-2xl border dark:border-slate-700 overflow-hidden bg-black/5 dark:bg-white/5"
-      >
-        <div class="relative">
-          <img
-            [src]="
-              toSrc(mainImage()) ||
-              toSrc(ad()!.coverUrl) ||
-              '/assets/placeholder-house.jpg'
-            "
-            [alt]="ad()!.title || 'Immagine annuncio'"
-            class="w-full aspect-video object-cover"
-            loading="eager"
-          />
-
-          <!-- subtle bottom gradient -->
-          <div
-            class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/45 to-transparent"
-          ></div>
-        </div>
-
-        @if (ad()!.images.length) {
-        <div class="p-3 pt-2">
-          <div class="flex gap-2 overflow-x-auto pb-1">
-            @for (img of ad()!.images!; track img) {
-            <button
-              type="button"
-              class="shrink-0 rounded-xl overflow-hidden border dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-600 dark:focus:ring-blue-500"
-              [class.border-amber-600]="img === mainImage()"
-              [class.dark:border-blue-500]="img === mainImage()"
-              (click)="setMain(img)"
-              aria-label="Seleziona immagine"
-            >
-              <img
-                [src]="toSrc(img) || '/assets/placeholder-house.jpg'"
-                class="h-16 w-28 object-cover"
-                alt="Anteprima"
-                loading="lazy"
-              />
-            </button>
-            }
-          </div>
-        </div>
-        }
-      </section>
-
-      <!-- Title / meta -->
-      <article
-        class="rounded-2xl border dark:border-slate-700 p-5 bg-white/60 dark:bg-slate-900/20"
-      >
-        <div
-          class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"
+    <div class="grid gap-6 lg:grid-cols-3">
+      <!-- LEFT -->
+      <div class="space-y-6 lg:col-span-2">
+        <!-- Gallery -->
+        <section
+          class="overflow-hidden rounded-2xl border bg-black/5 dark:border-slate-700 dark:bg-white/5"
         >
-          <div>
-            <h1
-              class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white"
-            >
-              {{ ad()!.title }}
-            </h1>
-            <p
-              class="mt-1 text-sm sm:text-base text-slate-600 dark:text-slate-300"
-            >
-              {{ ad()!.position?.address }} • {{ ad()!.city }}
-            </p>
+          <div class="relative">
+            <img
+              [src]="
+                toSrc(mainImage()) ||
+                toSrc(ad()!.coverUrl) ||
+                '/assets/placeholder-house.jpg'
+              "
+              [alt]="ad()!.title || 'Immagine annuncio'"
+              class="aspect-video w-full object-cover"
+              loading="eager"
+            />
 
-            @if (ad()?.proximityTags?.length) {
-            <div class="mt-3 flex flex-wrap gap-2">
-              @for (t of ad()!.proximityTags; track t) {
-              <span class="chip">{{ mapTag(t) }}</span>
-              }
-            </div>
-            }
-          </div>
-
-          <!-- quick stats -->
-          <div class="grid grid-cols-2 gap-2 text-sm min-w-[220px]">
-            @if (ad()!.surface != null) {
-            <div class="rounded-xl border dark:border-slate-700 p-3">
-              <div class="text-xs text-slate-500 dark:text-slate-400">
-                Superficie
-              </div>
-              <div class="font-semibold">{{ ad()!.surface }} m²</div>
-            </div>
-            } @if (ad()!.rooms != null) {
-            <div class="rounded-xl border dark:border-slate-700 p-3">
-              <div class="text-xs text-slate-500 dark:text-slate-400">
-                Stanze
-              </div>
-              <div class="font-semibold">{{ ad()!.rooms }}</div>
-            </div>
-            } @if (ad()!.floor != null) {
-            <div class="rounded-xl border dark:border-slate-700 p-3">
-              <div class="text-xs text-slate-500 dark:text-slate-400">
-                Piano
-              </div>
-              <div class="font-semibold">{{ ad()!.floor }}</div>
-            </div>
-            } @if (ad()!.energyClass) {
-            <div class="rounded-xl border dark:border-slate-700 p-3">
-              <div class="text-xs text-slate-500 dark:text-slate-400">
-                Classe energetica
-              </div>
-              <div class="font-semibold">{{ ad()!.energyClass }}</div>
-            </div>
-            }
-          </div>
-        </div>
-
-        <!-- extra details -->
-        <div class="mt-5 grid sm:grid-cols-2 gap-3 text-sm">
-          @if (ad()!.type) {
-          <div class="rounded-xl border dark:border-slate-700 p-3">
-            <span class="text-slate-500 dark:text-slate-400">Tipologia</span>
-            <div class="font-medium">{{ ad()!.type }}</div>
-          </div>
-          }
-        </div>
-      </article>
-
-      <!-- Utilities -->
-      <section class="rounded-2xl border dark:border-slate-700 p-5">
-        <div class="flex items-center justify-between">
-          <h3 class="font-semibold text-slate-900 dark:text-white">Utility</h3>
-          <span class="text-xs text-slate-500 dark:text-slate-400">
-            {{ ad()?.utilities?.length || 0 }} voci
-          </span>
-        </div>
-
-        @if (ad()?.utilities?.length) {
-        <div class="mt-3 flex flex-wrap gap-2">
-          @for (u of ad()!.utilities!; track u) {
-          <span class="chip">{{ u }}</span>
-          }
-        </div>
-        } @else {
-        <p class="mt-3 text-sm text-slate-500">Nessuna utility specificata.</p>
-        }
-      </section>
-
-      <!-- Description -->
-      @if (ad()!.description) {
-      <section class="rounded-2xl border dark:border-slate-700 p-5">
-        <h3 class="font-semibold text-slate-900 dark:text-white mb-2">
-          Descrizione
-        </h3>
-        <p
-          class="text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-line"
-        >
-          {{ ad()!.description }}
-        </p>
-      </section>
-      }
-    </div>
-
-    <!-- RIGHT / SIDEBAR -->
-    <aside class="space-y-6 lg:space-y-8 lg:sticky lg:top-6 lg:self-start">
-      <!-- Price -->
-      <section
-        class="rounded-2xl border dark:border-slate-700 p-5 bg-white/70 dark:bg-slate-900/25 backdrop-blur"
-      >
-        <div class="flex items-start justify-between gap-3">
-          <div>
+            <!-- subtle bottom gradient -->
             <div
-              class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400"
-            >
-              Prezzo
-            </div>
-            <div
-              class="mt-1 text-2xl font-extrabold text-slate-900 dark:text-white"
-            >
-              @if (ad()!.price != null) { €
-              {{ ad()!.price | number : "1.0-0" }} } @else { Prezzo su richiesta
-              }
-            </div>
-
-            @if (ad()!.agent) {
-            <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
-              Agente: {{ ad()!.agent!.email || "—" }}
-            </p>
-            }
+              class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/45 to-transparent"
+            ></div>
           </div>
-        </div>
-      </section>
 
-      <section class="rounded-2xl border dark:border-slate-700 p-5">
-        <div class="mb-3 flex items-center justify-between">
-          <h3 class="font-semibold text-slate-900 dark:text-white">
-            Fai un’offerta
-          </h3>
-        </div>
-
-        <app-offer-form
-          [realEstateId]="ad()!.realEstateId"
-          [isLoggedIn]="isLogged()"
-          (loginRequired)="goLogin()"
-          (success)="onOfferSuccess()"
-        />
-      </section>
-
-      <section class="rounded-2xl border dark:border-slate-700 p-5">
-        <div class="mb-3 flex items-center justify-between">
-          <h3 class="font-semibold text-slate-900 dark:text-white">
-            Prenota una visita
-          </h3>
-        </div>
-
-        <app-visit-form
-          [realEstateId]="ad()!.realEstateId"
-          [isLoggedIn]="isLogged()"
-          (loginRequired)="goLogin()"
-          (success)="onVisitSuccess()"
-        />
-      </section>
-
-      <!-- Agent -->
-      @if (ad()!.agent) {
-      <section class="rounded-2xl border dark:border-slate-700 p-5 text-sm">
-        <h3 class="font-semibold text-slate-900 dark:text-white mb-2">
-          Contatta l’agente
-        </h3>
-        @if (ad()!.agent!.email) {
-        <div class="flex items-center justify-between gap-2">
-          <span class="text-slate-600 dark:text-slate-300">Email</span>
-          <a class="underline" [href]="'mailto:' + ad()!.agent!.email">{{
-            ad()!.agent!.email
-          }}</a>
-        </div>
-        }
-      </section>
-      }
-
-      <!-- Offers -->
-      <section class="rounded-2xl border dark:border-slate-700 overflow-hidden">
-        <div
-          class="px-5 py-4 border-b dark:border-slate-700 bg-white/70 dark:bg-slate-900/70 backdrop-blur"
-        >
-          <h3 class="font-semibold text-slate-900 dark:text-white">
-            Le tue offerte
-          </h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Storico offerte per questo immobile
-          </p>
-        </div>
-
-        <div class="max-h-80 overflow-y-auto px-5 py-4">
-          @if (myOffersLoading()) {
-          <p class="text-sm text-slate-500">Caricamento…</p>
-          } @else if (myOffers().length === 0) {
-          <p class="text-sm text-slate-500">
-            Non hai ancora effettuato offerte.
-          </p>
-          } @else {
-          <div class="grid gap-3">
-            @for (o of myOffers(); track o.id) {
-            <div class="rounded-xl border dark:border-slate-700 p-4">
-              <div class="flex items-start justify-between gap-3">
-                <div>
-                  <div class="font-semibold text-slate-900 dark:text-white">
-                    € {{ o.amount | number : "1.0-0" }}
-                  </div>
-                  @if (o.createdAt) {
-                  <div
-                    class="mt-0.5 text-xs text-slate-500 dark:text-slate-400"
+          @if (ad()!.images.length) {
+            <div class="p-3 pt-2">
+              <div class="flex gap-2 overflow-x-auto pb-1">
+                @for (img of ad()!.images!; track img) {
+                  <button
+                    type="button"
+                    class="shrink-0 overflow-hidden rounded-xl border focus:ring-2 focus:ring-amber-600 focus:outline-none dark:border-slate-700 dark:focus:ring-blue-500"
+                    [class.border-amber-600]="img === mainImage()"
+                    [class.dark:border-blue-500]="img === mainImage()"
+                    (click)="setMain(img)"
+                    aria-label="Seleziona immagine"
                   >
-                    {{ o.createdAt | date : "short" }}
-                  </div>
+                    <img
+                      [src]="toSrc(img) || '/assets/placeholder-house.jpg'"
+                      class="h-16 w-28 object-cover"
+                      alt="Anteprima"
+                      loading="lazy"
+                    />
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </section>
+
+        <!-- Title / meta -->
+        <article
+          class="rounded-2xl border bg-white/60 p-5 dark:border-slate-700 dark:bg-slate-900/20"
+        >
+          <div
+            class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"
+          >
+            <div>
+              <h1
+                class="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl dark:text-white"
+              >
+                {{ ad()!.title }}
+              </h1>
+              <p
+                class="mt-1 text-sm text-slate-600 sm:text-base dark:text-slate-300"
+              >
+                {{ ad()!.position?.address }} • {{ ad()!.city }}
+              </p>
+
+              @if (ad()?.proximityTags?.length) {
+                <div class="mt-3 flex flex-wrap gap-2">
+                  @for (t of ad()!.proximityTags; track t) {
+                    <span class="chip">{{ mapTag(t) }}</span>
                   }
                 </div>
-                <span class="chip">{{ o.status }}</span>
-              </div>
+              }
             </div>
+
+            <!-- quick stats -->
+            <div class="grid min-w-[220px] grid-cols-2 gap-2 text-sm">
+              @if (ad()!.surface != null) {
+                <div class="rounded-xl border p-3 dark:border-slate-700">
+                  <div class="text-xs text-slate-500 dark:text-slate-400">
+                    Superficie
+                  </div>
+                  <div class="font-semibold">{{ ad()!.surface }} m²</div>
+                </div>
+              }
+              @if (ad()!.rooms != null) {
+                <div class="rounded-xl border p-3 dark:border-slate-700">
+                  <div class="text-xs text-slate-500 dark:text-slate-400">
+                    Stanze
+                  </div>
+                  <div class="font-semibold">{{ ad()!.rooms }}</div>
+                </div>
+              }
+              @if (ad()!.floor != null) {
+                <div class="rounded-xl border p-3 dark:border-slate-700">
+                  <div class="text-xs text-slate-500 dark:text-slate-400">
+                    Piano
+                  </div>
+                  <div class="font-semibold">{{ ad()!.floor }}</div>
+                </div>
+              }
+              @if (ad()!.energyClass) {
+                <div class="rounded-xl border p-3 dark:border-slate-700">
+                  <div class="text-xs text-slate-500 dark:text-slate-400">
+                    Classe energetica
+                  </div>
+                  <div class="font-semibold">{{ ad()!.energyClass }}</div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- extra details -->
+          <div class="mt-5 grid gap-3 text-sm sm:grid-cols-2">
+            @if (ad()!.type) {
+              <div class="rounded-xl border p-3 dark:border-slate-700">
+                <span class="text-slate-500 dark:text-slate-400"
+                  >Tipologia</span
+                >
+                <div class="font-medium">{{ ad()!.type }}</div>
+              </div>
             }
           </div>
+        </article>
+
+        <!-- Utilities -->
+        <section class="rounded-2xl border p-5 dark:border-slate-700">
+          <div class="flex items-center justify-between">
+            <h3 class="font-semibold text-slate-900 dark:text-white">
+              Utility
+            </h3>
+            <span class="text-xs text-slate-500 dark:text-slate-400">
+              {{ ad()?.utilities?.length || 0 }} voci
+            </span>
+          </div>
+
+          @if (ad()?.utilities?.length) {
+            <div class="mt-3 flex flex-col items-start justify-center gap-4">
+              @for (u of ad()!.utilities!; track u) {
+                @if (u === "Aria condizionata") {
+                  <div class="flex items-center justify-center gap-2">
+                    <svg
+                      fill="currentColor"
+                      width="800px"
+                      height="800px"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="size-6 text-black dark:text-white"
+                    >
+                      <path
+                        d="M21,3H3A2,2,0,0,0,1,5v7a2,2,0,0,0,2,2H21a2,2,0,0,0,2-2V5A2,2,0,0,0,21,3Zm0,9H3V5H21ZM5,10A1,1,0,0,1,6,9H18a1,1,0,0,1,0,2H6A1,1,0,0,1,5,10ZM16,7a1,1,0,0,1,1-1h1a1,1,0,0,1,0,2H17A1,1,0,0,1,16,7ZM9.793,20.293,11.086,19l-.293-.293a1,1,0,0,1,0-1.414l2-2a1,1,0,0,1,1.414,1.414L12.914,18l.293.293a1,1,0,0,1,0,1.414l-2,2a1,1,0,0,1-1.414-1.414Zm5.5,0L16.586,19l-.293-.293a1,1,0,0,1,0-1.414l2-2a1,1,0,0,1,1.414,1.414L18.414,18l.293.293a1,1,0,0,1,0,1.414l-2,2a1,1,0,0,1-1.414-1.414Zm-11,0L5.586,19l-.293-.293a1,1,0,0,1,0-1.414l2-2a1,1,0,0,1,1.414,1.414L7.414,18l.293.293a1,1,0,0,1,0,1.414l-2,2a1,1,0,0,1-1.414-1.414Z"
+                      />
+                    </svg>
+                    <h3
+                      class="text-sm font-semibold text-black dark:text-white"
+                    >
+                      {{ u }}
+                    </h3>
+                  </div>
+                } @else if (u === "Portineria") {
+                  <div class="flex items-center justify-center gap-2">
+                    <svg
+                      fill="currentColor"
+                      width="800px"
+                      height="800px"
+                      viewBox="0 0 512 512"
+                      id="Layer_1"
+                      enable-background="new 0 0 512 512"
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="size-6 text-black dark:text-white"
+                    >
+                      <g>
+                        <circle cx="256" cy="376" r="16" />
+
+                        <circle cx="256" cy="440" r="16" />
+
+                        <path
+                          d="m496 480h-66.185l-18.904-128.324c-6.765-45.92-41.082-82.694-86.015-92.897 11.409-11.768 19.844-26.434 24.066-42.78h3.038c26.468 0 48-21.533 48-48 0-23.741-17.329-43.5-40-47.321 0-3.98 0-101.574 0-104.679 0-8.836-7.163-16-16-16h-176c-8.837 0-16 7.164-16 16v104.679c-22.671 3.821-40 23.58-40 47.321 0 26.467 21.532 48 48 48h3.038c4.209 16.293 12.602 30.918 23.956 42.666-45.606 10.125-80.027 47.432-86.606 93.494l-18.264 127.841h-66.124c-8.837 0-16 7.164-16 16s7.163 16 16 16h480c8.837 0 16-7.164 16-16s-7.163-16-16-16zm-116.747-123.66 18.217 123.66h-173.47v-127.437l40.875-27.25c4.451-2.968 7.125-7.963 7.125-13.313v-24h28.106c39.381 0 73.407 29.38 79.147 68.34zm-80.152-204.34h-86.201c-14.266 0-26.149-10.39-28.484-24h143.17c-2.336 13.61-14.22 24-28.485 24zm-107.101 28.305c6.521 2.39 13.561 3.695 20.899 3.695h86.201c7.339 0 14.378-1.305 20.899-3.695v11.695c0 35.29-28.71 64-64 64s-64-28.71-64-64v-11.695zm176-12.305c0 8.822-7.178 16-16 16 0-34.41-.289-30.189.675-31.966 8.508.358 15.325 7.372 15.325 15.966zm-184-136h144v64h-144zm-40 136c0-8.594 6.817-15.608 15.325-15.966.966 1.782.675-2.444.675 31.966-8.822 0-16-7.178-16-16zm-11.936 188.686c5.594-39.158 39.641-68.686 79.197-68.686h28.739v15.437l-40.875 27.25c-4.451 2.968-7.125 7.963-7.125 13.313v136h-77.552z"
+                        />
+                      </g>
+                    </svg>
+                    <h3
+                      class="text-sm font-semibold text-black dark:text-white"
+                    >
+                      {{ u }}
+                    </h3>
+                  </div>
+                } @else if (u === "Ascensore") {
+                  <div class="flex items-center justify-center gap-2">
+                    <svg
+                      fill="currentColor"
+                      width="800px"
+                      height="800px"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="size-6 text-black dark:text-white"
+                    >
+                      <path
+                        d="M2 22h15V2H2zm14-1h-6V3h6zM3 3h6v18H3zm15.625 10h3.75L20.5 16zm3.75-2h-3.75L20.5 8z"
+                      />
+                      <path fill="none" d="M0 0h24v24H0z" />
+                    </svg>
+                    <h3
+                      class="text-sm font-semibold text-black dark:text-white"
+                    >
+                      {{ u }}
+                    </h3>
+                  </div>
+                } @else if (u === "nearSchool") {
+                  <div class="flex items-center justify-center gap-2">
+                    <svg
+                      fill="currentColor"
+                      width="800px"
+                      height="800px"
+                      viewBox="0 0 32 32"
+                      version="1.1"
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="size-6 text-black dark:text-white"
+                    >
+                      <title>books</title>
+                      <path
+                        d="M30.639 26.361l-6.211-23.183c-0.384-1.398-1.644-2.408-3.139-2.408-0.299 0-0.589 0.040-0.864 0.116l0.023-0.005-2.896 0.776c-0.23 0.065-0.429 0.145-0.618 0.243l0.018-0.008c-0.594-0.698-1.472-1.14-2.453-1.143h-2.999c-0.76 0.003-1.457 0.27-2.006 0.713l0.006-0.005c-0.543-0.438-1.24-0.705-1.999-0.708h-3.001c-1.794 0.002-3.248 1.456-3.25 3.25v24c0.002 1.794 1.456 3.248 3.25 3.25h3c0.76-0.003 1.457-0.269 2.006-0.712l-0.006 0.005c0.543 0.438 1.24 0.704 1.999 0.708h2.999c1.794-0.002 3.248-1.456 3.25-3.25v-13.053l3.717 13.873c0.382 1.398 1.641 2.408 3.136 2.408 0.3 0 0.59-0.041 0.866-0.117l-0.023 0.005 2.898-0.775c1.398-0.386 2.407-1.646 2.407-3.141 0-0.298-0.040-0.587-0.115-0.862l0.005 0.023zM19.026 10.061l4.346-1.165 3.494 13.042-4.345 1.164zM18.199 4.072l2.895-0.775c0.056-0.015 0.121-0.023 0.188-0.023 0.346 0 0.639 0.231 0.731 0.547l0.001 0.005 0.712 2.656-4.346 1.165-0.632-2.357v-0.848c0.094-0.179 0.254-0.312 0.446-0.37l0.005-0.001zM11.5 3.25h2.998c0.412 0.006 0.744 0.338 0.75 0.749v2.75l-4.498 0.001v-2.75c0.006-0.412 0.338-0.744 0.749-0.75h0.001zM8.25 22.75h-4.5v-13.5l4.5-0.001zM10.75 9.25l4.498-0.001v13.501h-4.498zM4.5 3.25h3c0.412 0.006 0.744 0.338 0.75 0.749v2.75l-4.5 0.001v-2.75c0.006-0.412 0.338-0.744 0.749-0.75h0.001zM7.5 28.75h-3c-0.412-0.006-0.744-0.338-0.75-0.749v-2.751h4.5v2.75c-0.006 0.412-0.338 0.744-0.749 0.75h-0.001zM14.498 28.75h-2.998c-0.412-0.006-0.744-0.338-0.75-0.749v-2.751h4.498v2.75c-0.006 0.412-0.338 0.744-0.749 0.75h-0.001zM27.693 27.928l-2.896 0.775c-0.057 0.015-0.122 0.024-0.189 0.024-0.139 0-0.269-0.037-0.381-0.102l0.004 0.002c-0.171-0.099-0.298-0.259-0.35-0.45l-0.001-0.005-0.711-2.655 4.345-1.164 0.712 2.657c0.015 0.056 0.023 0.12 0.023 0.186 0 0.347-0.232 0.639-0.549 0.73l-0.005 0.001z"
+                      ></path>
+                    </svg>
+                    <h3
+                      class="text-sm font-semibold text-black dark:text-white"
+                    >
+                      Vicino a scuole
+                    </h3>
+                  </div>
+                } @else if (u === "nearPublicTransport") {
+                  <div class="flex items-center justify-center gap-2">
+                    <svg
+                      fill="currentColor"
+                      height="800px"
+                      width="800px"
+                      version="1.1"
+                      id="Icons"
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
+                      viewBox="0 0 32 32"
+                      xml:space="preserve"
+                      class="size-6 text-black dark:text-white"
+                    >
+                      <path
+                        d="M21,5h-2.1l2-3.5C21.1,1,21,0.4,20.5,0.1C20-0.1,19.4,0,19.1,0.5L16.6,5h-1.7l2-3.5C17.1,1,17,0.4,16.5,0.1
+	C16-0.1,15.4,0,15.1,0.5L12.6,5H11c-2.8,0-5,2.2-5,5v9v6c0,0.9,0.4,1.7,1,2.2V29c0,1.7,1.3,3,3,3s3-1.3,3-3v-1h6v1c0,1.7,1.3,3,3,3
+	s3-1.3,3-3v-1.8c0.6-0.5,1-1.3,1-2.2v-6v-9C26,7.2,23.8,5,21,5z M13,24h-3c-0.6,0-1-0.4-1-1s0.4-1,1-1h3c0.6,0,1,0.4,1,1
+	S13.6,24,13,24z M22,24h-3c-0.6,0-1-0.4-1-1s0.4-1,1-1h3c0.6,0,1,0.4,1,1S22.6,24,22,24z M24,18H8v-7h16V18z"
+                      />
+                    </svg>
+                    <h3
+                      class="text-sm font-semibold text-black dark:text-white"
+                    >
+                      Vicino a trasporto pubblico
+                    </h3>
+                  </div>
+                } @else if (u === "nearPark") {
+                  <div class="flex items-center justify-center gap-2">
+                    <svg
+                      fill="currentColor"
+                      height="800px"
+                      width="800px"
+                      version="1.1"
+                      id="Layer_1"
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
+                      viewBox="0 0 512 512"
+                      xml:space="preserve"
+                      class="size-6 text-black dark:text-white"
+                    >
+                      <g>
+                        <g>
+                          <path
+                            d="M495.304,478.609h-26.45l-49.826-50.087l49.826-50.087h26.45c9.22,0,16.696-7.475,16.696-16.696
+			s-7.475-16.696-16.696-16.696c-8.669,0-191.4,0-200.348,0c-9.22,0-16.696,7.475-16.696,16.696s7.475,16.696,16.696,16.696h27.146
+			l49.826,50.087l-49.826,50.087h-88.363v-145.94c5.505,0.815,11.081,1.244,16.696,1.244c64.442,0,116.87-52.428,116.87-116.87
+			c0-45.193-26.416-86.026-66.889-105.201C297.775,49.723,246.411,0,183.652,0C121.05,0,69.791,49.476,66.915,111.378
+			C26.812,130.341,0,171.898,0,217.043c0,64.442,52.428,116.87,116.87,116.87c5.614,0,11.191-0.431,16.696-1.244v145.94H16.696
+			C7.475,478.609,0,486.084,0,495.304S7.475,512,16.696,512c12.215,0,473.334,0,478.609,0c9.22,0,16.696-7.475,16.696-16.696
+			S504.525,478.609,495.304,478.609z M116.87,300.522c-46.03,0-83.478-37.448-83.478-83.478c0-46.197,38.626-83.478,83.478-83.478
+			c11.276,0,22.207,2.204,32.489,6.554c8.494,3.593,18.288-0.382,21.88-8.874c3.592-8.492-0.382-18.289-8.874-21.88
+			c-14.419-6.098-29.726-9.19-45.495-9.19c-5.117,0-10.184,0.332-15.19,0.979c7.376-38.538,41.316-67.762,81.972-67.762
+			c45.999,0,83.428,37.402,83.478,83.388c-0.091,1.113-0.419,2.516-0.569,5.042c-0.446,7.457,4.117,14.305,11.173,16.764
+			c33.602,11.707,56.179,43.237,56.179,78.458c0,46.03-37.448,83.478-83.478,83.478c-20.321,0-40.07-7.709-55.608-21.707
+			c-6.351-5.721-15.998-5.722-22.349,0C156.939,292.813,137.19,300.522,116.87,300.522z M200.348,478.609h-33.391V322.365
+			c5.788-2.797,11.378-6.065,16.696-9.816c5.318,3.751,10.908,7.019,16.696,9.816V478.609z M369.202,378.435h52.552l-26.276,26.414
+			L369.202,378.435z M369.202,478.609l26.276-26.414l26.277,26.414H369.202z"
+                          />
+                        </g>
+                      </g>
+                    </svg>
+                    <h3
+                      class="text-sm font-semibold text-black dark:text-white"
+                    >
+                      Vicino a parchi
+                    </h3>
+                  </div>
+                }
+              }
+            </div>
+          } @else {
+            <p class="mt-3 text-sm text-slate-500">
+              Nessuna utility specificata.
+            </p>
           }
-        </div>
-      </section>
-    </aside>
-  </div>
+        </section>
+
+        <!-- Description -->
+        @if (ad()!.description) {
+          <section class="rounded-2xl border p-5 dark:border-slate-700">
+            <h3 class="mb-2 font-semibold text-slate-900 dark:text-white">
+              Descrizione
+            </h3>
+            <p
+              class="leading-relaxed whitespace-pre-line text-slate-700 dark:text-slate-200"
+            >
+              {{ ad()!.description }}
+            </p>
+          </section>
+        }
+      </div>
+
+      <!-- RIGHT / SIDEBAR -->
+      <aside class="space-y-6 lg:sticky lg:top-6 lg:space-y-8 lg:self-start">
+        <!-- Price -->
+        <section
+          class="rounded-2xl border bg-white/70 p-5 backdrop-blur dark:border-slate-700 dark:bg-slate-900/25"
+        >
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <div
+                class="text-xs tracking-wide text-slate-500 uppercase dark:text-slate-400"
+              >
+                Prezzo
+              </div>
+              <div
+                class="mt-1 text-2xl font-extrabold text-slate-900 dark:text-white"
+              >
+                @if (ad()!.price != null) {
+                  € {{ ad()!.price | number: "1.0-0" }}
+                } @else {
+                  Prezzo su richiesta
+                }
+              </div>
+
+              @if (ad()!.agent) {
+                <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
+                  Agente: {{ ad()!.agent!.email || "—" }}
+                </p>
+              }
+            </div>
+          </div>
+        </section>
+
+        <section class="rounded-2xl border p-5 dark:border-slate-700">
+          <div class="mb-3 flex items-center justify-between">
+            <h3 class="font-semibold text-slate-900 dark:text-white">
+              Fai un’offerta
+            </h3>
+          </div>
+
+          <app-offer-form
+            [realEstateId]="ad()!.realEstateId"
+            [isLoggedIn]="isLogged()"
+            (loginRequired)="goLogin()"
+            (success)="onOfferSuccess()"
+          />
+        </section>
+
+        <section class="rounded-2xl border p-5 dark:border-slate-700">
+          <div class="mb-3 flex items-center justify-between">
+            <h3 class="font-semibold text-slate-900 dark:text-white">
+              Prenota una visita
+            </h3>
+          </div>
+
+          <app-visit-form
+            [realEstateId]="ad()!.realEstateId"
+            [isLoggedIn]="isLogged()"
+            (loginRequired)="goLogin()"
+            (success)="onVisitSuccess()"
+          />
+        </section>
+
+        <!-- Agent -->
+        @if (ad()!.agent) {
+          <section class="rounded-2xl border p-5 text-sm dark:border-slate-700">
+            <h3 class="mb-2 font-semibold text-slate-900 dark:text-white">
+              Contatta l’agente
+            </h3>
+            @if (ad()!.agent!.email) {
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-slate-600 dark:text-slate-300">Email</span>
+                <a class="underline" [href]="'mailto:' + ad()!.agent!.email">{{
+                  ad()!.agent!.email
+                }}</a>
+              </div>
+            }
+          </section>
+        }
+
+        <!-- Offers -->
+        <section
+          class="overflow-hidden rounded-2xl border dark:border-slate-700"
+        >
+          <div
+            class="border-b bg-white/70 px-5 py-4 backdrop-blur dark:border-slate-700 dark:bg-slate-900/70"
+          >
+            <h3 class="font-semibold text-slate-900 dark:text-white">
+              Le tue offerte
+            </h3>
+            <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+              Storico offerte per questo immobile
+            </p>
+          </div>
+
+          <div class="max-h-80 overflow-y-auto px-5 py-4">
+            @if (myOffersLoading()) {
+              <p class="text-sm text-slate-500">Caricamento…</p>
+            } @else if (myOffers().length === 0) {
+              <p class="text-sm text-slate-500">
+                Non hai ancora effettuato offerte.
+              </p>
+            } @else {
+              <div class="grid gap-3">
+                @for (o of myOffers(); track o.id) {
+                  <div class="rounded-xl border p-4 dark:border-slate-700">
+                    <div class="flex items-start justify-between gap-3">
+                      <div>
+                        <div
+                          class="font-semibold text-slate-900 dark:text-white"
+                        >
+                          € {{ o.amount | number: "1.0-0" }}
+                        </div>
+                        @if (o.createdAt) {
+                          <div
+                            class="mt-0.5 text-xs text-slate-500 dark:text-slate-400"
+                          >
+                            {{ o.createdAt | date: "short" }}
+                          </div>
+                        }
+                      </div>
+                      <span class="chip">{{ o.status }}</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </section>
+      </aside>
+    </div>
   }
 </section>
