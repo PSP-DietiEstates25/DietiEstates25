@@ -18,7 +18,7 @@ import com.dietiestates.resource_server.service.OfferService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/realestates/{realestateid}/offers")
+@RequestMapping("/offers")
 @RequiredArgsConstructor
 @Validated
 public class OfferController {
@@ -29,7 +29,7 @@ public class OfferController {
     @PreAuthorize("hasAnyAuthority('USER', 'ESTATE_AGENT')")
     public ResponseEntity<OfferResponse> createOffer(
             @RequestBody OfferRequest request,
-            @PathVariable Long realestateid,
+            @RequestParam Long realestateid,
             @AuthenticationPrincipal Jwt jwt,
             Authentication authentication
     ){
@@ -46,19 +46,20 @@ public class OfferController {
 
     @GetMapping("/{offerid}")
     public ResponseEntity<OfferResponse> getOfferById(
-            @PathVariable("realestateid") Long realEstateId,
+            @RequestParam Long realestateid,
             @PathVariable Long offerid
     ) {
-        var offer = offerService.getOfferById(realEstateId, offerid);
+        var offer = offerService.getOfferById(realestateid, offerid);
         return ResponseEntity.status(HttpStatus.OK).body(offer);
     }
 
+    //può ritornare a seconda della presenza di ?realestateid le offerte paginate del realestate o dell'utente o dell'agente
     @GetMapping
     @PreAuthorize("hasAnyAuthority('USER', 'ESTATE_AGENT')")
-    public ResponseEntity<Page<OfferResponse>> getRealEstateOffers(
-            @PathVariable Long realestateid,
-            @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "5") Integer size,
+    public ResponseEntity<Page<OfferResponse>> getOffers(
+            @RequestParam(required = false) Long realestateid,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "5") Integer size,
             @AuthenticationPrincipal Jwt jwt,
             Authentication authentication
     ) {
@@ -69,8 +70,12 @@ public class OfferController {
                 .filter(authority -> authority.equals("USER") || authority.equals("ESTATE_AGENT"))
                 .findFirst().get().toString();
 
-        System.out.println("======================================ROLE: " + creatorRole + "===================================================");
-        var offers = offerService.getRealEstateOffers(realestateid, creatorEmail, creatorRole, page, size);
+        if(realestateid != null){
+            var offers = offerService.getRealEstateOffers(realestateid, creatorEmail, creatorRole, page, size);
+            return ResponseEntity.status(HttpStatus.OK).body(offers);
+        }
+
+        var offers = offerService.getOffers(creatorEmail, creatorRole, page, size);
         return ResponseEntity.status(HttpStatus.OK).body(offers);
     }
 
@@ -78,7 +83,7 @@ public class OfferController {
     @PreAuthorize("hasAuthority('ESTATE_AGENT')")
     public ResponseEntity<OfferResponse> updateOfferStatus(
             @RequestBody OfferRequest request,
-            @PathVariable Long realestateid,
+            @RequestParam Long realestateid,
             @PathVariable Long offerid
     ) {
         var offer = offerService.updateOfferStatus(request, realestateid, offerid);

@@ -25,7 +25,6 @@ export class RecentSearchesComponent {
   constructor() {
     effect(() => {
       this.savedSearches = computed(() => this.facade.savedSearches());
-      console.log(this.savedSearches());
     });
   }
 

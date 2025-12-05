@@ -27,7 +27,7 @@ export class OffersPaginatorComponent {
 
   constructor() {
     effect(() => {
-      this.offersRequest = this.offerPaginatorService.offerPaginatorRequest();
+      this.offersRequest = this.offerPaginatorService.offerRequest();
       this.page = this.offerPaginatorService.page();
       this.totalPages = this.offerPaginatorService.totalPagesNumber();
       this.displayedPages = this.getVisiblePages(

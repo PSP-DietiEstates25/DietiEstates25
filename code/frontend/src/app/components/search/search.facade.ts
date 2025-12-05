@@ -330,7 +330,7 @@ export class SearchFacade {
 
   fetchUserSearches(request: SearchPaginatorRequest) {
     const params = {
-      page: request.page,
+      page: request.page - 1,
       size: request.size,
     };
     return this.searchService.getUserSearches(params).pipe(

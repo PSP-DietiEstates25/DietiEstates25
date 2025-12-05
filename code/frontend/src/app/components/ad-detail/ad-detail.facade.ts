@@ -348,7 +348,7 @@ export class AdDetailFacade {
     this.myOffersLoading.set(true);
 
     this.offerService
-      .getRealEstateOffers({
+      .getOffers({
         realestateid: realEstateId,
         page: 0,
         size: 100,

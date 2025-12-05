@@ -288,20 +288,20 @@ spring:
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 
-            #POST,GET /realestates/{realestateid}/offers
+            #POST,GET /offers
             - id: resource_server_realestate_offers
               uri: http://localhost:8090
               predicates:
-                - Path=/realestates/{realestateid}/offers
+                - Path=/offers
                 - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 
-            #GET,PATCH /realestates/{realestateid}/offers/{offerid}
+            #GET,PATCH /offers/{offerid}
             - id: resource_server_get_patch_offer_by_id
               uri: http://localhost:8090
               predicates:
-                - Path=/realestates/{realestateid}/offers/{offerid}
+                - Path=/offers/{offerid}
                 - Method=GET,PATCH
               filters:
                 - RelayTokenIfExists=messaging-client-oidc

@@ -15,8 +15,8 @@ import { createOffer } from '../fn/offer-controller/create-offer';
 import { CreateOffer$Params } from '../fn/offer-controller/create-offer';
 import { getOfferById } from '../fn/offer-controller/get-offer-by-id';
 import { GetOfferById$Params } from '../fn/offer-controller/get-offer-by-id';
-import { getRealEstateOffers } from '../fn/offer-controller/get-real-estate-offers';
-import { GetRealEstateOffers$Params } from '../fn/offer-controller/get-real-estate-offers';
+import { getOffers } from '../fn/offer-controller/get-offers';
+import { GetOffers$Params } from '../fn/offer-controller/get-offers';
 import { OfferResponse } from '../models/offer-response';
 import { PageOfferResponse } from '../models/page-offer-response';
 import { updateOfferStatus } from '../fn/offer-controller/update-offer-status';
@@ -28,33 +28,33 @@ export class OfferControllerService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `getRealEstateOffers()` */
-  static readonly GetRealEstateOffersPath = '/realestates/{realestateid}/offers';
+  /** Path part for operation `getOffers()` */
+  static readonly GetOffersPath = '/offers';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getRealEstateOffers()` instead.
+   * To access only the response body, use `getOffers()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getRealEstateOffers$Response(params: GetRealEstateOffers$Params, context?: HttpContext): Observable<StrictHttpResponse<PageOfferResponse>> {
-    return getRealEstateOffers(this.http, this.rootUrl, params, context);
+  getOffers$Response(params?: GetOffers$Params, context?: HttpContext): Observable<StrictHttpResponse<PageOfferResponse>> {
+    return getOffers(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getRealEstateOffers$Response()` instead.
+   * To access the full response (for headers, for example), `getOffers$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getRealEstateOffers(params: GetRealEstateOffers$Params, context?: HttpContext): Observable<PageOfferResponse> {
-    return this.getRealEstateOffers$Response(params, context).pipe(
+  getOffers(params?: GetOffers$Params, context?: HttpContext): Observable<PageOfferResponse> {
+    return this.getOffers$Response(params, context).pipe(
       map((r: StrictHttpResponse<PageOfferResponse>): PageOfferResponse => r.body)
     );
   }
 
   /** Path part for operation `createOffer()` */
-  static readonly CreateOfferPath = '/realestates/{realestateid}/offers';
+  static readonly CreateOfferPath = '/offers';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -79,7 +79,7 @@ export class OfferControllerService extends BaseService {
   }
 
   /** Path part for operation `getOfferById()` */
-  static readonly GetOfferByIdPath = '/realestates/{realestateid}/offers/{offerid}';
+  static readonly GetOfferByIdPath = '/offers/{offerid}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -104,7 +104,7 @@ export class OfferControllerService extends BaseService {
   }
 
   /** Path part for operation `updateOfferStatus()` */
-  static readonly UpdateOfferStatusPath = '/realestates/{realestateid}/offers/{offerid}';
+  static readonly UpdateOfferStatusPath = '/offers/{offerid}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.

@@ -122,6 +122,29 @@ public class OfferServiceDefaultImpl implements OfferService {
     }
 
     @Override
+    public Page<OfferResponse> getOffers(String creatorEmail, String creatorRole, Integer page, Integer size) {
+        if(creatorRole.equals("USER"))
+            return this.getAllUserOffers(creatorEmail, page, size);
+        else return this.getAllEstateAgentOffers(creatorEmail, page, size);
+    }
+
+    @Override
+    public Page<OfferResponse> getAllUserOffers(String userEmail, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        var user = userFinder.getUserByEmail(userEmail);
+        var offers = offerFinder.getAllUserOffers(user.getId(), pageable);
+        return offerMapper.createPagedOffersResponse(offers);
+    }
+
+    @Override
+    public Page<OfferResponse> getAllEstateAgentOffers(String estateAgentEmail, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        var estateAgent = estateAgentFinder.getEstateAgentByEmail(estateAgentEmail);
+        var offers = offerFinder.getAllEstateAgentOffers(estateAgent.getId(), pageable);
+        return offerMapper.createPagedOffersResponse(offers);
+    }
+
+    @Override
     public OfferResponse updateOfferStatus(OfferRequest request, Long realEstateId, Long offerId) {
 
         offerVerifier.checkOfferOwnedByRealEstate(offerId, realEstateId);

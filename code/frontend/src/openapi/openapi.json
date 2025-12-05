@@ -762,15 +762,15 @@
         }
       }
     },
-    "/realestates/{realestateid}/offers": {
+    "/offers": {
       "get": {
         "tags": ["offer-controller"],
-        "operationId": "getRealEstateOffers",
+        "operationId": "getOffers",
         "parameters": [
           {
             "name": "realestateid",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -816,7 +816,7 @@
         "parameters": [
           {
             "name": "realestateid",
-            "in": "path",
+            "in": "query",
             "required": true,
             "schema": {
               "type": "integer",
@@ -1348,14 +1348,14 @@
         }
       }
     },
-    "/realestates/{realestateid}/offers/{offerid}": {
+    "/offers/{offerid}": {
       "get": {
         "tags": ["offer-controller"],
         "operationId": "getOfferById",
         "parameters": [
           {
             "name": "realestateid",
-            "in": "path",
+            "in": "query",
             "required": true,
             "schema": {
               "type": "integer",
@@ -1391,7 +1391,7 @@
         "parameters": [
           {
             "name": "realestateid",
-            "in": "path",
+            "in": "query",
             "required": true,
             "schema": {
               "type": "integer",

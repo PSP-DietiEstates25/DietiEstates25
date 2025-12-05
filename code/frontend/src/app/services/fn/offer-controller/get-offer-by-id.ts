@@ -18,7 +18,7 @@ export interface GetOfferById$Params {
 export function getOfferById(http: HttpClient, rootUrl: string, params: GetOfferById$Params, context?: HttpContext): Observable<StrictHttpResponse<OfferResponse>> {
   const rb = new RequestBuilder(rootUrl, getOfferById.PATH, 'get');
   if (params) {
-    rb.path('realestateid', params.realestateid, {});
+    rb.query('realestateid', params.realestateid, {});
     rb.path('offerid', params.offerid, {});
   }
 
@@ -32,4 +32,4 @@ export function getOfferById(http: HttpClient, rootUrl: string, params: GetOffer
   );
 }
 
-getOfferById.PATH = '/realestates/{realestateid}/offers/{offerid}';
+getOfferById.PATH = '/offers/{offerid}';

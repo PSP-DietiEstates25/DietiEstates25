@@ -16,7 +16,7 @@ export class OffersPaginatorService {
 
   size = computed(() => this._offerPaginatorRequest().size);
   page = computed(() => this._offerPaginatorRequest().page);
-  offerPaginatorRequest = computed(() => this._offerPaginatorRequest());
+  offerRequest = computed(() => this._offerPaginatorRequest());
   totalPagesNumber = computed(() => this._totalPagesNumber());
   searchPaginatorTracker = computed(() => this._offerPaginatorRefresher());
 

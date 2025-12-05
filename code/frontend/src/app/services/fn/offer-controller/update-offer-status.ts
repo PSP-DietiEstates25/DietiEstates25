@@ -20,7 +20,7 @@ export interface UpdateOfferStatus$Params {
 export function updateOfferStatus(http: HttpClient, rootUrl: string, params: UpdateOfferStatus$Params, context?: HttpContext): Observable<StrictHttpResponse<OfferResponse>> {
   const rb = new RequestBuilder(rootUrl, updateOfferStatus.PATH, 'patch');
   if (params) {
-    rb.path('realestateid', params.realestateid, {});
+    rb.query('realestateid', params.realestateid, {});
     rb.path('offerid', params.offerid, {});
     rb.body(params.body, 'application/json');
   }
@@ -35,4 +35,4 @@ export function updateOfferStatus(http: HttpClient, rootUrl: string, params: Upd
   );
 }
 
-updateOfferStatus.PATH = '/realestates/{realestateid}/offers/{offerid}';
+updateOfferStatus.PATH = '/offers/{offerid}';

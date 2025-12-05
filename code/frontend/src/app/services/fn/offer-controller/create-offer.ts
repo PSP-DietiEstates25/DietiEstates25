@@ -19,7 +19,7 @@ export interface CreateOffer$Params {
 export function createOffer(http: HttpClient, rootUrl: string, params: CreateOffer$Params, context?: HttpContext): Observable<StrictHttpResponse<OfferResponse>> {
   const rb = new RequestBuilder(rootUrl, createOffer.PATH, 'post');
   if (params) {
-    rb.path('realestateid', params.realestateid, {});
+    rb.query('realestateid', params.realestateid, {});
     rb.body(params.body, 'application/json');
   }
 
@@ -33,4 +33,4 @@ export function createOffer(http: HttpClient, rootUrl: string, params: CreateOff
   );
 }
 
-createOffer.PATH = '/realestates/{realestateid}/offers';
+createOffer.PATH = '/offers';

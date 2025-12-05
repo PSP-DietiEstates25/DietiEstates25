@@ -1,23 +1,30 @@
 package com.dietiestates.resource_server.finderdefaultimpl;
 
 import com.dietiestates.resource_server.exception.notfound.OfferNotFoundException;
-import com.dietiestates.resource_server.exception.notowned.OfferNotOwnedByRealEstateException;
+import com.dietiestates.resource_server.finder.EstateAgentFinder;
 import com.dietiestates.resource_server.finder.NegotiationFinder;
 import com.dietiestates.resource_server.finder.OfferFinder;
+import com.dietiestates.resource_server.finder.UserFinder;
 import com.dietiestates.resource_server.model.Negotiation;
 import com.dietiestates.resource_server.model.Offer;
 import com.dietiestates.resource_server.repository.OfferRepository;
-import com.dietiestates.resource_server.verifier.RealEstateVerifier;
+import com.dietiestates.resource_server.utils.PageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class OfferFinderDefaultImpl implements OfferFinder {
 
 	private final OfferRepository offerRepository;
+    private final UserFinder userFinder;
+    private final EstateAgentFinder estateAgentFinder;
+    private final PageUtils pageUtils;
     private final NegotiationFinder negotiationFinder;
 
 	@Override
@@ -38,4 +45,26 @@ public class OfferFinderDefaultImpl implements OfferFinder {
         return offerRepository.findByNegotiationId(negotiation.getId(), pageable);
     }
 
+    @Override
+    public Page<Offer> getAllUserOffers(Long userId, Pageable pageable){
+        List<Negotiation> allUserNegotiations = negotiationFinder.getAllUserNegotiations(userId);
+        List<Offer> allNegotiationsOffers = extractAllNegotiationsOffers(allUserNegotiations);
+        return PageUtils.toPage(allNegotiationsOffers, pageable);
+    }
+
+    @Override
+    public Page<Offer> getAllEstateAgentOffers(Long estateAgentId, Pageable pageable){
+        List<Negotiation> allEstateAgentNegotiations = negotiationFinder.getAllEstateAgentNegotiations(estateAgentId);
+        List<Offer> allNegotiationOffers = extractAllNegotiationsOffers(allEstateAgentNegotiations);
+        return PageUtils.toPage(allNegotiationOffers, pageable);
+    }
+
+    @Override
+    public List<Offer> extractAllNegotiationsOffers(List<Negotiation> negotiations){
+        var offers = new ArrayList<Offer>();
+        negotiations.forEach(negotiation -> {
+            offers.addAll(negotiation.getOffers());
+        });
+        return offers;
+    }
 }

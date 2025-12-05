@@ -12,4 +12,7 @@ public interface OfferFinder {
 	Offer getOfferById(Long id) throws OfferNotFoundException;
     Page<Offer> getRealEstateUserOffers(Long realEstateId, Long userId, Pageable pageable);
     Page<Offer> getRealEstateEstateAgentOffers(Long realEstateId, Long estateAgentId, Pageable pageable);
+    Page<Offer> getAllUserOffers(Long userId, Pageable pageable);
+    Page<Offer> getAllEstateAgentOffers(Long estateAgentId, Pageable pageable);
+    List<Offer> extractAllNegotiationsOffers(List<Negotiation> negotiations);
 }

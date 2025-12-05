@@ -7,7 +7,7 @@ import { RealEstateResponse } from '../../services/models/real-estate-response';
 import { OfferResponse } from '../../services/models/offer-response';
 import { PageOfferResponse } from '../../services/models/page-offer-response';
 import { PageRealEstateResponse } from '../../services/models/page-real-estate-response';
-import { Subject, from, of } from 'rxjs';
+import { Subject, forkJoin, from, of } from 'rxjs';
 import {
   catchError,
   finalize,
@@ -15,20 +15,20 @@ import {
   mergeMap,
   switchMap,
   takeUntil,
+  tap,
   toArray,
 } from 'rxjs/operators';
-
-export type OfferStatus =
-  | 'PENDING'
-  | 'ACCEPTED'
-  | 'REJECTED'
-  | 'COUNTERED'
-  | string;
+import { Status } from '../../enums/status.enum';
+import { AuthService } from '../../manual_services/auth/auth.service';
+import { Offer } from '../../services/models';
+import { PaginatorRequest } from '../../interfaces/paginator-request';
+import { NumberSymbol } from '@angular/common';
+import { FullOffer } from '../../interfaces/full-offer';
 
 export interface MyOfferVM {
   id: number;
   amount: number;
-  status: OfferStatus;
+  status: Status;
   createdAt: string | null;
 }
 
@@ -39,6 +39,71 @@ export interface OfferedRealEstateVM {
 
 @Injectable({ providedIn: 'root' })
 export class OffersFacade {
+  private offerService = inject(OfferControllerService);
+  private realEstateService = inject(RealEstateControllerService);
+  private authService = inject(AuthService);
+
+  loading = signal(false);
+  scanning = signal(false);
+  done = signal(false);
+  error = signal(false);
+
+  offers = signal<FullOffer[]>([]);
+
+  getOffers(request: PaginatorRequest) {
+    const params = {
+      size: request.size,
+      page: request.page - 1,
+    };
+    return this.offerService.getOffers(params);
+  }
+
+  fetchOffers(request: PaginatorRequest) {
+    const params = {
+      size: request.size,
+      page: request.page,
+    };
+    return this.getOffers(params).pipe(
+      switchMap((response) => {
+        const requests = response.content!.map((offer) => {
+          const counterOffer = offer.counterOfferId
+            ? this.offerService.getOfferById({
+                realestateid: offer.realEstateId!,
+                offerid: offer.counterOfferId!,
+              })
+            : of(null);
+
+          return forkJoin({
+            offer: of(offer),
+            counterOffer: counterOffer,
+          }).pipe(
+            map((result) => {
+              return {
+                ...result.offer,
+                counterOffer: result.counterOffer,
+              };
+            }),
+          );
+        });
+
+        return forkJoin(requests).pipe(
+          map((offerObservables) => {
+            return {
+              ...response,
+              fullOffers: offerObservables,
+            };
+          }),
+        );
+      }),
+      tap((fullOffersResponse) => {
+        const newOffers: FullOffer[] = fullOffersResponse.fullOffers.map(
+          (offer) => ({ ...offer }),
+        );
+        this.offers.set(newOffers);
+      }),
+    );
+  }
+  /*
   private realEstateService = inject(RealEstateControllerService);
   private offerService = inject(OfferControllerService);
 
@@ -193,4 +258,5 @@ export class OffersFacade {
         },
       });
   }
+  */
 }

@@ -18,12 +18,12 @@ import {
   take,
   switchMap,
 } from 'rxjs/operators';
-import { 
+import {
   PageRealEstateResponse,
   CadastralDataResponse,
   DetailResponse,
   GeographicalPositionResponse,
-  UtilityResponse
+  UtilityResponse,
 } from '../../services/models';
 import { environment } from '../../../environments/environment';
 
@@ -96,7 +96,9 @@ export class AgentDashboardFacade {
   private realEstateService = inject(RealEstateControllerService);
   private cadastralDataService = inject(CadastralDataControllerService);
   private detailService = inject(DetailControllerService);
-  private geographicalPositionService = inject(GeographicalPositionControllerService);
+  private geographicalPositionService = inject(
+    GeographicalPositionControllerService,
+  );
   private utilityService = inject(UtilityControllerService);
   private visitService = inject(VisitControllerService);
   private offerService = inject(OfferControllerService);
@@ -125,7 +127,8 @@ export class AgentDashboardFacade {
       realEstateId: Number(realEstateId),
       adTitle,
       requesterName,
-      requestedAt: visit?.requestedAt ?? visit?.createdAt ?? visit?.createdDate ?? null,
+      requestedAt:
+        visit?.requestedAt ?? visit?.createdAt ?? visit?.createdDate ?? null,
       preferredDate: visit?.preferredDate ?? visit?.date ?? null,
       status: (visit?.status ?? visit?.proposalStatus ?? 'PENDING') as any,
     };
@@ -133,7 +136,8 @@ export class AgentDashboardFacade {
 
   private toOfferVM(offer: any, parentRealEstateId?: number): OfferVM {
     const realEstate = offer?.realEstate ?? offer?.estate ?? null;
-    const realEstateId = offer?.realEstateId ?? parentRealEstateId ?? realEstate?.id ?? null;
+    const realEstateId =
+      offer?.realEstateId ?? parentRealEstateId ?? realEstate?.id ?? null;
     const title =
       offer?.adTitle ??
       realEstate?.title ??
@@ -156,16 +160,18 @@ export class AgentDashboardFacade {
     cadastralData: CadastralDataResponse | null,
     detail: DetailResponse | null,
     geographicalPosition: GeographicalPositionResponse | null,
-    utility: UtilityResponse | null
+    utility: UtilityResponse | null,
   ): AdVM {
-
     const title = realEstate?.description?.trim() || 'Annuncio';
     const city = geographicalPosition?.city as string;
     const municipality = geographicalPosition?.municipality as string;
     const price = cadastralData?.price as number;
     const createdAt = realEstate?.createdDate as string;
     const images = realEstate?.images ?? [];
-    const coverPath = realEstate?.images && realEstate.images.length > 0 ? realEstate.images[0] : null;
+    const coverPath =
+      realEstate?.images && realEstate.images.length > 0
+        ? realEstate.images[0]
+        : null;
     const coverSrc = coverPath ? `${environment.apiBaseUrl}${coverPath}` : null;
 
     return {
@@ -188,7 +194,8 @@ export class AgentDashboardFacade {
         if (!realEstates.length) return of([] as VisitVM[]);
         return forkJoin(
           realEstates.map((realEstate) =>
-            this.visitService.getRealEstateVisits({
+            this.visitService
+              .getRealEstateVisits({
                 realestateid: realEstate.id as number,
                 page: 0,
                 size: 100,
@@ -196,16 +203,22 @@ export class AgentDashboardFacade {
               .pipe(
                 catchError(() => of({ content: [] } as any)),
                 map((page) =>
-                  Array.isArray(page?.content) ? page.content : []
+                  Array.isArray(page?.content) ? page.content : [],
                 ),
-                map((visits) => visits.map((visit: any) => this.toVisitVM(visit)))
-              )
-          )
+                map((visits) =>
+                  visits.map((visit: any) => this.toVisitVM(visit)),
+                ),
+              ),
+          ),
         ).pipe(map((chunks) => chunks.flat()));
       }),
       tap((visits) => {
         const visitFilter = this.visitFilter();
-        this.visits.set(visitFilter ? visits.filter((visit) => visit.status === visitFilter) : visits);
+        this.visits.set(
+          visitFilter
+            ? visits.filter((visit) => visit.status === visitFilter)
+            : visits,
+        );
       }),
       catchError((error) => {
         console.error('[Facade] loadVisits error', error);
@@ -213,17 +226,22 @@ export class AgentDashboardFacade {
         return of(void 0);
       }),
       finalize(() => this.visitsLoading.set(false)),
-      map(() => void 0)
+      map(() => void 0),
     );
   }
 
   approveVisit(visit: VisitVM): Observable<void> {
     const prev = this.visits();
     this.visits.set(
-      prev.map((visitMap) => (visitMap.id === visit.id ? { ...visitMap, status: 'ACCEPTED' } : visitMap))
+      prev.map((visitMap) =>
+        visitMap.id === visit.id
+          ? { ...visitMap, status: 'ACCEPTED' }
+          : visitMap,
+      ),
     );
 
-    return this.visitService.updateVisitStatus({
+    return this.visitService
+      .updateVisitStatus({
         realestateid: visit.realEstateId,
         visitid: visit.id,
         body: { status: 'ACCEPTED' } as any,
@@ -234,17 +252,22 @@ export class AgentDashboardFacade {
           console.error('[Facade] approveVisit', error);
           this.visits.set(prev);
           return of(void 0);
-        })
+        }),
       );
   }
 
   declineVisit(visit: VisitVM): Observable<void> {
     const prev = this.visits();
     this.visits.set(
-      prev.map((visitMap) => (visitMap.id === visit.id ? { ...visitMap, status: 'REJECTED' } : visitMap))
+      prev.map((visitMap) =>
+        visitMap.id === visit.id
+          ? { ...visitMap, status: 'REJECTED' }
+          : visitMap,
+      ),
     );
 
-    return this.visitService.updateVisitStatus({
+    return this.visitService
+      .updateVisitStatus({
         realestateid: visit.realEstateId,
         visitid: visit.id,
         body: { status: 'REJECTED' } as any,
@@ -255,7 +278,7 @@ export class AgentDashboardFacade {
           console.error('[Facade] declineVisit', error);
           this.visits.set(prev);
           return of(void 0);
-        })
+        }),
       );
   }
 
@@ -266,19 +289,20 @@ export class AgentDashboardFacade {
       .getRealEstates({ page: 0, size: 5 }) // o getRealEstates$Json / $Response a seconda del generato
       .pipe(
         switchMap((pageResp: PageRealEstateResponse) => {
-
           const content = pageResp.content ?? [];
 
           if (!content.length) {
             this.ads.set([]);
             return of(void 0);
-          } 
+          }
 
-          const adStreams = content.map((reaalEstate) => this.buildAdVM(reaalEstate));
+          const adStreams = content.map((reaalEstate) =>
+            this.buildAdVM(reaalEstate),
+          );
 
           return forkJoin(adStreams).pipe(
             tap((ads) => this.ads.set(ads)),
-            map(() => void 0)
+            map(() => void 0),
           );
         }),
         catchError((err) => {
@@ -286,7 +310,7 @@ export class AgentDashboardFacade {
           this.ads.set([]);
           return of(void 0);
         }),
-        finalize(() => this.adsLoading.set(false))
+        finalize(() => this.adsLoading.set(false)),
       );
   }
 
@@ -305,19 +329,22 @@ export class AgentDashboardFacade {
           catchError((error) => {
             console.error('[Facade] deleteAd error (reload)', error);
             return of(void 0);
-          })
-        )
+          }),
+        ),
       ),
-      map(() => void 0)
+      map(() => void 0),
     );
   }
 
   updateAd(
     adId: number,
-    patch: Partial<{ description: string }>
+    patch: Partial<{ description: string }>,
   ): Observable<RealEstateResponse> {
     const body: any = { ...patch };
-    return this.realEstateService.updateRealEstate({ realestateid: adId, body })
+    return this.realEstateService.updateRealEstate({
+      realestateid: adId,
+      body,
+    });
     /*
     .pipe(
       switchMap(() => this.loadAds()),
@@ -338,7 +365,8 @@ export class AgentDashboardFacade {
         if (!realEstates.length) return of([] as OfferVM[]);
         return forkJoin(
           realEstates.map((realEstate) =>
-            this.offerService.getRealEstateOffers({
+            this.offerService
+              .getOffers({
                 realestateid: realEstate.id as number,
                 page: 0,
                 size: 100,
@@ -346,18 +374,24 @@ export class AgentDashboardFacade {
               .pipe(
                 catchError(() => of({ content: [] } as any)),
                 map((page) =>
-                  Array.isArray(page?.content) ? page.content : []
+                  Array.isArray(page?.content) ? page.content : [],
                 ),
                 map((offers) =>
-                  offers.map((offer: any) => this.toOfferVM(offer, realEstate.id as number))
-                )
-              )
-          )
+                  offers.map((offer: any) =>
+                    this.toOfferVM(offer, realEstate.id as number),
+                  ),
+                ),
+              ),
+          ),
         ).pipe(map((chunks) => chunks.flat()));
       }),
       tap((offers) => {
         const offerFilter = this.offerFilter();
-        this.offers.set(offerFilter ? offers.filter((offer) => offer.status === offerFilter) : offers);
+        this.offers.set(
+          offerFilter
+            ? offers.filter((offer) => offer.status === offerFilter)
+            : offers,
+        );
       }),
       catchError((error) => {
         console.error('[Facade] loadOffers error', error);
@@ -365,7 +399,7 @@ export class AgentDashboardFacade {
         return of(void 0);
       }),
       finalize(() => this.offersLoading.set(false)),
-      map(() => void 0)
+      map(() => void 0),
     );
   }
 
@@ -374,10 +408,15 @@ export class AgentDashboardFacade {
 
     const prev = this.offers();
     this.offers.set(
-      prev.map((offerMap) => (offerMap.id === offer.id ? { ...offerMap, status: 'ACCEPTED' } : offerMap))
+      prev.map((offerMap) =>
+        offerMap.id === offer.id
+          ? { ...offerMap, status: 'ACCEPTED' }
+          : offerMap,
+      ),
     );
 
-    return this.offerService.updateOfferStatus({
+    return this.offerService
+      .updateOfferStatus({
         realestateid: offer.realEstateId,
         offerid: offer.id,
         body: { status: 'ACCEPTED' } as any,
@@ -388,7 +427,7 @@ export class AgentDashboardFacade {
           console.error('[Facade] acceptOffer', error);
           this.offers.set(prev);
           return of(void 0);
-        })
+        }),
       );
   }
 
@@ -397,10 +436,15 @@ export class AgentDashboardFacade {
 
     const prev = this.offers();
     this.offers.set(
-      prev.map((offerMap) => (offerMap.id === offer.id ? { ...offerMap, status: 'REJECTED' } : offerMap))
+      prev.map((offerMap) =>
+        offerMap.id === offer.id
+          ? { ...offerMap, status: 'REJECTED' }
+          : offerMap,
+      ),
     );
 
-    return this.offerService.updateOfferStatus({
+    return this.offerService
+      .updateOfferStatus({
         realestateid: offer.realEstateId,
         offerid: offer.id,
         body: { status: 'REJECTED' } as any,
@@ -411,7 +455,7 @@ export class AgentDashboardFacade {
           console.error('[Facade] declineOffer', error);
           this.offers.set(prev);
           return of(void 0);
-        })
+        }),
       );
   }
 
@@ -430,7 +474,6 @@ export class AgentDashboardFacade {
   }
 
   createExternalOffer(): Observable<void> {
-
     const adId = this.addOfferForId();
     const amount = this.addOfferAmount();
     const email = (this.addOfferEmail() || '').trim();
@@ -456,7 +499,7 @@ export class AgentDashboardFacade {
       finalize(() => {
         this.addOfferLoading.set(false);
         this.cancelAddOffer();
-      })
+      }),
     );
   }
 
@@ -475,7 +518,6 @@ export class AgentDashboardFacade {
   }
 
   sendCounter(): Observable<void> {
-
     const offerId = this.counterId();
     const realEstateId = this.counterRealEstateId();
     const counterAmount = this.counterAmount();
@@ -491,8 +533,8 @@ export class AgentDashboardFacade {
       prev.map((offerMap) =>
         offerMap.id === offerId
           ? { ...offerMap, status: 'COUNTERED', amount: counterAmount }
-          : offerMap
-      )
+          : offerMap,
+      ),
     );
 
     const counterBody: OfferRequest = {
@@ -502,14 +544,15 @@ export class AgentDashboardFacade {
       counterOfId: offerId,
     };
 
-    return this.offerService.createOffer({ realestateid: realEstateId, body: counterBody })
+    return this.offerService
+      .createOffer({ realestateid: realEstateId, body: counterBody })
       .pipe(
         switchMap(() =>
           this.offerService.updateOfferStatus({
             realestateid: realEstateId,
             offerid: offerId,
             body: { status: 'COUNTERED' } as any,
-          })
+          }),
         ),
         switchMap(() => {
           this.cancelCounter();
@@ -519,55 +562,63 @@ export class AgentDashboardFacade {
           console.error('[Facade] sendCounter error', error);
           this.offers.set(prev);
           return of(void 0);
-        })
+        }),
       );
   }
 
-
   private buildAdVM(realEstateResponse: RealEstateResponse): Observable<AdVM> {
-
     const cadastralData = this.cadastralDataService.getCadastralDataById({
-      cadastraldataid: realEstateResponse.cadastralDataId as number
+      cadastraldataid: realEstateResponse.cadastralDataId as number,
     });
 
     const detail = this.detailService.getDetailById({
-      detailid: realEstateResponse.detailId as number 
-    })
+      detailid: realEstateResponse.detailId as number,
+    });
 
     return forkJoin({ cadastral: cadastralData, detail: detail }).pipe(
+      switchMap(
+        ({
+          cadastral: cadastralData,
+          detail: detail,
+        }): Observable<{
+          cadastralData: CadastralDataResponse;
+          detail: DetailResponse;
+          geographicalPosition: GeographicalPositionResponse;
+          utility: UtilityResponse;
+        }> => {
+          const geographicalPosition =
+            this.geographicalPositionService.getGeographicalPositionById({
+              geographicalpositionid: detail.geographicalPositionId as number,
+            });
 
-      switchMap(({ cadastral: cadastralData, detail: detail }): Observable<{
-        cadastralData: CadastralDataResponse;
-        detail: DetailResponse;
-        geographicalPosition: GeographicalPositionResponse;
-        utility: UtilityResponse;
-      }> => {
+          const utility = this.utilityService.getUtilityById({
+            utilityid: detail.utilityId as number,
+          });
 
-        const geographicalPosition = this.geographicalPositionService.getGeographicalPositionById({
-          geographicalpositionid: detail.geographicalPositionId as number
-        });
-
-        const utility = this.utilityService.getUtilityById({
-          utilityid: detail.utilityId as number
-        });
-
-        // forkJoin con tutte le info
-        return forkJoin({
-          cadastralData: of(cadastralData),
-          detail: of(detail),
-          geographicalPosition: geographicalPosition,
-          utility: utility,
-        });
-      }),
+          // forkJoin con tutte le info
+          return forkJoin({
+            cadastralData: of(cadastralData),
+            detail: of(detail),
+            geographicalPosition: geographicalPosition,
+            utility: utility,
+          });
+        },
+      ),
 
       map(({ cadastralData, detail, geographicalPosition, utility }) =>
-        this.toAdVM(realEstateResponse, cadastralData, detail, geographicalPosition, utility)
+        this.toAdVM(
+          realEstateResponse,
+          cadastralData,
+          detail,
+          geographicalPosition,
+          utility,
+        ),
       ),
 
       catchError((err) => {
         console.error('[AgentDashboardFacade] buildAdVM error', err);
         return of(this.toAdVM(realEstateResponse, null, null, null, null));
-      })
+      }),
     );
   }
 }

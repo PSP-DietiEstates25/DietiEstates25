@@ -10,16 +10,16 @@ import { RequestBuilder } from '../../request-builder';
 
 import { PageOfferResponse } from '../../models/page-offer-response';
 
-export interface GetRealEstateOffers$Params {
-  realestateid: number;
+export interface GetOffers$Params {
+  realestateid?: number;
   page?: number;
   size?: number;
 }
 
-export function getRealEstateOffers(http: HttpClient, rootUrl: string, params: GetRealEstateOffers$Params, context?: HttpContext): Observable<StrictHttpResponse<PageOfferResponse>> {
-  const rb = new RequestBuilder(rootUrl, getRealEstateOffers.PATH, 'get');
+export function getOffers(http: HttpClient, rootUrl: string, params?: GetOffers$Params, context?: HttpContext): Observable<StrictHttpResponse<PageOfferResponse>> {
+  const rb = new RequestBuilder(rootUrl, getOffers.PATH, 'get');
   if (params) {
-    rb.path('realestateid', params.realestateid, {});
+    rb.query('realestateid', params.realestateid, {});
     rb.query('page', params.page, {});
     rb.query('size', params.size, {});
   }
@@ -34,4 +34,4 @@ export function getRealEstateOffers(http: HttpClient, rootUrl: string, params: G
   );
 }
 
-getRealEstateOffers.PATH = '/realestates/{realestateid}/offers';
+getOffers.PATH = '/offers';
