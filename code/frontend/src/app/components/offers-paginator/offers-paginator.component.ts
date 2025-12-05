@@ -72,22 +72,22 @@ export class OffersPaginatorComponent {
   onPrev(event: Event) {
     event.preventDefault();
     if (this.page > 1) {
-      this.handleSearchPaginatorPageClick(this.page - 1);
+      this.handleOfferPaginatorPageClick(this.page - 1);
     }
   }
 
   onNext(event: Event) {
     event.preventDefault();
     if (this.page < this.totalPages) {
-      this.handleSearchPaginatorPageClick(this.page + 1);
+      this.handleOfferPaginatorPageClick(this.page + 1);
     }
   }
 
   handlePageNumberClick(newPage: number) {
-    this.handleSearchPaginatorPageClick(newPage);
+    this.handleOfferPaginatorPageClick(newPage);
   }
 
-  handleSearchPaginatorPageClick(newPage: number) {
+  handleOfferPaginatorPageClick(newPage: number) {
     this.offerPaginatorService.setPage(newPage);
     const params: Record<string, string> = {
       size: String(5),
