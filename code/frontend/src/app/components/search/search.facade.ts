@@ -96,6 +96,18 @@ export class SearchFacade {
       .subscribe();
   }
 
+  getCachedGeographicalPosition() {
+    return this._cachedGeographicalPosition();
+  }
+
+  getCachedUtility() {
+    return this._cachedUtility();
+  }
+
+  getCachedCadastralFilter() {
+    return this._cachedCadastralFilter();
+  }
+
   cacheFilters(
     geographicalPositionRequest: GeographicalPositionRequest,
     utilityRequest: UtilityRequest,

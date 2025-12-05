@@ -77,9 +77,9 @@ export class SearchLandingMapComponent
   query = '';
 
   ngOnInit(): void {
-    const cachedGeo = (this.facade as any)._getCachedGeographicalPosition();
-    this.cityName = cachedGeo?.city ?? '';
-    this.regionName = cachedGeo?.state ?? cachedGeo?.region ?? '';
+    const cachedGeo = this.facade.getCachedGeographicalPosition()!;
+    this.cityName = cachedGeo.city!;
+    this.regionName = (cachedGeo as any).state!;
   }
 
   ngAfterViewInit(): void {
@@ -359,9 +359,9 @@ export class SearchLandingMapComponent
 
     const geographicalPosition = (
       this.facade as any
-    )._getCachedGeographicalPosition();
-    const utility = (this.facade as any)._getCachedUtility();
-    const cadastralFilter = (this.facade as any)._getCachedCadastralFilter();
+    ).getCachedGeographicalPosition();
+    const utility = (this.facade as any).getCachedUtility();
+    const cadastralFilter = (this.facade as any).getCachedCadastralFilter();
 
     const updatedGeo = {
       ...geographicalPosition,
