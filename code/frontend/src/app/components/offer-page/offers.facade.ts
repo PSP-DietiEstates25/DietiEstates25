@@ -1,13 +1,29 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
-import { OfferControllerService, RealEstateControllerService } from '../../services/services';
+import {
+  OfferControllerService,
+  RealEstateControllerService,
+} from '../../services/services';
 import { RealEstateResponse } from '../../services/models/real-estate-response';
 import { OfferResponse } from '../../services/models/offer-response';
 import { PageOfferResponse } from '../../services/models/page-offer-response';
 import { PageRealEstateResponse } from '../../services/models/page-real-estate-response';
 import { Subject, from, of } from 'rxjs';
-import { catchError, finalize, map, mergeMap, switchMap, takeUntil, toArray } from 'rxjs/operators';
+import {
+  catchError,
+  finalize,
+  map,
+  mergeMap,
+  switchMap,
+  takeUntil,
+  toArray,
+} from 'rxjs/operators';
 
-export type OfferStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'COUNTERED' | string;
+export type OfferStatus =
+  | 'PENDING'
+  | 'ACCEPTED'
+  | 'REJECTED'
+  | 'COUNTERED'
+  | string;
 
 export interface MyOfferVM {
   id: number;
@@ -36,8 +52,8 @@ export class OffersFacade {
   readonly error = signal<string | null>(null);
 
   private scanPage = 0;
-  private readonly scanSize = 18;      
-  private readonly concurrency = 6;     
+  private readonly scanSize = 18;
+  private readonly concurrency = 6;
   readonly done = signal<boolean>(false);
 
   private cancel$ = new Subject<void>();
@@ -89,22 +105,6 @@ export class OffersFacade {
     this.ensurePage(this.pageIndex());
   }
 
-  prevPage() {
-    if (!this.canPrev()) return;
-    this.pageIndex.update((p) => Math.max(0, p - 1));
-  }
-
-  nextPage() {
-    const next = this.pageIndex() + 1;
-    this.goToPage(next);
-  }
-
-  goToPage(page: number) {
-    if (page < 0) return;
-    this.pageIndex.set(page);
-    this.ensurePage(page);
-  }
-
   private ensurePage(page: number) {
     const targetCount = (page + 1) * this.pageSize();
 
@@ -143,7 +143,9 @@ export class OffersFacade {
                 .getRealEstateOffers({ realestateid: id, page: 0, size: 1 })
                 .pipe(
                   map((offerPage: PageOfferResponse) => {
-                    const offers: OfferResponse[] = Array.isArray(offerPage?.content)
+                    const offers: OfferResponse[] = Array.isArray(
+                      offerPage?.content,
+                    )
                       ? (offerPage.content as OfferResponse[])
                       : [];
                     if (!offers.length) return null;
@@ -153,24 +155,28 @@ export class OffersFacade {
                       lastOffer: this.toMyOfferVM(offers[0]),
                     } satisfies OfferedRealEstateVM;
                   }),
-                  catchError(() => of<OfferedRealEstateVM | null>(null))
+                  catchError(() => of<OfferedRealEstateVM | null>(null)),
                 );
             }, this.concurrency),
             toArray(),
             map((arr) => arr.filter(Boolean) as OfferedRealEstateVM[]),
-            map((found) => ({ found, last: !!page?.last }))
+            map((found) => ({ found, last: !!page?.last })),
           );
         }),
         takeUntil(this.cancel$),
-        finalize(() => this.loading.set(false))
+        finalize(() => this.loading.set(false)),
       )
       .subscribe({
         next: ({ found, last }) => {
           this.scanPage += 1;
           if (last) this.done.set(true);
 
-          const existing = new Set(this.items().map((x) => x.realEstate?.id ?? -1));
-          const newOnes = found.filter((x) => !existing.has(x.realEstate?.id ?? -1));
+          const existing = new Set(
+            this.items().map((x) => x.realEstate?.id ?? -1),
+          );
+          const newOnes = found.filter(
+            (x) => !existing.has(x.realEstate?.id ?? -1),
+          );
 
           if (newOnes.length) this.items.set([...this.items(), ...newOnes]);
 
