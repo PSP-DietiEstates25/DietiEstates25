@@ -36,6 +36,8 @@ export class OffersListComponent {
         return 'bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-200';
       case 'COUNTERED':
         return 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200';
+      case 'COUNTER_OFFER':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200';
       default:
         return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200';
     }
