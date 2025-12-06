@@ -86,6 +86,7 @@ export class AgentDashboardFacade {
     'PENDING' | 'ACCEPTED' | 'REJECTED' | 'COUNTERED' | null
   >(null);
   offersLoding = signal(false);
+  lastOfferRequest: OfferPaginatorRequest | null = null;
 
   // contro-offerta
   counterId = signal<number | null>(null);
@@ -381,6 +382,7 @@ export class AgentDashboardFacade {
   }
 
   fetchOffers(request: OfferPaginatorRequest) {
+    this.lastOfferRequest = request;
     this.offersLoading.set(true);
     const params = {
       size: request.size,
@@ -389,7 +391,11 @@ export class AgentDashboardFacade {
     };
     return this.getOffers(params).pipe(
       switchMap((response) => {
-        const requests = response.content!.map((offer) => {
+        const content = response.content;
+        if (content!.length === 0) {
+          return of({ ...response, fullOffers: [] });
+        }
+        const requests = content!.map((offer) => {
           const counterOffer = offer.counterOfferId
             ? this.offerService.getOfferById({
                 realestateid: offer.realEstateId!,
@@ -452,7 +458,12 @@ export class AgentDashboardFacade {
         body: { status: 'ACCEPTED' } as any,
       })
       .pipe(
-        //switchMap(() => this.fetchOffers()),
+        switchMap(() => {
+          if (this.lastOfferRequest) {
+            return this.fetchOffers(this.lastOfferRequest);
+          }
+          return of(null);
+        }),
         catchError((error) => {
           console.error('[Facade] acceptOffer', error);
           this.offers.set(prev);
@@ -480,7 +491,12 @@ export class AgentDashboardFacade {
         body: { status: 'REJECTED' } as any,
       })
       .pipe(
-        //switchMap(() => this.loadOffers()),
+        switchMap(() => {
+          if (this.lastOfferRequest) {
+            return this.fetchOffers(this.lastOfferRequest);
+          }
+          return of(null);
+        }),
         catchError((error) => {
           console.error('[Facade] declineOffer', error);
           this.offers.set(prev);
@@ -584,12 +600,12 @@ export class AgentDashboardFacade {
             body: { status: 'COUNTERED' } as any,
           }),
         ),
-        /*
         switchMap(() => {
-          this.cancelCounter();
-          return this.loadOffers();
+          if (this.lastOfferRequest) {
+            return this.fetchOffers(this.lastOfferRequest);
+          }
+          return of(null);
         }),
-        */
         tap(() => {
           this.cancelCounter();
         }),

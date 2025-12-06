@@ -106,6 +106,43 @@
                     Crea contro offerta
                   </button>
                 </div>
+                @if (counterId() === offer.id) {
+                  <div
+                    class="mt-3 flex flex-col gap-2 rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-sm dark:border-slate-700 dark:bg-slate-900/60"
+                  >
+                    <div class="">
+                      <input
+                        type="number"
+                        class="input_main w-full"
+                        [ngModel]="counterAmount() ?? ''"
+                        (ngModelChange)="
+                          counterAmount.set(
+                            $event === '' || $event == null ? null : +$event
+                          )
+                        "
+                        placeholder="Nuovo importo"
+                      />
+                    </div>
+
+                    <div class="flex justify-end gap-2 sm:col-span-3">
+                      <button
+                        type="button"
+                        class="btn_ghost cursor-pointer"
+                        (click)="cancelCounter()"
+                      >
+                        Annulla
+                      </button>
+
+                      <button
+                        type="button"
+                        class="btn_primary cursor-pointer"
+                        (click)="sendCounter()"
+                      >
+                        Invia
+                      </button>
+                    </div>
+                  </div>
+                }
               }
             </article>
 

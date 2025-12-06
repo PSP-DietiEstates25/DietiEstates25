@@ -5,10 +5,11 @@ import { OfferControllerService } from '../../services/services';
 import { OffersPaginatorService } from '../../manual_services/offers_paginator/offers-paginator.service';
 import { ToastrService } from 'ngx-toastr';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-agent-offers-list',
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './agent-offers-list.component.html',
   styleUrl: './agent-offers-list.component.scss',
 })
@@ -18,6 +19,9 @@ export class AgentOffersListComponent {
   offerService = inject(OfferControllerService);
   offerPaginatorService = inject(OffersPaginatorService);
   toastrService = inject(ToastrService);
+
+  counterAmount = this.facade.counterAmount;
+  counterId = this.facade.counterId;
 
   constructor() {
     effect(() => {
@@ -56,7 +60,14 @@ export class AgentOffersListComponent {
   }
 
   sendCounter() {
-    this.facade.sendCounter().subscribe();
+    this.facade.sendCounter().subscribe({
+      next: () => {
+        this.toastrService.success('Controfferta inviata con successo');
+      },
+      error: () => {
+        this.toastrService.error("Errore durante l'invio della controfferta");
+      },
+    });
   }
 
   badgeClass(status: string) {

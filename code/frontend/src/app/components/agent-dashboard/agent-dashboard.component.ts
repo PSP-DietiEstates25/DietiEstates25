@@ -88,7 +88,6 @@ export class AgentDashboardComponent implements OnDestroy {
 
   // Counter-offer (stessi nomi)
   counterId = this.facade.counterId;
-  counterAmount = this.facade.counterAmount;
   counterMessage = this.facade.counterMessage;
 
   constructor() {
@@ -96,6 +95,7 @@ export class AgentDashboardComponent implements OnDestroy {
     effect(() => {
       this.offerPaginatorRequest = this.offerPaginatorService.offerRequest();
       this.offerFilter = this.offerPaginatorRequest.status;
+      this.facade.offerFilter.set(this.offerPaginatorRequest.status || null);
       if (this.active() === 'offers') {
         this.fetchEstateAgentOffers();
       }
@@ -182,11 +182,17 @@ export class AgentDashboardComponent implements OnDestroy {
 
   // OFFERS
   acceptOffer(offer: FullOffer) {
-    this.facade.acceptOffer(offer).subscribe();
+    this.facade.acceptOffer(offer).subscribe({
+      next: () => this.toastrService.success('Offerta accettata con successo'),
+      error: () => this.toastrService.error("Errore durante l'operazione"),
+    });
   }
 
   declineOffer(offer: FullOffer) {
-    this.facade.declineOffer(offer).subscribe();
+    this.facade.declineOffer(offer).subscribe({
+      next: () => this.toastrService.success('Offerta rifiutata'),
+      error: () => this.toastrService.error("Errore durante l'operazione"),
+    });
   }
 
   startAddOfferFor(adId: number) {
