@@ -32,7 +32,7 @@
         <a
           (click)="onPrev($event)"
           [class.opacity-50]="this.page <= 1"
-          class="search_footer_prev_button"
+          class="paginator_prev_button"
         >
           <svg
             class="h-2.5 w-2.5 rtl:rotate-180"
@@ -56,7 +56,7 @@
           <li>
             <a
               (click)="handlePageNumberClick(num)"
-              class="search_footer_page_button"
+              class="paginator_page_button"
             >
               {{ num }}</a
             >
@@ -67,7 +67,7 @@
         <a
           (click)="onNext($event)"
           [class.opacity-50]="page >= totalPages"
-          class="search_footer_next_button"
+          class="paginator_next_button"
         >
           <svg
             class="h-2.5 w-2.5 rtl:rotate-180"

@@ -1,7 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
-@import 'ngx-toastr/toastr';
-
+@import "ngx-toastr/toastr";
 
 html,
 body {
@@ -14,55 +13,51 @@ body {
 
 @layer components {
   .link_style {
-    @apply cursor-pointer hover:scale-105 rounded-xl px-3 py-2 border-2 border-transparent
-            hover:border-2 hover:border-amber-600 hover:bg-gray-100 hover:text-gray-900
-            dark:hover:border-blue-600 dark:hover:bg-blue-200 dark:text-white
-            font-semibold;
+    @apply cursor-pointer rounded-xl border-2 border-transparent px-3 py-2 font-semibold hover:scale-105 hover:border-2 hover:border-amber-600 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:border-blue-600 dark:hover:bg-blue-200;
   }
 
   .link_menu_style {
-    @apply cursor-pointer hover:text-amber-500 font-semibold
-            dark:text-white text-black;
+    @apply cursor-pointer font-semibold text-black hover:text-amber-500 dark:text-white;
   }
 
   .logout_button_style {
-    @apply cursor-pointer hover:scale-105 rounded-xl px-3 py-2 border-2 border-transparent
-            hover:border-2 hover:border-amber-600 hover:bg-gray-100 hover:text-gray-900
-            dark:hover:border-blue-600 dark:hover:bg-blue-200 dark:text-white
-            font-semibold;
+    @apply cursor-pointer rounded-xl border-2 border-transparent px-3 py-2 font-semibold hover:scale-105 hover:border-2 hover:border-amber-600 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:border-blue-600 dark:hover:bg-blue-200;
   }
 
   .input_main {
-    @apply w-full rounded-2xl px-4 py-3 border-2 outline-none
-           bg-white dark:bg-slate-900
-           border-gray-300 focus:border-amber-600
-           dark:text-white dark:border-slate-700 dark:focus:border-blue-500;
+    @apply w-full rounded-2xl border-2 border-gray-300 bg-white px-4 py-3 outline-none focus:border-amber-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500;
   }
 
   .btn_primary {
-    @apply cursor-pointer inline-flex items-center justify-center rounded-2xl px-4 py-2 font-semibold
-           border-2 border-amber-600 hover:bg-amber-600 hover:text-white
-           dark:border-blue-500 dark:hover:bg-blue-500 dark:hover:text-white
-           transition-transform hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed;
+    @apply inline-flex cursor-pointer items-center justify-center rounded-2xl border-2 border-amber-600 px-4 py-2 font-semibold transition-transform hover:scale-105 hover:bg-amber-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-60 dark:border-blue-500 dark:hover:bg-blue-500 dark:hover:text-white;
   }
 
   .btn_ghost {
-    @apply cursor-pointer inline-flex items-center justify-center rounded-2xl px-4 py-2 font-semibold
-           border-2 border-transparent hover:border-amber-600 dark:hover:border-blue-500
-           hover:bg-gray-100 dark:hover:bg-slate-800 transition
-           disabled:opacity-60 disabled:cursor-not-allowed;
+    @apply inline-flex cursor-pointer items-center justify-center rounded-2xl border-2 border-transparent px-4 py-2 font-semibold transition hover:border-amber-600 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-60 dark:hover:border-blue-500 dark:hover:bg-slate-800;
   }
 
   .form_error {
-    @apply text-red-700 text-xs italic
+    @apply text-xs text-red-700 italic;
   }
 
   .publish_button {
-    @apply cursor-pointer bg-green-800 hover:bg-green-700 hover:scale-105 text-white rounded px-3 py-2 md:text-base sm:text-base text-sm;
+    @apply cursor-pointer rounded bg-green-800 px-3 py-2 text-sm text-white hover:scale-105 hover:bg-green-700 sm:text-base md:text-base;
   }
 
   .discard_button {
-    @apply flex gap-2 cursor-pointer bg-red-800 hover:bg-red-700 hover:scale-105 text-white rounded px-3 py-2 md:text-base sm:text-base text-sm;
+    @apply flex cursor-pointer gap-2 rounded bg-red-800 px-3 py-2 text-sm text-white hover:scale-105 hover:bg-red-700 sm:text-base md:text-base;
+  }
+
+  .paginator_prev_button {
+    @apply ms-0 flex h-8 items-center justify-center rounded-s-lg border border-e-0 border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white;
+  }
+
+  .paginator_next_button {
+    @apply flex h-8 items-center justify-center rounded-e-lg border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white;
+  }
+
+  .paginator_page_button {
+    @apply flex h-8 cursor-pointer items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white;
   }
 }
 
@@ -72,12 +67,39 @@ body {
   }
 }
 
-.de-leaflet-popup .leaflet-popup-content-wrapper { border-radius: 16px; }
-.de-popup { width: 260px; }
-.de-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
-.de-addr { font-size: 12px; opacity: .8; }
-.de-price { margin-top: 10px; font-weight: 800; font-size: 16px; }
-.de-btn { margin-top: 12px; width: 100%; border-radius: 12px; padding: 8px 10px; font-weight: 700; background: #d97706; color: white; border: 0; cursor: pointer; }
-.de-btn:hover { filter: brightness(0.95); }
+.de-leaflet-popup .leaflet-popup-content-wrapper {
+  border-radius: 16px;
+}
+.de-popup {
+  width: 260px;
+}
+.de-title {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.de-addr {
+  font-size: 12px;
+  opacity: 0.8;
+}
+.de-price {
+  margin-top: 10px;
+  font-weight: 800;
+  font-size: 16px;
+}
+.de-btn {
+  margin-top: 12px;
+  width: 100%;
+  border-radius: 12px;
+  padding: 8px 10px;
+  font-weight: 700;
+  background: #d97706;
+  color: white;
+  border: 0;
+  cursor: pointer;
+}
+.de-btn:hover {
+  filter: brightness(0.95);
+}
 
 @import "leaflet/dist/leaflet.css";
