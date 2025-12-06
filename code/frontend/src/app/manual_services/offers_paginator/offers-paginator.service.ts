@@ -1,5 +1,6 @@
 import { computed, Injectable, signal, WritableSignal } from '@angular/core';
 import { PaginatorRequest } from '../../interfaces/paginator-request';
+import { OfferPaginatorRequest } from '../../interfaces/offer-paginator-request';
 
 @Injectable({
   providedIn: 'root',
@@ -7,10 +8,13 @@ import { PaginatorRequest } from '../../interfaces/paginator-request';
 export class OffersPaginatorService {
   private _defaultSize = 5;
   private _defaultPage = 1;
-  private _offerPaginatorRequest: WritableSignal<PaginatorRequest> = signal({
-    size: this._defaultSize,
-    page: this._defaultPage,
-  });
+  private _defaultStatus = null;
+  private _offerPaginatorRequest: WritableSignal<OfferPaginatorRequest> =
+    signal({
+      size: this._defaultSize,
+      page: this._defaultPage,
+      status: this._defaultStatus,
+    });
   private _totalPagesNumber = signal(1);
   private _offerPaginatorRefresher = signal(0);
 
@@ -56,10 +60,19 @@ export class OffersPaginatorService {
     this._totalPagesNumber.set(num);
   }
 
+  setStatus(status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'COUNTERED' | null) {
+    this._offerPaginatorRequest.update((req) => ({
+      ...req,
+      status: status,
+      page: 1,
+    }));
+  }
+
   refresh() {
     this._offerPaginatorRequest.set({
       size: this._defaultSize,
       page: this._defaultPage,
+      status: this._defaultStatus,
     });
   }
 }

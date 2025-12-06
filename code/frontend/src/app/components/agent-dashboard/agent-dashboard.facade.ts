@@ -26,6 +26,9 @@ import {
   UtilityResponse,
 } from '../../services/models';
 import { environment } from '../../../environments/environment';
+import { FullOffer } from '../../interfaces/full-offer';
+import { PaginatorRequest } from '../../interfaces/paginator-request';
+import { OfferPaginatorRequest } from '../../interfaces/offer-paginator-request';
 
 export type VisitVM = {
   id: number;
@@ -77,9 +80,12 @@ export class AgentDashboardFacade {
   adsLoading = signal(false);
 
   // stato offerte
-  offers = signal<OfferVM[]>([]);
+  offers = signal<FullOffer[]>([]);
   offersLoading = signal(false);
-  offerFilter = signal<'' | 'PENDING' | 'ACCEPTED' | 'REJECTED'>('');
+  offerFilter = signal<
+    'PENDING' | 'ACCEPTED' | 'REJECTED' | 'COUNTERED' | null
+  >(null);
+  offersLoding = signal(false);
 
   // contro-offerta
   counterId = signal<number | null>(null);
@@ -357,53 +363,77 @@ export class AgentDashboardFacade {
   }
 
   // OFFERS
-  loadOffers(): Observable<void> {
+  getOffers(request: OfferPaginatorRequest) {
+    let params;
+    if (request.status) {
+      params = {
+        size: request.size,
+        page: request.page - 1,
+        status: request.status,
+      };
+    } else {
+      params = {
+        size: request.size,
+        page: request.page - 1,
+      };
+    }
+    return this.offerService.getOffers(params);
+  }
+
+  fetchOffers(request: OfferPaginatorRequest) {
     this.offersLoading.set(true);
-    return this.realEstateService.getRealEstates({ page: 0, size: 100 }).pipe(
-      map((page) => (Array.isArray(page?.content) ? page.content : [])),
-      switchMap((realEstates) => {
-        if (!realEstates.length) return of([] as OfferVM[]);
-        return forkJoin(
-          realEstates.map((realEstate) =>
-            this.offerService
-              .getOffers({
-                realestateid: realEstate.id as number,
-                page: 0,
-                size: 100,
+    const params = {
+      size: request.size,
+      page: request.page,
+      status: request.status,
+    };
+    return this.getOffers(params).pipe(
+      switchMap((response) => {
+        const requests = response.content!.map((offer) => {
+          const counterOffer = offer.counterOfferId
+            ? this.offerService.getOfferById({
+                realestateid: offer.realEstateId!,
+                offerid: offer.counterOfferId!,
               })
-              .pipe(
-                catchError(() => of({ content: [] } as any)),
-                map((page) =>
-                  Array.isArray(page?.content) ? page.content : [],
-                ),
-                map((offers) =>
-                  offers.map((offer: any) =>
-                    this.toOfferVM(offer, realEstate.id as number),
-                  ),
-                ),
-              ),
-          ),
-        ).pipe(map((chunks) => chunks.flat()));
-      }),
-      tap((offers) => {
-        const offerFilter = this.offerFilter();
-        this.offers.set(
-          offerFilter
-            ? offers.filter((offer) => offer.status === offerFilter)
-            : offers,
+            : of(null);
+
+          return forkJoin({
+            offer: of(offer),
+            counterOffer: counterOffer,
+          }).pipe(
+            map((result) => {
+              return {
+                ...result.offer,
+                counterOffer: result.counterOffer,
+              };
+            }),
+          );
+        });
+
+        return forkJoin(requests).pipe(
+          map((offerObservables) => {
+            return {
+              ...response,
+              fullOffers: offerObservables,
+            };
+          }),
         );
       }),
-      catchError((error) => {
-        console.error('[Facade] loadOffers error', error);
-        this.offers.set([]);
-        return of(void 0);
+      tap((fullOffersResponse) => {
+        let newOffers: FullOffer[] = fullOffersResponse.fullOffers.map(
+          (offer) => ({ ...offer }),
+        );
+        const filterValue = this.offerFilter();
+        if (filterValue) {
+          newOffers = newOffers.filter((offer) => offer.status === filterValue);
+        }
+        this.offers.set(newOffers);
+        this.offersLoading.set(false);
       }),
-      finalize(() => this.offersLoading.set(false)),
-      map(() => void 0),
     );
   }
 
-  acceptOffer(offer: OfferVM): Observable<void> {
+  acceptOffer(offer: FullOffer) {
     if (offer.realEstateId == null) return of(void 0);
 
     const prev = this.offers();
@@ -418,11 +448,11 @@ export class AgentDashboardFacade {
     return this.offerService
       .updateOfferStatus({
         realestateid: offer.realEstateId,
-        offerid: offer.id,
+        offerid: offer.id!,
         body: { status: 'ACCEPTED' } as any,
       })
       .pipe(
-        switchMap(() => this.loadOffers()),
+        //switchMap(() => this.fetchOffers()),
         catchError((error) => {
           console.error('[Facade] acceptOffer', error);
           this.offers.set(prev);
@@ -431,7 +461,7 @@ export class AgentDashboardFacade {
       );
   }
 
-  declineOffer(offer: OfferVM): Observable<void> {
+  declineOffer(offer: FullOffer) {
     if (offer.realEstateId == null) return of(void 0);
 
     const prev = this.offers();
@@ -446,11 +476,11 @@ export class AgentDashboardFacade {
     return this.offerService
       .updateOfferStatus({
         realestateid: offer.realEstateId,
-        offerid: offer.id,
+        offerid: offer.id!,
         body: { status: 'REJECTED' } as any,
       })
       .pipe(
-        switchMap(() => this.loadOffers()),
+        //switchMap(() => this.loadOffers()),
         catchError((error) => {
           console.error('[Facade] declineOffer', error);
           this.offers.set(prev);
@@ -473,7 +503,7 @@ export class AgentDashboardFacade {
     this.addOfferEmail.set('');
   }
 
-  createExternalOffer(): Observable<void> {
+  createExternalOffer() {
     const adId = this.addOfferForId();
     const amount = this.addOfferAmount();
     const email = (this.addOfferEmail() || '').trim();
@@ -495,7 +525,7 @@ export class AgentDashboardFacade {
         console.error('[Facade] createExternalOffer error', error);
         return of(void 0);
       }),
-      switchMap(() => this.loadOffers()),
+      //switchMap(() => this.loadOffers()),
       finalize(() => {
         this.addOfferLoading.set(false);
         this.cancelAddOffer();
@@ -504,8 +534,8 @@ export class AgentDashboardFacade {
   }
 
   // Counter-offer
-  startCounter(offer: OfferVM) {
-    this.counterId.set(offer.id);
+  startCounter(offer: FullOffer) {
+    this.counterId.set(offer.id!);
     this.counterAmount.set(offer.amount ?? null);
     this.counterRealEstateId.set(offer.realEstateId ?? null);
     this.counterMessage.set('');
@@ -517,7 +547,7 @@ export class AgentDashboardFacade {
     this.counterMessage.set('');
   }
 
-  sendCounter(): Observable<void> {
+  sendCounter() {
     const offerId = this.counterId();
     const realEstateId = this.counterRealEstateId();
     const counterAmount = this.counterAmount();
@@ -554,9 +584,14 @@ export class AgentDashboardFacade {
             body: { status: 'COUNTERED' } as any,
           }),
         ),
+        /*
         switchMap(() => {
           this.cancelCounter();
           return this.loadOffers();
+        }),
+        */
+        tap(() => {
+          this.cancelCounter();
         }),
         catchError((error) => {
           console.error('[Facade] sendCounter error', error);

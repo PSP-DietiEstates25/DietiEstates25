@@ -1,4 +1,11 @@
-import { Component, inject, signal, DestroyRef } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  DestroyRef,
+  OnDestroy,
+  effect,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -12,24 +19,48 @@ import {
 } from './agent-dashboard.facade';
 import { AuthService } from '../../manual_services/auth/auth.service';
 import { environment } from '../../../environments/environment.development';
+import { OffersListComponent } from '../offers-list/offers-list.component';
+import { OffersPaginatorComponent } from '../offers-paginator/offers-paginator.component';
+import { AgentOffersListComponent } from '../agent-offers-list/agent-offers-list.component';
+import { OffersPaginatorService } from '../../manual_services/offers_paginator/offers-paginator.service';
+import { OfferControllerService } from '../../services/services';
+import { ToastrService } from 'ngx-toastr';
+import { OfferResponse } from '../../services/models';
+import { PaginatorRequest } from '../../interfaces/paginator-request';
+import { HttpErrorResponse } from '@angular/common/http';
+import { FullOffer } from '../../interfaces/full-offer';
+import { OfferPaginatorRequest } from '../../interfaces/offer-paginator-request';
 
 @Component({
   selector: 'app-agent-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    AgentOffersListComponent,
+    OffersPaginatorComponent,
+  ],
   templateUrl: './agent-dashboard.component.html',
 })
-export class AgentDashboardComponent {
-  private router = inject(Router);
-  private facade = inject(AgentDashboardFacade);
-  private destroyRef = inject(DestroyRef);
+export class AgentDashboardComponent implements OnDestroy {
+  facade = inject(AgentDashboardFacade);
+  offerPaginatorService = inject(OffersPaginatorService);
+  routerService = inject(Router);
+  toastrService = inject(ToastrService);
 
+  private destroyRef = inject(DestroyRef);
   private readonly authService = inject(AuthService);
 
   createAdFacade = inject(CreateAdFacade);
 
   isAuthenticated = false;
   email = '';
+
+  offers: OfferResponse[] = [];
+  offerPaginatorRequest!: OfferPaginatorRequest;
+  totalPages!: number;
+  page!: number;
 
   // Tabs
   tabs: Array<{ key: 'visits' | 'ads' | 'offers'; label: string }> = [
@@ -47,9 +78,8 @@ export class AgentDashboardComponent {
   ads = this.facade.ads;
   adsLoading = this.facade.adsLoading;
 
-  offers = this.facade.offers;
   offersLoading = this.facade.offersLoading;
-  offerFilter = this.facade.offerFilter;
+  offerFilter!: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'COUNTERED' | null;
 
   addOfferForId = this.facade.addOfferForId;
   addOfferAmount = this.facade.addOfferAmount;
@@ -63,6 +93,13 @@ export class AgentDashboardComponent {
 
   constructor() {
     // carica la prima tab
+    effect(() => {
+      this.offerPaginatorRequest = this.offerPaginatorService.offerRequest();
+      this.offerFilter = this.offerPaginatorRequest.status;
+      if (this.active() === 'offers') {
+        this.fetchEstateAgentOffers();
+      }
+    });
     this.facade.loadVisits().subscribe();
   }
 
@@ -87,8 +124,28 @@ export class AgentDashboardComponent {
     if (t === 'visits' && !this.visits().length)
       this.facade.loadVisits().subscribe();
     if (t === 'ads' && !this.ads().length) this.facade.loadAds().subscribe();
-    if (t === 'offers' && !this.offers().length)
-      this.facade.loadOffers().subscribe();
+    if (t === 'offers' && !this.offers.length) this.fetchEstateAgentOffers();
+  }
+
+  fetchEstateAgentOffers() {
+    this.facade.fetchOffers(this.offerPaginatorRequest).subscribe({
+      next: (results) => {
+        this.totalPages = results.totalPages!;
+        this.offers = results.content!;
+        this.initPages();
+      },
+      error: (response: HttpErrorResponse) => {
+        if (response.error === 500) {
+          this.toastrService.error('Contatta un admin', 'Errore interno');
+          this.routerService.navigateByUrl('/');
+        }
+      },
+    });
+  }
+
+  onOfferFilterChange(status: string) {
+    const newStatus = status === '' ? null : (status as any);
+    this.offerPaginatorService.setStatus(newStatus);
   }
 
   // VISITS
@@ -107,7 +164,7 @@ export class AgentDashboardComponent {
     this.facade.loadAds().subscribe();
   }
   goToCreateAd() {
-    this.router.navigate(['/basics']);
+    this.routerService.navigate(['/basics']);
   }
 
   deleteAd(adId: number) {
@@ -124,16 +181,12 @@ export class AgentDashboardComponent {
   }
 
   // OFFERS
-  loadOffers() {
-    this.facade.loadOffers().subscribe();
+  acceptOffer(offer: FullOffer) {
+    this.facade.acceptOffer(offer).subscribe();
   }
 
-  acceptOffer(o: OfferVM) {
-    this.facade.acceptOffer(o).subscribe();
-  }
-
-  declineOffer(o: OfferVM) {
-    this.facade.declineOffer(o).subscribe();
+  declineOffer(offer: FullOffer) {
+    this.facade.declineOffer(offer).subscribe();
   }
 
   startAddOfferFor(adId: number) {
@@ -149,8 +202,8 @@ export class AgentDashboardComponent {
   }
 
   // Counter-offer
-  startCounter(o: OfferVM) {
-    this.facade.startCounter(o);
+  startCounter(offer: FullOffer) {
+    this.facade.startCounter(offer);
   }
 
   cancelCounter() {
@@ -161,11 +214,20 @@ export class AgentDashboardComponent {
     this.facade.sendCounter().subscribe();
   }
 
+  initPages() {
+    this.offerPaginatorService.setPagesNumber(this.totalPages);
+    this.page = this.offerPaginatorService.page();
+  }
+
+  ngOnDestroy(): void {
+    this.offerPaginatorService.refresh();
+  }
+
   logout() {
     this.authService.logout().subscribe(() => {
       this.isAuthenticated = false;
       this.email = '';
-      this.router.navigateByUrl(
+      this.routerService.navigateByUrl(
         `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`,
       );
     });

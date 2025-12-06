@@ -1,0 +1,170 @@
+<section>
+  <!--
+  @if (facade.error()) {
+    <div
+      class="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-900 dark:border-rose-900/40 dark:bg-rose-950/40 dark:text-rose-100"
+    >
+      {{ facade.error() }}
+    </div>
+  }
+
+  @if (facade.scanning()) {
+    <p class="text-xs text-slate-500 dark:text-slate-400">
+      Sto cercando altre offerte per riempire la pagina…
+    </p>
+  }
+
+	-->
+  @if (!facade.offersLoading() && offers().length === 0) {
+    <div
+      class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900/30"
+    >
+      <div class="text-sm font-semibold text-slate-800 dark:text-slate-200">
+        Nessuna offerta trovata
+      </div>
+      <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+        Non sono state ancora presentate offerte
+      </div>
+    </div>
+  } @else {
+    <!--visibleItems si trasforma in realEstateOffers perchè si deve visualizzare una lista di real estates che hanno un offerta-->
+    <section class="flex flex-col items-center justify-center gap-5">
+      @for (offer of offers(); track offer.id) {
+        @if (offer.category === "OFFER") {
+          <div
+            class="flex w-full max-w-4xl flex-col items-stretch justify-center gap-6 rounded-xl border border-slate-200 bg-white p-4 shadow-sm md:flex-row dark:border-slate-700 dark:bg-slate-800"
+          >
+            <article
+              class="flex w-full flex-1 flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+            >
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                  <div
+                    class="text-sm font-semibold text-slate-900 dark:text-white"
+                  >
+                    Immobile #{{ offer.realEstateId }}
+                  </div>
+                  <div
+                    class="mt-0.5 text-xs text-slate-500 dark:text-slate-400"
+                  >
+                    Da
+                    <span class="font-medium">{{ offer.userEmail }}</span>
+                    • {{ offer.createdDate }}
+                  </div>
+                </div>
+
+                <span
+                  class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
+                  [class]="badgeClass(offer.status!)"
+                >
+                  {{ offer.status }}
+                </span>
+              </div>
+
+              <div class="mt-4 flex items-center justify-between">
+                <div
+                  class="text-sm font-bold text-amber-700 dark:text-amber-300"
+                >
+                  € {{ offer.amount }}
+                </div>
+
+                <a
+                  class="text-xs text-amber-700 hover:underline dark:text-amber-300"
+                  [routerLink]="['/ad', offer.realEstateId]"
+                >
+                  Vai al dettaglio →
+                </a>
+              </div>
+
+              <div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">
+                Ultima offerta: {{ offer.createdDate || "—" }}
+              </div>
+
+              @if (offer.status === "PENDING") {
+                <div
+                  class="mt-4 flex items-center justify-between gap-2 text-sm"
+                >
+                  <button
+                    type="button"
+                    class="btn_primary cursor-pointer"
+                    (click)="acceptOffer(offer)"
+                  >
+                    Accetta
+                  </button>
+                  <button
+                    type="button"
+                    class="btn_ghost cursor-pointer"
+                    (click)="declineOffer(offer)"
+                  >
+                    Rifiuta
+                  </button>
+                  <button
+                    type="button"
+                    class="btn_ghost cursor-pointer"
+                    (click)="startCounter(offer)"
+                  >
+                    Crea contro offerta
+                  </button>
+                </div>
+              }
+            </article>
+
+            @if (offer.counterOfferId) {
+              <article
+                class="flex w-full flex-1 flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+              >
+                <div class="flex items-start justify-between gap-3">
+                  <div class="min-w-0">
+                    <div
+                      class="text-sm font-semibold text-slate-900 dark:text-white"
+                    >
+                      Immobile #{{ offer.realEstateId }}
+                    </div>
+                  </div>
+
+                  <span
+                    class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
+                    [class]="badgeClass(offer.counterOffer?.category!)"
+                  >
+                    COUNTER OFFER
+                  </span>
+                </div>
+
+                <div class="flex flex-col">
+                  <div class="mt-4 flex items-center justify-between">
+                    <div
+                      class="text-sm font-bold text-amber-700 dark:text-amber-300"
+                    >
+                      € {{ offer.counterOffer?.amount }}
+                    </div>
+
+                    <a
+                      class="text-xs text-amber-700 hover:underline dark:text-amber-300"
+                      [routerLink]="['/ad', offer.realEstateId]"
+                    >
+                      Vai al dettaglio →
+                    </a>
+                  </div>
+
+                  <div
+                    class="mt-2 text-[11px] text-slate-500 dark:text-slate-400"
+                  >
+                    Ultima offerta: {{ offer.counterOffer!.createdDate || "—" }}
+                  </div>
+                </div>
+              </article>
+            } @else {
+              <article
+                class="flex w-full flex-1 flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-xs dark:border-slate-800 dark:bg-slate-900"
+              >
+                <h1 class="self-center text-[13px]">
+                  Non è presente una contro offerta
+                </h1>
+              </article>
+            }
+          </div>
+        }
+      }
+    </section>
+  }
+</section>

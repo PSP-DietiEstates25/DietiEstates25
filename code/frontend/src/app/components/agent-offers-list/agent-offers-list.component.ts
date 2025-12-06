@@ -1,19 +1,19 @@
 import { Component, computed, effect, inject, Signal } from '@angular/core';
-import { OffersFacade } from '../offer-page/offers.facade';
-import { OffersPaginatorService } from '../../manual_services/offers_paginator/offers-paginator.service';
-import { OfferControllerService } from '../../services/services';
-import { ToastrService } from 'ngx-toastr';
+import { AgentDashboardFacade } from '../agent-dashboard/agent-dashboard.facade';
 import { FullOffer } from '../../interfaces/full-offer';
+import { OfferControllerService } from '../../services/services';
+import { OffersPaginatorService } from '../../manual_services/offers_paginator/offers-paginator.service';
+import { ToastrService } from 'ngx-toastr';
 import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-offers-list',
+  selector: 'app-agent-offers-list',
   imports: [RouterLink],
-  templateUrl: './offers-list.component.html',
-  styleUrl: './offers-list.component.scss',
+  templateUrl: './agent-offers-list.component.html',
+  styleUrl: './agent-offers-list.component.scss',
 })
-export class OffersListComponent {
-  facade = inject(OffersFacade);
+export class AgentOffersListComponent {
+  facade = inject(AgentDashboardFacade);
   offers!: Signal<FullOffer[]>;
   offerService = inject(OfferControllerService);
   offerPaginatorService = inject(OffersPaginatorService);
@@ -24,6 +24,39 @@ export class OffersListComponent {
       this.offers = computed(() => this.facade.offers());
       console.log(this.offers());
     });
+  }
+
+  acceptOffer(offer: FullOffer) {
+    this.facade.acceptOffer(offer).subscribe();
+  }
+
+  declineOffer(offer: FullOffer) {
+    this.facade.declineOffer(offer).subscribe();
+  }
+
+  startAddOfferFor(realEstateId: number) {
+    this.facade.startAddOfferFor(realEstateId);
+  }
+
+  cancelAddOffer() {
+    this.facade.cancelAddOffer();
+  }
+
+  submitExternalOffer() {
+    this.facade.createExternalOffer().subscribe();
+  }
+
+  // Counter-offer
+  startCounter(offer: FullOffer) {
+    this.facade.startCounter(offer);
+  }
+
+  cancelCounter() {
+    this.facade.cancelCounter();
+  }
+
+  sendCounter() {
+    this.facade.sendCounter().subscribe();
   }
 
   badgeClass(status: string) {

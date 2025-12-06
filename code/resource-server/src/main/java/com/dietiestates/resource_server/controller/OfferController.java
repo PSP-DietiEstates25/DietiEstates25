@@ -58,6 +58,7 @@ public class OfferController {
     @PreAuthorize("hasAnyAuthority('USER', 'ESTATE_AGENT')")
     public ResponseEntity<Page<OfferResponse>> getOffers(
             @RequestParam(required = false) Long realestateid,
+            @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size,
             @AuthenticationPrincipal Jwt jwt,
@@ -75,7 +76,7 @@ public class OfferController {
             return ResponseEntity.status(HttpStatus.OK).body(offers);
         }
 
-        var offers = offerService.getOffers(creatorEmail, creatorRole, page, size);
+        var offers = offerService.getOffers(creatorEmail, creatorRole, status, page, size);
         return ResponseEntity.status(HttpStatus.OK).body(offers);
     }
 

@@ -33,7 +33,6 @@ import { OffersPaginatorComponent } from '../offers-paginator/offers-paginator.c
 export class OffersPageComponent implements OnDestroy {
   facade = inject(OffersFacade);
   offerPaginatorService = inject(OffersPaginatorService);
-  offerService = inject(OfferControllerService);
   routerService = inject(Router);
   toastrService = inject(ToastrService);
 

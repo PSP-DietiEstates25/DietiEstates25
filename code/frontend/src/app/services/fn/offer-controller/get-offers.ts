@@ -12,6 +12,7 @@ import { PageOfferResponse } from '../../models/page-offer-response';
 
 export interface GetOffers$Params {
   realestateid?: number;
+  status?: string;
   page?: number;
   size?: number;
 }
@@ -20,6 +21,7 @@ export function getOffers(http: HttpClient, rootUrl: string, params?: GetOffers$
   const rb = new RequestBuilder(rootUrl, getOffers.PATH, 'get');
   if (params) {
     rb.query('realestateid', params.realestateid, {});
+    rb.query('status', params.status, {});
     rb.query('page', params.page, {});
     rb.query('size', params.size, {});
   }

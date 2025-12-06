@@ -122,25 +122,25 @@ public class OfferServiceDefaultImpl implements OfferService {
     }
 
     @Override
-    public Page<OfferResponse> getOffers(String creatorEmail, String creatorRole, Integer page, Integer size) {
+    public Page<OfferResponse> getOffers(String creatorEmail, String creatorRole, String status, Integer page, Integer size) {
         if(creatorRole.equals("USER"))
-            return this.getAllUserOffers(creatorEmail, page, size);
-        else return this.getAllEstateAgentOffers(creatorEmail, page, size);
+            return this.getAllUserOffers(creatorEmail, status, page, size);
+        else return this.getAllEstateAgentOffers(creatorEmail, status, page, size);
     }
 
     @Override
-    public Page<OfferResponse> getAllUserOffers(String userEmail, Integer page, Integer size) {
+    public Page<OfferResponse> getAllUserOffers(String userEmail, String status, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
         var user = userFinder.getUserByEmail(userEmail);
-        var offers = offerFinder.getAllUserOffers(user.getId(), pageable);
+        var offers = offerFinder.getAllUserOffers(user.getId(), status, pageable);
         return offerMapper.createPagedOffersResponse(offers);
     }
 
     @Override
-    public Page<OfferResponse> getAllEstateAgentOffers(String estateAgentEmail, Integer page, Integer size) {
+    public Page<OfferResponse> getAllEstateAgentOffers(String estateAgentEmail, String status, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
         var estateAgent = estateAgentFinder.getEstateAgentByEmail(estateAgentEmail);
-        var offers = offerFinder.getAllEstateAgentOffers(estateAgent.getId(), pageable);
+        var offers = offerFinder.getAllEstateAgentOffers(estateAgent.getId(), status, pageable);
         return offerMapper.createPagedOffersResponse(offers);
     }
 

@@ -1,6 +1,8 @@
 package com.dietiestates.resource_server.finderdefaultimpl;
 
+import com.dietiestates.resource_server.enums.ProposalStatus;
 import com.dietiestates.resource_server.exception.notfound.OfferNotFoundException;
+import com.dietiestates.resource_server.exception.notfound.ProposalStatusNotFoundException;
 import com.dietiestates.resource_server.finder.EstateAgentFinder;
 import com.dietiestates.resource_server.finder.NegotiationFinder;
 import com.dietiestates.resource_server.finder.OfferFinder;
@@ -46,25 +48,54 @@ public class OfferFinderDefaultImpl implements OfferFinder {
     }
 
     @Override
-    public Page<Offer> getAllUserOffers(Long userId, Pageable pageable){
+    public Page<Offer> getAllUserOffers(Long userId, String status, Pageable pageable){
         List<Negotiation> allUserNegotiations = negotiationFinder.getAllUserNegotiations(userId);
-        List<Offer> allNegotiationsOffers = extractAllNegotiationsOffers(allUserNegotiations);
+        List<Offer> allNegotiationsOffers = extractAllNegotiationsOffers(allUserNegotiations, status);
         return PageUtils.toPage(allNegotiationsOffers, pageable);
     }
 
     @Override
-    public Page<Offer> getAllEstateAgentOffers(Long estateAgentId, Pageable pageable){
+    public Page<Offer> getAllEstateAgentOffers(Long estateAgentId, String status, Pageable pageable){
         List<Negotiation> allEstateAgentNegotiations = negotiationFinder.getAllEstateAgentNegotiations(estateAgentId);
-        List<Offer> allNegotiationOffers = extractAllNegotiationsOffers(allEstateAgentNegotiations);
+        List<Offer> allNegotiationOffers = extractAllNegotiationsOffers(allEstateAgentNegotiations, status);
         return PageUtils.toPage(allNegotiationOffers, pageable);
     }
 
     @Override
-    public List<Offer> extractAllNegotiationsOffers(List<Negotiation> negotiations){
+    public List<Offer> extractAllNegotiationsOffers(List<Negotiation> negotiations, String status){
         var offers = new ArrayList<Offer>();
+        ProposalStatus requestedStatus = null;
+
+        if(checkProposalStatusExists(status)){
+            requestedStatus = extractOfferProposalStatus(status);
+        }
+
+        var targetStatus = requestedStatus;
+
         negotiations.forEach(negotiation -> {
-            offers.addAll(negotiation.getOffers());
+            var negotiationOffers = negotiation.getOffers();
+            if(targetStatus != null){
+                negotiationOffers.forEach(offer -> {
+                    if(targetStatus.equals(offer.getProposalStatus()))
+                        offers.add(offer);
+                });
+            } else {
+                offers.addAll(negotiationOffers);
+            }
         });
         return offers;
+    }
+
+    private ProposalStatus extractOfferProposalStatus(String status){
+        try {
+            return ProposalStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ProposalStatusNotFoundException();
+        }
+    }
+
+
+    private boolean checkProposalStatusExists(String status){
+        return status != null && !status.isEmpty();
     }
 }
