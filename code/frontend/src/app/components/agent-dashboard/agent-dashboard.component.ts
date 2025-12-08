@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, TitleStrategy } from '@angular/router';
 import { CreateAdFacade } from '../create-ad/create-ad.facade';
 import { switchMap } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -32,6 +32,11 @@ import { VisitsPaginatorComponent } from '../visits-paginator/visits-paginator.c
 import { VisitPaginatorRequest } from '../../interfaces/visit-paginator-request';
 import { VisitControllerService } from '../../services/services';
 import { VisitPaginatorService } from '../../manual_services/visit_paginator/visit-paginator.service';
+import { AgentAdsListComponent } from '../agent-ads-list/agent-ads-list.component';
+import { AdsPaginatorComponent } from '../ads-paginator/ads-paginator.component';
+import { AdsPaginatorService } from '../../manual_services/ads_paginator/ads-paginator.service';
+import { FullRealEstate } from '../../interfaces/full-real-estate';
+import { PaginatorRequest } from '../../interfaces/paginator-request';
 
 @Component({
   selector: 'app-agent-dashboard',
@@ -44,6 +49,8 @@ import { VisitPaginatorService } from '../../manual_services/visit_paginator/vis
     OffersPaginatorComponent,
     AgentVisitsListComponent,
     VisitsPaginatorComponent,
+    AgentAdsListComponent,
+    AdsPaginatorComponent,
   ],
   templateUrl: './agent-dashboard.component.html',
 })
@@ -52,6 +59,7 @@ export class AgentDashboardComponent implements OnDestroy {
 
   offerPaginatorService = inject(OffersPaginatorService);
   visitPaginatorService = inject(VisitPaginatorService);
+  adsPaginatorService = inject(AdsPaginatorService);
 
   routerService = inject(Router);
   toastrService = inject(ToastrService);
@@ -66,9 +74,11 @@ export class AgentDashboardComponent implements OnDestroy {
 
   offers: OfferResponse[] = [];
   visits: VisitResponse[] = [];
+  realEstates: FullRealEstate[] = [];
 
   offerPaginatorRequest!: OfferPaginatorRequest;
   visitPaginatorRequest!: VisitPaginatorRequest;
+  adsPaginatorRequest!: PaginatorRequest;
 
   totalPages!: number;
   page!: number;
@@ -85,8 +95,7 @@ export class AgentDashboardComponent implements OnDestroy {
   visitsLoading = this.facade.visitsLoading;
   visitFilter!: 'PENDING' | 'ACCEPTED' | 'REJECTED' | null;
 
-  ads = this.facade.ads;
-  adsLoading = this.facade.adsLoading;
+  realEstatesLoading = this.facade.realEstatesLoading;
 
   offersLoading = this.facade.offersLoading;
   offerFilter!: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'COUNTERED' | null;
@@ -104,6 +113,7 @@ export class AgentDashboardComponent implements OnDestroy {
     effect(() => {
       this.offerPaginatorRequest = this.offerPaginatorService.offerRequest();
       this.visitPaginatorRequest = this.visitPaginatorService.visitRequest();
+      this.adsPaginatorRequest = this.adsPaginatorService.adsRequest();
       this.offerFilter = this.offerPaginatorRequest.status;
       this.visitFilter = this.visitPaginatorRequest.status;
       this.facade.offerFilter.set(this.offerPaginatorRequest.status || null);
@@ -113,29 +123,29 @@ export class AgentDashboardComponent implements OnDestroy {
       if (this.active() === 'visits') {
         this.fetchEstateAgentVisits();
       }
+      if (this.active() === 'ads') {
+        this.fetchEstateAgentOffers();
+      }
     });
   }
 
   ngOnInit(): void {
-    this.facade.loadAds().subscribe({
-      next: (page) => {
-        console.log(page);
-      },
-    });
-
-    // ricarica quando viene pubblicato un nuovo annuncio
+    /*
     this.createAdFacade.published$
       .pipe(
-        switchMap(() => this.facade.loadAds()),
+        switchMap(() => this.facade.fetchRealEstates()()),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
+    
+      */
   }
 
   setTab(t: 'visits' | 'ads' | 'offers') {
     this.active.set(t);
     if (t === 'visits' && !this.visits.length) this.fetchEstateAgentVisits();
-    if (t === 'ads' && !this.ads().length) this.facade.loadAds().subscribe();
+    if (t === 'ads' && !this.realEstates.length)
+      this.fetchEstateAgentRealEstates();
     if (t === 'offers' && !this.offers.length) this.fetchEstateAgentOffers();
   }
 
@@ -171,6 +181,22 @@ export class AgentDashboardComponent implements OnDestroy {
     });
   }
 
+  fetchEstateAgentRealEstates() {
+    this.facade.fetchRealEstates(this.adsPaginatorRequest).subscribe({
+      next: (results) => {
+        this.totalPages = results.totalPages!;
+        this.offers = results.content!;
+        this.initPages();
+      },
+      error: (response: HttpErrorResponse) => {
+        if (response.error === 500) {
+          this.toastrService.error('Contatta un admin', 'Errore interno');
+          this.routerService.navigateByUrl('/');
+        }
+      },
+    });
+  }
+
   onOfferFilterChange(status: string) {
     const newStatus = status === '' ? null : (status as any);
     this.offerPaginatorService.setStatus(newStatus);
@@ -191,9 +217,11 @@ export class AgentDashboardComponent implements OnDestroy {
   }
 
   // ADS
+  /*
   loadAds() {
     this.facade.loadAds().subscribe();
   }
+  */
   goToCreateAd() {
     this.routerService.navigate(['/basics']);
   }

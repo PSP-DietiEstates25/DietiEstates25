@@ -1,1 +1,360 @@
-<p>agent-ads-list works!</p>
+@if (realEstatesLoading()) {
+  <div class="py-12 text-center text-sm text-slate-600 dark:text-slate-300">
+    Caricamento annunci…
+  </div>
+} @else {
+  <div
+    class="flex flex-col items-center justify-center gap-6 px-6 sm:px-8 md:px-10"
+  >
+    @for (realEstate of realEstates(); track realEstate.id) {
+      <article
+        class="grid grid-cols-2 gap-4 overflow-hidden rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md md:items-start dark:border-slate-700 dark:bg-slate-900/70"
+      >
+        <div class="col-span-2 w-full">
+          <img
+            [src]="getImageUrl(realEstate.images![0])"
+            alt=""
+            class="md:64 sm:74 h-54 w-full rounded-lg object-cover"
+          />
+        </div>
+
+        <!--CADASTRAL DATA-->
+        <div class="col-span-2 flex flex-col gap-8 p-4">
+          <div class="flex flex-col items-start justify-center">
+            <h3 class="text-xl font-semibold text-slate-900 dark:text-white">
+              {{ realEstate.geographicalPosition.address }}
+            </h3>
+            <div class="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+              Creato: {{ realEstate.createdDate | date: "short" }}
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col items-start justify-center gap-5 p-4">
+          <h1 class="text-xl font-semibold">Caratteristiche</h1>
+          <div class="flex flex-col items-center justify-center gap-6">
+            <div class="jusitfy-center flex flex-col items-start gap-6">
+              <div class="flex items-center justify-center gap-2">
+                <app-price-icon></app-price-icon>
+                <h1 class="font-medium">
+                  Prezzo: € {{ realEstate.cadastralData?.price }}
+                </h1>
+              </div>
+              <div class="flex items-center justify-center gap-2">
+                <app-rooms-icon></app-rooms-icon>
+                <h1 class="font-medium">
+                  Stanze: {{ realEstate.cadastralData?.rooms }}
+                </h1>
+              </div>
+              <div class="flex items-center justify-center gap-2">
+                <app-square-meters-icon></app-square-meters-icon>
+                <h1 class="font-medium">
+                  Metri quadri: {{ realEstate.cadastralData?.squareMeters }}
+                </h1>
+              </div>
+              <div class="flex items-center justify-center gap-2">
+                <app-floor-icon></app-floor-icon>
+                <h1 class="font-medium">
+                  Piano: {{ realEstate.cadastralData?.floor }}
+                </h1>
+              </div>
+              <div class="flex items-center justify-center gap-2">
+                <app-energy-class-icon></app-energy-class-icon>
+                <h1 class="font-medium">
+                  Classe energetica:
+                  {{ realEstate.cadastralData?.energyClass }}
+                </h1>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col items-start justify-center gap-5 p-4">
+          <h1 class="text-xl font-semibold">Servizi</h1>
+          <div
+            class="flex flex-col items-center justify-center gap-6 sm:flex-row md:flex-row"
+          >
+            <div class="jusitfy-center flex flex-col items-start gap-6">
+              @if (realEstate.utility.hasAirConditioning) {
+                <div class="flex items-center justify-center gap-2">
+                  <app-air-conditioning-icon></app-air-conditioning-icon>
+                  <h1 class="font-medium">Aria condizionata</h1>
+                </div>
+              }
+              @if (realEstate.utility.hasElevator) {
+                <div class="flex items-center justify-center gap-2">
+                  <app-elevator-icon></app-elevator-icon>
+                  <h1 class="font-medium">Ascensore</h1>
+                </div>
+              }
+              @if (realEstate.utility.hasDoorman) {
+                <div class="flex items-center justify-center gap-2">
+                  <app-doorman-icon></app-doorman-icon>
+                  <h1 class="font-medium">Portineria</h1>
+                </div>
+              }
+            </div>
+            <div class="jusitfy-center flex flex-col items-start gap-6">
+              @if (realEstate.utility.nearPark) {
+                <div class="flex items-center justify-center gap-2">
+                  <app-near-park-icon></app-near-park-icon>
+                  <h1 class="font-medium">Vicino a parchi</h1>
+                </div>
+              }
+              @if (realEstate.utility.nearSchool) {
+                <div class="flex items-center justify-center gap-2">
+                  <app-near-school-icon></app-near-school-icon>
+                  <h1 class="font-medium">Vicino a scuole</h1>
+                </div>
+              }
+              @if (realEstate.utility.nearPublicTransport) {
+                <div class="flex items-center justify-center gap-2">
+                  <app-near-public-transport-icon></app-near-public-transport-icon>
+                  <h1 class="font-medium">Vicino a trasporto pubblico</h1>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!--ACTIONS-->
+        <div class="col-span-2 flex w-full flex-col items-start justify-center">
+          <div class="flex w-full items-center justify-between">
+            <!--Offerte-->
+            <button
+              type="button"
+              class="btn_primary cursor-pointer"
+              (click)="startAddOfferFor(realEstate.id!)"
+            >
+              {{
+                addOfferForId() === realEstate.id
+                  ? "Chiudi"
+                  : "Aggiungi offerta"
+              }}
+            </button>
+            <!--Interazioni annuncio-->
+            <div class="flex items-center justify-center gap-6">
+              <button
+                type="button"
+                class="btn_ghost cursor-pointer"
+                [routerLink]="['/edit', realEstate.id]"
+              >
+                Modifica
+              </button>
+              <button
+                type="button"
+                class="discard_button cursor-pointer"
+                (click)="deleteAd(realEstate.id!)"
+              >
+                Elimina
+              </button>
+            </div>
+          </div>
+          @if (addOfferForId() === realEstate.id) {
+            <div
+              class="mt-3 grid grid-cols-1 gap-2 rounded-xl border border-slate-200 bg-slate-50/70 p-3 sm:grid-cols-3 dark:border-slate-700 dark:bg-slate-900/60"
+            >
+              <div class="col-span-1 sm:col-span-2">
+                <label class="mb-1 block text-xs font-medium">
+                  Email offerente
+                </label>
+                <input
+                  type="email"
+                  class="input_main w-full"
+                  [ngModel]="addOfferEmail()"
+                  (ngModelChange)="addOfferEmail.set($event)"
+                  placeholder="es. mario.rossi@mail.com"
+                />
+              </div>
+              <div class="col-span-1">
+                <label class="mb-1 block text-xs font-medium">
+                  Importo (€)
+                </label>
+                <input
+                  type="number"
+                  class="input_main w-full"
+                  [ngModel]="addOfferAmount() ?? ''"
+                  (ngModelChange)="
+                    addOfferAmount.set(
+                      $event === '' || $event == null ? null : +$event
+                    )
+                  "
+                  placeholder="es. 250000"
+                />
+              </div>
+              <div class="col-span-1 mt-1 flex justify-end gap-2 sm:col-span-3">
+                <button
+                  type="button"
+                  class="btn_primary cursor-pointer"
+                  [disabled]="addOfferLoading()"
+                  (click)="submitExternalOffer()"
+                >
+                  {{ addOfferLoading() ? "Invio…" : "Salva offerta" }}
+                </button>
+                <button
+                  type="button"
+                  class="btn_ghost cursor-pointer"
+                  (click)="cancelAddOffer()"
+                >
+                  Annulla
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </article>
+    } @empty {
+      <div
+        class="col-span-full py-12 text-center text-slate-600 dark:text-slate-300"
+      >
+        <p class="text-sm">Non hai ancora annunci.</p>
+        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          Crea il tuo primo annuncio per iniziare a ricevere visite e offerte.
+        </p>
+      </div>
+    }
+  </div>
+}
+
+<!--
+@if (realEstatesLoading()) {
+  <div class="py-12 text-center text-sm text-slate-600 dark:text-slate-300">
+    Caricamento annunci…
+  </div>
+} @else {
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    @for (realEstate of realEstates(); track realEstate.id) {
+      <article
+        class="overflow-hidden rounded-2xl border border-slate-200 bg-white/70 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-900/70"
+      >
+        <img
+          [src]="getImageUrl(realEstate.images![0])"
+          alt=""
+          class="h-40 w-full object-cover"
+        />
+
+        <div class="space-y-2 p-4">
+          <h3 class="line-clamp-2 font-semibold text-slate-900 dark:text-white">
+            {{ realEstate.geographicalPosition.address }}
+          </h3>
+
+          <div
+            class="flex items-center justify-between text-xs text-slate-600 dark:text-slate-300"
+          >
+            <span class="truncate">
+              {{ realEstate.geographicalPosition.city }}
+            </span>
+            @if (realEstate.cadastralData?.price!) {
+              <span class="font-semibold">
+                € {{ realEstate.cadastralData!.price }}
+              </span>
+            }
+          </div>
+
+          <div class="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+            Creato: {{ realEstate.createdDate | date: "short" }}
+          </div>
+
+          <div class="mt-3 flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              class="btn_primary cursor-pointer"
+              (click)="startAddOfferFor(realEstate.id!)"
+            >
+              {{
+                addOfferForId() === realEstate.id
+                  ? "Chiudi"
+                  : "Aggiungi offerta"
+              }}
+            </button>
+            <a
+              class="btn_ghost cursor-pointer"
+              [routerLink]="['/ad', realEstate.id]"
+            >
+              Vai all'annuncio
+            </a>
+          </div>
+
+          <div class="mt-2 flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              class="btn_ghost cursor-pointer"
+              [routerLink]="['/edit', realEstate.id]"
+            >
+              Modifica
+            </button>
+            <button
+              type="button"
+              class="btn_danger cursor-pointer"
+              (click)="deleteAd(realEstate.id!)"
+            >
+              Elimina
+            </button>
+          </div>
+
+          @if (addOfferForId() === realEstate.id) {
+            <div
+              class="mt-3 grid grid-cols-1 gap-2 rounded-xl border border-slate-200 bg-slate-50/70 p-3 sm:grid-cols-3 dark:border-slate-700 dark:bg-slate-900/60"
+            >
+              <div class="col-span-1 sm:col-span-2">
+                <label class="mb-1 block text-xs font-medium">
+                  Email offerente
+                </label>
+                <input
+                  type="email"
+                  class="input_main w-full"
+                  [ngModel]="addOfferEmail()"
+                  (ngModelChange)="addOfferEmail.set($event)"
+                  placeholder="es. mario.rossi@mail.com"
+                />
+              </div>
+              <div class="col-span-1">
+                <label class="mb-1 block text-xs font-medium">
+                  Importo (€)
+                </label>
+                <input
+                  type="number"
+                  class="input_main w-full"
+                  [ngModel]="addOfferAmount() ?? ''"
+                  (ngModelChange)="
+                    addOfferAmount.set(
+                      $event === '' || $event == null ? null : +$event
+                    )
+                  "
+                  placeholder="es. 250000"
+                />
+              </div>
+              <div class="col-span-1 mt-1 flex justify-end gap-2 sm:col-span-3">
+                <button
+                  type="button"
+                  class="btn_primary cursor-pointer"
+                  [disabled]="addOfferLoading()"
+                  (click)="submitExternalOffer()"
+                >
+                  {{ addOfferLoading() ? "Invio…" : "Salva offerta" }}
+                </button>
+                <button
+                  type="button"
+                  class="btn_ghost cursor-pointer"
+                  (click)="cancelAddOffer()"
+                >
+                  Annulla
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </article>
+    } @empty {
+      <div
+        class="col-span-full py-12 text-center text-slate-600 dark:text-slate-300"
+      >
+        <p class="text-sm">Non hai ancora annunci.</p>
+        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          Crea il tuo primo annuncio per iniziare a ricevere visite e offerte.
+        </p>
+      </div>
+    }
+  </div>
+}
+-->

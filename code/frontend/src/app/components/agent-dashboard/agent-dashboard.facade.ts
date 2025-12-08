@@ -35,6 +35,8 @@ import { FullOffer } from '../../interfaces/full-offer';
 import { PaginatorRequest } from '../../interfaces/paginator-request';
 import { OfferPaginatorRequest } from '../../interfaces/offer-paginator-request';
 import { VisitPaginatorRequest } from '../../interfaces/visit-paginator-request';
+import { FullRealEstate } from '../../interfaces/full-real-estate';
+import { AdCategory } from '../../enums/ad-category.enum';
 
 export type VisitVM = {
   id: number;
@@ -82,8 +84,8 @@ export class AgentDashboardFacade {
   visitFilter = signal<'PENDING' | 'ACCEPTED' | 'REJECTED' | null>(null);
 
   // stato annunci
-  ads = signal<AdVM[]>([]);
-  adsLoading = signal(false);
+  realEstates = signal<FullRealEstate[]>([]);
+  realEstatesLoading = signal(false);
 
   // stato offerte
   offers = signal<FullOffer[]>([]);
@@ -346,6 +348,7 @@ export class AgentDashboardFacade {
   }
 
   // ADS
+  /*
   loadAds(): Observable<void> {
     this.adsLoading.set(true);
     return this.realEstateService
@@ -376,25 +379,112 @@ export class AgentDashboardFacade {
         finalize(() => this.adsLoading.set(false)),
       );
   }
+  */
+
+  fetchRealEstates(request: PaginatorRequest) {
+    const params = {
+      page: request.page - 1,
+      size: request.size,
+    };
+    return this.realEstateService.getRealEstates(params).pipe(
+      switchMap((response) => {
+        const requests = response.content!.map((realEstate) => {
+          const cadastralData = this.cadastralDataService.getCadastralDataById({
+            cadastraldataid: realEstate.cadastralDataId!,
+          });
+
+          const details = this.detailService
+            .getDetailById({ detailid: realEstate.detailId! })
+            .pipe(
+              switchMap((detail) => {
+                return forkJoin({
+                  geographicalPosition:
+                    this.geographicalPositionService.getGeographicalPositionById(
+                      {
+                        geographicalpositionid: detail.geographicalPositionId!,
+                      },
+                    ),
+                  utility: this.utilityService.getUtilityById({
+                    utilityid: detail.utilityId!,
+                  }),
+                });
+              }),
+            );
+
+          return forkJoin({
+            realEstate: of(realEstate),
+            cadastralData: cadastralData,
+            details: details,
+          }).pipe(
+            map((result) => {
+              return {
+                ...result.realEstate,
+                cadastralData: result.cadastralData,
+                geographicalPosition: result.details.geographicalPosition,
+                utility: result.details.utility,
+              };
+            }),
+          );
+        });
+
+        return forkJoin(requests).pipe(
+          map((realEstatesObservables) => {
+            return {
+              ...response,
+              fullRealEstates: realEstatesObservables,
+            };
+          }),
+        );
+      }),
+      tap((fullRealEstatesResponse) => {
+        const newRealEstates: FullRealEstate[] =
+          fullRealEstatesResponse.fullRealEstates.map((realEstate) => {
+            return {
+              ...realEstate,
+              geographicalPosition: realEstate.geographicalPosition,
+              utility: realEstate.utility,
+              cadastralData: {
+                ...realEstate.cadastralData,
+                energyClass: realEstate.cadastralData.energyClass as
+                  | 'A4'
+                  | 'A3'
+                  | 'A2'
+                  | 'A1'
+                  | 'B'
+                  | 'C'
+                  | 'D'
+                  | 'E'
+                  | 'F'
+                  | 'G',
+              },
+              category: realEstate.category as AdCategory,
+            };
+          });
+        this.realEstates.set(newRealEstates);
+      }),
+    );
+  }
 
   deleteAd(adId: number): Observable<void> {
-    const prev = this.ads();
-    this.ads.set(prev.filter((ad) => ad.id !== adId));
+    const prev = this.realEstates();
+    this.realEstates.set(prev.filter((ad) => ad.id !== adId));
 
     return this.realEstateService.deleteRealEstate({ realestateid: adId }).pipe(
       catchError((error) => {
         console.error('[Facade] deleteAd error (delete)', error);
-        this.ads.set(prev);
+        this.realEstates.set(prev);
         return of(void 0);
       }),
+      /*
       switchMap(() =>
-        this.loadAds().pipe(
+        this.fetchRealEstates().pipe(
           catchError((error) => {
             console.error('[Facade] deleteAd error (reload)', error);
             return of(void 0);
           }),
         ),
       ),
+      */
       map(() => void 0),
     );
   }
