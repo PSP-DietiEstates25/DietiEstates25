@@ -45,7 +45,7 @@ export class VisitPaginatorService {
     }
   }
 
-  setSearchFooterTracker(value: number) {
+  setVisitFooterTracker(value: number) {
     this._visitPaginatorRefresher.set(value);
   }
 

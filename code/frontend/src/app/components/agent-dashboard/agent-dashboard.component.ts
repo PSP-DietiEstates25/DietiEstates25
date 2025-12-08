@@ -185,6 +185,7 @@ export class AgentDashboardComponent implements OnDestroy {
   approveVisit(visit: VisitResponse) {
     this.facade.approveVisit(visit).subscribe();
   }
+
   declineVisit(visit: VisitResponse) {
     this.facade.declineVisit(visit).subscribe();
   }

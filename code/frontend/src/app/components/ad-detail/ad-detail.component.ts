@@ -9,6 +9,12 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../manual_services/auth/auth.service';
 
 import { environment } from '../../../environments/environment';
+import { AirConditioningIconComponent } from '../../shared/icons/air-conditioning-icon/air-conditioning-icon.component';
+import { ElevatorIconComponent } from '../../shared/icons/elevator-icon/elevator-icon.component';
+import { DoormanIconComponent } from '../../shared/icons/doorman-icon/doorman-icon.component';
+import { NearParkIconComponent } from '../../shared/icons/near-park-icon/near-park-icon.component';
+import { NearPublicTransportIconComponent } from '../../shared/icons/near-public-transport-icon/near-public-transport-icon.component';
+import { NearSchoolIconComponent } from '../../shared/icons/near-school-icon/near-school-icon.component';
 
 const isHttp = (s: string) => /^https?:\/\//i.test(s);
 const isData = (s: string) => /^data:/i.test(s);
@@ -19,6 +25,12 @@ const looksPng = (b64: string) => b64.startsWith('iVBOR');
   selector: 'app-ad-detail',
   standalone: true,
   imports: [
+    AirConditioningIconComponent,
+    ElevatorIconComponent,
+    DoormanIconComponent,
+    NearParkIconComponent,
+    NearPublicTransportIconComponent,
+    NearSchoolIconComponent,
     OfferFormComponent,
     VisitFormComponent,
     DecimalPipe,
