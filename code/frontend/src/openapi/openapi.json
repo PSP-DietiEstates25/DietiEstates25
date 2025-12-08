@@ -437,6 +437,100 @@
         }
       }
     },
+    "/visits": {
+      "get": {
+        "tags": ["visit-controller"],
+        "operationId": "getVisits",
+        "parameters": [
+          {
+            "name": "realestateid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 5
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageVisitResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["visit-controller"],
+        "operationId": "createVisit",
+        "parameters": [
+          {
+            "name": "realestateid",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VisitRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VisitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/utilities": {
       "get": {
         "tags": ["utility-controller"],
@@ -669,92 +763,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RealEstateResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/realestates/{realestateid}/visits": {
-      "get": {
-        "tags": ["visit-controller"],
-        "operationId": "getRealEstateVisits",
-        "parameters": [
-          {
-            "name": "realestateid",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
-          },
-          {
-            "name": "size",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 5
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PageVisitResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": ["visit-controller"],
-        "operationId": "createVisit",
-        "parameters": [
-          {
-            "name": "realestateid",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/VisitRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VisitResponse"
                 }
               }
             }
@@ -1272,20 +1280,11 @@
         }
       }
     },
-    "/realestates/{realestateid}/visits/{visitid}": {
+    "/visits/{visitid}": {
       "get": {
         "tags": ["visit-controller"],
         "operationId": "getVisitById",
         "parameters": [
-          {
-            "name": "realestateid",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
           {
             "name": "visitid",
             "in": "path",
@@ -1315,7 +1314,7 @@
         "parameters": [
           {
             "name": "realestateid",
-            "in": "path",
+            "in": "query",
             "required": true,
             "schema": {
               "type": "integer",
@@ -1943,54 +1942,6 @@
           }
         }
       },
-      "UserRequest": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "minLength": 1
-          }
-        },
-        "required": ["email"]
-      },
-      "UserResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "email": {
-            "type": "string"
-          },
-          "createdDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastModifiedDate": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "SearchRequest": {
-        "type": "object",
-        "properties": {
-          "category": {
-            "type": "string",
-            "minLength": 1
-          },
-          "cadastralFilterId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "detailId": {
-            "type": "integer",
-            "format": "int64"
-          }
-        },
-        "required": ["category"]
-      },
       "VisitRequest": {
         "type": "object",
         "properties": {
@@ -2052,6 +2003,54 @@
             "type": "string"
           }
         }
+      },
+      "UserRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["email"]
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "email": {
+            "type": "string"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifiedDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SearchRequest": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cadastralFilterId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "detailId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "required": ["category"]
       },
       "OfferRequest": {
         "type": "object",
@@ -2308,7 +2307,7 @@
           }
         }
       },
-      "PageSearchResponse": {
+      "PageVisitResponse": {
         "type": "object",
         "properties": {
           "totalElements": {
@@ -2326,7 +2325,7 @@
           "content": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/SearchResponse"
+              "$ref": "#/components/schemas/VisitResponse"
             }
           },
           "number": {
@@ -2380,6 +2379,66 @@
           }
         }
       },
+      "SortObject": {
+        "type": "object",
+        "properties": {
+          "empty": {
+            "type": "boolean"
+          },
+          "sorted": {
+            "type": "boolean"
+          },
+          "unsorted": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageSearchResponse": {
+        "type": "object",
+        "properties": {
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchResponse"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
       "SearchResponse": {
         "type": "object",
         "properties": {
@@ -2411,20 +2470,6 @@
           }
         }
       },
-      "SortObject": {
-        "type": "object",
-        "properties": {
-          "empty": {
-            "type": "boolean"
-          },
-          "sorted": {
-            "type": "boolean"
-          },
-          "unsorted": {
-            "type": "boolean"
-          }
-        }
-      },
       "PageRealEstateResponse": {
         "type": "object",
         "properties": {
@@ -2444,52 +2489,6 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/RealEstateResponse"
-            }
-          },
-          "number": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "sort": {
-            "$ref": "#/components/schemas/SortObject"
-          },
-          "pageable": {
-            "$ref": "#/components/schemas/PageableObject"
-          },
-          "numberOfElements": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "first": {
-            "type": "boolean"
-          },
-          "last": {
-            "type": "boolean"
-          },
-          "empty": {
-            "type": "boolean"
-          }
-        }
-      },
-      "PageVisitResponse": {
-        "type": "object",
-        "properties": {
-          "totalElements": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "size": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "content": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/VisitResponse"
             }
           },
           "number": {

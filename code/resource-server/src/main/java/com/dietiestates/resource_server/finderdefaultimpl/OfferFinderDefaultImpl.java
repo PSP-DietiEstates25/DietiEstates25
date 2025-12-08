@@ -11,6 +11,7 @@ import com.dietiestates.resource_server.model.Negotiation;
 import com.dietiestates.resource_server.model.Offer;
 import com.dietiestates.resource_server.repository.OfferRepository;
 import com.dietiestates.resource_server.utils.PageUtils;
+import com.dietiestates.resource_server.utils.ProposalUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -66,8 +67,8 @@ public class OfferFinderDefaultImpl implements OfferFinder {
         var offers = new ArrayList<Offer>();
         ProposalStatus requestedStatus = null;
 
-        if(checkProposalStatusExists(status)){
-            requestedStatus = extractOfferProposalStatus(status);
+        if(ProposalUtils.checkProposalStatusExists(status)){
+            requestedStatus = ProposalUtils.extractProposalStatus(status);
         }
 
         var targetStatus = requestedStatus;
@@ -84,18 +85,5 @@ public class OfferFinderDefaultImpl implements OfferFinder {
             }
         });
         return offers;
-    }
-
-    private ProposalStatus extractOfferProposalStatus(String status){
-        try {
-            return ProposalStatus.valueOf(status.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new ProposalStatusNotFoundException();
-        }
-    }
-
-
-    private boolean checkProposalStatusExists(String status){
-        return status != null && !status.isEmpty();
     }
 }

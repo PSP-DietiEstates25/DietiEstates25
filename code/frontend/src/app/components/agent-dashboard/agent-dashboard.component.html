@@ -56,91 +56,31 @@
           <select
             id="visit-status"
             class="input_main w-52"
-            [ngModel]="visitFilter()"
-            (ngModelChange)="visitFilter.set($any($event))"
+            [ngModel]="visitFilter"
+            (ngModelChange)="onVisitFilterChange($event)"
           >
             <option value="">Tutte</option>
             <option value="PENDING">In attesa</option>
+            <option value="ACCEPTED">Accettate</option>
+            <option value="REJECTED">Rifiutate</option>
           </select>
         </div>
-        <button
-          type="button"
-          class="btn_primary ml-auto cursor-pointer"
-          (click)="loadVisits()"
-        >
-          Aggiorna
-        </button>
       </div>
 
       <!-- Lista -->
-      @if (visitsLoading()) {
-        <div
-          class="py-12 text-center text-sm text-slate-600 dark:text-slate-300"
-        >
-          Caricamento richieste di visita…
+      <header class="flex items-end justify-between gap-3">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+            Visite
+          </h1>
+          <p class="text-sm text-slate-600 dark:text-slate-400">
+            Visite proposte dagli utenti sugli annunci pubblicati.
+          </p>
         </div>
-      } @else {
-        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          @for (v of visits(); track v.id) {
-            <article
-              class="rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-900/70"
-            >
-              <h3
-                class="line-clamp-2 font-semibold text-slate-900 dark:text-white"
-              >
-                {{ v.adTitle }}
-              </h3>
-              <p class="mt-1 text-xs text-slate-500 dark:text-slate-300">
-                Richiesta da
-                <span class="font-medium">{{ v.requesterName }}</span> •
-                {{ v.requestedAt | date: "short" }}
-              </p>
+      </header>
 
-              @if (v.preferredDate) {
-                <p class="mt-1 text-xs text-slate-500 dark:text-slate-300">
-                  Preferenza visita:
-                  <span class="font-medium">
-                    {{ v.preferredDate | date: "short" }}
-                  </span>
-                </p>
-              }
-
-              <div class="mt-3 flex flex-wrap items-center gap-2">
-                <span class="chip text-xs tracking-wide uppercase">
-                  {{ v.status }}
-                </span>
-
-                @if (v.status === "PENDING") {
-                  <button
-                    type="button"
-                    class="btn_primary cursor-pointer"
-                    (click)="approveVisit(v)"
-                  >
-                    Approva
-                  </button>
-                  <button
-                    type="button"
-                    class="btn_ghost cursor-pointer"
-                    (click)="declineVisit(v)"
-                  >
-                    Rifiuta
-                  </button>
-                }
-              </div>
-            </article>
-          } @empty {
-            <div
-              class="col-span-full py-12 text-center text-slate-600 dark:text-slate-300"
-            >
-              <p class="text-sm">Nessuna richiesta di visita al momento.</p>
-              <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                Quando gli utenti richiederanno una visita ai tuoi annunci, le
-                vedrai qui.
-              </p>
-            </div>
-          }
-        </div>
-      }
+      <app-agent-visits-list></app-agent-visits-list>
+      <app-visits-paginator></app-visits-paginator>
     </section>
   }
 
@@ -350,7 +290,7 @@
             Offers
           </h1>
           <p class="text-sm text-slate-600 dark:text-slate-400">
-            Immobili su cui hai pubblicato almeno un’offerta.
+            Offerte proposte dagli utenti sugli annunci pubblicati.
           </p>
         </div>
       </header>

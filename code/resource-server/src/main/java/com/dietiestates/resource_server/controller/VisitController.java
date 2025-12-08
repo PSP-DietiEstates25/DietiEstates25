@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 
@@ -15,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/realestates/{realestateid}/visits")
+@RequestMapping("/visits")
 @RequiredArgsConstructor
 public class VisitController {
 
@@ -25,7 +26,7 @@ public class VisitController {
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<VisitResponse> createVisit(
             @RequestBody VisitRequest request,
-            @PathVariable Long realestateid,
+            @RequestParam Long realestateid,
             @AuthenticationPrincipal Jwt jwt
     ){
         var userEmail = jwt.getSubject();
@@ -46,12 +47,21 @@ public class VisitController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('USER', 'ESTATE_AGENT')")
-    public ResponseEntity<Page<VisitResponse>> getRealEstateVisits(
-            @PathVariable Long realestateid,
+    public ResponseEntity<Page<VisitResponse>> getVisits(
+            @RequestParam(required = false) Long realestateid,
+            @RequestParam(required = false) String status,
             @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "5") Integer size
+            @RequestParam(required = false, defaultValue = "5") Integer size,
+            @AuthenticationPrincipal Jwt jwt
     ) {
-        var visits = visitService.getRealEstateVisits(realestateid, page, size);
+
+        if(realestateid != null){
+            var visits = visitService.getRealEstateVisits(realestateid, page, size);
+            return ResponseEntity.status(HttpStatus.OK).body(visits);
+        }
+
+        var estateAgentEmail = jwt.getSubject();
+        var visits = visitService.getAllEstateAgentVisits(estateAgentEmail, status, page, size);
         return ResponseEntity.status(HttpStatus.OK).body(visits);
     }
 
@@ -59,7 +69,7 @@ public class VisitController {
     @PreAuthorize("hasAuthority('ESTATE_AGENT')")
     public ResponseEntity<VisitResponse> updateVisitStatus(
             @RequestBody VisitRequest request,
-            @PathVariable Long realestateid,
+            @RequestParam Long realestateid,
             @PathVariable Long visitid,
             @AuthenticationPrincipal Jwt jwt
     ) {

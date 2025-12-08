@@ -36,6 +36,7 @@ public class VisitServiceDefaultImpl implements VisitService {
     private final NotificationService notificationService;
     private final NegotiationService negotiationService;
     private final RealEstateFinder realEstateFinder;
+    private final EstateAgentFinder estateAgentFinder;
 
 	@Override
 	public VisitResponse createVisit(VisitRequest request, Long realEstateId, String userEmail) {
@@ -72,6 +73,15 @@ public class VisitServiceDefaultImpl implements VisitService {
         var realEstateVisits = visitFinder.getRealEstateVisits(realEstateId, pageable);
 
         return visitMapper.createPagedVisitsResponse(realEstateVisits);
+    }
+
+    @Override
+    public Page<VisitResponse> getAllEstateAgentVisits(String estateAgentEmail, String status, Integer page, Integer size) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        var estateAgent = estateAgentFinder.getEstateAgentByEmail(estateAgentEmail);
+        var visits = visitFinder.getAllEstateAgentVisits(estateAgent.getId(), status, pageable);
+        return visitMapper.createPagedVisitsResponse(visits);
     }
 
     @Override

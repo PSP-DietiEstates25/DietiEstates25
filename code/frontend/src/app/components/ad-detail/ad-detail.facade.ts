@@ -216,8 +216,6 @@ export class AdDetailFacade {
     this.utilityResponse.set(null);
     this.mainImage.set(null);
 
-    const userEmail = opts?.userEmail ?? 'guest@public.local';
-
     this.realEstateService
       .getRealEstateById({ realestateid: realEstateId })
       .subscribe({
@@ -314,7 +312,7 @@ export class AdDetailFacade {
       time,
     };
     return this.visitService.createVisit({
-      realestateid: vm.realEstateId,
+      realestateid: vm.realEstateId!,
       body,
     });
   }

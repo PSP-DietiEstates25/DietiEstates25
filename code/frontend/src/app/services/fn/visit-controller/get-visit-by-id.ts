@@ -11,14 +11,12 @@ import { RequestBuilder } from '../../request-builder';
 import { VisitResponse } from '../../models/visit-response';
 
 export interface GetVisitById$Params {
-  realestateid: number;
   visitid: number;
 }
 
 export function getVisitById(http: HttpClient, rootUrl: string, params: GetVisitById$Params, context?: HttpContext): Observable<StrictHttpResponse<VisitResponse>> {
   const rb = new RequestBuilder(rootUrl, getVisitById.PATH, 'get');
   if (params) {
-    rb.path('realestateid', params.realestateid, {});
     rb.path('visitid', params.visitid, {});
   }
 
@@ -32,4 +30,4 @@ export function getVisitById(http: HttpClient, rootUrl: string, params: GetVisit
   );
 }
 
-getVisitById.PATH = '/realestates/{realestateid}/visits/{visitid}';
+getVisitById.PATH = '/visits/{visitid}';

@@ -16,5 +16,4 @@ public interface OfferFinder {
     Page<Offer> getAllUserOffers(Long userId, String status, Pageable pageable);
     Page<Offer> getAllEstateAgentOffers(Long estateAgentId, String status, Pageable pageable);
     List<Offer> extractAllNegotiationsOffers(List<Negotiation> negotiations, String status);
-
 }

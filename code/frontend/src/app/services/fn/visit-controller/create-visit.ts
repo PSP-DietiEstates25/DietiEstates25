@@ -19,7 +19,7 @@ export interface CreateVisit$Params {
 export function createVisit(http: HttpClient, rootUrl: string, params: CreateVisit$Params, context?: HttpContext): Observable<StrictHttpResponse<VisitResponse>> {
   const rb = new RequestBuilder(rootUrl, createVisit.PATH, 'post');
   if (params) {
-    rb.path('realestateid', params.realestateid, {});
+    rb.query('realestateid', params.realestateid, {});
     rb.body(params.body, 'application/json');
   }
 
@@ -33,4 +33,4 @@ export function createVisit(http: HttpClient, rootUrl: string, params: CreateVis
   );
 }
 
-createVisit.PATH = '/realestates/{realestateid}/visits';
+createVisit.PATH = '/visits';

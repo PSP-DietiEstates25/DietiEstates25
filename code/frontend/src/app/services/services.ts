@@ -8,9 +8,9 @@ export { NotificationCategoryControllerService } from './services/notification-c
 export { GeographicalPositionControllerService } from './services/geographical-position-controller.service';
 export { DetailControllerService } from './services/detail-controller.service';
 export { CadastralDataControllerService } from './services/cadastral-data-controller.service';
+export { VisitControllerService } from './services/visit-controller.service';
 export { UserControllerService } from './services/user-controller.service';
 export { SearchControllerService } from './services/search-controller.service';
-export { VisitControllerService } from './services/visit-controller.service';
 export { OfferControllerService } from './services/offer-controller.service';
 export { NotificationControllerService } from './services/notification-controller.service';
 export { EstateAgentControllerService } from './services/estate-agent-controller.service';

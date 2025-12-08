@@ -8,7 +8,12 @@ import {
   UtilityControllerService,
   CadastralDataControllerService,
 } from '../../services/services';
-import { OfferRequest, RealEstateResponse } from '../../services/models';
+import {
+  OfferRequest,
+  RealEstateResponse,
+  Visit,
+  VisitResponse,
+} from '../../services/models';
 import { forkJoin, of, Observable } from 'rxjs';
 import {
   map,
@@ -29,6 +34,7 @@ import { environment } from '../../../environments/environment';
 import { FullOffer } from '../../interfaces/full-offer';
 import { PaginatorRequest } from '../../interfaces/paginator-request';
 import { OfferPaginatorRequest } from '../../interfaces/offer-paginator-request';
+import { VisitPaginatorRequest } from '../../interfaces/visit-paginator-request';
 
 export type VisitVM = {
   id: number;
@@ -71,9 +77,9 @@ const DEMO_AD: AdVM = {
 @Injectable({ providedIn: 'root' })
 export class AgentDashboardFacade {
   // stato visite
-  visits = signal<VisitVM[]>([]);
+  visits = signal<VisitResponse[]>([]);
   visitsLoading = signal(false);
-  visitFilter = signal<'' | 'PENDING' | 'ACCEPTED' | 'REJECTED'>('');
+  visitFilter = signal<'PENDING' | 'ACCEPTED' | 'REJECTED' | null>(null);
 
   // stato annunci
   ads = signal<AdVM[]>([]);
@@ -87,6 +93,7 @@ export class AgentDashboardFacade {
   >(null);
   offersLoding = signal(false);
   lastOfferRequest: OfferPaginatorRequest | null = null;
+  lastVisitRequest!: VisitPaginatorRequest;
 
   // contro-offerta
   counterId = signal<number | null>(null);
@@ -193,6 +200,7 @@ export class AgentDashboardFacade {
   }
 
   // VISITS
+  /*
   loadVisits(): Observable<void> {
     this.visitsLoading.set(true);
     return this.realEstateService.getRealEstates({ page: 0, size: 100 }).pipe(
@@ -236,8 +244,46 @@ export class AgentDashboardFacade {
       map(() => void 0),
     );
   }
+  */
+  getVisits(request: VisitPaginatorRequest) {
+    let params;
+    if (request.status) {
+      params = {
+        size: request.size,
+        page: request.page - 1,
+        status: request.status,
+      };
+    } else {
+      params = {
+        size: request.size,
+        page: request.page - 1,
+      };
+    }
+    return this.visitService.getVisits(params);
+  }
 
-  approveVisit(visit: VisitVM): Observable<void> {
+  fetchVisits(request: VisitPaginatorRequest) {
+    this.lastVisitRequest = request;
+    this.visitsLoading.set(false);
+    const params = {
+      size: request.size,
+      page: request.page,
+      status: request.status,
+    };
+    return this.getVisits(params).pipe(
+      tap((visitsReponse) => {
+        let visits = visitsReponse.content!;
+        const filterValue = this.visitFilter();
+        if (filterValue) {
+          visits = visits.filter((visits) => visits.status === filterValue);
+        }
+        this.visits.set(visits);
+        this.visitsLoading.set(false);
+      }),
+    );
+  }
+
+  approveVisit(visit: VisitResponse) {
     const prev = this.visits();
     this.visits.set(
       prev.map((visitMap) =>
@@ -249,12 +295,17 @@ export class AgentDashboardFacade {
 
     return this.visitService
       .updateVisitStatus({
-        realestateid: visit.realEstateId,
-        visitid: visit.id,
+        realestateid: visit.realEstateId!,
+        visitid: visit.id!,
         body: { status: 'ACCEPTED' } as any,
       })
       .pipe(
-        switchMap(() => this.loadVisits()),
+        switchMap(() => {
+          if (this.lastVisitRequest) {
+            return this.fetchVisits(this.lastVisitRequest);
+          }
+          return of(null);
+        }),
         catchError((error) => {
           console.error('[Facade] approveVisit', error);
           this.visits.set(prev);
@@ -263,7 +314,7 @@ export class AgentDashboardFacade {
       );
   }
 
-  declineVisit(visit: VisitVM): Observable<void> {
+  declineVisit(visit: VisitResponse) {
     const prev = this.visits();
     this.visits.set(
       prev.map((visitMap) =>
@@ -275,12 +326,17 @@ export class AgentDashboardFacade {
 
     return this.visitService
       .updateVisitStatus({
-        realestateid: visit.realEstateId,
-        visitid: visit.id,
+        realestateid: visit.realEstateId!,
+        visitid: visit.id!,
         body: { status: 'REJECTED' } as any,
       })
       .pipe(
-        switchMap(() => this.loadVisits()),
+        switchMap(() => {
+          if (this.lastVisitRequest) {
+            return this.fetchVisits(this.lastVisitRequest);
+          }
+          return of(null);
+        }),
         catchError((error) => {
           console.error('[Facade] declineVisit', error);
           this.visits.set(prev);

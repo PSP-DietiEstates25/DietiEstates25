@@ -13,10 +13,10 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { createVisit } from '../fn/visit-controller/create-visit';
 import { CreateVisit$Params } from '../fn/visit-controller/create-visit';
-import { getRealEstateVisits } from '../fn/visit-controller/get-real-estate-visits';
-import { GetRealEstateVisits$Params } from '../fn/visit-controller/get-real-estate-visits';
 import { getVisitById } from '../fn/visit-controller/get-visit-by-id';
 import { GetVisitById$Params } from '../fn/visit-controller/get-visit-by-id';
+import { getVisits } from '../fn/visit-controller/get-visits';
+import { GetVisits$Params } from '../fn/visit-controller/get-visits';
 import { PageVisitResponse } from '../models/page-visit-response';
 import { updateVisitStatus } from '../fn/visit-controller/update-visit-status';
 import { UpdateVisitStatus$Params } from '../fn/visit-controller/update-visit-status';
@@ -28,33 +28,33 @@ export class VisitControllerService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `getRealEstateVisits()` */
-  static readonly GetRealEstateVisitsPath = '/realestates/{realestateid}/visits';
+  /** Path part for operation `getVisits()` */
+  static readonly GetVisitsPath = '/visits';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getRealEstateVisits()` instead.
+   * To access only the response body, use `getVisits()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getRealEstateVisits$Response(params: GetRealEstateVisits$Params, context?: HttpContext): Observable<StrictHttpResponse<PageVisitResponse>> {
-    return getRealEstateVisits(this.http, this.rootUrl, params, context);
+  getVisits$Response(params?: GetVisits$Params, context?: HttpContext): Observable<StrictHttpResponse<PageVisitResponse>> {
+    return getVisits(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getRealEstateVisits$Response()` instead.
+   * To access the full response (for headers, for example), `getVisits$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getRealEstateVisits(params: GetRealEstateVisits$Params, context?: HttpContext): Observable<PageVisitResponse> {
-    return this.getRealEstateVisits$Response(params, context).pipe(
+  getVisits(params?: GetVisits$Params, context?: HttpContext): Observable<PageVisitResponse> {
+    return this.getVisits$Response(params, context).pipe(
       map((r: StrictHttpResponse<PageVisitResponse>): PageVisitResponse => r.body)
     );
   }
 
   /** Path part for operation `createVisit()` */
-  static readonly CreateVisitPath = '/realestates/{realestateid}/visits';
+  static readonly CreateVisitPath = '/visits';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -79,7 +79,7 @@ export class VisitControllerService extends BaseService {
   }
 
   /** Path part for operation `getVisitById()` */
-  static readonly GetVisitByIdPath = '/realestates/{realestateid}/visits/{visitid}';
+  static readonly GetVisitByIdPath = '/visits/{visitid}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -104,7 +104,7 @@ export class VisitControllerService extends BaseService {
   }
 
   /** Path part for operation `updateVisitStatus()` */
-  static readonly UpdateVisitStatusPath = '/realestates/{realestateid}/visits/{visitid}';
+  static readonly UpdateVisitStatusPath = '/visits/{visitid}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.

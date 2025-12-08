@@ -1,22 +1,22 @@
 import { Component, effect, inject } from '@angular/core';
-import { SearchControllerService } from '../../services/services';
-import { PaginatorRequest } from '../../interfaces/paginator-request';
-import { Router } from '@angular/router';
-import { environment } from '../../../environments/environment';
-import { FormsModule } from '@angular/forms';
 import { OffersPaginatorService } from '../../manual_services/offers_paginator/offers-paginator.service';
+import { Router } from '@angular/router';
+import { PaginatorRequest } from '../../interfaces/paginator-request';
+import { environment } from '../../../environments/environment';
+import { VisitPaginatorService } from '../../manual_services/visit_paginator/visit-paginator.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-offers-paginator',
+  selector: 'app-visits-paginator',
   imports: [FormsModule],
-  templateUrl: './offers-paginator.component.html',
-  styleUrl: './offers-paginator.component.scss',
+  templateUrl: './visits-paginator.component.html',
+  styleUrl: './visits-paginator.component.scss',
 })
-export class OffersPaginatorComponent {
-  offerPaginatorService = inject(OffersPaginatorService);
+export class VisitsPaginatorComponent {
+  visitPaginatorService = inject(VisitPaginatorService);
   routerService = inject(Router);
 
-  offersRequest!: PaginatorRequest;
+  visitRequest!: PaginatorRequest;
   goToPage!: number;
   page!: number;
   totalPages!: number;
@@ -26,9 +26,9 @@ export class OffersPaginatorComponent {
 
   constructor() {
     effect(() => {
-      this.offersRequest = this.offerPaginatorService.offerRequest();
-      this.page = this.offerPaginatorService.page();
-      this.totalPages = this.offerPaginatorService.totalPagesNumber();
+      this.visitRequest = this.visitPaginatorService.visitRequest();
+      this.page = this.visitPaginatorService.page();
+      this.totalPages = this.visitPaginatorService.totalPagesNumber();
       this.displayedPages = this.getVisiblePages(
         this.totalPages,
         this.page,
@@ -71,28 +71,28 @@ export class OffersPaginatorComponent {
   onPrev(event: Event) {
     event.preventDefault();
     if (this.page > 1) {
-      this.handleOfferPaginatorPageClick(this.page - 1);
+      this.handleVisitPaginatorPageClick(this.page - 1);
     }
   }
 
   onNext(event: Event) {
     event.preventDefault();
     if (this.page < this.totalPages) {
-      this.handleOfferPaginatorPageClick(this.page + 1);
+      this.handleVisitPaginatorPageClick(this.page + 1);
     }
   }
 
   handlePageNumberClick(newPage: number) {
-    this.handleOfferPaginatorPageClick(newPage);
+    this.handleVisitPaginatorPageClick(newPage);
   }
 
-  handleOfferPaginatorPageClick(newPage: number) {
-    this.offerPaginatorService.setPage(newPage);
+  handleVisitPaginatorPageClick(newPage: number) {
+    this.visitPaginatorService.setPage(newPage);
     const params: Record<string, string> = {
       size: String(5),
       page: String(this.page),
     };
 
-    this.routerService.navigate(['/offers'], { queryParams: params });
+    this.routerService.navigate(['/visits'], { queryParams: params });
   }
 }

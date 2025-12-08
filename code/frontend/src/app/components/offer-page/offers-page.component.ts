@@ -1,17 +1,9 @@
-import {
-  afterNextRender,
-  Component,
-  effect,
-  inject,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { Component, effect, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { OffersFacade } from './offers.facade';
 import { OffersPaginatorService } from '../../manual_services/offers_paginator/offers-paginator.service';
-import { OfferControllerService } from '../../services/services';
 import { OfferResponse } from '../../services/models';
 import { PaginatorRequest } from '../../interfaces/paginator-request';
 import { HttpErrorResponse } from '@angular/common/http';

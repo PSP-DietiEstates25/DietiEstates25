@@ -10,5 +10,6 @@ public interface VisitService {
 	VisitResponse createVisit(VisitRequest request, Long realEstateId, String userEmail);
 	VisitResponse getVisitById(Long realEstateId, Long visitId) throws VisitNotOwnedByRealEstateException;
     Page<VisitResponse> getRealEstateVisits(Long realEstateId, Integer page, Integer size);
+    Page<VisitResponse> getAllEstateAgentVisits(String estateAgentEmail, String status, Integer page, Integer size);
     VisitResponse updateVisitStatus(VisitRequest request, Long realEstateId, Long visitId) throws VisitNotOwnedByRealEstateException;
 }

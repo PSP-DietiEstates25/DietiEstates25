@@ -1,4 +1,11 @@
-import { Component, computed, effect, inject, Signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  OnDestroy,
+  Signal,
+} from '@angular/core';
 import { AgentDashboardFacade } from '../agent-dashboard/agent-dashboard.facade';
 import { FullOffer } from '../../interfaces/full-offer';
 import { OfferControllerService } from '../../services/services';
@@ -6,36 +13,36 @@ import { OffersPaginatorService } from '../../manual_services/offers_paginator/o
 import { ToastrService } from 'ngx-toastr';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-agent-offers-list',
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, DatePipe],
   templateUrl: './agent-offers-list.component.html',
   styleUrl: './agent-offers-list.component.scss',
 })
-export class AgentOffersListComponent {
+export class AgentOffersListComponent implements OnDestroy {
   facade = inject(AgentDashboardFacade);
-  offers!: Signal<FullOffer[]>;
   offerService = inject(OfferControllerService);
   offerPaginatorService = inject(OffersPaginatorService);
   toastrService = inject(ToastrService);
 
   counterAmount = this.facade.counterAmount;
   counterId = this.facade.counterId;
+  offers = this.facade.offers;
 
-  constructor() {
-    effect(() => {
-      this.offers = computed(() => this.facade.offers());
-      console.log(this.offers());
+  acceptOffer(offer: FullOffer) {
+    this.facade.acceptOffer(offer).subscribe({
+      next: () => this.toastrService.success('Offerta accettata con successo'),
+      error: () => this.toastrService.error("Errore durante l'operazione"),
     });
   }
 
-  acceptOffer(offer: FullOffer) {
-    this.facade.acceptOffer(offer).subscribe();
-  }
-
   declineOffer(offer: FullOffer) {
-    this.facade.declineOffer(offer).subscribe();
+    this.facade.declineOffer(offer).subscribe({
+      next: () => this.toastrService.success('Offerta rifiutata'),
+      error: () => this.toastrService.error("Errore durante l'operazione"),
+    });
   }
 
   startAddOfferFor(realEstateId: number) {
@@ -68,6 +75,10 @@ export class AgentOffersListComponent {
         this.toastrService.error("Errore durante l'invio della controfferta");
       },
     });
+  }
+
+  ngOnDestroy(): void {
+    this.offerPaginatorService.refresh();
   }
 
   badgeClass(status: string) {

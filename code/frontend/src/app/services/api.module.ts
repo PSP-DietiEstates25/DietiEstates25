@@ -12,9 +12,9 @@ import { NotificationCategoryControllerService } from './services/notification-c
 import { GeographicalPositionControllerService } from './services/geographical-position-controller.service';
 import { DetailControllerService } from './services/detail-controller.service';
 import { CadastralDataControllerService } from './services/cadastral-data-controller.service';
+import { VisitControllerService } from './services/visit-controller.service';
 import { UserControllerService } from './services/user-controller.service';
 import { SearchControllerService } from './services/search-controller.service';
-import { VisitControllerService } from './services/visit-controller.service';
 import { OfferControllerService } from './services/offer-controller.service';
 import { NotificationControllerService } from './services/notification-controller.service';
 import { EstateAgentControllerService } from './services/estate-agent-controller.service';
@@ -35,9 +35,9 @@ import { AdminControllerService } from './services/admin-controller.service';
     GeographicalPositionControllerService,
     DetailControllerService,
     CadastralDataControllerService,
+    VisitControllerService,
     UserControllerService,
     SearchControllerService,
-    VisitControllerService,
     OfferControllerService,
     NotificationControllerService,
     EstateAgentControllerService,

@@ -20,7 +20,7 @@ export interface UpdateVisitStatus$Params {
 export function updateVisitStatus(http: HttpClient, rootUrl: string, params: UpdateVisitStatus$Params, context?: HttpContext): Observable<StrictHttpResponse<VisitResponse>> {
   const rb = new RequestBuilder(rootUrl, updateVisitStatus.PATH, 'patch');
   if (params) {
-    rb.path('realestateid', params.realestateid, {});
+    rb.query('realestateid', params.realestateid, {});
     rb.path('visitid', params.visitid, {});
     rb.body(params.body, 'application/json');
   }
@@ -35,4 +35,4 @@ export function updateVisitStatus(http: HttpClient, rootUrl: string, params: Upd
   );
 }
 
-updateVisitStatus.PATH = '/realestates/{realestateid}/visits/{visitid}';
+updateVisitStatus.PATH = '/visits/{visitid}';

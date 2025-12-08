@@ -306,20 +306,20 @@ spring:
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 
-            #POST,GET /realestates/{realestateid}/visits
+            #POST,GET /visits
             - id: resource_server_realestate_visits
               uri: http://localhost:8090
               predicates:
-                - Path=/realestates/{realestateid}/visits
+                - Path=/visits
                 - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 
-            #GET,PATCH /realestates/{realestateid}/visits/{visitid}
+            #GET,PATCH /visits/{visitid}
             - id: resource_server_get_patch_visit_by_id
               uri: http://localhost:8090
               predicates:
-                - Path=/realestates/{realestateid}/visits/{visitid}
+                - Path=/visits/{visitid}
                 - Method=GET,PATCH
               filters:
                 - RelayTokenIfExists=messaging-client-oidc

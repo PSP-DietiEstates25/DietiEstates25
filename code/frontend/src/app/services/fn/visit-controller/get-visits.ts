@@ -10,16 +10,18 @@ import { RequestBuilder } from '../../request-builder';
 
 import { PageVisitResponse } from '../../models/page-visit-response';
 
-export interface GetRealEstateVisits$Params {
-  realestateid: number;
+export interface GetVisits$Params {
+  realestateid?: number;
+  status?: string;
   page?: number;
   size?: number;
 }
 
-export function getRealEstateVisits(http: HttpClient, rootUrl: string, params: GetRealEstateVisits$Params, context?: HttpContext): Observable<StrictHttpResponse<PageVisitResponse>> {
-  const rb = new RequestBuilder(rootUrl, getRealEstateVisits.PATH, 'get');
+export function getVisits(http: HttpClient, rootUrl: string, params?: GetVisits$Params, context?: HttpContext): Observable<StrictHttpResponse<PageVisitResponse>> {
+  const rb = new RequestBuilder(rootUrl, getVisits.PATH, 'get');
   if (params) {
-    rb.path('realestateid', params.realestateid, {});
+    rb.query('realestateid', params.realestateid, {});
+    rb.query('status', params.status, {});
     rb.query('page', params.page, {});
     rb.query('size', params.size, {});
   }
@@ -34,4 +36,4 @@ export function getRealEstateVisits(http: HttpClient, rootUrl: string, params: G
   );
 }
 
-getRealEstateVisits.PATH = '/realestates/{realestateid}/visits';
+getVisits.PATH = '/visits';
