@@ -173,9 +173,9 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
     @Transactional
     public void deleteRealEstate(Long realEstateId) {
         var realEstate = realEstateFinder.getRealEstateById(realEstateId);
-        for (Negotiation neg : realEstate.getNegotiations()) {
-            neg.setRealEstate(null);
-            negotiationRepository.save(neg);
+        for (Negotiation negotiation : realEstate.getNegotiations()) {
+            negotiation.setRealEstate(null);
+            negotiationRepository.save(negotiation);
         }
         realEstateRepository.delete(realEstate);
     }

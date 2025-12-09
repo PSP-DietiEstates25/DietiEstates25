@@ -74,6 +74,7 @@ export class AdminAdsListComponent implements OnDestroy {
 
   confirmDiscard() {
     const realEstateToRemoveId = this.realEstateIdToRemove();
+    console.log(realEstateToRemoveId);
     if (realEstateToRemoveId != null) {
       this.deleteAd(realEstateToRemoveId);
     }
