@@ -50,7 +50,7 @@ public class RealEstate {
     @Column(insertable = false)
     private LocalDateTime lastModifiedDate;
 
-    @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "realEstate", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Negotiation> negotiations = new ArrayList<>();
 
     @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)

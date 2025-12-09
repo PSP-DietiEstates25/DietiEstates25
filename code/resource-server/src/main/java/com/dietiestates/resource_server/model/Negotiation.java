@@ -46,7 +46,6 @@ public class Negotiation {
 
     @ManyToOne
     @JoinColumn(
-            nullable = false,
             name = "real_estate_id",
             foreignKey = @ForeignKey(name = "NEGOTIATION_REAL_ESTATE_ID_FK"))
     private RealEstate realEstate;

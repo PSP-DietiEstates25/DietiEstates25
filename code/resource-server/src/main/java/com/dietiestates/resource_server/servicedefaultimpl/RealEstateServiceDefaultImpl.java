@@ -7,6 +7,8 @@ import com.dietiestates.resource_server.factory.RealEstateFactory;
 import com.dietiestates.resource_server.finder.*;
 import com.dietiestates.resource_server.mapper.RealEstateMapper;
 import com.dietiestates.resource_server.model.Admin;
+import com.dietiestates.resource_server.model.Negotiation;
+import com.dietiestates.resource_server.repository.NegotiationRepository;
 import com.dietiestates.resource_server.repository.RealEstateRepository;
 import com.dietiestates.resource_server.service.NotificationService;
 import com.dietiestates.resource_server.service.RealEstateService;
@@ -41,6 +43,7 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
 	private final DetailFinder detailFinder;
     private final SearchRealEstateService searchRealEstateService;
     private final NotificationService notificationService;
+    private final NegotiationRepository negotiationRepository;
 
     private final StorageService storageService;
 
@@ -169,7 +172,11 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
     @Override
     @Transactional
     public void deleteRealEstate(Long realEstateId) {
-        var entity = realEstateFinder.getRealEstateById(realEstateId);
-        realEstateRepository.delete(entity);
+        var realEstate = realEstateFinder.getRealEstateById(realEstateId);
+        for (Negotiation neg : realEstate.getNegotiations()) {
+            neg.setRealEstate(null);
+            negotiationRepository.save(neg);
+        }
+        realEstateRepository.delete(realEstate);
     }
 }
