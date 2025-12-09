@@ -16,7 +16,11 @@ import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.
 @Component({
   selector: 'app-step-basics',
   standalone: true,
-  imports: [ReactiveFormsModule, DiscardDialogComponent],
+  imports: [
+    ReactiveFormsModule,
+    DiscardDialogComponent,
+    DiscardDialogComponent,
+  ],
   templateUrl: './step-basics.component.html',
 })
 export class StepBasicsComponent {

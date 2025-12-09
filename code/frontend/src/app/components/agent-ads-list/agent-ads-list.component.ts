@@ -1,4 +1,10 @@
-import { Component, inject, OnDestroy } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnDestroy,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CurrencyPipe, DatePipe } from '@angular/common';
@@ -18,6 +24,10 @@ import { EnergyClassIconComponent } from '../../shared/icons/energy-class-icon/e
 import { AirConditioningIconComponent } from '../../shared/icons/air-conditioning-icon/air-conditioning-icon.component';
 import { ElevatorIconComponent } from '../../shared/icons/elevator-icon/elevator-icon.component';
 import { DoormanIconComponent } from '../../shared/icons/doorman-icon/doorman-icon.component';
+import { ToastrService } from 'ngx-toastr';
+import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.component';
+import { DeleteAdDialogComponent } from '../dialog/delete-ad-dialog/delete-ad-dialog.component';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-agent-ads-list',
@@ -37,16 +47,22 @@ import { DoormanIconComponent } from '../../shared/icons/doorman-icon/doorman-ic
     GeographicalPositionIconComponent,
     AirConditioningIconComponent,
     ElevatorIconComponent,
+    DiscardDialogComponent,
     DoormanIconComponent,
+    DeleteAdDialogComponent,
   ],
   templateUrl: './agent-ads-list.component.html',
   styleUrl: './agent-ads-list.component.scss',
 })
 export class AgentAdsListComponent implements OnDestroy {
-  private facade = inject(AgentDashboardFacade);
-  private adsPaginatorService = inject(AdsPaginatorService);
+  facade = inject(AgentDashboardFacade);
+  adsPaginatorService = inject(AdsPaginatorService);
+  toastrService = inject(ToastrService);
+
+  isDiscardModalOpen = false;
 
   realEstates = this.facade.realEstates;
+  realEstateIdToRemove: WritableSignal<number | null> = signal(null);
   realEstatesLoading = this.facade.realEstatesLoading;
 
   //offerta esterna
@@ -59,6 +75,41 @@ export class AgentAdsListComponent implements OnDestroy {
     return `${environment.apiBaseUrl}${path}`;
   }
 
+  openDiscardModal(adId: number) {
+    this.realEstateIdToRemove.set(adId);
+    this.isDiscardModalOpen = true;
+  }
+
+  closeDiscardModal() {
+    this.realEstateIdToRemove.set(null);
+    this.isDiscardModalOpen = false;
+  }
+
+  confirmDiscard() {
+    const realEstateToRemoveId = this.realEstateIdToRemove();
+    if (realEstateToRemoveId != null) {
+      this.deleteAd(realEstateToRemoveId);
+    }
+    this.closeDiscardModal();
+  }
+
+  deleteAd(adId: number) {
+    console.log(adId);
+    this.facade.deleteAd(adId).subscribe({
+      next: () => {
+        this.toastrService.success('Annuncio cancellato');
+      },
+      error: (error: HttpErrorResponse) => {
+        if (error.status === 500) {
+          this.toastrService.error(
+            'Errore interno del server',
+            'Contatta un admin',
+          );
+        }
+      },
+    });
+  }
+
   startAddOfferFor(adId: number) {
     this.facade.startAddOfferFor(adId);
   }
@@ -69,12 +120,6 @@ export class AgentAdsListComponent implements OnDestroy {
 
   cancelAddOffer() {
     this.facade.cancelAddOffer();
-  }
-
-  deleteAd(adId: number) {
-    if (confirm('Sei sicuro di voler eliminare questo annuncio?')) {
-      this.facade.deleteAd(adId).subscribe();
-    }
   }
 
   ngOnDestroy(): void {

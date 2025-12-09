@@ -467,8 +467,6 @@ export class AgentDashboardFacade {
 
   deleteAd(adId: number): Observable<void> {
     const prev = this.realEstates();
-    this.realEstates.set(prev.filter((ad) => ad.id !== adId));
-
     return this.realEstateService.deleteRealEstate({ realestateid: adId }).pipe(
       catchError((error) => {
         console.error('[Facade] deleteAd error (delete)', error);
