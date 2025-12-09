@@ -1,4 +1,4 @@
-<section class="container mx-auto px-4 py-6 space-y-6">
+<section class="container mx-auto space-y-6 px-4 py-6">
   <!-- HEADER + TABS -->
   <header
     class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
@@ -17,20 +17,20 @@
       aria-label="Navigazione area admin"
     >
       @for (t of tabs; track t.key) {
-      <button
-        type="button"
-        class="btn_ghost rounded-full px-3 py-1.5 text-xs sm:text-sm font-medium transition data-[active=true]:btn_primary data-[active=true]:shadow-sm"
-        [attr.data-active]="active() === t.key"
-        [class.btn_primary]="active() === t.key"
-        (click)="setTab(t.key)"
-      >
-        {{ t.label }}
-      </button>
+        <button
+          type="button"
+          class="btn_ghost data-[active=true]:btn_primary rounded-full px-3 py-1.5 text-xs font-medium transition data-[active=true]:shadow-sm sm:text-sm"
+          [attr.data-active]="active() === t.key"
+          [class.btn_primary]="active() === t.key"
+          (click)="setTab(t.key)"
+        >
+          {{ t.label }}
+        </button>
       }
 
       <button
         type="button"
-        class="btn_ghost rounded-full text-xs sm:text-sm cursor-pointer"
+        class="btn_ghost cursor-pointer rounded-full text-xs sm:text-sm"
         (click)="logout()"
       >
         Logout
@@ -38,320 +38,241 @@
     </nav>
   </header>
 
-  <!-- ADS TAB -->
-  @if (active() === 'ads') {
-  <section class="space-y-4">
-    <!-- Filtro -->
-    <div
-      class="flex flex-wrap items-end gap-3 rounded-2xl border border-slate-200 bg-white/70 px-3 py-3 dark:border-slate-700 dark:bg-slate-900/70"
-    >
-      <div>
-        <label
-          for="q"
-          class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-200"
-        >
-          Cerca
-        </label>
-        <input
-          id="q"
-          class="input_main w-72"
-          [ngModel]="q()"
-          (ngModelChange)="q.set($event); loadAds()"
-          placeholder="Titolo o città"
-        />
-      </div>
-
-      <div>
-        <label
-          for="active"
-          class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-200"
-        >
-          Stato
-        </label>
-        <select
-          id="active"
-          class="input_main w-44"
-          [ngModel]="activeFilter()"
-          (ngModelChange)="activeFilter.set($event); loadAds()"
-        >
-          <option [ngValue]="''">Tutti</option>
-          <option [ngValue]="true">Solo attivi</option>
-          <option [ngValue]="false">Solo inattivi</option>
-        </select>
-      </div>
-
-      <div class="ml-auto text-xs text-slate-500 dark:text-slate-400">
-        Usa i filtri per affinare la lista degli annunci.
-      </div>
-    </div>
-
-    <!-- Lista annunci -->
-    @if (adsLoading()) {
-    <div class="py-12 text-center text-sm text-slate-600 dark:text-slate-300">
-      Caricamento annunci…
-    </div>
-    } @else {
-    <div class="grid lg:grid-cols-2 gap-4">
-      @for (ad of ads(); track ad.id) {
-      <article
-        class="rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-900/70"
-      >
-        <div class="flex items-start justify-between gap-3">
-          <div class="space-y-1">
-            <h3
-              class="font-semibold text-slate-900 dark:text-white line-clamp-2"
-            >
-              {{ ad.title }}
-            </h3>
-            <p class="text-xs text-slate-600 dark:text-slate-300">
-              {{ ad.city || "—" }} •
-              <span class="text-slate-500">Creato</span>
-              {{ ad.createdAt | date : "short" }}
-            </p>
-            <div class="text-sm text-slate-800 dark:text-slate-100">
-              <span class="font-semibold">
-                € {{ ad.price | number : "1.0-0" }}
-              </span>
-            </div>
-          </div>
-
-          <div class="flex flex-col gap-2">
-            <button
-              type="button"
-              class="btn_ghost cursor-pointer"
-              [routerLink]="['/edit', ad.id]"
-            >
-              Modifica
-            </button>
-            <button
-              type="button"
-              class="btn_ghost cursor-pointer text-red-600 hover:text-red-700"
-              (click)="deleteAd(ad)"
-            >
-              Elimina
-            </button>
-          </div>
+  <!-- ADS -->
+  @if (active() === "ads") {
+    <section class="space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+            I tuoi annunci
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Gestisci la lista degli immobili pubblicati come agente.
+          </p>
         </div>
-      </article>
-      } @empty {
-      <div
-        class="col-span-full py-12 text-center text-slate-600 dark:text-slate-300"
-      >
-        <p class="text-sm">Nessun annuncio trovato.</p>
-        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-          Prova a rimuovere o modificare i filtri di ricerca.
-        </p>
       </div>
-      }
-    </div>
-    }
-  </section>
+
+      <app-admin-ads-list></app-admin-ads-list>
+      <app-ads-paginator></app-ads-paginator>
+    </section>
   }
 
   <!-- USERS TAB -->
-  @if (active() === 'users') {
-  <section class="space-y-4">
-    <div>
-      <h2 class="text-xl font-bold text-slate-900 dark:text-white">
-        Gestione utenti
-      </h2>
-      <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
-        Crea rapidamente nuovi account amministratore o agenti.
-      </p>
-    </div>
+  @if (active() === "users") {
+    <section class="space-y-4">
+      <div>
+        <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+          Gestione utenti
+        </h2>
+        <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+          Crea rapidamente nuovi account amministratore o agenti.
+        </p>
+      </div>
 
-    <div class="grid lg:grid-cols-2 gap-4">
-      <article
-        class="rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/70"
-      >
-        <h3 class="font-semibold mb-3 text-slate-900 dark:text-white">
-          Crea nuovo utente
-        </h3>
-        <form [formGroup]="createForm" class="flex flex-col gap-3 max-w-md">
-          <div>
-            <label
-              for="email"
-              class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-200"
+      <div class="grid gap-4 lg:grid-cols-2">
+        <article
+          class="rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/70"
+        >
+          <h3 class="mb-3 font-semibold text-slate-900 dark:text-white">
+            Crea nuovo utente
+          </h3>
+          <form [formGroup]="createForm" class="flex max-w-md flex-col gap-3">
+            <div>
+              <label
+                for="email"
+                class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200"
+              >
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                class="input_main"
+                formControlName="email"
+                placeholder="es. admin@azienda.it"
+              />
+            </div>
+
+            <div>
+              <label
+                for="role2"
+                class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200"
+              >
+                Ruolo
+              </label>
+              <select id="role2" class="input_main" formControlName="role">
+                <option value="ESTATE_AGENT">Agente</option>
+                <option value="ADMIN">Admin</option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                for="pwd"
+                class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200"
+              >
+                Password
+              </label>
+              <input
+                id="pwd"
+                type="password"
+                class="input_main"
+                formControlName="password"
+              />
+            </div>
+
+            <div>
+              <label
+                for="pwd2"
+                class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200"
+              >
+                Conferma password
+              </label>
+              <input
+                id="pwd2"
+                type="password"
+                class="input_main w-full"
+                formControlName="confirm"
+              />
+              @if (
+                createForm.hasError("mismatch") &&
+                (createForm.dirty || createForm.touched)
+              ) {
+                <p class="mt-1 text-xs text-red-500">
+                  Le password non coincidono.
+                </p>
+              }
+            </div>
+
+            <button
+              type="button"
+              class="btn_primary mt-1 w-fit"
+              (click)="createUser()"
+              [disabled]="createForm.invalid"
             >
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              class="input_main"
-              formControlName="email"
-              placeholder="es. admin@azienda.it"
-            />
-          </div>
-
-          <div>
-            <label
-              for="role2"
-              class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-200"
-            >
-              Ruolo
-            </label>
-            <select id="role2" class="input_main" formControlName="role">
-              <option value="ESTATE_AGENT">Agente</option>
-              <option value="ADMIN">Admin</option>
-            </select>
-          </div>
-
-          <div>
-            <label
-              for="pwd"
-              class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-200"
-            >
-              Password
-            </label>
-            <input
-              id="pwd"
-              type="password"
-              class="input_main"
-              formControlName="password"
-            />
-          </div>
-
-          <div>
-            <label
-              for="pwd2"
-              class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-200"
-            >
-              Conferma password
-            </label>
-            <input
-              id="pwd2"
-              type="password"
-              class="input_main w-full"
-              formControlName="confirm"
-            />
-            @if ( createForm.hasError('mismatch') && (createForm.dirty ||
-            createForm.touched) ) {
-            <p class="text-xs text-red-500 mt-1">Le password non coincidono.</p>
-            }
-          </div>
-
-          <button
-            type="button"
-            class="btn_primary mt-1 w-fit"
-            (click)="createUser()"
-            [disabled]="createForm.invalid"
-          >
-            Crea utente
-          </button>
-        </form>
-      </article>
-    </div>
-  </section>
+              Crea utente
+            </button>
+          </form>
+        </article>
+      </div>
+    </section>
   }
 
   <!-- PASSWORD TAB -->
-  @if (active() === 'passwords') {
-  <section class="space-y-4 max-w-xl">
-    <div>
-      <h2 class="text-xl font-bold text-slate-900 dark:text-white">
-        Cambia password
-      </h2>
-      <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
-        Aggiorna la password del tuo account amministratore.
-      </p>
-    </div>
-
-    <form
-      [formGroup]="form"
-      (ngSubmit)="submit()"
-      class="grid gap-3 rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/70"
-    >
+  @if (active() === "passwords") {
+    <section class="max-w-xl space-y-4">
       <div>
-        <label
-          for="cur"
-          class="text-sm font-medium block mb-1 text-slate-700 dark:text-slate-200"
-        >
-          Password attuale
-        </label>
-        <input
-          id="cur"
-          type="password"
-          autocomplete="current-password"
-          class="input_main w-full"
-          formControlName="currentPassword"
-        />
-        @if (formControls.currentPassword.touched &&
-        formControls.currentPassword.invalid) {
-        <p class="text-xs text-red-600 mt-1">Campo obbligatorio.</p>
-        }
-      </div>
-
-      <div>
-        <label
-          for="new"
-          class="text-sm font-medium block mb-1 text-slate-700 dark:text-slate-200"
-        >
-          Nuova password
-        </label>
-        <input
-          id="new"
-          type="password"
-          autocomplete="new-password"
-          class="input_main w-full"
-          formControlName="newPassword"
-        />
-        @if (formControls.newPassword.touched &&
-        formControls.newPassword.hasError('minlength')) {
-        <p class="text-xs text-red-600 mt-1">Almeno 8 caratteri.</p>
-        } @if (formControls.newPassword.touched &&
-        formControls.newPassword.hasError('pattern')) {
-        <p class="text-xs text-red-600 mt-1">
-          Deve includere almeno una maiuscola, una minuscola e un numero.
+        <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+          Cambia password
+        </h2>
+        <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+          Aggiorna la password del tuo account amministratore.
         </p>
-        }
       </div>
 
-      <div>
-        <label
-          for="conf"
-          class="text-sm font-medium block mb-1 text-slate-700 dark:text-slate-200"
+      <form
+        [formGroup]="form"
+        (ngSubmit)="submit()"
+        class="grid gap-3 rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/70"
+      >
+        <div>
+          <label
+            for="cur"
+            class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200"
+          >
+            Password attuale
+          </label>
+          <input
+            id="cur"
+            type="password"
+            autocomplete="current-password"
+            class="input_main w-full"
+            formControlName="currentPassword"
+          />
+          @if (
+            formControls.currentPassword.touched &&
+            formControls.currentPassword.invalid
+          ) {
+            <p class="mt-1 text-xs text-red-600">Campo obbligatorio.</p>
+          }
+        </div>
+
+        <div>
+          <label
+            for="new"
+            class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200"
+          >
+            Nuova password
+          </label>
+          <input
+            id="new"
+            type="password"
+            autocomplete="new-password"
+            class="input_main w-full"
+            formControlName="newPassword"
+          />
+          @if (
+            formControls.newPassword.touched &&
+            formControls.newPassword.hasError("minlength")
+          ) {
+            <p class="mt-1 text-xs text-red-600">Almeno 8 caratteri.</p>
+          }
+          @if (
+            formControls.newPassword.touched &&
+            formControls.newPassword.hasError("pattern")
+          ) {
+            <p class="mt-1 text-xs text-red-600">
+              Deve includere almeno una maiuscola, una minuscola e un numero.
+            </p>
+          }
+        </div>
+
+        <div>
+          <label
+            for="conf"
+            class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200"
+          >
+            Conferma nuova password
+          </label>
+          <input
+            id="conf"
+            type="password"
+            autocomplete="new-password"
+            class="input_main w-full"
+            formControlName="confirmNewPassword"
+          />
+          @if (form.touched && form.hasError("mismatch")) {
+            <p class="mt-1 text-xs text-red-600">Le password non coincidono.</p>
+          }
+        </div>
+
+        <button
+          class="btn_primary mt-1 w-fit"
+          [disabled]="loading() || form.invalid"
         >
-          Conferma nuova password
-        </label>
-        <input
-          id="conf"
-          type="password"
-          autocomplete="new-password"
-          class="input_main w-full"
-          formControlName="confirmNewPassword"
-        />
-        @if (form.touched && form.hasError('mismatch')) {
-        <p class="text-xs text-red-600 mt-1">Le password non coincidono.</p>
+          {{ loading() ? "Salvataggio…" : "Aggiorna password" }}
+        </button>
+
+        @if (success()) {
+          <p class="mt-1 text-sm text-green-600">
+            {{ success() }}
+          </p>
         }
+        @if (error()) {
+          <p class="mt-1 text-sm text-red-600">
+            {{ error() }}
+          </p>
+        }
+      </form>
+
+      <div class="mt-2">
+        <a
+          routerLink="/admin"
+          class="text-xs text-slate-600 underline dark:text-slate-300"
+        >
+          Torna alla dashboard
+        </a>
       </div>
-
-      <button
-        class="btn_primary mt-1 w-fit"
-        [disabled]="loading() || form.invalid"
-      >
-        {{ loading() ? "Salvataggio…" : "Aggiorna password" }}
-      </button>
-
-      @if (success()) {
-      <p class="text-green-600 text-sm mt-1">
-        {{ success() }}
-      </p>
-      } @if (error()) {
-      <p class="text-red-600 text-sm mt-1">
-        {{ error() }}
-      </p>
-      }
-    </form>
-
-    <div class="mt-2">
-      <a
-        routerLink="/admin"
-        class="text-xs underline text-slate-600 dark:text-slate-300"
-      >
-        Torna alla dashboard
-      </a>
-    </div>
-  </section>
+    </section>
   }
 </section>

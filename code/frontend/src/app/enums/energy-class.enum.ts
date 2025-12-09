@@ -1,15 +1,14 @@
-export enum EnergyClass {
-  A4 = 0,
-  A3 = 1,
-  A2 = 2,
-  A1 = 3,
-  B = 4,
-  C = 5,
-  D = 6,
-  E = 7,
-  F = 8,
-  G = 9,
-}
+export type EnergyClass =
+  | 'A4'
+  | 'A3'
+  | 'A2'
+  | 'A1'
+  | 'B'
+  | 'C'
+  | 'D'
+  | 'E'
+  | 'F'
+  | 'G';
 
 export const ENERGY_LABELS: Record<number, string> = {
   0: 'A4',

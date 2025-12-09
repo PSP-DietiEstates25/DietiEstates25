@@ -56,7 +56,6 @@ import { PaginatorRequest } from '../../interfaces/paginator-request';
 })
 export class AgentDashboardComponent implements OnDestroy {
   facade = inject(AgentDashboardFacade);
-
   offerPaginatorService = inject(OffersPaginatorService);
   visitPaginatorService = inject(VisitPaginatorService);
   adsPaginatorService = inject(AdsPaginatorService);
@@ -185,7 +184,7 @@ export class AgentDashboardComponent implements OnDestroy {
     this.facade.fetchRealEstates(this.adsPaginatorRequest).subscribe({
       next: (results) => {
         this.totalPages = results.totalPages!;
-        this.offers = results.content!;
+        this.realEstates = results.fullRealEstates!;
         this.initPages();
       },
       error: (response: HttpErrorResponse) => {
@@ -286,6 +285,8 @@ export class AgentDashboardComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.offerPaginatorService.refresh();
+    this.visitPaginatorService.refresh();
+    this.adsPaginatorService.refresh();
   }
 
   logout() {

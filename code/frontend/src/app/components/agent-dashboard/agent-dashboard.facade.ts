@@ -37,6 +37,7 @@ import { OfferPaginatorRequest } from '../../interfaces/offer-paginator-request'
 import { VisitPaginatorRequest } from '../../interfaces/visit-paginator-request';
 import { FullRealEstate } from '../../interfaces/full-real-estate';
 import { AdCategory } from '../../enums/ad-category.enum';
+import { EnergyClass } from '../../enums/energy-class.enum';
 
 export type VisitVM = {
   id: number;
@@ -429,38 +430,28 @@ export class AgentDashboardFacade {
 
         return forkJoin(requests).pipe(
           map((realEstatesObservables) => {
+            const fullRealEstatesTyped: FullRealEstate[] =
+              realEstatesObservables.map((realEstate) => ({
+                ...realEstate,
+                category: realEstate.category as unknown as AdCategory,
+                cadastralData: {
+                  ...realEstate.cadastralData,
+                  energyClass: realEstate.cadastralData
+                    .energyClass as unknown as EnergyClass,
+                },
+                geographicalPosition: realEstate.geographicalPosition,
+                utility: realEstate.utility,
+              }));
+
             return {
               ...response,
-              fullRealEstates: realEstatesObservables,
+              fullRealEstates: fullRealEstatesTyped,
             };
           }),
         );
       }),
       tap((fullRealEstatesResponse) => {
-        const newRealEstates: FullRealEstate[] =
-          fullRealEstatesResponse.fullRealEstates.map((realEstate) => {
-            return {
-              ...realEstate,
-              geographicalPosition: realEstate.geographicalPosition,
-              utility: realEstate.utility,
-              cadastralData: {
-                ...realEstate.cadastralData,
-                energyClass: realEstate.cadastralData.energyClass as
-                  | 'A4'
-                  | 'A3'
-                  | 'A2'
-                  | 'A1'
-                  | 'B'
-                  | 'C'
-                  | 'D'
-                  | 'E'
-                  | 'F'
-                  | 'G',
-              },
-              category: realEstate.category as AdCategory,
-            };
-          });
-        this.realEstates.set(newRealEstates);
+        this.realEstates.set(fullRealEstatesResponse.fullRealEstates);
       }),
     );
   }

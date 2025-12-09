@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormsModule,
@@ -20,6 +20,13 @@ import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../manual_services/auth/auth.service';
 import { environment } from '../../../environments/environment.development';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { AgentAdsListComponent } from '../agent-ads-list/agent-ads-list.component';
+import { AdsPaginatorComponent } from '../ads-paginator/ads-paginator.component';
+import { AdsPaginatorService } from '../../manual_services/ads_paginator/ads-paginator.service';
+import { FullRealEstate } from '../../interfaces/full-real-estate';
+import { PaginatorRequest } from '../../interfaces/paginator-request';
+import { throttleTime } from 'rxjs';
+import { AdminAdsListComponent } from '../admin-ads-list/admin-ads-list.component';
 
 function matchValidator(a: string, b: string) {
   return (ctrl: AbstractControl) => {
@@ -32,19 +39,34 @@ function matchValidator(a: string, b: string) {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterLink,
+    AdsPaginatorComponent,
+    AdminAdsListComponent,
+  ],
   templateUrl: './admin-dashboard.component.html',
 })
 export class AdminDashboardComponent {
-  private facade = inject(AdminDashboardFacade);
-  private toastrService = inject(ToastrService);
-  private formBuilder = inject(FormBuilder);
-  private routerService = inject(Router);
+  facade = inject(AdminDashboardFacade);
+  adsPaginatorService = inject(AdsPaginatorService);
+  formBuilder = inject(FormBuilder);
+  routerService = inject(Router);
+  toastrService = inject(ToastrService);
 
   private readonly authService = inject(AuthService);
 
   isAuthenticated = false;
   email = '';
+
+  realEstates: FullRealEstate[] = [];
+
+  adsPaginatorRequest!: PaginatorRequest;
+
+  totalPages!: number;
+  page!: number;
 
   tabs = [
     { key: 'ads' as const, label: 'Annunci' },
@@ -53,10 +75,7 @@ export class AdminDashboardComponent {
   ];
   active = signal<'passwords' | 'ads' | 'users'>('ads');
 
-  ads = signal<AdminAd[]>([]);
   adsLoading = signal(false);
-  q = signal('');
-  activeFilter = signal<boolean | ''>('');
 
   users = signal<AdminUser[]>([]);
   usersLoading = signal(false);
@@ -73,14 +92,18 @@ export class AdminDashboardComponent {
   );
 
   constructor() {
-    this.loadAds();
+    effect(() => {
+      this.adsPaginatorRequest = this.adsPaginatorService.adsRequest();
+      if (this.active() === 'ads') {
+        this.fetchAdminRealEstates();
+      }
+    });
   }
 
   setTab(t: 'ads' | 'users' | 'passwords') {
     this.active.set(t);
-
-    if (t === 'ads') {
-      this.loadAds();
+    if (t === 'ads' && this.realEstates.length) {
+      this.fetchAdminRealEstates();
     }
     // else if (t === 'users') {
     //   this.createForm.reset({
@@ -91,20 +114,20 @@ export class AdminDashboardComponent {
     // }
   }
 
-  loadAds() {
-    this.adsLoading.set(true);
-    this.facade
-      .listAds({ q: this.q().trim() || undefined, active: this.activeFilter() })
-      .subscribe({
-        next: (list) => this.ads.set(list || []),
-        error: (_) => this.ads.set([]),
-        complete: () => this.adsLoading.set(false),
-      });
-  }
-
-  deleteAd(ad: AdminAd) {
-    if (!confirm(`Eliminare l'annuncio "${ad.title}"?`)) return;
-    this.facade.deleteAd(ad.id).subscribe({ next: (_) => this.loadAds() });
+  fetchAdminRealEstates() {
+    this.facade.fetchRealEstates(this.adsPaginatorRequest).subscribe({
+      next: (results) => {
+        this.totalPages = results.totalPages!;
+        this.realEstates = results.fullRealEstates!;
+        this.initPages();
+      },
+      error: (response: HttpErrorResponse) => {
+        if (response.error === 500) {
+          this.toastrService.error('Contatta un admin', 'Errore interno');
+          this.routerService.navigateByUrl('/');
+        }
+      },
+    });
   }
 
   createUser() {
@@ -189,6 +212,15 @@ export class AdminDashboardComponent {
         this.form.markAsUntouched();
       },
     });
+  }
+
+  initPages() {
+    this.adsPaginatorService.setPagesNumber(this.totalPages);
+    this.page = this.adsPaginatorService.page();
+  }
+
+  ngOnDestroy(): void {
+    this.adsPaginatorService.refresh();
   }
 }
 

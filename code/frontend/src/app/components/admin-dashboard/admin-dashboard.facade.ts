@@ -1,11 +1,15 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { Observable, throwError, of, EMPTY } from 'rxjs';
+import { Observable, throwError, of, EMPTY, forkJoin } from 'rxjs';
 import { map, catchError, switchMap, tap, finalize } from 'rxjs/operators';
 
 import {
   RealEstateControllerService,
   EstateAgentControllerService,
   AdminControllerService,
+  CadastralDataControllerService,
+  DetailControllerService,
+  GeographicalPositionControllerService,
+  UtilityControllerService,
 } from '../../services/services';
 
 import { GetRealEstates$Params } from '../../services/fn/real-estate-controller/get-real-estates';
@@ -15,6 +19,10 @@ import { PageRealEstateResponse } from '../../services/models/page-real-estate-r
 import { AuthService } from '../../manual_services/auth/auth.service';
 
 import { StafferRequest, StafferResponse } from '../../services/models';
+import { PaginatorRequest } from '../../interfaces/paginator-request';
+import { FullRealEstate } from '../../interfaces/full-real-estate';
+import { AdCategory } from '../../enums/ad-category.enum';
+import { EnergyClass } from '../../enums/energy-class.enum';
 
 export interface AdminAd {
   id: number;
@@ -40,7 +48,6 @@ export interface ListAdsOpts {
   active?: boolean | '';
 }
 
-// account dell'authorization server
 export interface AccountResponse {
   id?: number;
   email?: string;
@@ -57,85 +64,224 @@ export interface AccountRequest {
 
 @Injectable({ providedIn: 'root' })
 export class AdminDashboardFacade {
-  private realEstateService = inject(RealEstateControllerService);
+  realEstateService = inject(RealEstateControllerService);
+  cadastralDataService = inject(CadastralDataControllerService);
+  detailService = inject(DetailControllerService);
+  geographicalPositionService = inject(GeographicalPositionControllerService);
+  utilityService = inject(UtilityControllerService);
   private estateAgentService = inject(EstateAgentControllerService);
   private adminService = inject(AdminControllerService);
   private authService = inject(AuthService);
+
+  // stato annunci
+  realEstates = signal<FullRealEstate[]>([]);
+  realEstatesLoading = signal(false);
 
   loading = signal(false);
   success = signal<string | null>(null);
   error = signal<string | null>(null);
 
   // ===== ADS =====
-  listAds(
-    arg1?: string | ListAdsOpts,
-    activeParam?: boolean | '',
-  ): Observable<AdminAd[]> {
-    let q: string | undefined;
-    let active: boolean | '' | undefined;
-    if (typeof arg1 === 'string' || arg1 === undefined) {
-      q = arg1;
-      active = activeParam;
-    } else {
-      q = arg1.q;
-      active = arg1.active;
-    }
-
-    const realEstateParams: GetRealEstates$Params = {
-      page: 0,
-      size: 100,
+  /*
+  fetchRealEstates(request: PaginatorRequest) {
+    const params = {
+      page: request.page - 1,
+      size: request.size,
     };
+    return this.realEstateService.getRealEstates(params).pipe(
+      switchMap((response) => {
+        const requests = response.content!.map((realEstate) => {
+          const cadastralData = this.cadastralDataService.getCadastralDataById({
+            cadastraldataid: realEstate.cadastralDataId!,
+          });
 
-    return this.realEstateService.getRealEstates(realEstateParams).pipe(
-      map((page: PageRealEstateResponse) => {
-        const list = Array.isArray(page?.content)
-          ? (page.content as RealEstateResponse[])
-          : [];
-        return list.map((re) => this.toAdminAd(re));
-      }),
-      map((ads) => {
-        const qNorm = (q ?? '').trim().toLowerCase();
-        let res = ads;
-        if (qNorm) {
-          res = res.filter((a) =>
-            [a.title, a.city, String(a.price ?? ''), String(a.id)]
-              .filter(Boolean)
-              .some((v) => String(v).toLowerCase().includes(qNorm)),
+          const details = this.detailService
+            .getDetailById({ detailid: realEstate.detailId! })
+            .pipe(
+              switchMap((detail) => {
+                return forkJoin({
+                  geographicalPosition:
+                    this.geographicalPositionService.getGeographicalPositionById(
+                      {
+                        geographicalpositionid: detail.geographicalPositionId!,
+                      },
+                    ),
+                  utility: this.utilityService.getUtilityById({
+                    utilityid: detail.utilityId!,
+                  }),
+                });
+              }),
+            );
+
+          return forkJoin({
+            realEstate: of(realEstate),
+            cadastralData: cadastralData,
+            details: details,
+          }).pipe(
+            map((result) => {
+              return {
+                ...result.realEstate,
+                cadastralData: result.cadastralData,
+                geographicalPosition: result.details.geographicalPosition,
+                utility: result.details.utility,
+              };
+            }),
           );
-        }
-        if (active !== '' && active !== undefined) {
-          res = res.filter((a) => (a.active ?? null) === (active as boolean));
-        }
-        return res;
+        });
+
+        return forkJoin(requests).pipe(
+          map((realEstatesObservables) => {
+            return {
+              ...response,
+              fullRealEstates: realEstatesObservables,
+            };
+          }),
+        );
       }),
-      catchError((e) => {
-        console.error('[AdminDashboard] listAds error', e);
-        return of([]);
+      tap((fullRealEstatesResponse) => {
+        const newRealEstates: FullRealEstate[] =
+          fullRealEstatesResponse.fullRealEstates.map((realEstate) => {
+            return {
+              ...realEstate,
+              geographicalPosition: realEstate.geographicalPosition,
+              utility: realEstate.utility,
+              cadastralData: {
+                ...realEstate.cadastralData,
+                energyClass: realEstate.cadastralData.energyClass as
+                  | 'A4'
+                  | 'A3'
+                  | 'A2'
+                  | 'A1'
+                  | 'B'
+                  | 'C'
+                  | 'D'
+                  | 'E'
+                  | 'F'
+                  | 'G',
+              },
+              category: realEstate.category as AdCategory,
+            };
+          });
+        this.realEstates.set(newRealEstates);
+      }),
+    );
+  }
+  */
+  fetchRealEstates(request: PaginatorRequest) {
+    const params = {
+      page: request.page - 1,
+      size: request.size,
+    };
+    return this.realEstateService.getRealEstates(params).pipe(
+      switchMap((response) => {
+        const requests = response.content!.map((realEstate) => {
+          const cadastralData = this.cadastralDataService.getCadastralDataById({
+            cadastraldataid: realEstate.cadastralDataId!,
+          });
+
+          const details = this.detailService
+            .getDetailById({ detailid: realEstate.detailId! })
+            .pipe(
+              switchMap((detail) => {
+                return forkJoin({
+                  geographicalPosition:
+                    this.geographicalPositionService.getGeographicalPositionById(
+                      {
+                        geographicalpositionid: detail.geographicalPositionId!,
+                      },
+                    ),
+                  utility: this.utilityService.getUtilityById({
+                    utilityid: detail.utilityId!,
+                  }),
+                });
+              }),
+            );
+
+          return forkJoin({
+            realEstate: of(realEstate),
+            cadastralData: cadastralData,
+            details: details,
+          }).pipe(
+            map((result) => {
+              return {
+                ...result.realEstate,
+                cadastralData: result.cadastralData,
+                geographicalPosition: result.details.geographicalPosition,
+                utility: result.details.utility,
+              };
+            }),
+          );
+        });
+
+        return forkJoin(requests).pipe(
+          map((realEstatesObservables) => {
+            const fullRealEstatesTyped: FullRealEstate[] =
+              realEstatesObservables.map((realEstate) => ({
+                ...realEstate,
+                category: realEstate.category as unknown as AdCategory,
+                cadastralData: {
+                  ...realEstate.cadastralData,
+                  energyClass: realEstate.cadastralData
+                    .energyClass as unknown as EnergyClass,
+                },
+                geographicalPosition: realEstate.geographicalPosition,
+                utility: realEstate.utility,
+              }));
+
+            return {
+              ...response,
+              fullRealEstates: fullRealEstatesTyped,
+            };
+          }),
+        );
+      }),
+      tap((fullRealEstatesResponse) => {
+        this.realEstates.set(fullRealEstatesResponse.fullRealEstates);
       }),
     );
   }
 
-  deleteAd(id: number): Observable<void> {
-    return this.realEstateService.deleteRealEstate({ realestateid: id }).pipe(
-      switchMap(() => this.listAds({})),
-      catchError((e) => {
-        console.error('[AdminDashboard] deleteAd error', e);
-        return of([]);
+  deleteAd(adId: number): Observable<void> {
+    const prev = this.realEstates();
+    return this.realEstateService.deleteRealEstate({ realestateid: adId }).pipe(
+      catchError((error) => {
+        console.error('[Facade] deleteAd error (delete)', error);
+        this.realEstates.set(prev);
+        return of(void 0);
       }),
+      /*
+      switchMap(() =>
+        this.fetchRealEstates().pipe(
+          catchError((error) => {
+            console.error('[Facade] deleteAd error (reload)', error);
+            return of(void 0);
+          }),
+        ),
+      ),
+      */
       map(() => void 0),
     );
   }
 
-  private toAdminAd = (re: RealEstateResponse): AdminAd => ({
-    id: Number(re.id ?? 0),
-    title: re.description ?? `Annuncio #${re.id ?? '?'}`,
-    city: null,
-    price: null,
-    active: null,
-    createdAt: re.createdDate ?? null,
-  });
-
-  // ===== USERS =====
+  updateAd(
+    adId: number,
+    patch: Partial<{ description: string }>,
+  ): Observable<RealEstateResponse> {
+    const body: any = { ...patch };
+    return this.realEstateService.updateRealEstate({
+      realestateid: adId,
+      body,
+    });
+    /*
+    .pipe(
+      switchMap(() => this.loadAds()),
+      catchError((error) => {
+        console.error('[Facade] updateAd error', error);
+        return of(void 0);
+      })
+    );
+    */
+  }
 
   // crea un account nell'authorization server
   private authRegister(

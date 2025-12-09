@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   Component,
   inject,
@@ -5,56 +6,49 @@ import {
   signal,
   WritableSignal,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { CurrencyPipe, DatePipe } from '@angular/common';
-import { AgentDashboardFacade } from '../agent-dashboard/agent-dashboard.facade'; // Verifica il percorso corretto
-import { AdsPaginatorService } from '../../manual_services/ads_paginator/ads-paginator.service';
 import { environment } from '../../../environments/environment';
-import { NearParkIconComponent } from '../../shared/icons/near-park-icon/near-park-icon.component';
-import { NearPublicTransportIconComponent } from '../../shared/icons/near-public-transport-icon/near-public-transport-icon.component';
-import { NearSchoolIconComponent } from '../../shared/icons/near-school-icon/near-school-icon.component';
+import { AgentDashboardFacade } from '../agent-dashboard/agent-dashboard.facade';
+import { AdsPaginatorService } from '../../manual_services/ads_paginator/ads-paginator.service';
+import { ToastrService } from 'ngx-toastr';
+import { DeleteAdDialogComponent } from '../dialog/delete-ad-dialog/delete-ad-dialog.component';
+import { RouterLink } from '@angular/router';
+import { DatePipe } from '@angular/common';
 import { PriceIconComponent } from '../../shared/icons/price-icon/price-icon.component';
+import { RoomsIconComponent } from '../../shared/icons/rooms-icon/rooms-icon.component';
 import { SquareMetersIconComponent } from '../../shared/icons/square-meters-icon/square-meters-icon.component';
 import { FloorIconComponent } from '../../shared/icons/floor-icon/floor-icon.component';
-import { RoomsIconComponent } from '../../shared/icons/rooms-icon/rooms-icon.component';
-import { EnergyClass } from '../../enums/energy-class.enum';
-import { GeographicalPositionIconComponent } from '../../shared/icons/geographical-position-icon/geographical-position-icon.component';
 import { EnergyClassIconComponent } from '../../shared/icons/energy-class-icon/energy-class-icon.component';
 import { AirConditioningIconComponent } from '../../shared/icons/air-conditioning-icon/air-conditioning-icon.component';
 import { ElevatorIconComponent } from '../../shared/icons/elevator-icon/elevator-icon.component';
 import { DoormanIconComponent } from '../../shared/icons/doorman-icon/doorman-icon.component';
-import { ToastrService } from 'ngx-toastr';
-import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.component';
-import { DeleteAdDialogComponent } from '../dialog/delete-ad-dialog/delete-ad-dialog.component';
-import { HttpErrorResponse } from '@angular/common/http';
+import { NearParkIconComponent } from '../../shared/icons/near-park-icon/near-park-icon.component';
+import { NearSchoolIconComponent } from '../../shared/icons/near-school-icon/near-school-icon.component';
+import { NearPublicTransportIconComponent } from '../../shared/icons/near-public-transport-icon/near-public-transport-icon.component';
+import { AdminDashboardFacade } from '../admin-dashboard/admin-dashboard.facade';
 
 @Component({
-  selector: 'app-agent-ads-list',
-  standalone: true, // Assicurati che sia standalone
+  selector: 'app-admin-ads-list',
   imports: [
+    DeleteAdDialogComponent,
     RouterLink,
-    FormsModule,
     DatePipe,
-    NearParkIconComponent,
-    NearPublicTransportIconComponent,
-    NearSchoolIconComponent,
     PriceIconComponent,
+    RoomsIconComponent,
     SquareMetersIconComponent,
     FloorIconComponent,
-    RoomsIconComponent,
     EnergyClassIconComponent,
-    GeographicalPositionIconComponent,
     AirConditioningIconComponent,
     ElevatorIconComponent,
     DoormanIconComponent,
-    DeleteAdDialogComponent,
+    NearParkIconComponent,
+    NearSchoolIconComponent,
+    NearPublicTransportIconComponent,
   ],
-  templateUrl: './agent-ads-list.component.html',
-  styleUrl: './agent-ads-list.component.scss',
+  templateUrl: './admin-ads-list.component.html',
+  styleUrl: './admin-ads-list.component.scss',
 })
-export class AgentAdsListComponent implements OnDestroy {
-  facade = inject(AgentDashboardFacade);
+export class AdminAdsListComponent implements OnDestroy {
+  facade = inject(AdminDashboardFacade);
   adsPaginatorService = inject(AdsPaginatorService);
   toastrService = inject(ToastrService);
 
@@ -63,12 +57,6 @@ export class AgentAdsListComponent implements OnDestroy {
   realEstates = this.facade.realEstates;
   realEstateIdToRemove: WritableSignal<number | null> = signal(null);
   realEstatesLoading = this.facade.realEstatesLoading;
-
-  //offerta esterna
-  addOfferForId = this.facade.addOfferForId;
-  addOfferAmount = this.facade.addOfferAmount;
-  addOfferEmail = this.facade.addOfferEmail;
-  addOfferLoading = this.facade.addOfferLoading;
 
   getImageUrl(path?: string) {
     return `${environment.apiBaseUrl}${path}`;
@@ -107,18 +95,6 @@ export class AgentAdsListComponent implements OnDestroy {
         }
       },
     });
-  }
-
-  startAddOfferFor(adId: number) {
-    this.facade.startAddOfferFor(adId);
-  }
-
-  submitExternalOffer() {
-    this.facade.createExternalOffer().subscribe();
-  }
-
-  cancelAddOffer() {
-    this.facade.cancelAddOffer();
   }
 
   ngOnDestroy(): void {
