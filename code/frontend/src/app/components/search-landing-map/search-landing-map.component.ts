@@ -144,14 +144,12 @@ export class SearchLandingMapComponent
   setMap() {
     this.map = new L.Map(this.mapContainer.nativeElement, {
       center: [41.9028, 12.4964],
-      zoom: 6,
-      doubleClickZoom: false,
+      zoom: 11,
     }); // centrato su italia
 
     L.tileLayer(environmentMap.map_klokantech_basic, {
       attribution:
         'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © OpenStreetMap <a href="https://www.openstreetmap.org/copyright" target="_blank">contributors</a>',
-      maxZoom: 20,
     }).addTo(this.map);
 
     L.control.zoom({ position: 'bottomright' }).addTo(this.map);
@@ -190,10 +188,20 @@ export class SearchLandingMapComponent
         this.showSelections(features, true);
       }
 
+      const polygonBounds = this.geojson.getBounds();
+      const polygonCenter = polygonBounds.getCenter();
+      const fitZoom = this.map.getBoundsZoom(polygonBounds, false);
+
+      this.map.setView(polygonCenter, fitZoom, {
+        animate: true,
+        duration: 1,
+      });
+      /*
       this.map.fitBounds(this.geojson.getBounds(), {
         padding: [50, 50],
         animate: true,
       });
+      */
 
       this.boundariesLayer.addLayer(this.geojson);
     } catch (error) {
@@ -272,6 +280,7 @@ export class SearchLandingMapComponent
   }
 
   highlightFeature = (mouseEvent: any) => {
+    if (!this.isSelectingMunicipalities) return;
     const layer = mouseEvent.target;
     if (layer !== this.selectedLayer) {
       layer.setStyle(this.getHoverStyle());
@@ -280,6 +289,7 @@ export class SearchLandingMapComponent
   };
 
   resetHighlight = (mouseEvent: any) => {
+    if (!this.isSelectingMunicipalities) return;
     const layer = mouseEvent.target;
     if (layer !== this.selectedLayer) {
       this.geojson.resetStyle(layer);
@@ -287,6 +297,7 @@ export class SearchLandingMapComponent
   };
 
   handleLayerClick = (mouseEvent: any, feature: any) => {
+    if (!this.isSelectingMunicipalities) return;
     const clickedLayer = mouseEvent.target;
 
     const zoneName =
@@ -414,22 +425,24 @@ export class SearchLandingMapComponent
   addMarkers(cards: any[]) {
     this.markersLayer.clearLayers();
 
-    for (const c of cards ?? []) {
-      const lat = Number(c?.lat),
-        lon = Number(c?.lon);
-      if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+    console.log('Cards ricevute:', cards); // Debug: vedi la struttura esatta in console
 
-      const m = L.marker([lat, lon], { icon: this.markerIcon });
+    for (const card of cards) {
+      const geo = card.geographicalPosition;
 
-      m.bindPopup(this.popupHtml(c), {
+      const latitude = card.geographicalPosition.latitude;
+      const longitude = card.geographicalPosition.longitude;
+
+      const marker = L.marker([latitude, longitude], { icon: this.markerIcon });
+
+      marker.bindPopup(this.popupHtml(card), {
         className: 'de-leaflet-popup',
         minWidth: 260,
       });
 
-      // click bottone dentro al popup
-      m.on('popupopen', (e: any) => {
-        const el = e.popup.getElement() as HTMLElement | null;
-        const btn = el?.querySelector<HTMLButtonElement>('.de-btn');
+      marker.on('popupopen', (e: any) => {
+        const element = e.popup.getElement() as HTMLElement | null;
+        const btn = element?.querySelector<HTMLButtonElement>('.de-btn');
         btn?.addEventListener('click', (ev) => {
           ev.preventDefault();
           ev.stopPropagation();
@@ -439,7 +452,19 @@ export class SearchLandingMapComponent
         });
       });
 
-      this.markersLayer.addLayer(m);
+      this.markersLayer.addLayer(marker);
+    }
+
+    if (this.selectedLayer && (this.selectedLayer as any).getBounds) {
+      const bounds = (this.selectedLayer as any).getBounds();
+
+      this.map.fitBounds(bounds, {
+        animate: true,
+        duration: 1,
+      });
+    } else {
+      // Fallback: se per qualche motivo non c'è un layer selezionato, zoomiamo sui marker come prima
+      this.zoomToMarkers();
     }
   }
 
