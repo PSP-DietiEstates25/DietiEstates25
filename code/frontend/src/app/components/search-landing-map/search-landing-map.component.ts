@@ -21,6 +21,7 @@ import { environmentMap } from '../../../environments/environment.map';
 import { ToastrService } from 'ngx-toastr';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { AdCategory } from '../../enums/ad-category.enum';
+import { environment } from '../../../environments/environment';
 
 export interface MunicipalityToSelect {
   name: string;
@@ -91,45 +92,8 @@ export class SearchLandingMapComponent
     this.loadBoundaries();
   }
 
-  imgSrc(raw?: string | null): string | null {
-    if (!raw) return null;
-
-    if (isData(raw)) return raw;
-
-    if (isHttp(raw)) {
-      const cached = this.blobCache.get(raw);
-      if (cached) return cached;
-
-      if (!this.pending.has(raw)) {
-        this.pending.add(raw);
-        this.httpNoInter
-          .get(raw, { responseType: 'blob', withCredentials: false })
-          .subscribe({
-            next: (blob) => {
-              const obj = URL.createObjectURL(blob);
-              this.blobCache.set(raw, obj);
-              this.pending.delete(raw);
-              this.changeDetector.detectChanges();
-            },
-            error: () => {
-              this.pending.delete(raw);
-            },
-          });
-      }
-      return this.placeholder;
-    }
-
-    // se è un path relativo assoluto
-    if (raw.startsWith('/')) return raw;
-
-    // base64 “nudo”
-    if (raw.startsWith('?') || raw.length < 20) return null;
-    const mime = looksJpeg(raw)
-      ? 'image/jpeg'
-      : looksPng(raw)
-        ? 'image/png'
-        : 'image/*';
-    return `data:${mime};base64,${raw}`;
+  getImageUrl(path?: string) {
+    return `${environment.apiBaseUrl}${path}`;
   }
 
   setMarkerIcon() {
