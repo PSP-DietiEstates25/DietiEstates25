@@ -26,7 +26,12 @@ import { NavbarComponent } from '../../shared/components/navbar/navbar.component
 import { AdCategory } from '../../enums/ad-category.enum';
 import { environment } from '../../../environments/environment';
 // Importa il nuovo componente
-import { MapPopupComponent } from '../map-popup/map-popup.component'; // Verifica il percorso
+import { MapPopupComponent } from '../map-popup/map-popup.component';
+import { PriceIconComponent } from '../../shared/icons/price-icon/price-icon.component';
+import { RoomsIconComponent } from '../../shared/icons/rooms-icon/rooms-icon.component';
+import { SquareMetersIconComponent } from '../../shared/icons/square-meters-icon/square-meters-icon.component';
+import { FloorIconComponent } from '../../shared/icons/floor-icon/floor-icon.component';
+import { EnergyClassIconComponent } from '../../shared/icons/energy-class-icon/energy-class-icon.component'; // Verifica il percorso
 
 export interface MunicipalityToSelect {
   name: string;
@@ -36,7 +41,16 @@ export interface MunicipalityToSelect {
 @Component({
   selector: 'app-search-landing-map',
   standalone: true,
-  imports: [CommonModule, RouterLink, NavbarComponent],
+  imports: [
+    CommonModule,
+    RouterLink,
+    NavbarComponent,
+    PriceIconComponent,
+    RoomsIconComponent,
+    SquareMetersIconComponent,
+    FloorIconComponent,
+    EnergyClassIconComponent,
+  ],
   templateUrl: './search-landing-map.component.html',
   styleUrls: ['./search-landing-map.component.scss'],
 })
@@ -341,14 +355,9 @@ export class SearchLandingMapComponent
       });
   }
 
-  // =======================================================================
-  //  NUOVA LOGICA PER MARKER E POPUP DINAMICI
-  // =======================================================================
-
   addMarkers(cards: any[]) {
     this.markersLayer.clearLayers();
 
-    // 1. Raggruppa gli immobili con le stesse coordinate
     const groups = new Map<string, any[]>();
     cards.forEach((card) => {
       const latitude = card.geographicalPosition.latitude;
@@ -365,7 +374,9 @@ export class SearchLandingMapComponent
       const longitude = first.geographicalPosition.longitude;
 
       const iconToUse =
-        count > 1 ? this.getGeoapifyCounterIcon(count) : this.markerIcon;
+        count > 1
+          ? this.geoapifyService.getCounterIcon(count)
+          : this.markerIcon;
 
       const marker = L.marker([latitude, longitude], { icon: iconToUse });
 
@@ -413,28 +424,6 @@ export class SearchLandingMapComponent
     } else {
       this.zoomToMarkers();
     }
-  }
-
-  getGeoapifyCounterIcon(count: number): L.Icon {
-    const apiKey = environment.geoapifyAPIKey || '';
-
-    const params = new URLSearchParams({
-      apiKey: apiKey,
-      type: 'material',
-      color: '#094585',
-      text: count.toString(),
-      textColor: '#ffffff',
-      textSize: 'small',
-      scaleFactor: '2',
-    });
-
-    return L.icon({
-      iconUrl: `https://api.geoapify.com/v1/icon?${params.toString()}`,
-      iconSize: [31, 46],
-      iconAnchor: [15.5, 46],
-      popupAnchor: [0, -46],
-      // shadowUrl: environmentMap.map_house_marker_shadow
-    });
   }
 
   filteredMunicipalities(): MunicipalityToSelect[] {
