@@ -3,7 +3,7 @@
 >
   <div class="group relative h-40 overflow-hidden bg-gray-100">
     <img
-      [src]="getImageUrl(currentCard?.images?.[0])"
+      [src]="getImageUrl(currentCard.images?.[0])"
       alt="Immobile"
       class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
       loading="lazy"
@@ -12,7 +12,7 @@
     <div
       class="absolute top-2 left-2 z-10 rounded bg-[#094585] px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-white uppercase shadow-sm"
     >
-      {{ getCategoryLabel(currentCard?.category) }}
+      {{ getCategoryLabel(currentCard.category) }}
     </div>
 
     @if (cards.length > 1) {

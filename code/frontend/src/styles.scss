@@ -102,4 +102,33 @@ body {
   filter: brightness(0.95);
 }
 
+.de-leaflet-popup {
+  // Rimuovi padding e rendi trasparente il wrapper
+  .leaflet-popup-content-wrapper {
+    padding: 0;
+    overflow: hidden;
+    border-radius: 0.75rem; // rounded-xl
+    background: transparent;
+    box-shadow:
+      0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  // Gestione contenuto interno
+  .leaflet-popup-content {
+    margin: 0 !important;
+    width: 280px !important;
+  }
+
+  // Colore della punta
+  .leaflet-popup-tip {
+    background: white;
+  }
+
+  // Nascondi la X di chiusura
+  .leaflet-popup-close-button {
+    display: none;
+  }
+}
+
 @import "leaflet/dist/leaflet.css";
