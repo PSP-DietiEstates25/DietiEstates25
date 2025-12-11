@@ -99,7 +99,6 @@
             Cerca in questa zona
           </button>
         </div>
-
       } @else {
         @if (!loading && facade.searchCards().length === 0) {
           <div
@@ -118,22 +117,20 @@
           </div>
         }
 
-        <div class="space-y-4">
+        <div class="flex flex-col justify-center space-y-4">
           @for (searchCard of facade.searchCards(); track searchCard.id) {
             <article
-              class="group flex h-auto flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md sm:h-32 sm:flex-row"
+              class="group flex h-40 flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md sm:flex-row"
             >
-              <div
-                class="relative h-32 w-full flex-shrink-0 bg-gray-200 sm:w-32"
-              >
+              <div class="relative w-full flex-shrink-0 bg-gray-200 sm:w-36">
                 <img
                   [src]="getImageUrl(searchCard.images![0]) || placeholder"
-                  class="h-full w-full object-cover transition-transform group-hover:scale-105"
+                  class="h-full w-full object-cover transition-transform"
                   loading="lazy"
                   alt="Immobile"
                 />
                 <div
-                  class="absolute top-2 left-2 rounded bg-gray-900/70 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-white uppercase"
+                  class="absolute top-2 left-2 rounded bg-gray-900/70 px-1.5 py-0.5 text-sm font-bold tracking-wider text-white uppercase"
                 >
                   {{
                     (searchCard.category || "SALE") === "RENT"
@@ -144,7 +141,7 @@
               </div>
 
               <div class="flex flex-1 flex-col justify-between p-3">
-                <div>
+                <div class="flex flex-col items-start justify-center">
                   <h3
                     class="line-clamp-1 text-sm font-bold text-gray-900 group-hover:text-blue-600"
                   >
@@ -155,16 +152,77 @@
                   </p>
                 </div>
 
-                <div class="mt-2 flex items-center justify-between">
-                  <span class="text-xs font-medium text-gray-400">{{
-                    searchCard.geographicalPosition.city
-                  }}</span>
-                  <a
-                    [routerLink]="['/ad', searchCard.id]"
-                    class="rounded-lg bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-100"
-                  >
-                    Vedi
-                  </a>
+                <div class="flex flex-col items-start justify-between">
+                  <div class="grid w-full grid-cols-5">
+                    <div class="flex flex-col items-center justify-center">
+                      <app-price-icon
+                        class="mb-1 size-4 text-gray-500"
+                      ></app-price-icon>
+                      <span
+                        class="w-full truncate text-center text-[10px] font-medium text-gray-700"
+                      >
+                        {{ searchCard.cadastralData?.price }}
+                      </span>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center">
+                      <app-rooms-icon
+                        class="mb-1 size-4 text-gray-500"
+                      ></app-rooms-icon>
+                      <span
+                        class="w-full truncate text-center text-[10px] font-medium text-gray-700"
+                      >
+                        {{ searchCard.cadastralData?.rooms }}
+                      </span>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center">
+                      <app-square-meters-icon
+                        class="mb-1 size-4 text-gray-500"
+                      ></app-square-meters-icon>
+                      <span
+                        class="w-full truncate text-center text-[10px] font-medium text-gray-700"
+                      >
+                        {{ searchCard.cadastralData?.squareMeters }}
+                      </span>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center">
+                      <app-floor-icon
+                        class="mb-1 size-4 text-gray-500"
+                      ></app-floor-icon>
+                      <span
+                        class="w-full truncate text-center text-[10px] font-medium text-gray-700"
+                      >
+                        {{ searchCard.cadastralData?.floor }}
+                      </span>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center">
+                      <app-energy-class-icon
+                        class="mb-1 size-4 text-gray-500"
+                      ></app-energy-class-icon>
+                      <span
+                        class="w-full truncate text-center text-[10px] font-medium text-gray-700"
+                      >
+                        {{ searchCard.cadastralData?.energyClass }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="mt-auto flex w-full items-center justify-between">
+                    <span
+                      class="truncate pr-2 text-xs font-medium text-gray-400"
+                    >
+                      {{ searchCard.geographicalPosition.city }}
+                    </span>
+                    <a
+                      [routerLink]="['/ad', searchCard.id]"
+                      class="shrink-0 rounded-lg bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-100"
+                    >
+                      Vedi
+                    </a>
+                  </div>
                 </div>
               </div>
             </article>

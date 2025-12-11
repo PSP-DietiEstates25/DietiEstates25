@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { map } from 'rxjs';
+import * as L from 'leaflet';
 
 export type NearTag = 'NEAR_PARKS' | 'NEAR_PUBLIC_TRANSPORT' | 'NEAR_SCHOOLS';
 
@@ -102,7 +103,27 @@ export class GeoapifyService {
     );
   }
 
-  getLatitudeLongitudeByCityAndRegion(cityName: string, regionName: string) {}
+  getCounterIcon(count: number): L.Icon {
+    const apiKey = environment.geoapifyAPIKey || '';
+
+    const params = new URLSearchParams({
+      apiKey: apiKey,
+      type: 'material',
+      color: '#094585',
+      text: count.toString(),
+      textColor: '#ffffff',
+      textSize: 'small',
+      scaleFactor: '2',
+    });
+
+    return L.icon({
+      iconUrl: `https://api.geoapify.com/v1/icon?${params.toString()}`,
+      iconSize: [31, 46],
+      iconAnchor: [15.5, 46],
+      popupAnchor: [0, -46],
+      // shadowUrl: environmentMap.map_house_marker_shadow
+    });
+  }
 
   getMunicipalityName(lat: number, lon: number) {
     const url = `https://api.geoapify.com/v1/boundaries/part-of`;
