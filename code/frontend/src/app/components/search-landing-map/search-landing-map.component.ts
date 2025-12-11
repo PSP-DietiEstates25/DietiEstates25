@@ -8,6 +8,9 @@ import {
   ElementRef,
   NgZone,
   ChangeDetectorRef,
+  EnvironmentInjector,
+  ApplicationRef,
+  createComponent,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -22,16 +25,13 @@ import { ToastrService } from 'ngx-toastr';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { AdCategory } from '../../enums/ad-category.enum';
 import { environment } from '../../../environments/environment';
+// Importa il nuovo componente
+import { MapPopupComponent } from '../map-popup/map-popup.component'; // Verifica il percorso
 
 export interface MunicipalityToSelect {
   name: string;
   isSelected: boolean;
 }
-
-const isHttp = (s: string) => /^https?:\/\//i.test(s);
-const isData = (s: string) => /^data:/i.test(s);
-const looksJpeg = (b64: string) => b64?.startsWith('/9j/');
-const looksPng = (b64: string) => b64?.startsWith('iVBOR');
 
 @Component({
   selector: 'app-search-landing-map',
@@ -50,21 +50,22 @@ export class SearchLandingMapComponent
   private router = inject(Router);
   private toastrService = inject(ToastrService);
 
+  // Injections per Componente Dinamico
+  private injector = inject(EnvironmentInjector);
+  private appRef = inject(ApplicationRef);
+
   private httpBackend = inject(HttpBackend);
-  private httpNoInter = new HttpClient(this.httpBackend);
-  private blobCache = new Map<string, string>();
-  private pending = new Set<string>();
   readonly placeholder = '/assets/placeholder.jpg';
 
   @ViewChild('mapContainer') mapContainer!: ElementRef;
   private map!: L.Map;
-  private marker!: L.Marker;
   private markerIcon!: L.Icon;
 
   // Layer Groups
   private boundariesLayer: L.LayerGroup = L.layerGroup();
   private markersLayer: L.LayerGroup = L.layerGroup();
   private geojson!: L.GeoJSON<any, Geometry>;
+
   municipalitiesSelection: MunicipalityToSelect[] = [];
   selectedLayer: L.Path | null = null;
   isSelectingMunicipalities = false;
@@ -77,9 +78,7 @@ export class SearchLandingMapComponent
   regionName = '';
   query = '';
 
-  // FIX: Flag per bloccare eventi hover durante lo zoom/pan
   private isMapMoving = false;
-  // FIX: Renderer Canvas per prestazioni migliori
   private myRenderer = L.canvas({ padding: 0.5 });
 
   ngOnInit(): void {
@@ -93,7 +92,6 @@ export class SearchLandingMapComponent
     this.setMap();
     this.boundariesLayer.addTo(this.map);
     this.markersLayer.addTo(this.map);
-
     this.loadBoundaries();
   }
 
@@ -114,7 +112,6 @@ export class SearchLandingMapComponent
     this.map = new L.Map(this.mapContainer.nativeElement, {
       center: [41.9028, 12.4964],
       zoom: 11,
-      // FIX: Usare renderer Canvas invece di SVG (default) per evitare lag grafico
       renderer: this.myRenderer,
       zoomAnimation: true,
       fadeAnimation: true,
@@ -123,16 +120,14 @@ export class SearchLandingMapComponent
 
     L.tileLayer(environmentMap.map_klokantech_basic, {
       attribution:
-        'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © OpenStreetMap <a href="https://www.openstreetmap.org/copyright" target="_blank">contributors</a>',
+        'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © OpenStreetMap',
     }).addTo(this.map);
 
     L.control.zoom({ position: 'bottomright' }).addTo(this.map);
 
-    // FIX: Listener per gestire lo stato di movimento della mappa
     this.map.on('movestart zoomstart', () => {
       this.isMapMoving = true;
     });
-
     this.map.on('moveend zoomend', () => {
       this.isMapMoving = false;
     });
@@ -172,14 +167,12 @@ export class SearchLandingMapComponent
       }
 
       const polygonBounds = this.geojson.getBounds();
-      const polygonCenter = polygonBounds.getCenter();
       const fitZoom = this.map.getBoundsZoom(polygonBounds, false);
 
-      this.map.setView(polygonCenter, fitZoom, {
+      this.map.setView(polygonBounds.getCenter(), fitZoom, {
         animate: true,
         duration: 1,
       });
-
       this.boundariesLayer.addLayer(this.geojson);
     } catch (error) {
       this.infoMessage = 'Errore nel caricamento della mappa. Riprova.';
@@ -192,55 +185,45 @@ export class SearchLandingMapComponent
     this.selectMunicipality(name);
   }
 
-  showSelections(features: any, hasMunicitpalities: boolean) {
+  showSelections(features: any, hasMunicipalities: boolean) {
     this.isSelectingMunicipalities = true;
-    if (hasMunicitpalities) this.showMunicipalitiesSelection(features);
+    if (hasMunicipalities) this.showMunicipalitiesSelection(features);
     else this.showCitySelection(features);
   }
 
   showMunicipalitiesSelection(features: any) {
     for (const feature of features) {
-      const municipalityToSelect: MunicipalityToSelect = {
+      this.municipalitiesSelection.push({
         name: feature.properties.name,
         isSelected: false,
-      };
-      this.municipalitiesSelection.push(municipalityToSelect);
+      });
     }
-
-    this.municipalitiesSelection.sort((a, b) => {
-      return a.name.localeCompare(b.name, undefined, { numeric: true });
-    });
+    this.municipalitiesSelection.sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { numeric: true }),
+    );
   }
 
   showCitySelection(response: any) {
-    const municipalityToSelect: MunicipalityToSelect = {
+    this.municipalitiesSelection.push({
       name: response.features[0].properties.name,
       isSelected: false,
-    };
-    this.municipalitiesSelection.push(municipalityToSelect);
+    });
   }
 
   selectMunicipality(name: string | null) {
     this.selectedMunicipality = name || '';
-
-    this.municipalitiesSelection.forEach((municipality) => {
-      if (municipality.name === name) {
-        municipality.isSelected = true;
-      } else municipality.isSelected = false;
-    });
-
-    let foundLayer: any = null;
+    this.municipalitiesSelection.forEach(
+      (m) => (m.isSelected = m.name === name),
+    );
 
     if (this.geojson) {
       this.geojson.eachLayer((layer: any) => {
         const featureName =
           layer.feature.properties.name || layer.feature.properties['name:it'];
-
         if (featureName === name) {
           this.selectedLayer = layer;
           layer.setStyle(this.getSelectedStyle());
           layer.bringToFront();
-          foundLayer = layer;
         } else {
           this.geojson.resetStyle(layer);
         }
@@ -252,13 +235,12 @@ export class SearchLandingMapComponent
       this.markersLayer.clearLayers();
       this.infoMessage = `Seleziona una municipalità.`;
     }
-
     this.changeDetector.detectChanges();
   }
 
+  // Eventi Mappa
   highlightFeature = (mouseEvent: any) => {
     if (this.isMapMoving || !this.isSelectingMunicipalities) return;
-
     const layer = mouseEvent.target;
     if (layer !== this.selectedLayer) {
       layer.setStyle(this.getHoverStyle());
@@ -268,43 +250,29 @@ export class SearchLandingMapComponent
 
   resetHighlight = (mouseEvent: any) => {
     if (this.isMapMoving || !this.isSelectingMunicipalities) return;
-
     const layer = mouseEvent.target;
     if (layer !== this.selectedLayer) {
       this.geojson.resetStyle(layer);
-
-      if (this.selectedLayer) {
-        (this.selectedLayer as any).bringToFront();
-      }
+      if (this.selectedLayer) (this.selectedLayer as any).bringToFront();
     }
   };
 
   handleLayerClick = (mouseEvent: any, feature: any) => {
     if (!this.isSelectingMunicipalities) return;
     const clickedLayer = mouseEvent.target;
-
     const zoneName =
       feature.properties.name || feature.properties['name:it'] || '';
-
-    if (this.selectedLayer === clickedLayer) {
-      this.selectMunicipality(null);
-    } else {
-      this.selectMunicipality(zoneName);
-    }
+    if (this.selectedLayer === clickedLayer) this.selectMunicipality(null);
+    else this.selectMunicipality(zoneName);
   };
 
   onEachFeature = (feature: any, layer: L.Layer) => {
     layer.on({
       mouseover: this.highlightFeature,
       mouseout: this.resetHighlight,
-      click: (mouseEvent: L.LeafletMouseEvent) => {
-        this.ngZone.run(() => {
-          this.handleLayerClick(mouseEvent, feature);
-        });
-      },
-      dblclick: (mouseEvent: L.LeafletMouseEvent) => {
-        L.DomEvent.stopPropagation(mouseEvent);
-      },
+      click: (e: L.LeafletMouseEvent) =>
+        this.ngZone.run(() => this.handleLayerClick(e, feature)),
+      dblclick: (e) => L.DomEvent.stopPropagation(e),
     });
   };
 
@@ -317,7 +285,6 @@ export class SearchLandingMapComponent
       fillOpacity: 0,
     };
   }
-
   getHoverStyle() {
     return {
       weight: 2,
@@ -327,7 +294,6 @@ export class SearchLandingMapComponent
       fillOpacity: 0.2,
     };
   }
-
   getSelectedStyle() {
     return {
       weight: 3,
@@ -340,28 +306,18 @@ export class SearchLandingMapComponent
 
   onSearch() {
     this.isSelectingMunicipalities = false;
-    let selectedMunicipality: MunicipalityToSelect;
-    this.municipalitiesSelection.forEach((municipality) => {
-      if (municipality.isSelected) selectedMunicipality = municipality;
-    });
-    this.infoMessage = `Caricamento annunci a: ${selectedMunicipality!.name}...`;
-    console.log(selectedMunicipality!);
-    this.performSearch(selectedMunicipality!.name);
+    const selected = this.municipalitiesSelection.find((m) => m.isSelected);
+    if (selected) {
+      this.infoMessage = `Caricamento annunci a: ${selected.name}...`;
+      this.performSearch(selected.name);
+    }
   }
 
   performSearch(municipality: string | null) {
     this.markersLayer.clearLayers();
-
-    const geographicalPosition = (
-      this.facade as any
-    ).getCachedGeographicalPosition();
+    const geoPos = (this.facade as any).getCachedGeographicalPosition();
     const utility = (this.facade as any).getCachedUtility();
-    const cadastralFilter = (this.facade as any).getCachedCadastralFilter();
-
-    const updatedGeo = {
-      ...geographicalPosition,
-      municipality: municipality || '',
-    };
+    const cadastral = (this.facade as any).getCachedCadastralFilter();
 
     this.facade.geographicalPositionId.set(null);
     this.facade.detailId.set(null);
@@ -369,9 +325,9 @@ export class SearchLandingMapComponent
     this.facade
       .runFullSearch({
         category: AdCategory.Sale,
-        geographicalPosition: updatedGeo,
+        geographicalPosition: { ...geoPos, municipality: municipality || '' },
         utility: utility,
-        cadastralFilter: cadastralFilter,
+        cadastralFilter: cadastral,
       })
       .subscribe({
         next: () => {
@@ -387,60 +343,84 @@ export class SearchLandingMapComponent
       });
   }
 
-  private popupHtml(c: any) {
-    const title = c?.title ?? 'Immobile';
-    const addr =
-      [c?.address, c?.city].filter(Boolean).join(', ') ||
-      'Indirizzo non disponibile';
-
-    return `
-    <div class="de-popup">
-      <div class="de-title">${this.escapeHtml(title)}</div>
-      <div class="de-addr">${this.escapeHtml(addr)}</div>
-      <button class="de-btn" data-id="${c?.id ?? ''}">Apri annuncio</button>
-    </div>`;
-  }
-
-  onCancel() {
-    this.router.navigate(['/searches']);
-    this.toastrService.error('Ricerca interrotta');
-  }
+  // =======================================================================
+  //  NUOVA LOGICA PER MARKER E POPUP DINAMICI
+  // =======================================================================
 
   addMarkers(cards: any[]) {
     this.markersLayer.clearLayers();
 
-    console.log('Cards ricevute:', cards);
+    // 1. Raggruppa gli immobili con le stesse coordinate
+    const groups = new Map<string, any[]>();
+    cards.forEach((card) => {
+      const lat = card.geographicalPosition.latitude;
+      const lng = card.geographicalPosition.longitude;
+      const key = `${lat},${lng}`;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key)!.push(card);
+    });
 
-    for (const card of cards) {
-      const latitude = card.geographicalPosition.latitude;
-      const longitude = card.geographicalPosition.longitude;
+    // 2. Crea i marker per ogni gruppo
+    groups.forEach((groupCards, key) => {
+      const count = groupCards.length;
+      const first = groupCards[0];
+      const lat = first.geographicalPosition.latitude;
+      const lng = first.geographicalPosition.longitude;
 
-      const marker = L.marker([latitude, longitude], { icon: this.markerIcon });
+      // Scelta Icona: Standard se 1, Numerata (Geoapify) se > 1
+      const iconToUse =
+        count > 1 ? this.getGeoapifyCounterIcon(count) : this.markerIcon;
 
-      marker.bindPopup(this.popupHtml(card), {
-        className: 'de-leaflet-popup',
-        minWidth: 260,
-      });
+      const marker = L.marker([lat, lng], { icon: iconToUse });
 
-      marker.on('popupopen', (e: any) => {
-        const element = e.popup.getElement() as HTMLElement | null;
-        const btn = element?.querySelector<HTMLButtonElement>('.de-btn');
-        btn?.addEventListener('click', (ev) => {
-          ev.preventDefault();
-          ev.stopPropagation();
-          const id = (btn.dataset['id'] ?? '').trim();
-          if (!id) return;
-          this.ngZone.run(() => this.router.navigate(['/ad', id]));
-        });
-      });
+      // 3. Generazione Dinamica del Popup
+      // Leaflet non supporta Angular nativamente, quindi creiamo il componente "on the fly"
+      marker.bindPopup(
+        () => {
+          // A. Crea il componente usando l'injector
+          const componentRef = createComponent(MapPopupComponent, {
+            environmentInjector: this.injector,
+          });
+
+          // B. Passa i dati (Input)
+          componentRef.setInput('cards', groupCards);
+
+          // C. Aggancia all'ApplicationRef per il Change Detection
+          this.appRef.attachView(componentRef.hostView);
+
+          // D. Ottieni l'elemento DOM HTML
+          const domElem = (componentRef.hostView as any)
+            .rootNodes[0] as HTMLElement;
+
+          // E. IMPORTANTE: Distruggi il componente quando il popup viene rimosso dal DOM
+          // per evitare memory leaks.
+          domElem.addEventListener(
+            'remove',
+            () => {
+              this.appRef.detachView(componentRef.hostView);
+              componentRef.destroy();
+            },
+            { once: true },
+          ); // listener eseguito una volta sola
+
+          // Forza un aggiornamento della vista
+          componentRef.changeDetectorRef.detectChanges();
+
+          return domElem;
+        },
+        {
+          minWidth: 280,
+          maxWidth: 280,
+          className: 'de-leaflet-popup', // Classe per il CSS
+        },
+      );
 
       this.markersLayer.addLayer(marker);
-    }
+    });
 
+    // 4. Adatta lo zoom
     if (this.selectedLayer && (this.selectedLayer as any).getBounds) {
-      const bounds = (this.selectedLayer as any).getBounds();
-
-      this.map.fitBounds(bounds, {
+      this.map.fitBounds((this.selectedLayer as any).getBounds(), {
         animate: true,
         duration: 0.8,
       });
@@ -449,13 +429,31 @@ export class SearchLandingMapComponent
     }
   }
 
-  private escapeHtml(s: string) {
-    return s
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#039;');
+  // Costruisce l'URL per l'icona Geoapify
+  getGeoapifyCounterIcon(count: number): L.Icon {
+    // Assicurati che l'API KEY sia presente nei tuoi environment
+    const apiKey = environment.geoapifyAPIKey || '';
+
+    const params = new URLSearchParams({
+      apiKey: apiKey,
+      type: 'material',
+      color: '#094585', // Colore Blu Scuro
+      text: count.toString(),
+      textColor: '#ffffff',
+      textSize: 'small',
+      scaleFactor: '2', // Alta risoluzione
+    });
+
+    // Rimuovi "icon: 'home'" dai parametri se vuoi solo il numero e lo sfondo colorato
+    // Se vuoi anche l'icona della casa sotto il numero, aggiungi "icon: 'home'"
+
+    return L.icon({
+      iconUrl: `https://api.geoapify.com/v1/icon?${params.toString()}`,
+      iconSize: [31, 46], // Dimensioni Geoapify standard
+      iconAnchor: [15.5, 46],
+      popupAnchor: [0, -46],
+      // shadowUrl: environmentMap.map_house_marker_shadow // Opzionale
+    });
   }
 
   filteredMunicipalities(): MunicipalityToSelect[] {
@@ -471,47 +469,29 @@ export class SearchLandingMapComponent
     this.selectedMunicipality = '';
     this.query = '';
     this.markersLayer.clearLayers();
-
-    try {
-      if (this.geojson) {
-        this.geojson.eachLayer((layer: any) => {
-          this.geojson.resetStyle(layer);
-        });
-      }
-    } catch {}
-
+    if (this.geojson) this.geojson.eachLayer((l) => this.geojson.resetStyle(l));
     this.selectedLayer = null;
     this.infoMessage = 'Seleziona una municipalità.';
     this.changeDetector.detectChanges();
   }
 
   zoomToMarkers() {
-    try {
-      const latlngs: L.LatLng[] = [];
-
-      for (const layer of this.markersLayer.getLayers()) {
-        const m: any = layer;
-        if (m?.getLatLng) latlngs.push(m.getLatLng());
-      }
-
-      if (!latlngs.length) return;
-
-      const bounds = L.latLngBounds(latlngs);
-      this.map.fitBounds(bounds, { padding: [40, 40], animate: true });
-    } catch {}
+    const latlngs: L.LatLng[] = [];
+    this.markersLayer.eachLayer((layer: any) => {
+      if (layer.getLatLng) latlngs.push(layer.getLatLng());
+    });
+    if (latlngs.length)
+      this.map.fitBounds(L.latLngBounds(latlngs), {
+        padding: [40, 40],
+        animate: true,
+      });
   }
 
   ngOnDestroy(): void {
-    try {
-      if (this.map) {
-        this.map.off('movestart zoomstart');
-        this.map.off('moveend zoomend');
-        this.map.remove();
-      }
-    } catch {}
-
-    for (const url of this.blobCache.values()) URL.revokeObjectURL(url);
-    this.blobCache.clear();
-    this.pending.clear();
+    if (this.map) {
+      this.map.off('movestart zoomstart');
+      this.map.off('moveend zoomend');
+      this.map.remove();
+    }
   }
 }

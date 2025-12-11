@@ -1,0 +1,32 @@
+:host {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+// Reset del contenitore popup di Leaflet
+::ng-deep .leaflet-popup-content-wrapper {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 0.75rem; // Rounded-xl di Tailwind
+  background: transparent; // Lascia che sia il componente a dare il colore
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+::ng-deep .leaflet-popup-content {
+  margin: 0 !important;
+  width: 280px !important;
+}
+
+// Punta del popup bianca
+::ng-deep .leaflet-popup-tip {
+  background: white;
+}
+
+// Opzionale: Nasconde il pulsante "X" di chiusura default di Leaflet
+// (se preferisci un look più pulito, altrimenti rimuovi questa parte)
+::ng-deep .leaflet-popup-close-button {
+  display: none;
+}

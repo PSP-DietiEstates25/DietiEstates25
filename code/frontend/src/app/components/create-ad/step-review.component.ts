@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, OnDestroy } from '@angular/core';
 import { CreateAdFacade } from './create-ad.facade';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -10,7 +10,7 @@ import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.
   imports: [DiscardDialogComponent],
   templateUrl: './step-review.component.html',
 })
-export class StepReviewComponent {
+export class StepReviewComponent implements OnDestroy {
   private toastrService = inject(ToastrService);
   private routerService = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
@@ -48,5 +48,9 @@ export class StepReviewComponent {
     this.facade.clearSavedData();
     this.routerService.navigate(['/']);
     this.toastrService.error('Creazione annuncio interrotta!', 'Cancellazione');
+  }
+
+  ngOnDestroy() {
+    this.facade.clearSavedData();
   }
 }

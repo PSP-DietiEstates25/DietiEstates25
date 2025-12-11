@@ -99,6 +99,7 @@
             Cerca in questa zona
           </button>
         </div>
+
       } @else {
         @if (!loading && facade.searchCards().length === 0) {
           <div
@@ -129,6 +130,7 @@
                   [src]="getImageUrl(searchCard.images![0]) || placeholder"
                   class="h-full w-full object-cover transition-transform group-hover:scale-105"
                   loading="lazy"
+                  alt="Immobile"
                 />
                 <div
                   class="absolute top-2 left-2 rounded bg-gray-900/70 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-white uppercase"
