@@ -353,47 +353,37 @@ export class SearchLandingMapComponent
     // 1. Raggruppa gli immobili con le stesse coordinate
     const groups = new Map<string, any[]>();
     cards.forEach((card) => {
-      const lat = card.geographicalPosition.latitude;
-      const lng = card.geographicalPosition.longitude;
-      const key = `${lat},${lng}`;
+      const latitude = card.geographicalPosition.latitude;
+      const longitude = card.geographicalPosition.longitude;
+      const key = `${latitude},${longitude}`;
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key)!.push(card);
     });
 
-    // 2. Crea i marker per ogni gruppo
     groups.forEach((groupCards, key) => {
       const count = groupCards.length;
       const first = groupCards[0];
-      const lat = first.geographicalPosition.latitude;
-      const lng = first.geographicalPosition.longitude;
+      const latitude = first.geographicalPosition.latitude;
+      const longitude = first.geographicalPosition.longitude;
 
-      // Scelta Icona: Standard se 1, Numerata (Geoapify) se > 1
       const iconToUse =
         count > 1 ? this.getGeoapifyCounterIcon(count) : this.markerIcon;
 
-      const marker = L.marker([lat, lng], { icon: iconToUse });
+      const marker = L.marker([latitude, longitude], { icon: iconToUse });
 
-      // 3. Generazione Dinamica del Popup
-      // Leaflet non supporta Angular nativamente, quindi creiamo il componente "on the fly"
       marker.bindPopup(
         () => {
-          // A. Crea il componente usando l'injector
           const componentRef = createComponent(MapPopupComponent, {
             environmentInjector: this.injector,
           });
 
-          // B. Passa i dati (Input)
           componentRef.setInput('cards', groupCards);
 
-          // C. Aggancia all'ApplicationRef per il Change Detection
           this.appRef.attachView(componentRef.hostView);
 
-          // D. Ottieni l'elemento DOM HTML
           const domElem = (componentRef.hostView as any)
             .rootNodes[0] as HTMLElement;
 
-          // E. IMPORTANTE: Distruggi il componente quando il popup viene rimosso dal DOM
-          // per evitare memory leaks.
           domElem.addEventListener(
             'remove',
             () => {
@@ -401,9 +391,8 @@ export class SearchLandingMapComponent
               componentRef.destroy();
             },
             { once: true },
-          ); // listener eseguito una volta sola
+          );
 
-          // Forza un aggiornamento della vista
           componentRef.changeDetectorRef.detectChanges();
 
           return domElem;
@@ -411,14 +400,13 @@ export class SearchLandingMapComponent
         {
           minWidth: 280,
           maxWidth: 280,
-          className: 'de-leaflet-popup', // Classe per il CSS
+          className: 'de-leaflet-popup',
         },
       );
 
       this.markersLayer.addLayer(marker);
     });
 
-    // 4. Adatta lo zoom
     if (this.selectedLayer && (this.selectedLayer as any).getBounds) {
       this.map.fitBounds((this.selectedLayer as any).getBounds(), {
         animate: true,
@@ -429,30 +417,25 @@ export class SearchLandingMapComponent
     }
   }
 
-  // Costruisce l'URL per l'icona Geoapify
   getGeoapifyCounterIcon(count: number): L.Icon {
-    // Assicurati che l'API KEY sia presente nei tuoi environment
     const apiKey = environment.geoapifyAPIKey || '';
 
     const params = new URLSearchParams({
       apiKey: apiKey,
       type: 'material',
-      color: '#094585', // Colore Blu Scuro
+      color: '#094585',
       text: count.toString(),
       textColor: '#ffffff',
       textSize: 'small',
-      scaleFactor: '2', // Alta risoluzione
+      scaleFactor: '2',
     });
-
-    // Rimuovi "icon: 'home'" dai parametri se vuoi solo il numero e lo sfondo colorato
-    // Se vuoi anche l'icona della casa sotto il numero, aggiungi "icon: 'home'"
 
     return L.icon({
       iconUrl: `https://api.geoapify.com/v1/icon?${params.toString()}`,
-      iconSize: [31, 46], // Dimensioni Geoapify standard
+      iconSize: [31, 46],
       iconAnchor: [15.5, 46],
       popupAnchor: [0, -46],
-      // shadowUrl: environmentMap.map_house_marker_shadow // Opzionale
+      // shadowUrl: environmentMap.map_house_marker_shadow
     });
   }
 

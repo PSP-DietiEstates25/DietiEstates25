@@ -9,7 +9,7 @@ import { SquareMetersIconComponent } from '../../shared/icons/square-meters-icon
 @Component({
   selector: 'app-map-popup',
   standalone: true,
-  imports: [CurrencyPipe, RoomsIconComponent, SquareMetersIconComponent],
+  imports: [RoomsIconComponent, SquareMetersIconComponent],
   templateUrl: './map-popup.component.html',
   styleUrl: './map-popup.component.scss',
 })
