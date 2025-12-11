@@ -47,8 +47,6 @@ export class SearchLandingMapComponent
   private geoapifyService = inject(GeoapifyService);
   private ngZone = inject(NgZone);
   private changeDetector = inject(ChangeDetectorRef);
-  private router = inject(Router);
-  private toastrService = inject(ToastrService);
 
   // Injections per Componente Dinamico
   private injector = inject(EnvironmentInjector);
@@ -455,6 +453,7 @@ export class SearchLandingMapComponent
     if (this.geojson) this.geojson.eachLayer((l) => this.geojson.resetStyle(l));
     this.selectedLayer = null;
     this.infoMessage = 'Seleziona una municipalità.';
+    this.facade.searchCards.set([]);
     this.changeDetector.detectChanges();
   }
 
@@ -476,5 +475,6 @@ export class SearchLandingMapComponent
       this.map.off('moveend zoomend');
       this.map.remove();
     }
+    this.facade.searchCards.set([]);
   }
 }
