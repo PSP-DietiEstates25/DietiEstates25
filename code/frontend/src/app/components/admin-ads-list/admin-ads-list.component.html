@@ -35,31 +35,41 @@
           <div class="flex flex-col items-center justify-center gap-6">
             <div class="jusitfy-center flex flex-col items-start gap-6">
               <div class="flex items-center justify-center gap-2">
-                <app-price-icon></app-price-icon>
+                <app-price-icon
+                  class="size-6 text-black dark:text-white"
+                ></app-price-icon>
                 <h1 class="font-medium">
                   Prezzo: € {{ realEstate.cadastralData?.price }}
                 </h1>
               </div>
               <div class="flex items-center justify-center gap-2">
-                <app-rooms-icon></app-rooms-icon>
+                <app-rooms-icon
+                  class="size-6 text-black dark:text-white"
+                ></app-rooms-icon>
                 <h1 class="font-medium">
                   Stanze: {{ realEstate.cadastralData?.rooms }}
                 </h1>
               </div>
               <div class="flex items-center justify-center gap-2">
-                <app-square-meters-icon></app-square-meters-icon>
+                <app-square-meters-icon
+                  class="size-6 text-black dark:text-white"
+                ></app-square-meters-icon>
                 <h1 class="font-medium">
                   Metri quadri: {{ realEstate.cadastralData?.squareMeters }}
                 </h1>
               </div>
               <div class="flex items-center justify-center gap-2">
-                <app-floor-icon></app-floor-icon>
+                <app-floor-icon
+                  class="size-6 text-black dark:text-white"
+                ></app-floor-icon>
                 <h1 class="font-medium">
                   Piano: {{ realEstate.cadastralData?.floor }}
                 </h1>
               </div>
               <div class="flex items-center justify-center gap-2">
-                <app-energy-class-icon></app-energy-class-icon>
+                <app-energy-class-icon
+                  class="size-6 text-black dark:text-white"
+                ></app-energy-class-icon>
                 <h1 class="font-medium">
                   Classe energetica:
                   {{ realEstate.cadastralData?.energyClass }}
@@ -77,19 +87,25 @@
             <div class="jusitfy-center flex flex-col items-start gap-6">
               @if (realEstate.utility.hasAirConditioning) {
                 <div class="flex items-center justify-center gap-2">
-                  <app-air-conditioning-icon></app-air-conditioning-icon>
+                  <app-air-conditioning-icon
+                    class="size-6 text-black dark:text-white"
+                  ></app-air-conditioning-icon>
                   <h1 class="font-medium">Aria condizionata</h1>
                 </div>
               }
               @if (realEstate.utility.hasElevator) {
                 <div class="flex items-center justify-center gap-2">
-                  <app-elevator-icon></app-elevator-icon>
+                  <app-elevator-icon
+                    class="size-6 text-black dark:text-white"
+                  ></app-elevator-icon>
                   <h1 class="font-medium">Ascensore</h1>
                 </div>
               }
               @if (realEstate.utility.hasDoorman) {
                 <div class="flex items-center justify-center gap-2">
-                  <app-doorman-icon></app-doorman-icon>
+                  <app-doorman-icon
+                    class="size-6 text-black dark:text-white"
+                  ></app-doorman-icon>
                   <h1 class="font-medium">Portineria</h1>
                 </div>
               }
@@ -97,19 +113,25 @@
             <div class="jusitfy-center flex flex-col items-start gap-6">
               @if (realEstate.utility.nearPark) {
                 <div class="flex items-center justify-center gap-2">
-                  <app-near-park-icon></app-near-park-icon>
+                  <app-near-park-icon
+                    class="size-6 text-black dark:text-white"
+                  ></app-near-park-icon>
                   <h1 class="font-medium">Vicino a parchi</h1>
                 </div>
               }
               @if (realEstate.utility.nearSchool) {
                 <div class="flex items-center justify-center gap-2">
-                  <app-near-school-icon></app-near-school-icon>
+                  <app-near-school-icon
+                    class="size-6 text-black dark:text-white"
+                  ></app-near-school-icon>
                   <h1 class="font-medium">Vicino a scuole</h1>
                 </div>
               }
               @if (realEstate.utility.nearPublicTransport) {
                 <div class="flex items-center justify-center gap-2">
-                  <app-near-public-transport-icon></app-near-public-transport-icon>
+                  <app-near-public-transport-icon
+                    class="size-6 text-black dark:text-white"
+                  ></app-near-public-transport-icon>
                   <h1 class="font-medium">Vicino a trasporto pubblico</h1>
                 </div>
               }

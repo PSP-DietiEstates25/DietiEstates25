@@ -5,11 +5,20 @@ import { CurrencyPipe } from '@angular/common';
 import { FullRealEstate } from '../../interfaces/full-real-estate';
 import { RoomsIconComponent } from '../../shared/icons/rooms-icon/rooms-icon.component';
 import { SquareMetersIconComponent } from '../../shared/icons/square-meters-icon/square-meters-icon.component';
+import { PriceIconComponent } from '../../shared/icons/price-icon/price-icon.component';
+import { FloorIconComponent } from '../../shared/icons/floor-icon/floor-icon.component';
+import { EnergyClassIconComponent } from '../../shared/icons/energy-class-icon/energy-class-icon.component';
 
 @Component({
   selector: 'app-map-popup',
   standalone: true,
-  imports: [RoomsIconComponent, SquareMetersIconComponent],
+  imports: [
+    RoomsIconComponent,
+    SquareMetersIconComponent,
+    PriceIconComponent,
+    FloorIconComponent,
+    EnergyClassIconComponent,
+  ],
   templateUrl: './map-popup.component.html',
   styleUrl: './map-popup.component.scss',
 })
