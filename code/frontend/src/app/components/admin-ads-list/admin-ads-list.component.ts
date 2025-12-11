@@ -74,7 +74,6 @@ export class AdminAdsListComponent implements OnDestroy {
 
   confirmDiscard() {
     const realEstateToRemoveId = this.realEstateIdToRemove();
-    console.log(realEstateToRemoveId);
     if (realEstateToRemoveId != null) {
       this.deleteAd(realEstateToRemoveId);
     }
@@ -82,7 +81,6 @@ export class AdminAdsListComponent implements OnDestroy {
   }
 
   deleteAd(adId: number) {
-    console.log(adId);
     this.facade.deleteAd(adId).subscribe({
       next: () => {
         this.toastrService.success('Annuncio cancellato');

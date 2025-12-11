@@ -49,13 +49,6 @@
               >({{ facade.searchCards().length }})</span
             >
           </div>
-          <button
-            type="button"
-            class="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline"
-            (click)="zoomToMarkers()"
-          >
-            Inquadra mappa
-          </button>
         </div>
       }
     </div>
@@ -153,10 +146,7 @@
                   <h3
                     class="line-clamp-1 text-sm font-bold text-gray-900 group-hover:text-blue-600"
                   >
-                    {{
-                      searchCard.geographicalPosition.address ||
-                        "Immobile #" + searchCard.id
-                    }}
+                    {{ searchCard.geographicalPosition.address }}
                   </h3>
                   <p class="mt-1 line-clamp-2 text-xs text-gray-500">
                     {{ searchCard.description || "Nessuna descrizione." }}

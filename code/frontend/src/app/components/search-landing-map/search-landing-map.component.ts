@@ -77,6 +77,11 @@ export class SearchLandingMapComponent
   regionName = '';
   query = '';
 
+  // FIX: Flag per bloccare eventi hover durante lo zoom/pan
+  private isMapMoving = false;
+  // FIX: Renderer Canvas per prestazioni migliori
+  private myRenderer = L.canvas({ padding: 0.5 });
+
   ngOnInit(): void {
     const cachedGeo = this.facade.getCachedGeographicalPosition()!;
     this.cityName = cachedGeo.city!;
@@ -109,7 +114,12 @@ export class SearchLandingMapComponent
     this.map = new L.Map(this.mapContainer.nativeElement, {
       center: [41.9028, 12.4964],
       zoom: 11,
-    }); // centrato su italia
+      // FIX: Usare renderer Canvas invece di SVG (default) per evitare lag grafico
+      renderer: this.myRenderer,
+      zoomAnimation: true,
+      fadeAnimation: true,
+      markerZoomAnimation: true,
+    });
 
     L.tileLayer(environmentMap.map_klokantech_basic, {
       attribution:
@@ -117,6 +127,15 @@ export class SearchLandingMapComponent
     }).addTo(this.map);
 
     L.control.zoom({ position: 'bottomright' }).addTo(this.map);
+
+    // FIX: Listener per gestire lo stato di movimento della mappa
+    this.map.on('movestart zoomstart', () => {
+      this.isMapMoving = true;
+    });
+
+    this.map.on('moveend zoomend', () => {
+      this.isMapMoving = false;
+    });
   }
 
   async loadBoundaries() {
@@ -160,12 +179,6 @@ export class SearchLandingMapComponent
         animate: true,
         duration: 1,
       });
-      /*
-      this.map.fitBounds(this.geojson.getBounds(), {
-        padding: [50, 50],
-        animate: true,
-      });
-      */
 
       this.boundariesLayer.addLayer(this.geojson);
     } catch (error) {
@@ -244,7 +257,8 @@ export class SearchLandingMapComponent
   }
 
   highlightFeature = (mouseEvent: any) => {
-    if (!this.isSelectingMunicipalities) return;
+    if (this.isMapMoving || !this.isSelectingMunicipalities) return;
+
     const layer = mouseEvent.target;
     if (layer !== this.selectedLayer) {
       layer.setStyle(this.getHoverStyle());
@@ -253,10 +267,15 @@ export class SearchLandingMapComponent
   };
 
   resetHighlight = (mouseEvent: any) => {
-    if (!this.isSelectingMunicipalities) return;
+    if (this.isMapMoving || !this.isSelectingMunicipalities) return;
+
     const layer = mouseEvent.target;
     if (layer !== this.selectedLayer) {
       this.geojson.resetStyle(layer);
+
+      if (this.selectedLayer) {
+        (this.selectedLayer as any).bringToFront();
+      }
     }
   };
 
@@ -291,11 +310,10 @@ export class SearchLandingMapComponent
 
   getDefaultStyle() {
     return {
-      fillColor: '',
-      weight: 2,
+      fillColor: '#FFFFFF',
+      weight: 1,
       opacity: 1,
       color: '#094585',
-      dashArray: '1',
       fillOpacity: 0,
     };
   }
@@ -303,6 +321,7 @@ export class SearchLandingMapComponent
   getHoverStyle() {
     return {
       weight: 2,
+      color: '#094585',
       fillColor: '#5ea8f7',
       dashArray: '',
       fillOpacity: 0.2,
@@ -311,7 +330,8 @@ export class SearchLandingMapComponent
 
   getSelectedStyle() {
     return {
-      weight: 2,
+      weight: 3,
+      color: '#094585',
       fillColor: '#5ea8f7',
       dashArray: '',
       fillOpacity: 0.2,
@@ -389,11 +409,9 @@ export class SearchLandingMapComponent
   addMarkers(cards: any[]) {
     this.markersLayer.clearLayers();
 
-    console.log('Cards ricevute:', cards); // Debug: vedi la struttura esatta in console
+    console.log('Cards ricevute:', cards);
 
     for (const card of cards) {
-      const geo = card.geographicalPosition;
-
       const latitude = card.geographicalPosition.latitude;
       const longitude = card.geographicalPosition.longitude;
 
@@ -424,15 +442,13 @@ export class SearchLandingMapComponent
 
       this.map.fitBounds(bounds, {
         animate: true,
-        duration: 1,
+        duration: 0.8,
       });
     } else {
-      // Fallback: se per qualche motivo non c'è un layer selezionato, zoomiamo sui marker come prima
       this.zoomToMarkers();
     }
   }
 
-  // evitare XSS in popup
   private escapeHtml(s: string) {
     return s
       .replaceAll('&', '&amp;')
@@ -487,7 +503,11 @@ export class SearchLandingMapComponent
 
   ngOnDestroy(): void {
     try {
-      if (this.map) this.map.remove();
+      if (this.map) {
+        this.map.off('movestart zoomstart');
+        this.map.off('moveend zoomend');
+        this.map.remove();
+      }
     } catch {}
 
     for (const url of this.blobCache.values()) URL.revokeObjectURL(url);
