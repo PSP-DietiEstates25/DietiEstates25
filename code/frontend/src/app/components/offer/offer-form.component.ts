@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { OfferControllerService } from '../../services/services';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../manual_services/auth/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-offer-form',
@@ -14,7 +15,7 @@ import { AuthService } from '../../manual_services/auth/auth.service';
 export class OfferFormComponent {
   private formBuilder = inject(FormBuilder);
   private offerService = inject(OfferControllerService);
-  private authService = inject(AuthService);
+  private toastrService = inject(ToastrService);
 
   @Input()
   realEstateId!: number;
@@ -65,11 +66,14 @@ export class OfferFormComponent {
       );
 
       this.successMessage = 'Offerta inviata!';
+      this.toastrService.success('Offerta inviata.', 'Successo');
       this.success.emit();
       this.form.reset();
     } catch (error: any) {
-      this.error =
-        error?.error?.message ?? 'Errore durante l’invio dell’offerta.';
+      this.toastrService.error(
+        `Errore durante l'invio dell'offerta, contatta un admin.`,
+        `Errore`,
+      );
     } finally {
       this.loading = false;
     }

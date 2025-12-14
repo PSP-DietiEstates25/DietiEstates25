@@ -1,5 +1,9 @@
 <form [formGroup]="form" (ngSubmit)="submitVisit()" class="grid gap-4">
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <p class="col-span-2 text-xs text-slate-500 dark:text-slate-400">
+      Seleziona una data disponibile a partire da oggi.
+    </p>
+
     <div class="grid gap-1.5">
       <label for="visit-date" class="text-sm font-medium">Data</label>
       <input
@@ -13,12 +17,9 @@
           form.get('date')?.touched && form.get('date')?.invalid
         "
       />
-      <p class="text-xs text-slate-500 dark:text-slate-400">
-        Seleziona una data disponibile a partire da oggi.
-      </p>
 
-      @if (form.get('date')?.touched && form.get('date')?.invalid) {
-      <p class="text-xs text-red-600">Inserisci una data valida.</p>
+      @if (form.get("date")?.touched && form.get("date")?.invalid) {
+        <p class="text-xs text-red-600">Inserisci una data valida.</p>
       }
     </div>
 
@@ -34,22 +35,27 @@
           form.get('time')?.touched && form.get('time')?.invalid
         "
       />
-      <p class="text-xs text-slate-500 dark:text-slate-400">
-        Esempio: 10:30, 16:00.
-      </p>
 
-      @if (form.get('time')?.touched && form.get('time')?.invalid) {
-      <p class="text-xs text-red-600">Inserisci un orario valido.</p>
+      @if (form.get("time")?.touched && form.get("time")?.invalid) {
+        <p class="text-xs text-red-600">Inserisci un orario valido.</p>
       }
     </div>
   </div>
 
   @if (!isLoggedIn) {
-  <div
-    class="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-900/40 dark:bg-amber-900/10 dark:text-amber-200"
-  >
-    Per richiedere una visita devi accedere.
-  </div>
+    <div
+      class="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-900/40 dark:bg-amber-900/10 dark:text-amber-200"
+    >
+      Per richiedere una visita devi accedere.
+    </div>
+  }
+
+  @if (isDateIncorrect) {
+    <div
+      class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600 dark:border-red-900/40 dark:bg-red-900/10 dark:text-red-200"
+    >
+      La data e l'orario selezionati non possono essere nel passato.
+    </div>
   }
 
   <button

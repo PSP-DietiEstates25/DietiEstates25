@@ -3,6 +3,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { VisitControllerService } from '../../services/services';
 import { firstValueFrom } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-visit-form',
   standalone: true,
@@ -10,8 +11,8 @@ import { firstValueFrom } from 'rxjs';
   templateUrl: './visit-form.component.html',
 })
 export class VisitFormComponent {
-
   private formBuilder = inject(FormBuilder);
+  private toastrService = inject(ToastrService);
   private visitService = inject(VisitControllerService);
 
   @Input()
@@ -29,6 +30,7 @@ export class VisitFormComponent {
   loading = false;
   successMessage = '';
   errorMessage = '';
+  isDateIncorrect = false;
   today = new Date().toISOString().slice(0, 10);
 
   form = this.formBuilder.group({
@@ -44,11 +46,23 @@ export class VisitFormComponent {
       this.loginRequired.emit();
       return;
     }
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
+    const currentDate = new Date(Date.now());
+    const selectedDate = this.form.controls.date.value;
+    const selectedTime = this.form.controls.time.value;
+    const selectedDateTime = new Date(`${selectedDate}T${selectedTime}`);
+
+    if (selectedDateTime.getTime() < currentDate.getTime()) {
+      this.isDateIncorrect = true;
+      return;
+    }
+
+    this.isDateIncorrect = false;
     this.loading = true;
     try {
       const body = {
@@ -59,14 +73,23 @@ export class VisitFormComponent {
       };
 
       await firstValueFrom(
-        this.visitService.createVisit({ realestateid: this.realEstateId, body })
+        this.visitService.createVisit({
+          realestateid: this.realEstateId,
+          body,
+        }),
       );
 
-      this.successMessage = 'Richiesta inviata!';
+      this.toastrService.success(
+        `La visita è stata prenotata con successo`,
+        `Successo`,
+      );
       this.success.emit();
       this.form.reset();
     } catch (error: any) {
-      this.errorMessage = error?.error?.message ?? 'Errore durante la richiesta di visita.';
+      this.toastrService.error(
+        `Errore durante l'invio della visita, contatta un admin.`,
+        `Errore`,
+      );
     } finally {
       this.loading = false;
     }
