@@ -338,6 +338,7 @@
 
           <app-offer-form
             [realEstateId]="ad()!.realEstateId"
+            [realEstatePrice]="ad()!.price!"
             [isLoggedIn]="isLogged()"
             (loginRequired)="goLogin()"
             (success)="onOfferSuccess()"

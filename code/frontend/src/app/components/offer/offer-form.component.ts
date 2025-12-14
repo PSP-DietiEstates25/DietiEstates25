@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  inject,
+  input,
+} from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OfferControllerService } from '../../services/services';
@@ -20,6 +27,8 @@ export class OfferFormComponent {
   @Input()
   realEstateId!: number;
 
+  realEstatePrice = input.required<number>();
+
   @Input()
   isLoggedIn = false;
 
@@ -30,6 +39,7 @@ export class OfferFormComponent {
   loginRequired = new EventEmitter<void>();
 
   loading = false;
+  isIncorrectAmount = false;
   successMessage = '';
   error = '';
 
@@ -50,6 +60,14 @@ export class OfferFormComponent {
       return;
     }
 
+    const currentAmount = this.form.controls.amount.value!;
+
+    if (currentAmount < this.realEstatePrice()) {
+      this.isIncorrectAmount = true;
+      return;
+    }
+
+    this.isIncorrectAmount = false;
     this.loading = true;
     try {
       const body = {
