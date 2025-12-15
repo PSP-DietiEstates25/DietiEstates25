@@ -121,6 +121,21 @@ export class AdDetailComponent {
     });
   }
 
+  badgeClass(status: string) {
+    switch (status) {
+      case 'ACCEPTED':
+        return 'accepted_offer_badge';
+      case 'REJECTED':
+        return 'rejected_offer_badge';
+      case 'COUNTERED':
+        return 'countered_offer_badge';
+      case 'COUNTER_OFFER':
+        return 'counter_offer_badge';
+      default:
+        return 'pending_offer_badge';
+    }
+  }
+
   mapTag(t?: string): string {
     switch (t) {
       case 'NEAR_SCHOOLS':
