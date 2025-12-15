@@ -57,6 +57,7 @@ export class StepDetailsComponent {
 
   positionForm = this.formBuilder.nonNullable.group({
     address: ['', Validators.required],
+    region: ['', Validators.required],
     city: ['', Validators.required],
     municipality: ['', Validators.required],
     latitude: [40.85631, Validators.required],
@@ -88,6 +89,7 @@ export class StepDetailsComponent {
         this.positionForm.patchValue(
           {
             address: pos.address,
+            region: pos.region,
             city: pos.city,
             municipality: pos.municipality,
             latitude: pos.latitude,
@@ -112,6 +114,10 @@ export class StepDetailsComponent {
 
   get address() {
     return this.positionForm.get('address');
+  }
+
+  get region() {
+    return this.positionForm.get('region');
   }
 
   get municipality() {
@@ -183,6 +189,7 @@ export class StepDetailsComponent {
           const newLongitude = result.lon;
 
           this.positionForm.patchValue({
+            region: result.state,
             city: result.city,
             municipality: result.suburb ?? result.city,
             address: result.formatted,
@@ -195,6 +202,7 @@ export class StepDetailsComponent {
             .pipe(
               switchMap((municipalityName: string) => {
                 this.positionForm.patchValue({
+                  region: result.state,
                   city: result.city,
                   municipality: municipalityName,
                   address: result.formatted,

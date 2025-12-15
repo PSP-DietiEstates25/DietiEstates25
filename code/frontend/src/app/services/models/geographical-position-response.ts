@@ -13,4 +13,5 @@ export interface GeographicalPositionResponse {
   longitude?: number;
   municipality?: string;
   radius?: number;
+  region?: string;
 }

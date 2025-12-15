@@ -25,7 +25,8 @@ public class RealEstateFilterDefaultImpl implements RealEstateFilter {
             var realEstateGeographicalPosition = realEstate.getDetail().getGeographicalPosition();
             if(
                     realEstateGeographicalPosition.getCity().equals(geographicalPosition.getCity()) &&
-                            realEstateGeographicalPosition.getMunicipality().equals(geographicalPosition.getMunicipality())
+                            realEstateGeographicalPosition.getMunicipality().equals(geographicalPosition.getMunicipality()) &&
+                            realEstateGeographicalPosition.getRegion().equals(geographicalPosition.getRegion())
             )
                 realEstatesFilteredByGeographicalPosition.add(realEstate);
         });
@@ -36,20 +37,33 @@ public class RealEstateFilterDefaultImpl implements RealEstateFilter {
     @Override
     public List<RealEstate> filterRealEstateByUtility(Utility utility, List<RealEstate> realEstatesToFilter) {
 
-        var realEstatesFilteredByUtility = new ArrayList<RealEstate>();
+        return realEstatesToFilter.stream()
+                .filter(realEstate -> matchesUtilities(utility, realEstate.getDetail().getUtility()))
+                .toList();
+    }
 
-        realEstatesToFilter.forEach(realEstate -> {
+    @Override
+    public boolean matchesUtilities(Utility searchUtility, Utility realEstateUtility){
 
-            var realEstateUtility = realEstate.getDetail().getUtility();
-            if(
-                    realEstateUtility.getHasAirConditioning().equals(utility.getHasAirConditioning()) &&
-                            realEstateUtility.getHasDoorman().equals(utility.getHasDoorman()) &&
-                            realEstateUtility.getHasElevator().equals(utility.getHasElevator())
-            )
-                realEstatesFilteredByUtility.add(realEstate);
-        });
+        if(Boolean.TRUE.equals(searchUtility.getHasDoorman()) && !Boolean.TRUE.equals(realEstateUtility.getHasDoorman()))
+            return false;
 
-        return realEstatesFilteredByUtility;
+        if(Boolean.TRUE.equals(searchUtility.getHasElevator()) && !Boolean.TRUE.equals(realEstateUtility.getHasElevator()))
+            return false;
+
+        if(Boolean.TRUE.equals(searchUtility.getHasAirConditioning()) && !Boolean.TRUE.equals(realEstateUtility.getHasAirConditioning()))
+            return false;
+
+        if(Boolean.TRUE.equals(searchUtility.getNearPark()) && !Boolean.TRUE.equals(realEstateUtility.getNearPark()))
+            return false;
+
+        if(Boolean.TRUE.equals(searchUtility.getNearSchool()) && !Boolean.TRUE.equals(realEstateUtility.getNearSchool()))
+            return false;
+
+        if(Boolean.TRUE.equals(searchUtility.getNearPublicTransport()) && !Boolean.TRUE.equals(realEstateUtility.getNearPublicTransport()))
+            return false;
+
+        return true;
     }
 
     @Override

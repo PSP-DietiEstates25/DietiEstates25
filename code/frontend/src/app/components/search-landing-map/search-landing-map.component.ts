@@ -79,6 +79,7 @@ export class SearchLandingMapComponent
   private geojson!: L.GeoJSON<any, Geometry>;
 
   municipalitiesSelection: MunicipalityToSelect[] = [];
+  preselectedMunicipality: string | null = null;
   selectedLayer: L.Path | null = null;
   isSelectingMunicipalities = false;
 
@@ -97,6 +98,7 @@ export class SearchLandingMapComponent
     const cachedGeo = this.facade.getCachedGeographicalPosition()!;
     this.cityName = cachedGeo.city!;
     this.regionName = (cachedGeo as any).state!;
+    this.preselectedMunicipality = cachedGeo.municipality || null;
   }
 
   ngAfterViewInit(): void {
@@ -186,6 +188,10 @@ export class SearchLandingMapComponent
         duration: 1,
       });
       this.boundariesLayer.addLayer(this.geojson);
+
+      if (this.preselectedMunicipality) {
+        this.selectMunicipality(this.preselectedMunicipality);
+      }
     } catch (error) {
       this.infoMessage = 'Errore nel caricamento della mappa. Riprova.';
     } finally {

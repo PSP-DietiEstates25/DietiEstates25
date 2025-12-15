@@ -25,6 +25,10 @@ public class GeographicalPositionRequest {
     @NotBlank(message = "City is mandatory")
     private String city;
 
+    @NotEmpty(message = "Region is mandatory")
+    @NotBlank(message = "Region is mandatory")
+    private String region;
+
     @NotEmpty(message = "Municipality is mandatory")
     @NotBlank(message = "Municipality is mandatory")
     private String municipality;

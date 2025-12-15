@@ -1773,6 +1773,10 @@
             "type": "string",
             "minLength": 1
           },
+          "region": {
+            "type": "string",
+            "minLength": 1
+          },
           "municipality": {
             "type": "string",
             "minLength": 1
@@ -1796,7 +1800,14 @@
             "format": "int32"
           }
         },
-        "required": ["address", "city", "latitude", "longitude", "municipality"]
+        "required": [
+          "address",
+          "city",
+          "latitude",
+          "longitude",
+          "municipality",
+          "region"
+        ]
       },
       "GeographicalPositionResponse": {
         "type": "object",
@@ -1814,6 +1825,9 @@
             "format": "date-time"
           },
           "city": {
+            "type": "string"
+          },
+          "region": {
             "type": "string"
           },
           "municipality": {
@@ -2651,7 +2665,7 @@
           },
           "energyClass": {
             "type": "string",
-            "enum": ["A4", "A3", "A2", "A1", "B", "C", "D", "E", "F", "G"]
+            "enum": ["G", "F", "E", "D", "C", "B", "A1", "A2", "A3", "A4"]
           },
           "rooms": {
             "type": "integer",
@@ -2796,6 +2810,9 @@
             "format": "int64"
           },
           "city": {
+            "type": "string"
+          },
+          "region": {
             "type": "string"
           },
           "municipality": {

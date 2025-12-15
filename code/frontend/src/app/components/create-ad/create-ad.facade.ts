@@ -1,12 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { EMPTY, Observable, Subject } from 'rxjs';
-import {
-  catchError,
-  finalize,
-  map,
-  switchMap,
-} from 'rxjs/operators';
+import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 
 import {
   GeographicalPositionControllerService,
@@ -41,6 +36,7 @@ export interface UtilitiesDraft {
 
 export interface PositionDraft {
   address: string;
+  region: string;
   city: string;
   municipality: string;
   latitude: number;
@@ -58,7 +54,9 @@ export interface CadastralDraft {
 
 @Injectable({ providedIn: 'root' })
 export class CreateAdFacade {
-  private geographicalPositionService = inject(GeographicalPositionControllerService);
+  private geographicalPositionService = inject(
+    GeographicalPositionControllerService,
+  );
   private cadastralDataService = inject(CadastralDataControllerService);
   private detailService = inject(DetailControllerService);
   private utlilityService = inject(UtilityControllerService);
@@ -85,7 +83,7 @@ export class CreateAdFacade {
         this.geographicalPosition() &&
         this.cadastralData() &&
         this.images().length > 0
-      )
+      ),
   );
 
   getBasics() {
@@ -165,6 +163,7 @@ export class CreateAdFacade {
 
     const geographicalPositionRequest: GeographicalPositionRequest = {
       address: geographicalPosition.address,
+      region: geographicalPosition.region,
       city: geographicalPosition.city,
       municipality: geographicalPosition.municipality,
       latitude: geographicalPosition.latitude,
@@ -186,14 +185,12 @@ export class CreateAdFacade {
     this.utlilityService
       .createUtility$Response({ body: utilityRequest })
       .pipe(
-        // 1) Utility creata -> utilityId
         map((response): number => {
           const id = this.extractId(response, ['utilityId']);
           if (id == null) throw new Error('Utility creata ma ID non presente');
           return id;
         }),
 
-        // 2) GeographicalPosition creata -> { utilityId, geographicalPositionId }
         switchMap((utilityId: number) =>
           this.geographicalPositionService
             .createGeographicalPosition$Response({
@@ -201,7 +198,9 @@ export class CreateAdFacade {
             })
             .pipe(
               map(
-                (response): {
+                (
+                  response,
+                ): {
                   utilityId: number;
                   geographicalPositionId: number;
                 } => {
@@ -210,12 +209,12 @@ export class CreateAdFacade {
                   ]);
                   if (geographicalPositionId == null)
                     throw new Error(
-                      'GeographicalPosition creata ma ID non presente'
+                      'GeographicalPosition creata ma ID non presente',
                     );
                   return { utilityId, geographicalPositionId };
-                }
-              )
-            )
+                },
+              ),
+            ),
         ),
 
         // 3) Detail creato -> { detailId }
@@ -229,16 +228,18 @@ export class CreateAdFacade {
             })
             .pipe(
               map(
-                (response): {
+                (
+                  response,
+                ): {
                   detailId: number;
                 } => {
                   const detailId = this.extractId(response, ['detailId']);
                   if (detailId == null)
                     throw new Error('Detail creato ma ID non presente');
                   return { detailId };
-                }
-              )
-            )
+                },
+              ),
+            ),
         ),
 
         // 4) CadastralData creata -> { detailId, cadastralId }
@@ -247,7 +248,9 @@ export class CreateAdFacade {
             .createCadastralData$Response({ body: cadastralDataRequest })
             .pipe(
               map(
-                (response): {
+                (
+                  response,
+                ): {
                   detailId: number;
                   cadastralId: number;
                 } => {
@@ -257,9 +260,9 @@ export class CreateAdFacade {
                   if (cadastralId == null)
                     throw new Error('Cadastral creato ma ID non presente');
                   return { detailId, cadastralId };
-                }
-              )
-            )
+                },
+              ),
+            ),
         ),
 
         switchMap(({ detailId, cadastralId }) => {
@@ -287,11 +290,13 @@ export class CreateAdFacade {
 
         catchError((error) => {
           this.error.set(
-            error?.error?.message || error?.message || 'Creazione annuncio fallita'
+            error?.error?.message ||
+              error?.message ||
+              'Creazione annuncio fallita',
           );
           return EMPTY;
         }),
-        finalize(() => this.loading.set(false))
+        finalize(() => this.loading.set(false)),
       )
       .subscribe((realEstateId: number) => {
         this.publishedSubject.next(realEstateId);

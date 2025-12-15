@@ -1,4 +1,11 @@
-import { Component, inject, OnInit, signal, effect } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  signal,
+  effect,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -25,6 +32,7 @@ export class FilterPanelComponent implements OnInit {
   locationService = inject(LocationsService);
   toastrService = inject(ToastrService);
   routerService = inject(Router);
+  changeDetectorRef = inject(ChangeDetectorRef);
 
   isOpen = signal(true);
 
@@ -53,8 +61,8 @@ export class FilterPanelComponent implements OnInit {
       minSquareMeters: [0, [Validators.min(0), Validators.max(10_000)]],
       maxSquareMeters: [300, [Validators.min(0), Validators.max(10_000)]],
 
-      minEnergyClass: [1, [Validators.min(1), Validators.max(10)]],
-      maxEnergyClass: [10, [Validators.min(1), Validators.max(10)]],
+      minEnergyClass: [0, [Validators.min(0), Validators.max(9)]],
+      maxEnergyClass: [9, [Validators.min(0), Validators.max(9)]],
 
       minRooms: [0, [Validators.min(0), Validators.max(50)]],
       maxRooms: [10, [Validators.min(0), Validators.max(50)]],
@@ -81,12 +89,20 @@ export class FilterPanelComponent implements OnInit {
   });
 
   private readonly _syncFromFacade = effect(() => {
+    const currentRegionsList = this.regions();
+
     const gp = this.facade.cachedGeographicalPosition();
     const util = this.facade.cachedUtility();
     const cad = this.facade.cachedCadastralFilter();
     const cat = this.facade.cachedCategory();
 
-    if (!gp || !util || !cad) return;
+    if (currentRegionsList.length === 0) {
+      return;
+    }
+
+    if (!gp || !util || !cad) {
+      return;
+    }
 
     this.mainForm.controls.category.setValue(
       cat === 'RENT' ? AdCategory.Rent : AdCategory.Sale,
@@ -96,21 +112,23 @@ export class FilterPanelComponent implements OnInit {
     const regionCtrl = this.geographicalPositionForm.controls.region;
     const cityCtrl = this.geographicalPositionForm.controls.city;
 
-    const region = ((gp as any).state ?? (gp as any).region ?? '') as string;
-    const city = ((gp as any).city ?? '') as string;
+    const regionVal = ((gp as any).state ?? (gp as any).region ?? '') as string;
+    const cityVal = ((gp as any).city ?? '') as string;
 
-    regionCtrl.setValue(region, { emitEvent: false });
+    regionCtrl.setValue(regionVal, { emitEvent: false });
 
-    if (region) {
+    if (regionVal) {
       cityCtrl.enable({ emitEvent: false });
 
-      this.locationService.getCitiesByRegion(region).subscribe({
+      this.locationService.getCitiesByRegion(regionVal).subscribe({
         next: (citiesResponse) => {
           this.cities.set(citiesResponse ?? []);
-          cityCtrl.setValue(city, { emitEvent: false });
+          this.changeDetectorRef.detectChanges();
+          cityCtrl.setValue(cityVal, { emitEvent: false });
         },
-        error: () => {
-          cityCtrl.setValue(city, { emitEvent: false });
+        error: (err) => {
+          console.error('Errore caricamento città', err);
+          cityCtrl.setValue(cityVal, { emitEvent: false });
         },
       });
     } else {
@@ -204,10 +222,26 @@ export class FilterPanelComponent implements OnInit {
     const utility = this.utilityForm.getRawValue();
     const cadastralFilter = this.cadastralFilterForm.getRawValue();
 
+    const currentCachedGeo = this.facade.getCachedGeographicalPosition();
+
+    let municipalityToKeep = '';
+
+    if (
+      currentCachedGeo &&
+      currentCachedGeo.city === geographicalPosition.city &&
+      (currentCachedGeo.region === geographicalPosition.region ||
+        currentCachedGeo.region === geographicalPosition.region)
+    ) {
+      municipalityToKeep = currentCachedGeo.municipality || '';
+    }
+
     const geographicalPositionRequest = {
+      region: geographicalPosition.region,
       state: geographicalPosition.region,
       city: geographicalPosition.city,
-      municipality: '',
+
+      municipality: municipalityToKeep,
+
       address: '',
       latitude: 0,
       longitude: 0,

@@ -23,7 +23,10 @@ public class GeographicalPosition {
 	
 	@Column(nullable = false)
 	private String city;
-	
+
+    @Column(nullable = false)
+    private String region;
+
 	@Column(nullable = false)
 	private String municipality;
 	
@@ -53,6 +56,7 @@ public class GeographicalPosition {
 	@Builder(builderMethodName = "builder")
 	public GeographicalPosition(
 			String city,
+            String region,
 			String municipality,
 			String address,
 			Double latitude,
@@ -60,6 +64,7 @@ public class GeographicalPosition {
 			Integer radius
 			){
 		this.city = city;
+        this.region = region;
 		this.municipality = municipality;
 		this.address = address;
 		this.latitude = latitude;

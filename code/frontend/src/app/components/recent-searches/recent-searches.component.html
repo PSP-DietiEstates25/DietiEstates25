@@ -35,15 +35,9 @@
           >
             <div class="flex items-start justify-between gap-3">
               <!-- Main -->
-              <div class="min-w-0">
+              <div class="min-w-0 flex-col items-start justify-center">
                 <!-- label -->
-                <div class="flex flex-wrap items-center gap-2">
-                  <div class="min-w-0">
-                    <div class="truncate text-sm font-semibold text-gray-900">
-                      Ricerca
-                    </div>
-                  </div>
-
+                <div class="flex items-center justify-start gap-2">
                   <!-- category pill -->
                   <span
                     class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
@@ -54,6 +48,12 @@
                   >
                     {{ search.category === "RENT" ? "Affitto" : "Vendita" }}
                   </span>
+
+                  <h1 class="text-sm text-white dark:text-black">
+                    <span class="opacity-70">📍</span>
+                    {{ search.geographicalPosition.city }},
+                    {{ search.geographicalPosition.municipality }}
+                  </h1>
                 </div>
 
                 <!-- meta -->
@@ -64,19 +64,6 @@
                     <span class="opacity-70">🕒</span>
                     {{ search.createdDate | date: "short" }}
                   </span>
-
-                  @if (
-                    search.geographicalPosition.city ||
-                    search.geographicalPosition.municipality
-                  ) {
-                    <span class="inline-flex items-center gap-1 truncate">
-                      <span class="opacity-70">📍</span>
-                      {{
-                        search.geographicalPosition.city ||
-                          search.geographicalPosition.municipality
-                      }}
-                    </span>
-                  }
                 </div>
               </div>
 
@@ -95,9 +82,147 @@
 
             <!-- subtle footer hint on hover -->
             <div
+              class="mt-2 flex flex-col items-start justify-start gap-3 py-2"
+            >
+              <div class="flex items-center justify-start gap-4">
+                <div class="flex items-center justify-center gap-2">
+                  <app-price-icon class="size-5 text-gray-500"></app-price-icon>
+                  <h1 class="text-sm text-gray-500">
+                    {{ search.cadastralFilter!.minPrice }} -
+                    {{ search.cadastralFilter?.maxPrice }} €
+                  </h1>
+                </div>
+                <div class="flex items-center justify-center gap-2">
+                  <app-square-meters-icon
+                    class="size-5 text-gray-500"
+                  ></app-square-meters-icon>
+                  <h1 class="text-sm text-gray-500">
+                    {{ search.cadastralFilter!.minSquareMeters }} -
+                    {{ search.cadastralFilter?.maxSquareMeters }} m²
+                  </h1>
+                </div>
+                <div class="flex items-center justify-center gap-2">
+                  <app-rooms-icon class="size-5 text-gray-500"></app-rooms-icon>
+                  <h1 class="text-sm text-gray-500">
+                    {{ search.cadastralFilter!.minRooms }} -
+                    {{ search.cadastralFilter?.maxRooms }}
+                  </h1>
+                </div>
+                <div class="flex items-center justify-center gap-2">
+                  <app-floor-icon class="size-5 text-gray-500"></app-floor-icon>
+                  <h1 class="text-sm text-gray-500">
+                    {{ search.cadastralFilter!.minFloor }} -
+                    {{ search.cadastralFilter?.maxFloor }}
+                  </h1>
+                </div>
+                <div class="flex items-center justify-center gap-2">
+                  <app-energy-class-icon
+                    class="size-5 text-gray-500"
+                  ></app-energy-class-icon>
+                  <h1 class="text-sm text-gray-500">
+                    @if (search.cadastralFilter!.minEnergyClass === 0) {
+                      G
+                    } @else if (search.cadastralFilter!.minEnergyClass === 1) {
+                      F
+                    } @else if (search.cadastralFilter!.minEnergyClass === 2) {
+                      E
+                    } @else if (search.cadastralFilter!.minEnergyClass === 3) {
+                      D
+                    } @else if (search.cadastralFilter!.minEnergyClass === 4) {
+                      C
+                    } @else if (search.cadastralFilter!.minEnergyClass === 5) {
+                      B
+                    } @else if (search.cadastralFilter!.minEnergyClass === 6) {
+                      A1
+                    } @else if (search.cadastralFilter!.minEnergyClass === 7) {
+                      A2
+                    } @else if (search.cadastralFilter!.minEnergyClass === 8) {
+                      A3
+                    } @else if (search.cadastralFilter!.minEnergyClass === 9) {
+                      A4
+                    }
+                    -
+                    @if (search.cadastralFilter!.maxEnergyClass === 0) {
+                      G
+                    } @else if (search.cadastralFilter!.maxEnergyClass === 1) {
+                      F
+                    } @else if (search.cadastralFilter!.maxEnergyClass === 2) {
+                      E
+                    } @else if (search.cadastralFilter!.maxEnergyClass === 3) {
+                      D
+                    } @else if (search.cadastralFilter!.maxEnergyClass === 4) {
+                      C
+                    } @else if (search.cadastralFilter!.maxEnergyClass === 5) {
+                      B
+                    } @else if (search.cadastralFilter!.maxEnergyClass === 6) {
+                      A1
+                    } @else if (search.cadastralFilter!.maxEnergyClass === 7) {
+                      A2
+                    } @else if (search.cadastralFilter!.maxEnergyClass === 8) {
+                      A3
+                    } @else if (search.cadastralFilter!.maxEnergyClass === 9) {
+                      A4
+                    }
+                  </h1>
+                </div>
+              </div>
+              <div class="flex items-center justify-start gap-4">
+                @if (search.utility.hasElevator) {
+                  <div class="flex items-center justify-center gap-2">
+                    <app-elevator-icon
+                      class="size-5 text-gray-500"
+                    ></app-elevator-icon>
+                    <h1 class="text-sm text-gray-500">Ascensore</h1>
+                  </div>
+                }
+                @if (search.utility.hasAirConditioning) {
+                  <div class="flex items-center justify-center gap-2">
+                    <app-air-conditioning-icon
+                      class="size-5 text-gray-500"
+                    ></app-air-conditioning-icon>
+                    <h1 class="text-sm text-gray-500">Aria condizionata</h1>
+                  </div>
+                }
+                @if (search.utility.hasDoorman) {
+                  <div class="flex items-center justify-center gap-2">
+                    <app-doorman-icon
+                      class="size-5 text-gray-500"
+                    ></app-doorman-icon>
+                    <h1 class="text-sm text-gray-500">Portineria</h1>
+                  </div>
+                }
+                @if (search.utility.nearPark) {
+                  <div class="flex items-center justify-center gap-2">
+                    <app-near-park-icon
+                      class="size-5 text-gray-500"
+                    ></app-near-park-icon>
+                    <h1 class="text-sm text-gray-500">Vicino a parchi</h1>
+                  </div>
+                }
+                @if (search.utility.nearPublicTransport) {
+                  <div class="flex items-center justify-center gap-2">
+                    <app-near-public-transport-icon
+                      class="size-5 text-gray-500"
+                    ></app-near-public-transport-icon>
+                    <h1 class="text-sm text-gray-500">
+                      Vicino a trasporto pubblico
+                    </h1>
+                  </div>
+                }
+                @if (search.utility.nearSchool) {
+                  <div class="flex items-center justify-center gap-2">
+                    <app-near-school-icon
+                      class="size-5 text-gray-500"
+                    ></app-near-school-icon>
+                    <h1 class="text-sm text-gray-500">Vicino a scuole</h1>
+                  </div>
+                }
+              </div>
+            </div>
+            <div
               class="mt-2 hidden text-[11px] text-gray-500 group-hover:block"
             >
-              Suggerimento: usa “Riesegui” per ripartire dagli stessi filtri.
+              Usa “Riesegui” per ripartire dagli stessi filtri.
             </div>
           </li>
         }

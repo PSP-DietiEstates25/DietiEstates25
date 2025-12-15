@@ -42,6 +42,7 @@ export class StepReviewComponent implements OnDestroy {
 
   publish() {
     this.facade.createAd();
+    this.toastrService.success('Annuncio creato.', 'Successo');
   }
 
   discard() {

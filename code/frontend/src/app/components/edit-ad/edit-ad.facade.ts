@@ -37,6 +37,7 @@ export interface UtilityDraft {
 }
 export interface GeographicalPositionDraft {
   address: string;
+  region: string;
   city: string;
   municipality: string;
   latitude: number;
@@ -60,7 +61,7 @@ export class EditAdFacade {
   private cadastralDataId = signal<number | null>(null);
 
   private geographicalPositionService = inject(
-    GeographicalPositionControllerService
+    GeographicalPositionControllerService,
   );
   private cadsatralDataService = inject(CadastralDataControllerService);
   private detailService = inject(DetailControllerService);
@@ -93,7 +94,7 @@ export class EditAdFacade {
         this.geographicalPosition() &&
         this.cadastralData() &&
         this.images().length > 0
-      )
+      ),
   );
 
   getBasics(): BasicsDraft | null {
@@ -125,7 +126,7 @@ export class EditAdFacade {
   }
 
   setGeographicalPosition(
-    geographicalPositionDraft: GeographicalPositionDraft
+    geographicalPositionDraft: GeographicalPositionDraft,
   ) {
     this.geographicalPosition.set(geographicalPositionDraft);
   }
@@ -181,7 +182,7 @@ export class EditAdFacade {
       .getRealEstateById$Response({ realestateid: realEstateId })
       .pipe(
         map(
-          (realEstateResponse) => realEstateResponse.body as RealEstateResponse
+          (realEstateResponse) => realEstateResponse.body as RealEstateResponse,
         ),
         switchMap((realEstateDto) => {
           this.setBasics({
@@ -196,7 +197,7 @@ export class EditAdFacade {
           const existingImgs = realEstateDto.images ?? [];
           const files = existingImgs
             .map((b64, index) =>
-              this.base64ToFile(b64, `existing-${index}.jpg`)
+              this.base64ToFile(b64, `existing-${index}.jpg`),
             )
             .filter((file): file is File => !!file);
 
@@ -217,7 +218,7 @@ export class EditAdFacade {
                   cadastraldataid: cadastralDataId,
                 })
                 .pipe(
-                  map((cadastralDataResponse) => cadastralDataResponse.body!)
+                  map((cadastralDataResponse) => cadastralDataResponse.body!),
                 )
             : EMPTY;
 
@@ -238,8 +239,8 @@ export class EditAdFacade {
                     .pipe(
                       map(
                         (geographicalPositionResponse) =>
-                          geographicalPositionResponse.body!
-                      )
+                          geographicalPositionResponse.body!,
+                      ),
                     )
                 : EMPTY;
 
@@ -255,6 +256,7 @@ export class EditAdFacade {
                   if (geographicalPosition) {
                     this.setGeographicalPosition({
                       address: geographicalPosition.address,
+                      region: geographicalPosition.region,
                       city: geographicalPosition.city,
                       municipality: geographicalPosition.municipality,
                       latitude: geographicalPosition.latitude,
@@ -291,20 +293,20 @@ export class EditAdFacade {
                     });
                   }
                   return realEstateDto.id!;
-                })
+                }),
               );
-            })
+            }),
           );
         }),
         catchError((error) => {
           this.error.set(
             error?.error?.message ||
               error?.message ||
-              'Caricamento annuncio fallito'
+              'Caricamento annuncio fallito',
           );
           return EMPTY;
         }),
-        finalize(() => this.loading.set(false))
+        finalize(() => this.loading.set(false)),
       )
       .subscribe();
   }
@@ -343,7 +345,7 @@ export class EditAdFacade {
       cadastralDataId == null
     ) {
       this.error.set(
-        'Struttura annuncio inconsistente: alcuni ID mancanti (detail/geo/utility/cadastral).'
+        'Struttura annuncio inconsistente: alcuni ID mancanti (detail/geo/utility/cadastral).',
       );
       return;
     }
@@ -360,6 +362,7 @@ export class EditAdFacade {
 
     const geographicalPositionRequest: GeographicalPositionRequest = {
       address: geographicalPosition.address,
+      region: geographicalPosition.region,
       city: geographicalPosition.city,
       municipality: geographicalPosition.municipality,
       latitude: geographicalPosition.latitude,
@@ -392,7 +395,7 @@ export class EditAdFacade {
           this.geographicalPositionService.updateGeographicalPosition$Response({
             geographicalpositionid: geographicalPositionId,
             body: geographicalPositionRequest,
-          })
+          }),
         ),
 
         switchMap(() =>
@@ -402,13 +405,13 @@ export class EditAdFacade {
               geographicalPositionId,
               utilityId,
             } as DetailRequest,
-          })
+          }),
         ),
         switchMap(() =>
           this.cadsatralDataService.updateCadastralData$Response({
             cadastraldataid: cadastralDataId,
             body: cadastralDataRequest,
-          })
+          }),
         ),
         // QUI: niente più base64. Inviamo multipart (data + images)
         switchMap(() => {
@@ -431,11 +434,11 @@ export class EditAdFacade {
           this.error.set(
             error?.error?.message ||
               error?.message ||
-              'Salvataggio modifiche fallito'
+              'Salvataggio modifiche fallito',
           );
           return EMPTY;
         }),
-        finalize(() => this.loading.set(false))
+        finalize(() => this.loading.set(false)),
       )
       .subscribe(() => {
         this.savedSubject.next(realestateId);
@@ -447,7 +450,7 @@ export class EditAdFacade {
   private base64ToFile(
     base64Like: string,
     name: string,
-    mime = 'image/jpeg'
+    mime = 'image/jpeg',
   ): File | null {
     try {
       if (!base64Like) return null;

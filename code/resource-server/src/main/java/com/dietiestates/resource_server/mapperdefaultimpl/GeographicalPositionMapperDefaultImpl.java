@@ -16,6 +16,7 @@ public class GeographicalPositionMapperDefaultImpl implements GeographicalPositi
 	public GeographicalPositionSpec toSpec(GeographicalPositionRequest request) {
 		return GeographicalPositionSpec.builder()
 				.city(request.getCity())
+                .region(request.getRegion())
 				.municipality(request.getMunicipality())
 				.address(request.getAddress())
 				.latitude(request.getLatitude())
@@ -31,6 +32,7 @@ public class GeographicalPositionMapperDefaultImpl implements GeographicalPositi
 				.createdDate(geographicalPosition.getCreatedDate())
 				.lastModifiedDate(geographicalPosition.getLastModifiedDate())
 				.city(geographicalPosition.getCity())
+                .region(geographicalPosition.getRegion())
 				.municipality(geographicalPosition.getMunicipality())
 				.address(geographicalPosition.getAddress())
 				.longitude(geographicalPosition.getLongitude())

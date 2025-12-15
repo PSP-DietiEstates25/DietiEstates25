@@ -50,7 +50,6 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
 	@Override
 	public RealEstateResponse createRealEstate(RealEstateRequest request, List<MultipartFile> images, String estateAgentEmail) throws IOException {
 
-        // 1. Salvo le immagini su filesystem e mi faccio restituire le URL pubbliche
         List<String> imageUrls = new ArrayList<>();
         if (images != null) {
             for (MultipartFile img : images) {

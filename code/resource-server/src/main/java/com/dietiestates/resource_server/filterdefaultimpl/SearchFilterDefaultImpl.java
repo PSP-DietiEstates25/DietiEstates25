@@ -34,20 +34,33 @@ public class SearchFilterDefaultImpl implements SearchFilter {
     @Override
     public List<Search> filterSearchesByUtility(Utility utility, List<Search> searchesToFilter) {
 
-        var searchesFilteredByUtility = new ArrayList<Search>();
+        return searchesToFilter.stream()
+                .filter(search -> matchesUtilities(utility, search.getDetail().getUtility()))
+                .toList();
+    }
 
-        searchesToFilter.forEach(search -> {
+    @Override
+    public boolean matchesUtilities(Utility searchUtility, Utility realEstateUtility){
 
-            var searchUtility = search.getDetail().getUtility();
-            if(
-                    searchUtility.getHasAirConditioning().equals(utility.getHasAirConditioning()) &&
-                            searchUtility.getHasDoorman().equals(utility.getHasDoorman()) &&
-                            searchUtility.getHasElevator().equals(utility.getHasElevator())
-            )
-                searchesFilteredByUtility.add(search);
-        });
+        if(Boolean.TRUE.equals(searchUtility.getHasDoorman()) && !Boolean.TRUE.equals(realEstateUtility.getHasDoorman()))
+            return false;
 
-        return searchesFilteredByUtility;
+        if(Boolean.TRUE.equals(searchUtility.getHasElevator()) && !Boolean.TRUE.equals(realEstateUtility.getHasElevator()))
+            return false;
+
+        if(Boolean.TRUE.equals(searchUtility.getHasAirConditioning()) && !Boolean.TRUE.equals(realEstateUtility.getHasAirConditioning()))
+            return false;
+
+        if(Boolean.TRUE.equals(searchUtility.getNearPark()) && !Boolean.TRUE.equals(realEstateUtility.getNearPark()))
+            return false;
+
+        if(Boolean.TRUE.equals(searchUtility.getNearSchool()) && !Boolean.TRUE.equals(realEstateUtility.getNearSchool()))
+            return false;
+
+        if(Boolean.TRUE.equals(searchUtility.getNearPublicTransport()) && !Boolean.TRUE.equals(realEstateUtility.getNearPublicTransport()))
+            return false;
+
+        return true;
     }
 
     @Override

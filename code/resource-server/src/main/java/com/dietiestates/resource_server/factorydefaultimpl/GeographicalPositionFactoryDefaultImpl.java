@@ -17,6 +17,7 @@ public class GeographicalPositionFactoryDefaultImpl implements GeographicalPosit
             GeographicalPositionSpec spec
     ) {
         return GeographicalPosition.builder()
+                .region(spec.getRegion())
                 .city(spec.getCity())
                 .municipality(spec.getMunicipality())
                 .address(spec.getAddress())

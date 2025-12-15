@@ -4,7 +4,7 @@
 
 export interface CadastralData {
   createdDate?: string;
-  energyClass?: 'A4' | 'A3' | 'A2' | 'A1' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
+  energyClass?: 'G' | 'F' | 'E' | 'D' | 'C' | 'B' | 'A1' | 'A2' | 'A3' | 'A4';
   floor?: number;
   id?: number;
   lastModifiedDate?: string;

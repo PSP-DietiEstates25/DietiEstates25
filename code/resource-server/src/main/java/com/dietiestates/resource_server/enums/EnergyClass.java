@@ -5,16 +5,16 @@ import java.util.Optional;
 import lombok.Getter;
 
 public enum EnergyClass {
-    A4(0),
-    A3(1),
-    A2(2),
-    A1(3),
-    B(4),
-    C(5),
-    D(6),
-    E(7),
-    F(8),
-    G(9);
+    G(0),
+    F(1),
+    E(2),
+    D(3),
+    C(4),
+    B(5),
+    A1(6),
+    A2(7),
+    A3(8),
+    A4(9);
 
     @Getter
     private final Integer order;

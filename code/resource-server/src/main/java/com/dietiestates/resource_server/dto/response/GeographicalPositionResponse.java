@@ -17,6 +17,7 @@ public class GeographicalPositionResponse {
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
     private String city;
+    private String region;
     private String municipality;
     private String address;
     private Double longitude;

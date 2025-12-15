@@ -9,4 +9,5 @@ export interface GeographicalPositionRequest {
   longitude: number;
   municipality: string;
   radius?: number;
+  region: string;
 }
