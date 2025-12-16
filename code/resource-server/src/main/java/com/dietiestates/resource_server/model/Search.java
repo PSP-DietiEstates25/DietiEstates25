@@ -35,9 +35,6 @@ public class Search {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 	
-	@OneToMany(mappedBy = "search", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SearchRealEstate> searchRealEstates = new ArrayList<>();
-	
 	@ManyToOne
 	@JoinColumn(
 			nullable = false,
@@ -71,10 +68,5 @@ public class Search {
         this.detail = detail;
         this.cadastralFilter = cadastralFilter;
 		user.addSearch(this);
-	}
-	
-	public void addSearchRealEstate(SearchRealEstate searchRealEstate) {
-		this.searchRealEstates.add(searchRealEstate);
-		searchRealEstate.setSearch(this);
 	}
 }

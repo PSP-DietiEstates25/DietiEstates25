@@ -44,8 +44,6 @@ export type { RealEstateRequest } from './models/real-estate-request';
 export type { RealEstateResponse } from './models/real-estate-response';
 export type { RoomsRange } from './models/rooms-range';
 export type { Search } from './models/search';
-export type { SearchRealEstate } from './models/search-real-estate';
-export type { SearchRealEstateKey } from './models/search-real-estate-key';
 export type { SearchRequest } from './models/search-request';
 export type { SearchResponse } from './models/search-response';
 export type { SortObject } from './models/sort-object';

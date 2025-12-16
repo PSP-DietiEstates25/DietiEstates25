@@ -19,6 +19,7 @@ import { DoormanIconComponent } from '../../shared/icons/doorman-icon/doorman-ic
 import { NearParkIconComponent } from '../../shared/icons/near-park-icon/near-park-icon.component';
 import { NearPublicTransportIconComponent } from '../../shared/icons/near-public-transport-icon/near-public-transport-icon.component';
 import { NearSchoolIconComponent } from '../../shared/icons/near-school-icon/near-school-icon.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-recent-searches',
@@ -45,6 +46,7 @@ export class RecentSearchesComponent {
   searchService = inject(SearchControllerService);
   searchPaginatorService = inject(SearchPaginatorService);
   toastrService = inject(ToastrService);
+  routerService = inject(Router);
 
   constructor() {
     effect(() => {
@@ -58,6 +60,15 @@ export class RecentSearchesComponent {
   }
 
   replay(search: FullSearch) {
-    this.facade.replaySearch(search);
+    this.facade.replaySearch(search).subscribe({
+      next: () => {
+        this.toastrService.success('Ricerca caricata con successo');
+        this.routerService.navigate(['/search']); 
+      },
+      error: (err) => {
+        console.error(err);
+        this.toastrService.error('Impossibile rieseguire la ricerca');
+      }
+    });
   }
 }

@@ -53,9 +53,6 @@ public class RealEstate {
     @OneToMany(mappedBy = "realEstate", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Negotiation> negotiations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "realEstate", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SearchRealEstate> searchRealEstates = new ArrayList<>();
-
     @ManyToOne
     @JoinColumn(nullable = false, name = "estate_agent_id", foreignKey = @ForeignKey(name = "REAL_ESTATE_ESTATE_AGENT_ID_FK"))
     private EstateAgent estateAgent;
@@ -87,10 +84,5 @@ public class RealEstate {
     public void addNegotiation(Negotiation negotiation) {
         negotiations.add(negotiation);
         negotiation.setRealEstate(this);
-    }
-
-    public void addSearchRealEstate(SearchRealEstate searchRealEstate) {
-        this.searchRealEstates.add(searchRealEstate);
-        searchRealEstate.setRealEstate(this);
     }
 }

@@ -2,10 +2,8 @@ package com.dietiestates.resource_server.finderdefaultimpl;
 
 import com.dietiestates.resource_server.exception.notfound.RealEstateNotFoundException;
 import com.dietiestates.resource_server.finder.RealEstateFinder;
-import com.dietiestates.resource_server.finder.SearchRealEstateFinder;
 import com.dietiestates.resource_server.model.Admin;
 import com.dietiestates.resource_server.model.RealEstate;
-import com.dietiestates.resource_server.model.SearchRealEstate;
 import com.dietiestates.resource_server.model.User;
 import com.dietiestates.resource_server.repository.RealEstateRepository;
 import com.dietiestates.resource_server.utils.PageUtils;
@@ -22,7 +20,6 @@ import java.util.List;
 public class RealEstateFinderDefaultImpl implements RealEstateFinder {
 
 	private final RealEstateRepository realEstateRepository;
-    private final SearchRealEstateFinder searchRealEstateFinder;
     private final PageUtils pageUtils;
 	
 	@Override
@@ -40,12 +37,6 @@ public class RealEstateFinderDefaultImpl implements RealEstateFinder {
     public Page<RealEstate> getAdminRealEstates(Admin admin, Pageable pageable) {
         var estateAgentsRealEstates = getAdminEstateAgentsRealEstates(admin);
         return PageUtils.toPage(estateAgentsRealEstates, pageable);
-    }
-
-    @Override
-    public Page<RealEstate> getSearchRealEstates(Long searchId, Pageable pageable) {
-        var searchSearchRealEsatates = searchRealEstateFinder.getSearchSearchRealEstates(searchId, pageable);
-        return searchSearchRealEsatates.map(SearchRealEstate::getRealEstate);
     }
 
     @Override

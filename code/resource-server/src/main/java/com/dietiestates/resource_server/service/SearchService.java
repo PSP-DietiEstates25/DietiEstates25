@@ -12,4 +12,5 @@ import java.util.List;
 public interface SearchService {
 	List<RealEstateResponse> createSearch(SearchRequest request, String userEmail);
     Page<SearchResponse> getUserSearches(String userEmail, Integer page, Integer size);
+    List<RealEstateResponse> runSavedSearch(Long searchId, String userEmail);
 }

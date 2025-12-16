@@ -120,23 +120,6 @@ export class SearchFacade {
     if (category) this._cachedCategory.set(category);
   }
 
-  replaySearch(search: FullSearch) {
-    this.resetContext();
-
-    this._cachedGeographicalPosition.set(search.geographicalPosition);
-    this._cachedUtility.set(search.utility);
-    this._cachedCadastralFilter.set(search.cadastralFilter!);
-    this._cachedCategory.set(search.category as AdCategory);
-
-    return this.runFullSearch({
-      category: search.category as AdCategory,
-      geographicalPosition:
-        search.geographicalPosition as GeographicalPositionRequest,
-      utility: search.utility as UtilityRequest,
-      cadastralFilter: search.cadastralFilter as CadastralFilterRequest,
-    });
-  }
-
   prepareDetail(
     geographicalPositionRequest: GeographicalPositionRequest,
     utilityRequest: UtilityRequest,
@@ -264,67 +247,101 @@ export class SearchFacade {
     this.loading.set(true);
 
     return this.searchService.createSearch({ body: searchBody }).pipe(
-      switchMap((realEstateList) => {
-        const requests = realEstateList.map((realEstate) => {
-          const cadastralData = this.cadastralDataService.getCadastralDataById({
-            cadastraldataid: realEstate.cadastralDataId!,
-          });
-          const details = this.detailService
-            .getDetailById({
-              detailid: realEstate.detailId!,
-            })
-            .pipe(
-              switchMap((detail) => {
-                return forkJoin({
-                  geographicalPosition:
-                    this.geographicalPositionService.getGeographicalPositionById(
-                      {
-                        geographicalpositionid: detail.geographicalPositionId!,
-                      },
-                    ),
-                  utility: this.utilityService.getUtilityById({
-                    utilityid: detail.utilityId!,
-                  }),
-                });
-              }),
-            );
-
-          return forkJoin({
-            realEstate: of(realEstate),
-            cadastralData: cadastralData,
-            details: details,
-          }).pipe(
-            map((result) => {
-              return {
-                ...result.realEstate,
-                cadastralData: result.cadastralData,
-                geographicalPosition: result.details.geographicalPosition,
-                utility: result.details.utility,
-              };
-            }),
-          );
-        });
-
-        return forkJoin(requests);
-      }),
-      map((realEstateObservables) => {
-        return realEstateObservables.map((realEstate) => {
-          return {
-            geographicalPosition: realEstate.geographicalPosition,
-            utility: realEstate.utility,
-            cadastralData: realEstate.cadastralData,
-            category: realEstate.category,
-            createdDate: realEstate.category,
-            description: realEstate.description,
-            id: realEstate.id,
-            images: realEstate.images,
-          } as FullRealEstate;
-        });
-      }),
+      switchMap((realEstateList) => 
+        this.mapRealEstatesToFullRealEstates(realEstateList)
+      ),
       tap((searchCards) => {
         this.savedSearches.set(searchCards);
         this.searchCards.set(searchCards);
       }),
+      finalize(() => this.loading.set(false))
+    );
+  }
+
+  // --- NUOVO METODO HELPER PER ARRICCHIRE I DATI ---
+  private mapRealEstatesToFullRealEstates(realEstates: RealEstateResponse[]) {
+    if (!realEstates || realEstates.length === 0) {
+      return of([]);
+    }
+
+    const requests = realEstates.map((realEstate) => {
+      const cadastralData = this.cadastralDataService.getCadastralDataById({
+        cadastraldataid: realEstate.cadastralDataId!,
+      });
+
+      const details = this.detailService
+        .getDetailById({
+          detailid: realEstate.detailId!,
+        })
+        .pipe(
+          switchMap((detail) => {
+            return forkJoin({
+              geographicalPosition:
+                this.geographicalPositionService.getGeographicalPositionById({
+                  geographicalpositionid: detail.geographicalPositionId!,
+                }),
+              utility: this.utilityService.getUtilityById({
+                utilityid: detail.utilityId!,
+              }),
+            });
+          }),
+        );
+
+      return forkJoin({
+        realEstate: of(realEstate),
+        cadastralData: cadastralData,
+        details: details,
+      }).pipe(
+        map((result) => {
+          return {
+            geographicalPosition: result.details.geographicalPosition,
+            utility: result.details.utility,
+            cadastralData: result.cadastralData,
+            category: result.realEstate.category,
+            createdDate: result.realEstate.createdDate,
+            description: result.realEstate.description,
+            id: result.realEstate.id,
+            images: result.realEstate.images,
+          } as FullRealEstate;
+        }),
+      );
+    });
+
+    return forkJoin(requests);
+  }
+
+  // --- METODO MODIFICATO PER USARE LA GET ---
+  replaySearch(search: FullSearch) {
+    this.resetContext();
+    this.loading.set(true);
+    this.error.set(null);
+
+    // 1. Aggiorna la cache visiva (per il Filter Panel)
+    this._cachedGeographicalPosition.set(search.geographicalPosition);
+    this._cachedUtility.set(search.utility);
+    this._cachedCadastralFilter.set(search.cadastralFilter!);
+    this._cachedCategory.set(search.category as AdCategory);
+
+    // 2. Chiama l'endpoint GET per rieseguire la ricerca on-demand
+    // NOTA: Assicurati che runSavedSearch esista nel tuo SearchControllerService
+    // come discusso in precedenza.
+    return this.searchService.getSearch({ searchid: search.id! }).pipe(
+      // 3. Arricchisci i risultati grezzi
+      switchMap((realEstates) =>
+        this.mapRealEstatesToFullRealEstates(realEstates),
+      ),
+      tap((searchCards) => {
+        // 4. Aggiorna i segnali
+        this.searchCards.set(searchCards);
+        // Opzionale: se vuoi aggiornare anche lo storico visualizzato, ma di solito
+        // savedSearches contiene le "definizioni" delle ricerche, non i risultati.
+        // Se searchCards è quello che alimenta la lista risultati, basta questo.
+      }),
+      catchError((error) => {
+        this.error.set(error);
+        throw error;
+      }),
+      finalize(() => this.loading.set(false)),
     );
   }
 

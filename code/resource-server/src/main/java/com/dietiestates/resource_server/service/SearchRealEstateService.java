@@ -2,7 +2,6 @@ package com.dietiestates.resource_server.service;
 
 import com.dietiestates.resource_server.model.RealEstate;
 import com.dietiestates.resource_server.model.Search;
-import com.dietiestates.resource_server.model.SearchRealEstate;
 
 import java.util.List;
 

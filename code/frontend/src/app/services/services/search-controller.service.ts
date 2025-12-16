@@ -13,6 +13,8 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { createSearch } from '../fn/search-controller/create-search';
 import { CreateSearch$Params } from '../fn/search-controller/create-search';
+import { getSearch } from '../fn/search-controller/get-search';
+import { GetSearch$Params } from '../fn/search-controller/get-search';
 import { getUserSearches } from '../fn/search-controller/get-user-searches';
 import { GetUserSearches$Params } from '../fn/search-controller/get-user-searches';
 import { PageSearchResponse } from '../models/page-search-response';
@@ -70,6 +72,31 @@ export class SearchControllerService extends BaseService {
    */
   createSearch(params: CreateSearch$Params, context?: HttpContext): Observable<Array<RealEstateResponse>> {
     return this.createSearch$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<RealEstateResponse>>): Array<RealEstateResponse> => r.body)
+    );
+  }
+
+  /** Path part for operation `getSearch()` */
+  static readonly GetSearchPath = '/searches/{searchid}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getSearch()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getSearch$Response(params: GetSearch$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<RealEstateResponse>>> {
+    return getSearch(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getSearch$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getSearch(params: GetSearch$Params, context?: HttpContext): Observable<Array<RealEstateResponse>> {
+    return this.getSearch$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<RealEstateResponse>>): Array<RealEstateResponse> => r.body)
     );
   }

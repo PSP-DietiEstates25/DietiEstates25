@@ -198,6 +198,15 @@ spring:
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 
+            #GET /searches/{searchid}
+            - id: resource_server_get_search_by_id
+              uri: http://localhost:8090
+              predicates:
+                - Path=/searches/{searchid}
+                - Method=GET
+              filters:
+                - RelayTokenIfExists=messaging-client-oidc
+
             #POST /detais
             - id: resource_server_details
               uri: http://localhost:8090

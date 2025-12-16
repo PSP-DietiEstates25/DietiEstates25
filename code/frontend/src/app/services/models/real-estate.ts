@@ -6,7 +6,6 @@ import { CadastralData } from '../models/cadastral-data';
 import { Detail } from '../models/detail';
 import { EstateAgent } from '../models/estate-agent';
 import { Negotiation } from '../models/negotiation';
-import { SearchRealEstate } from '../models/search-real-estate';
 export interface RealEstate {
   cadastralData?: CadastralData;
   category?: 'SALE' | 'RENT';
@@ -18,5 +17,4 @@ export interface RealEstate {
   images?: Array<string>;
   lastModifiedDate?: string;
   negotiations?: Array<Negotiation>;
-  searchRealEstates?: Array<SearchRealEstate>;
 }

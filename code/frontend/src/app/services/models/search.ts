@@ -4,7 +4,6 @@
 
 import { CadastralFilter } from '../models/cadastral-filter';
 import { Detail } from '../models/detail';
-import { SearchRealEstate } from '../models/search-real-estate';
 import { User } from '../models/user';
 export interface Search {
   cadastralFilter?: CadastralFilter;
@@ -13,6 +12,5 @@ export interface Search {
   detail?: Detail;
   id?: number;
   lastModifiedDate?: string;
-  searchRealEstates?: Array<SearchRealEstate>;
   user?: User;
 }

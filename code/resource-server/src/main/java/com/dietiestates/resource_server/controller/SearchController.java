@@ -36,6 +36,17 @@ public class SearchController {
         return ResponseEntity.status(HttpStatus.CREATED).body(realEstates);
     }
 
+    @GetMapping("/{searchid}")
+    public ResponseEntity<List<RealEstateResponse>> getSearch(
+            @PathVariable Long searchid,
+            @AuthenticationPrincipal Jwt jwt
+    ){
+        var userEmail = jwt.getSubject();
+
+        var realEstates = searchService.runSavedSearch(searchid, userEmail);
+        return ResponseEntity.status(HttpStatus.OK).body(realEstates);
+    }
+
     @GetMapping
     public ResponseEntity<Page<SearchResponse>> getUserSearches(
             @RequestParam(required = false, defaultValue = "0") Integer page,

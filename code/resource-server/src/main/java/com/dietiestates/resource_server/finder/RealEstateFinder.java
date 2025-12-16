@@ -11,6 +11,5 @@ public interface RealEstateFinder {
 	RealEstate getRealEstateById(Long id) throws RealEstateNotFoundException;
     Page<RealEstate> getEstateAgentRealEstates(Long estateAgentId, Pageable pageable);
     Page<RealEstate> getAdminRealEstates(Admin admin, Pageable pageable);
-    Page<RealEstate> getSearchRealEstates(Long searchId, Pageable pageable);
     List<RealEstate> getAllRealEstates();
 }
