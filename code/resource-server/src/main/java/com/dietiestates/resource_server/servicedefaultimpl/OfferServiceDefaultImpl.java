@@ -162,14 +162,22 @@ public class OfferServiceDefaultImpl implements OfferService {
     public void createOfferNotification(Offer offer){
 
         String message = null;
+        String estateAgentEmail = offer.getNegotiation().getEstateAgent().getEmail();
+        String realEstateAddress = offer.getNegotiation().getRealEstate().getDetail().getGeographicalPosition().getAddress();
+        String offerAmount = offer.getAmount().toString() + "€";
+
+        String counterOfferAmount = null;
+
+        if(offer.getCounterOffer() != null)
+            counterOfferAmount = offer.getCounterOffer().getAmount().toString() + "€";
 
         if (offer.getProposalCategory().equals(ProposalCategory.OFFER)){
             if (offer.getProposalStatus().equals(ProposalStatus.ACCEPTED))
-                message = "Offer accepted";
+                message = "L'offerta di " + offerAmount + " per l'immobile in " + realEstateAddress + " è stata accettata, contatta l'agente al seguente recapito: " + estateAgentEmail + ".";
             else if (offer.getProposalStatus().equals(ProposalStatus.REJECTED))
-                message = "Offer rejected";
+                message = "L'offerta di " + offerAmount + " per l'immobile in " + realEstateAddress + " è stata rifiutata, riprova con una nuova offerta.";
             else if (offer.getProposalStatus().equals(ProposalStatus.COUNTERED))
-                message = "Offer countered";
+                message = "L'offerta di " + offerAmount + " per l'immobile in" + realEstateAddress + " è stata negoziata, con una controfferta dal valore di " + counterOfferAmount + ".";
         } else if (offer.getProposalCategory().equals(ProposalCategory.COUNTER_OFFER)){
             message = "Offer countered2";
         }

@@ -23,7 +23,7 @@
       </div>
     </div>
 
-    <!-- Controls row -->
+    <!-- Controls -->
     <div class="flex flex-wrap items-center gap-2">
       <div class="relative flex-1 min-w-[220px]">
         <input class="input_main w-full h-10 rounded-xl border border-neutral-800 bg-neutral-950/40 px-3 text-sm"
@@ -37,7 +37,7 @@
       </button>
     </div>
 
-    <!-- Category chips -->
+    <!-- Categorie -->
     <div class="-mt-1 flex flex-wrap gap-1.5">
       @for (cat of categories; track cat) {
       @let active = vm.filterCats().includes(cat);
@@ -51,7 +51,7 @@
     </div>
   </header>
 
-  <!-- Prefs: collapsible / compact -->
+  <!-- Preferenze -->
   <details class="group mb-4 rounded-2xl border border-neutral-800 bg-neutral-900/30">
     <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3">
       <div class="flex items-center gap-2">
@@ -73,10 +73,18 @@
         @for (p of vm.prefs(); track p.category) {
         <li class="flex items-center justify-between rounded-xl border border-neutral-800 bg-neutral-950/20 px-3 py-2">
           <span class="text-sm text-neutral-200 truncate">
-            {{ p.category }}
+            @if (p.category === 'NEW_PROPERTIES') {
+              Nuovi annunci
+            } @else if(p.category === 'PROMOTIONAL'){
+              Promozioni
+            } @else if(p.category === 'VISIT'){
+              Visite
+            }@else if(p.category === 'OFFER'){
+              Offerte
+            }
           </span>
 
-          <!-- Switch (più piccolo e pulito) -->
+          <!-- Switch -->
           <label class="relative inline-flex cursor-pointer items-center">
             <input type="checkbox" class="peer sr-only" [checked]="p.enabled" (change)="onToggle(p.category, $event)" />
             <div class="h-5 w-9 rounded-full bg-neutral-700 transition peer-checked:bg-emerald-500/90"></div>
@@ -89,7 +97,7 @@
     </div>
   </details>
 
-  <!-- List -->
+  <!-- Lista -->
   <section class="space-y-3">
     <div class="flex items-center justify-between">
       <h2 class="text-base font-medium text-neutral-100">
@@ -100,7 +108,7 @@
       </h2>
     </div>
 
-    <!-- Empty -->
+    <!-- Vuoto -->
     @if (!vm.loading() && vm.filtered().length === 0) {
     <div class="rounded-2xl border border-neutral-800 bg-neutral-900/30 p-5 text-sm text-neutral-300">
       <div class="text-base font-medium text-neutral-100">
