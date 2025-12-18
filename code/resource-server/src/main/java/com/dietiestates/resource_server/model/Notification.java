@@ -1,5 +1,6 @@
 package com.dietiestates.resource_server.model;
 
+import com.dietiestates.resource_server.enums.NotificationCategory;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -23,6 +24,13 @@ public class Notification {
 
 	@Column(nullable = false, length = 2000)
 	private String message;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private NotificationCategory notificationCategory;
+
+    @Column(nullable = false)
+    private Boolean isVisible;
 	
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
@@ -32,19 +40,23 @@ public class Notification {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 
-	@ManyToOne
-	@JoinColumn(
-			nullable = false,
-			name = "notification_category_id",
-			foreignKey = @ForeignKey(name = "NOTIFICATION_NOTIFICATION_CATEGORY_ID_FK"))
-	private NotificationCategory notificationCategory;
+    @ManyToOne
+    @JoinColumn(
+            nullable = false,
+            name = "negotiation_id",
+            foreignKey = @ForeignKey(name = "NOTIFICATION_NEGOTIATION_ID_FK"))
+    private Negotiation negotiation;
 
 	@Builder(builderMethodName = "builder")
 	public Notification(
 			String message,
-			NotificationCategory notificationCategory
+            String notificationCategory,
+            Boolean isVisible,
+			Negotiation negotiation
 			) {
 		this.message = message;
-		notificationCategory.addNotification(this);
+        this.notificationCategory = NotificationCategory.valueOf(notificationCategory);
+        this.isVisible = isVisible;
+        negotiation.addNotification(this);
 	}
 }

@@ -1,5 +1,3 @@
-import { NotificationCategoryResponse } from '../../services/models/notification-category-response';
-
 export type NotificationCategory =
   | 'NEW_PROPERTIES'
   | 'PROMOTIONAL'
@@ -20,7 +18,7 @@ export const ALL_NOTIFICATION_CATEGORIES: NotificationCategory[] = [
 ];
 
 export function adaptUserPreferences(
-  api: NotificationCategoryResponse[] | null | undefined
+  api: NotificationCategoryResponse[] | null | undefined,
 ): NotificationPreferenceVM[] {
   const byName = new Map<string, NotificationCategoryResponse>();
 

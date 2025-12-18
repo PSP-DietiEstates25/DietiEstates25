@@ -43,7 +43,7 @@ public enum BusinessErrorCodes {
     GEOGRAPHICAL_POSITION_NOT_OWNED_BY_DETAIL(11003, HttpStatus.FORBIDDEN, "Geographical position not owned by detail"),
     OFFER_NOT_OWNED_BY_REAL_ESTATE(6003, HttpStatus.FORBIDDEN, "Offer not owned by real estate"),
     VISIT_NOT_OWNED_BY_REAL_ESTATE(7003, HttpStatus.FORBIDDEN, "Visit not owned by real estate"),
-    NOTIFICATION_NOT_OWNED_BY_NOTIFICATION_CATEGORY(2003, HttpStatus.FORBIDDEN, "Notification not owned by notification category"),
+    NOTIFICATION_NOT_OWNED_BY_USER(2003, HttpStatus.FORBIDDEN, "Notification not owned by user"),
     REAL_ESTATE_NOT_OWNED_BY_ESTATE_AGENT(9003, HttpStatus.FORBIDDEN, "Real estate not owned by estate agent"),
     SEARCH_NOT_OWNED_BY_USER(13003, HttpStatus.FORBIDDEN, "Search not owned by user")
     ;

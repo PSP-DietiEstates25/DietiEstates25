@@ -9,4 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 public class NotificationSpec {
 	private String message;
+    private String notificationCategory;
+    private Boolean isVisible;
+    private Long negotiationId;
 }

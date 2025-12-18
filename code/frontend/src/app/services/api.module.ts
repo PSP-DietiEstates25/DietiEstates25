@@ -8,7 +8,6 @@ import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
 import { UtilityControllerService } from './services/utility-controller.service';
 import { RealEstateControllerService } from './services/real-estate-controller.service';
-import { NotificationCategoryControllerService } from './services/notification-category-controller.service';
 import { GeographicalPositionControllerService } from './services/geographical-position-controller.service';
 import { DetailControllerService } from './services/detail-controller.service';
 import { CadastralDataControllerService } from './services/cadastral-data-controller.service';
@@ -31,7 +30,6 @@ import { AdminControllerService } from './services/admin-controller.service';
   providers: [
     UtilityControllerService,
     RealEstateControllerService,
-    NotificationCategoryControllerService,
     GeographicalPositionControllerService,
     DetailControllerService,
     CadastralDataControllerService,

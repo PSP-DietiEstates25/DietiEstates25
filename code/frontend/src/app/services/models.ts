@@ -21,9 +21,6 @@ export type { GeographicalPositionRequest } from './models/geographical-position
 export type { GeographicalPositionResponse } from './models/geographical-position-response';
 export type { Negotiation } from './models/negotiation';
 export type { Notification } from './models/notification';
-export type { NotificationCategory } from './models/notification-category';
-export type { NotificationCategoryRequest } from './models/notification-category-request';
-export type { NotificationCategoryResponse } from './models/notification-category-response';
 export type { NotificationRequest } from './models/notification-request';
 export type { NotificationResponse } from './models/notification-response';
 export type { Offer } from './models/offer';
@@ -51,7 +48,6 @@ export type { SquareMetersRange } from './models/square-meters-range';
 export type { Staffer } from './models/staffer';
 export type { StafferRequest } from './models/staffer-request';
 export type { StafferResponse } from './models/staffer-response';
-export type { UpdateNotificationCategoryStatusRequest } from './models/update-notification-category-status-request';
 export type { User } from './models/user';
 export type { UserRequest } from './models/user-request';
 export type { UserResponse } from './models/user-response';

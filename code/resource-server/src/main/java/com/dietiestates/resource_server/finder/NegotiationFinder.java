@@ -10,10 +10,9 @@ import com.dietiestates.resource_server.spec.NegotiationSpec;
 import java.util.List;
 
 public interface NegotiationFinder {
+    Negotiation getNegotiationById(Long id) throws NegotiationNotFoundException;
     Negotiation getRealEstateUserNegotiation(Long realEstateId, Long userId) throws NegotiationNotFoundException;
     Negotiation getRealEstateEstateAgentNegotiation(Long realEstateId, Long estateAgentId) throws NegotiationNotFoundException;
-
     List<Negotiation> getAllUserNegotiations(Long userId);
-
     List<Negotiation> getAllEstateAgentNegotiations(Long estateAgentId);
 }

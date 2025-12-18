@@ -10,16 +10,16 @@ import { RequestBuilder } from '../../request-builder';
 
 import { PageNotificationResponse } from '../../models/page-notification-response';
 
-export interface GetNotificationCategoryNotifications$Params {
-  notificationcategoryname: string;
+export interface GetUserNotifications$Params {
+  category?: string;
   page?: number;
   size?: number;
 }
 
-export function getNotificationCategoryNotifications(http: HttpClient, rootUrl: string, params: GetNotificationCategoryNotifications$Params, context?: HttpContext): Observable<StrictHttpResponse<PageNotificationResponse>> {
-  const rb = new RequestBuilder(rootUrl, getNotificationCategoryNotifications.PATH, 'get');
+export function getUserNotifications(http: HttpClient, rootUrl: string, params?: GetUserNotifications$Params, context?: HttpContext): Observable<StrictHttpResponse<PageNotificationResponse>> {
+  const rb = new RequestBuilder(rootUrl, getUserNotifications.PATH, 'get');
   if (params) {
-    rb.path('notificationcategoryname', params.notificationcategoryname, {});
+    rb.query('category', params.category, {});
     rb.query('page', params.page, {});
     rb.query('size', params.size, {});
   }
@@ -34,4 +34,4 @@ export function getNotificationCategoryNotifications(http: HttpClient, rootUrl: 
   );
 }
 
-getNotificationCategoryNotifications.PATH = '/notificationcategories/{notificationcategoryname}/notifications';
+getUserNotifications.PATH = '/notifications';

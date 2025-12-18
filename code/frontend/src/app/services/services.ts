@@ -4,7 +4,6 @@
 
 export { UtilityControllerService } from './services/utility-controller.service';
 export { RealEstateControllerService } from './services/real-estate-controller.service';
-export { NotificationCategoryControllerService } from './services/notification-category-controller.service';
 export { GeographicalPositionControllerService } from './services/geographical-position-controller.service';
 export { DetailControllerService } from './services/detail-controller.service';
 export { CadastralDataControllerService } from './services/cadastral-data-controller.service';

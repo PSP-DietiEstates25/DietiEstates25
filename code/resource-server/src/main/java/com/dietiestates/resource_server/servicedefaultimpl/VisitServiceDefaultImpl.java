@@ -3,18 +3,20 @@ package com.dietiestates.resource_server.servicedefaultimpl;
 import com.dietiestates.resource_server.dto.request.NotificationRequest;
 import com.dietiestates.resource_server.dto.request.VisitRequest;
 import com.dietiestates.resource_server.dto.response.VisitResponse;
-import com.dietiestates.resource_server.enums.NotificationCategoryType;
+import com.dietiestates.resource_server.enums.NotificationCategory;
+import com.dietiestates.resource_server.enums.ProposalCategory;
 import com.dietiestates.resource_server.enums.ProposalStatus;
 import com.dietiestates.resource_server.exception.notowned.VisitNotOwnedByRealEstateException;
 import com.dietiestates.resource_server.factory.VisitFactory;
 import com.dietiestates.resource_server.finder.*;
 import com.dietiestates.resource_server.mapper.VisitMapper;
+import com.dietiestates.resource_server.model.Offer;
+import com.dietiestates.resource_server.model.Visit;
 import com.dietiestates.resource_server.repository.VisitRepository;
 import com.dietiestates.resource_server.service.NegotiationService;
 import com.dietiestates.resource_server.service.NotificationService;
 import com.dietiestates.resource_server.service.VisitService;
 import com.dietiestates.resource_server.spec.NegotiationSpec;
-import com.dietiestates.resource_server.verifier.RealEstateVerifier;
 import com.dietiestates.resource_server.verifier.VisitVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -95,63 +97,38 @@ public class VisitServiceDefaultImpl implements VisitService {
         var user = negotiation.getUser();
         visitToUpdate.setProposalStatus(ProposalStatus.valueOf(visitSpec.getStatus()));
 
-        createVisitNotification(visitToUpdate.getProposalStatus(), user.getEmail());
+        createVisitNotification(visitToUpdate);
 
         visitRepository.save(visitToUpdate);
         return visitMapper.fromEntity(visitToUpdate);
     }
 
-    public void createVisitNotification(
-            ProposalStatus proposalStatus,
-            String userEmail
-    ){
+    public void createVisitNotification(Visit visit){
 
-        var message = (proposalStatus.equals(ProposalStatus.ACCEPTED)) ? "Visit accepted"
-                : "Visit rejected";
+        var message = createVisitNotificationMessage(visit);
 
-        notificationService.createNotification(
-                NotificationCategoryType.VISIT.toString(),
-                NotificationRequest.builder()
-                        .message(message)
-                        .build()
-        );
+        var notificationRequest = NotificationRequest.builder()
+                .message(message)
+                .notificationCategory(NotificationCategory.VISIT.toString())
+                .isVisible(true)
+                .negotiationId(visit.getNegotiation().getId())
+                .build();
+
+        notificationService.createNotification(notificationRequest);
     }
 
-    /*
-    @Transactional
-    public VisitResponse acceptVisit(Long id, Authentication auth) {
-        Visit visit = visitRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Visit not found: " + id));
+    public String createVisitNotificationMessage(Visit visit){
+        String message = null;
+        String estateAgentEmail = visit.getNegotiation().getEstateAgent().getEmail();
+        String realEstateAddress = visit.getNegotiation().getRealEstate().getDetail().getGeographicalPosition().getAddress();
 
-        visit.setProposalStatus(ProposalStatus.ACCEPTED);
-        var saved = visitRepository.save(visit);
+        if (visit.getProposalCategory().equals(ProposalCategory.VISIT)){
+            if (visit.getProposalStatus().equals(ProposalStatus.ACCEPTED))
+                message = "La visita prenotata in data " + visit.getDate().toString() + " alle " + visit.getTime().toString() + " per l'immobile in " + realEstateAddress + " è stata accettata, contatta l'agente al seguente recapito: " + estateAgentEmail + ".";
+            else if (visit.getProposalStatus().equals(ProposalStatus.REJECTED))
+                message = "La visita prenotata in data " + visit.getDate().toString() + " alle " + visit.getTime().toString() + " per l'immobile in " + realEstateAddress + " è stata rifiutata, riprova con una nuova prenotazione.";
+        }
 
-        notificationService.createNotification(
-                "VISIT",
-                NotificationRequest.builder()
-                        .message("Visita accettata")
-                        .userEmail(saved.getUser().getSecurityAccountDecorator().getAccountEmail())
-                        .build());
-
-        return visitMapper.toResponse(saved);
+        return message;
     }
-
-    @Transactional
-    public VisitResponse rejectVisit(Long id, Authentication auth) {
-        Visit visit = visitRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Visit not found: " + id));
-
-        visit.setProposalStatus(ProposalStatus.REJECTED);
-        var saved = visitRepository.save(visit);
-
-        notificationService.createNotification(
-                "VISIT",
-                NotificationRequest.builder()
-                        .message("Visita rifiutata")
-                        .userEmail(saved.getUser().getSecurityAccountDecorator().getAccountEmail())
-                        .build());
-
-        return visitMapper.toResponse(saved);
-    }
-    */
 }

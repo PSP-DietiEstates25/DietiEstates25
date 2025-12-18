@@ -13,9 +13,7 @@
   "paths": {
     "/utilities/{utilityid}": {
       "get": {
-        "tags": [
-          "utility-controller"
-        ],
+        "tags": ["utility-controller"],
         "operationId": "getUtilityById",
         "parameters": [
           {
@@ -42,9 +40,7 @@
         }
       },
       "put": {
-        "tags": [
-          "utility-controller"
-        ],
+        "tags": ["utility-controller"],
         "operationId": "updateUtility",
         "parameters": [
           {
@@ -83,9 +79,7 @@
     },
     "/realestates/{realestateid}": {
       "get": {
-        "tags": [
-          "real-estate-controller"
-        ],
+        "tags": ["real-estate-controller"],
         "operationId": "getRealEstateById",
         "parameters": [
           {
@@ -112,9 +106,7 @@
         }
       },
       "put": {
-        "tags": [
-          "real-estate-controller"
-        ],
+        "tags": ["real-estate-controller"],
         "operationId": "updateRealEstate",
         "parameters": [
           {
@@ -144,9 +136,7 @@
                     }
                   }
                 },
-                "required": [
-                  "data"
-                ]
+                "required": ["data"]
               }
             }
           }
@@ -165,9 +155,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "real-estate-controller"
-        ],
+        "tags": ["real-estate-controller"],
         "operationId": "deleteRealEstate",
         "parameters": [
           {
@@ -187,79 +175,9 @@
         }
       }
     },
-    "/notificationcategories/{notificationcategoryname}": {
-      "get": {
-        "tags": [
-          "notification-category-controller"
-        ],
-        "operationId": "getNotificationCategoryByName",
-        "parameters": [
-          {
-            "name": "notificationcategoryname",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NotificationCategoryResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "notification-category-controller"
-        ],
-        "operationId": "updateIsActive",
-        "parameters": [
-          {
-            "name": "notificationcategoryname",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateNotificationCategoryStatusRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NotificationCategoryResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/geographicalpositions/{geographicalpositionid}": {
       "get": {
-        "tags": [
-          "geographical-position-controller"
-        ],
+        "tags": ["geographical-position-controller"],
         "operationId": "getGeographicalPositionById",
         "parameters": [
           {
@@ -286,9 +204,7 @@
         }
       },
       "put": {
-        "tags": [
-          "geographical-position-controller"
-        ],
+        "tags": ["geographical-position-controller"],
         "operationId": "updateGeographicalPosition",
         "parameters": [
           {
@@ -327,9 +243,7 @@
     },
     "/details/{detailid}": {
       "get": {
-        "tags": [
-          "detail-controller"
-        ],
+        "tags": ["detail-controller"],
         "operationId": "getDetailById",
         "parameters": [
           {
@@ -356,9 +270,7 @@
         }
       },
       "put": {
-        "tags": [
-          "detail-controller"
-        ],
+        "tags": ["detail-controller"],
         "operationId": "updateDetail",
         "parameters": [
           {
@@ -397,9 +309,7 @@
     },
     "/cadastraldata/{cadastraldataid}": {
       "get": {
-        "tags": [
-          "cadastral-data-controller"
-        ],
+        "tags": ["cadastral-data-controller"],
         "operationId": "getCadastralDataById",
         "parameters": [
           {
@@ -426,9 +336,7 @@
         }
       },
       "put": {
-        "tags": [
-          "cadastral-data-controller"
-        ],
+        "tags": ["cadastral-data-controller"],
         "operationId": "updateCadastralData",
         "parameters": [
           {
@@ -467,9 +375,7 @@
     },
     "/visits": {
       "get": {
-        "tags": [
-          "visit-controller"
-        ],
+        "tags": ["visit-controller"],
         "operationId": "getVisits",
         "parameters": [
           {
@@ -524,9 +430,7 @@
         }
       },
       "post": {
-        "tags": [
-          "visit-controller"
-        ],
+        "tags": ["visit-controller"],
         "operationId": "createVisit",
         "parameters": [
           {
@@ -565,9 +469,7 @@
     },
     "/utilities": {
       "get": {
-        "tags": [
-          "utility-controller"
-        ],
+        "tags": ["utility-controller"],
         "operationId": "getDetailUtility",
         "parameters": [
           {
@@ -594,9 +496,7 @@
         }
       },
       "post": {
-        "tags": [
-          "utility-controller"
-        ],
+        "tags": ["utility-controller"],
         "operationId": "createUtility",
         "requestBody": {
           "content": {
@@ -624,9 +524,7 @@
     },
     "/users": {
       "post": {
-        "tags": [
-          "user-controller"
-        ],
+        "tags": ["user-controller"],
         "operationId": "registerUser",
         "requestBody": {
           "content": {
@@ -654,9 +552,7 @@
     },
     "/searches": {
       "get": {
-        "tags": [
-          "search-controller"
-        ],
+        "tags": ["search-controller"],
         "operationId": "getUserSearches",
         "parameters": [
           {
@@ -694,9 +590,7 @@
         }
       },
       "post": {
-        "tags": [
-          "search-controller"
-        ],
+        "tags": ["search-controller"],
         "operationId": "createSearch",
         "requestBody": {
           "content": {
@@ -727,9 +621,7 @@
     },
     "/realestates": {
       "get": {
-        "tags": [
-          "real-estate-controller"
-        ],
+        "tags": ["real-estate-controller"],
         "operationId": "getRealEstates",
         "parameters": [
           {
@@ -776,9 +668,7 @@
         }
       },
       "post": {
-        "tags": [
-          "real-estate-controller"
-        ],
+        "tags": ["real-estate-controller"],
         "operationId": "createRealEstate",
         "requestBody": {
           "content": {
@@ -797,9 +687,7 @@
                     }
                   }
                 },
-                "required": [
-                  "data"
-                ]
+                "required": ["data"]
               }
             }
           }
@@ -820,9 +708,7 @@
     },
     "/offers": {
       "get": {
-        "tags": [
-          "offer-controller"
-        ],
+        "tags": ["offer-controller"],
         "operationId": "getOffers",
         "parameters": [
           {
@@ -877,9 +763,7 @@
         }
       },
       "post": {
-        "tags": [
-          "offer-controller"
-        ],
+        "tags": ["offer-controller"],
         "operationId": "createOffer",
         "parameters": [
           {
@@ -916,68 +800,15 @@
         }
       }
     },
-    "/notificationcategories": {
+    "/notifications": {
       "get": {
-        "tags": [
-          "notification-category-controller"
-        ],
-        "operationId": "getUserNotificationCategories",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/NotificationCategoryResponse"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "notification-category-controller"
-        ],
-        "operationId": "createNotificationCategory",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NotificationCategoryRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NotificationCategoryResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/notificationcategories/{notificationcategoryname}/notifications": {
-      "get": {
-        "tags": [
-          "notification-controller"
-        ],
-        "operationId": "getNotificationCategoryNotifications",
+        "tags": ["notification-controller"],
+        "operationId": "getUserNotifications",
         "parameters": [
           {
-            "name": "notificationcategoryname",
-            "in": "path",
-            "required": true,
+            "name": "category",
+            "in": "query",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -1017,20 +848,8 @@
         }
       },
       "post": {
-        "tags": [
-          "notification-controller"
-        ],
+        "tags": ["notification-controller"],
         "operationId": "createNotification",
-        "parameters": [
-          {
-            "name": "notificationcategoryname",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1057,9 +876,7 @@
     },
     "/geographicalpositions": {
       "get": {
-        "tags": [
-          "geographical-position-controller"
-        ],
+        "tags": ["geographical-position-controller"],
         "operationId": "getDetailGeographicalPosition",
         "parameters": [
           {
@@ -1086,9 +903,7 @@
         }
       },
       "post": {
-        "tags": [
-          "geographical-position-controller"
-        ],
+        "tags": ["geographical-position-controller"],
         "operationId": "createGeographicalPosition",
         "requestBody": {
           "content": {
@@ -1116,9 +931,7 @@
     },
     "/estateagents": {
       "post": {
-        "tags": [
-          "estate-agent-controller"
-        ],
+        "tags": ["estate-agent-controller"],
         "operationId": "registerEstateAgent",
         "requestBody": {
           "content": {
@@ -1146,9 +959,7 @@
     },
     "/details": {
       "post": {
-        "tags": [
-          "detail-controller"
-        ],
+        "tags": ["detail-controller"],
         "operationId": "createDetail",
         "requestBody": {
           "content": {
@@ -1176,9 +987,7 @@
     },
     "/cadastralfilters": {
       "get": {
-        "tags": [
-          "cadastral-filter-controller"
-        ],
+        "tags": ["cadastral-filter-controller"],
         "operationId": "getSearchCadastralFilter",
         "parameters": [
           {
@@ -1205,9 +1014,7 @@
         }
       },
       "post": {
-        "tags": [
-          "cadastral-filter-controller"
-        ],
+        "tags": ["cadastral-filter-controller"],
         "operationId": "createCadastralFilter",
         "requestBody": {
           "content": {
@@ -1235,9 +1042,7 @@
     },
     "/cadastraldata": {
       "get": {
-        "tags": [
-          "cadastral-data-controller"
-        ],
+        "tags": ["cadastral-data-controller"],
         "operationId": "getRealEstateCadastralData",
         "parameters": [
           {
@@ -1264,9 +1069,7 @@
         }
       },
       "post": {
-        "tags": [
-          "cadastral-data-controller"
-        ],
+        "tags": ["cadastral-data-controller"],
         "operationId": "createCadastralData",
         "requestBody": {
           "content": {
@@ -1294,9 +1097,7 @@
     },
     "/admins": {
       "get": {
-        "tags": [
-          "admin-controller"
-        ],
+        "tags": ["admin-controller"],
         "operationId": "getCreatedStaffers",
         "parameters": [
           {
@@ -1332,9 +1133,7 @@
         }
       },
       "post": {
-        "tags": [
-          "admin-controller"
-        ],
+        "tags": ["admin-controller"],
         "operationId": "registerAdmin",
         "requestBody": {
           "content": {
@@ -1362,9 +1161,7 @@
     },
     "/visits/{visitid}": {
       "get": {
-        "tags": [
-          "visit-controller"
-        ],
+        "tags": ["visit-controller"],
         "operationId": "getVisitById",
         "parameters": [
           {
@@ -1391,9 +1188,7 @@
         }
       },
       "patch": {
-        "tags": [
-          "visit-controller"
-        ],
+        "tags": ["visit-controller"],
         "operationId": "updateVisitStatus",
         "parameters": [
           {
@@ -1441,9 +1236,7 @@
     },
     "/offers/{offerid}": {
       "get": {
-        "tags": [
-          "offer-controller"
-        ],
+        "tags": ["offer-controller"],
         "operationId": "getOfferById",
         "parameters": [
           {
@@ -1479,9 +1272,7 @@
         }
       },
       "patch": {
-        "tags": [
-          "offer-controller"
-        ],
+        "tags": ["offer-controller"],
         "operationId": "updateOfferStatus",
         "parameters": [
           {
@@ -1529,9 +1320,7 @@
     },
     "/users/{userid}": {
       "get": {
-        "tags": [
-          "user-controller"
-        ],
+        "tags": ["user-controller"],
         "operationId": "getUserById",
         "parameters": [
           {
@@ -1560,9 +1349,7 @@
     },
     "/searches/{searchid}": {
       "get": {
-        "tags": [
-          "search-controller"
-        ],
+        "tags": ["search-controller"],
         "operationId": "getSearch",
         "parameters": [
           {
@@ -1592,21 +1379,11 @@
         }
       }
     },
-    "/notificationcategories/{notificationcategoryname}/notifications/{notificationid}": {
+    "/notifications/{notificationid}": {
       "get": {
-        "tags": [
-          "notification-controller"
-        ],
+        "tags": ["notification-controller"],
         "operationId": "getNotificationById",
         "parameters": [
-          {
-            "name": "notificationcategoryname",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "notificationid",
             "in": "path",
@@ -1633,9 +1410,7 @@
     },
     "/estateagents/{estateagentid}": {
       "get": {
-        "tags": [
-          "estate-agent-controller"
-        ],
+        "tags": ["estate-agent-controller"],
         "operationId": "getEstateAgentById",
         "parameters": [
           {
@@ -1664,9 +1439,7 @@
     },
     "/cadastralfilters/{cadastralfilterid}": {
       "get": {
-        "tags": [
-          "cadastral-filter-controller"
-        ],
+        "tags": ["cadastral-filter-controller"],
         "operationId": "getCadastralFilterById",
         "parameters": [
           {
@@ -1695,9 +1468,7 @@
     },
     "/admins/{adminid}": {
       "get": {
-        "tags": [
-          "admin-controller"
-        ],
+        "tags": ["admin-controller"],
         "operationId": "getAdminById",
         "parameters": [
           {
@@ -1817,10 +1588,7 @@
             "format": "int64"
           }
         },
-        "required": [
-          "category",
-          "description"
-        ]
+        "required": ["category", "description"]
       },
       "RealEstateResponse": {
         "type": "object",
@@ -1859,48 +1627,6 @@
           "cadastralDataId": {
             "type": "integer",
             "format": "int64"
-          }
-        }
-      },
-      "UpdateNotificationCategoryStatusRequest": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 1
-          },
-          "isActive": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "isActive",
-          "name"
-        ]
-      },
-      "NotificationCategoryResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "createdDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastModifiedDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "name": {
-            "type": "string"
-          },
-          "isActive": {
-            "type": "boolean"
-          },
-          "userEmail": {
-            "type": "string"
           }
         }
       },
@@ -2053,13 +1779,7 @@
             "format": "int32"
           }
         },
-        "required": [
-          "energyClass",
-          "floor",
-          "price",
-          "rooms",
-          "squareMeters"
-        ]
+        "required": ["energyClass", "floor", "price", "rooms", "squareMeters"]
       },
       "CadastralDataResponse": {
         "type": "object",
@@ -2120,12 +1840,7 @@
             "minLength": 1
           }
         },
-        "required": [
-          "category",
-          "date",
-          "status",
-          "time"
-        ]
+        "required": ["category", "date", "status", "time"]
       },
       "VisitResponse": {
         "type": "object",
@@ -2175,9 +1890,7 @@
             "minLength": 1
           }
         },
-        "required": [
-          "email"
-        ]
+        "required": ["email"]
       },
       "UserResponse": {
         "type": "object",
@@ -2215,9 +1928,7 @@
             "format": "int64"
           }
         },
-        "required": [
-          "category"
-        ]
+        "required": ["category"]
       },
       "OfferRequest": {
         "type": "object",
@@ -2238,11 +1949,7 @@
             "format": "int64"
           }
         },
-        "required": [
-          "amount",
-          "category",
-          "status"
-        ]
+        "required": ["amount", "category", "status"]
       },
       "OfferResponse": {
         "type": "object",
@@ -2288,38 +1995,26 @@
           }
         }
       },
-      "NotificationCategoryRequest": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 1
-          },
-          "isActive": {
-            "type": "boolean"
-          },
-          "userEmail": {
-            "type": "string",
-            "minLength": 1
-          }
-        },
-        "required": [
-          "isActive",
-          "name",
-          "userEmail"
-        ]
-      },
       "NotificationRequest": {
         "type": "object",
         "properties": {
           "message": {
             "type": "string",
             "minLength": 1
+          },
+          "notificationCategory": {
+            "type": "string",
+            "minLength": 1
+          },
+          "isVisible": {
+            "type": "boolean"
+          },
+          "negotiationId": {
+            "type": "integer",
+            "format": "int64"
           }
         },
-        "required": [
-          "message"
-        ]
+        "required": ["isVisible", "message", "notificationCategory"]
       },
       "NotificationResponse": {
         "type": "object",
@@ -2339,7 +2034,13 @@
           "message": {
             "type": "string"
           },
-          "notificationCategoryId": {
+          "notificationCategory": {
+            "type": "string"
+          },
+          "isVisible": {
+            "type": "boolean"
+          },
+          "realEstateId": {
             "type": "integer",
             "format": "int64"
           }
@@ -2353,9 +2054,7 @@
             "minLength": 1
           }
         },
-        "required": [
-          "email"
-        ]
+        "required": ["email"]
       },
       "StafferResponse": {
         "type": "object",
@@ -2830,18 +2529,7 @@
           },
           "energyClass": {
             "type": "string",
-            "enum": [
-              "G",
-              "F",
-              "E",
-              "D",
-              "C",
-              "B",
-              "A1",
-              "A2",
-              "A3",
-              "A4"
-            ]
+            "enum": ["G", "F", "E", "D", "C", "B", "A1", "A2", "A3", "A4"]
           },
           "rooms": {
             "type": "integer",
@@ -3052,6 +2740,12 @@
               "$ref": "#/components/schemas/Proposal"
             }
           },
+          "notifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Notification"
+            }
+          },
           "offers": {
             "type": "array",
             "items": {
@@ -3076,36 +2770,11 @@
           "message": {
             "type": "string"
           },
-          "createdDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastModifiedDate": {
-            "type": "string",
-            "format": "date-time"
-          },
           "notificationCategory": {
-            "$ref": "#/components/schemas/NotificationCategory"
-          }
-        }
-      },
-      "NotificationCategory": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "name": {
             "type": "string",
-            "enum": [
-              "NEW_PROPERTIES",
-              "PROMOTIONAL",
-              "VISIT",
-              "OFFER"
-            ]
+            "enum": ["NEW_PROPERTIES", "PROMOTIONAL", "VISIT", "OFFER"]
           },
-          "isActive": {
+          "isVisible": {
             "type": "boolean"
           },
           "createdDate": {
@@ -3116,14 +2785,8 @@
             "type": "string",
             "format": "date-time"
           },
-          "user": {
-            "$ref": "#/components/schemas/User"
-          },
-          "notifications": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Notification"
-            }
+          "negotiation": {
+            "$ref": "#/components/schemas/Negotiation"
           }
         }
       },
@@ -3136,20 +2799,11 @@
           },
           "proposalCategory": {
             "type": "string",
-            "enum": [
-              "OFFER",
-              "COUNTER_OFFER",
-              "VISIT"
-            ]
+            "enum": ["OFFER", "COUNTER_OFFER", "VISIT"]
           },
           "proposalStatus": {
             "type": "string",
-            "enum": [
-              "PENDING",
-              "ACCEPTED",
-              "REJECTED",
-              "COUNTERED"
-            ]
+            "enum": ["PENDING", "ACCEPTED", "REJECTED", "COUNTERED"]
           },
           "createdDate": {
             "type": "string",
@@ -3286,20 +2940,11 @@
           },
           "proposalCategory": {
             "type": "string",
-            "enum": [
-              "OFFER",
-              "COUNTER_OFFER",
-              "VISIT"
-            ]
+            "enum": ["OFFER", "COUNTER_OFFER", "VISIT"]
           },
           "proposalStatus": {
             "type": "string",
-            "enum": [
-              "PENDING",
-              "ACCEPTED",
-              "REJECTED",
-              "COUNTERED"
-            ]
+            "enum": ["PENDING", "ACCEPTED", "REJECTED", "COUNTERED"]
           },
           "createdDate": {
             "type": "string",
@@ -3323,10 +2968,7 @@
           },
           "category": {
             "type": "string",
-            "enum": [
-              "SALE",
-              "RENT"
-            ]
+            "enum": ["SALE", "RENT"]
           },
           "images": {
             "type": "array",
@@ -3384,10 +3026,7 @@
           },
           "category": {
             "type": "string",
-            "enum": [
-              "SALE",
-              "RENT"
-            ]
+            "enum": ["SALE", "RENT"]
           },
           "createdDate": {
             "type": "string",
@@ -3452,12 +3091,6 @@
             "type": "string",
             "format": "date-time"
           },
-          "notificationCategories": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NotificationCategory"
-            }
-          },
           "searches": {
             "type": "array",
             "items": {
@@ -3519,20 +3152,11 @@
           },
           "proposalCategory": {
             "type": "string",
-            "enum": [
-              "OFFER",
-              "COUNTER_OFFER",
-              "VISIT"
-            ]
+            "enum": ["OFFER", "COUNTER_OFFER", "VISIT"]
           },
           "proposalStatus": {
             "type": "string",
-            "enum": [
-              "PENDING",
-              "ACCEPTED",
-              "REJECTED",
-              "COUNTERED"
-            ]
+            "enum": ["PENDING", "ACCEPTED", "REJECTED", "COUNTERED"]
           },
           "createdDate": {
             "type": "string",

@@ -11,14 +11,12 @@ import { RequestBuilder } from '../../request-builder';
 import { NotificationResponse } from '../../models/notification-response';
 
 export interface GetNotificationById$Params {
-  notificationcategoryname: string;
   notificationid: number;
 }
 
 export function getNotificationById(http: HttpClient, rootUrl: string, params: GetNotificationById$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationResponse>> {
   const rb = new RequestBuilder(rootUrl, getNotificationById.PATH, 'get');
   if (params) {
-    rb.path('notificationcategoryname', params.notificationcategoryname, {});
     rb.path('notificationid', params.notificationid, {});
   }
 
@@ -32,4 +30,4 @@ export function getNotificationById(http: HttpClient, rootUrl: string, params: G
   );
 }
 
-getNotificationById.PATH = '/notificationcategories/{notificationcategoryname}/notifications/{notificationid}';
+getNotificationById.PATH = '/notifications/{notificationid}';

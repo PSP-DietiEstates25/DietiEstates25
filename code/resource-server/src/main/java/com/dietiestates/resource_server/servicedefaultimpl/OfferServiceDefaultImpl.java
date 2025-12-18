@@ -3,7 +3,7 @@ package com.dietiestates.resource_server.servicedefaultimpl;
 import com.dietiestates.resource_server.dto.request.NotificationRequest;
 import com.dietiestates.resource_server.dto.request.OfferRequest;
 import com.dietiestates.resource_server.dto.response.OfferResponse;
-import com.dietiestates.resource_server.enums.NotificationCategoryType;
+import com.dietiestates.resource_server.enums.NotificationCategory;
 import com.dietiestates.resource_server.enums.ProposalCategory;
 import com.dietiestates.resource_server.enums.ProposalStatus;
 import com.dietiestates.resource_server.factory.OfferFactory;
@@ -161,10 +161,23 @@ public class OfferServiceDefaultImpl implements OfferService {
 
     public void createOfferNotification(Offer offer){
 
+        var message = createOfferNotificationMessage(offer);
+
+        var notificationRequest = NotificationRequest.builder()
+                .message(message)
+                .notificationCategory(NotificationCategory.OFFER.toString())
+                .isVisible(true)
+                .negotiationId(offer.getNegotiation().getId())
+                .build();
+
+        notificationService.createNotification(notificationRequest);
+    }
+
+    public String createOfferNotificationMessage(Offer offer){
         String message = null;
         String estateAgentEmail = offer.getNegotiation().getEstateAgent().getEmail();
         String realEstateAddress = offer.getNegotiation().getRealEstate().getDetail().getGeographicalPosition().getAddress();
-        String offerAmount = offer.getAmount().toString() + "€";
+        String offerAmount = offer.getAmount().toString () + "€";
 
         String counterOfferAmount = null;
 
@@ -178,16 +191,8 @@ public class OfferServiceDefaultImpl implements OfferService {
                 message = "L'offerta di " + offerAmount + " per l'immobile in " + realEstateAddress + " è stata rifiutata, riprova con una nuova offerta.";
             else if (offer.getProposalStatus().equals(ProposalStatus.COUNTERED))
                 message = "L'offerta di " + offerAmount + " per l'immobile in" + realEstateAddress + " è stata negoziata, con una controfferta dal valore di " + counterOfferAmount + ".";
-        } else if (offer.getProposalCategory().equals(ProposalCategory.COUNTER_OFFER)){
-            message = "Offer countered2";
         }
 
-        notificationService.createNotification(
-                NotificationCategoryType.OFFER.toString(),
-                NotificationRequest.builder()
-                        .message(message)
-                        .build()
-        );
+        return message;
     }
-
 }

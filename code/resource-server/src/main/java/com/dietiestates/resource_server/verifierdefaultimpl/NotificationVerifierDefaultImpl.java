@@ -1,8 +1,8 @@
 package com.dietiestates.resource_server.verifierdefaultimpl;
 
-import com.dietiestates.resource_server.enums.NotificationCategoryType;
+import com.dietiestates.resource_server.enums.NotificationCategory;
 import com.dietiestates.resource_server.exception.notfound.NotificationNotFoundException;
-import com.dietiestates.resource_server.exception.notowned.NotificationNotOwnedByNotificationCategoryException;
+import com.dietiestates.resource_server.exception.notowned.NotificationNotOwnedByUserException;
 import com.dietiestates.resource_server.repository.NotificationRepository;
 import com.dietiestates.resource_server.verifier.NotificationVerifier;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +20,16 @@ public class NotificationVerifierDefaultImpl implements NotificationVerifier {
             throw new NotificationNotFoundException();
     }
 
+    /*
     @Override
-    public void checkNotificationOwnedByNotificationCategory(
+    public void checkNotificationOwnedByUser(
             Long id,
-            String notificationCategoryName
-    ) throws NotificationNotOwnedByNotificationCategoryException {
+            String userEmail
+    ) throws NotificationNotOwnedByUserException {
 
-        if(!notificationRepository.existsByIdAndNotificationCategoryName(id, NotificationCategoryType.valueOf(notificationCategoryName)))
-            throw new NotificationNotOwnedByNotificationCategoryException();
+        if(!notificationRepository.exists(id, NotificationCategory.valueOf(notificationCategoryName)))
+            throw new NotificationNotOwnedByUserException();
     }
+
+     */
 }

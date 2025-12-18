@@ -1,10 +1,6 @@
 package com.dietiestates.resource_server.dto.request;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +14,15 @@ public class NotificationRequest {
 
     @NotEmpty(message = "Message is mandatory")
     @NotBlank(message = "Message is mandatory")
-    @Size(min = 1, message = "Message must be at least 1 character long")
-    @Size(max = 50, message = "Message must be maximum 50 characters long")
     private String message;
+
+    @NotEmpty(message = "Notification category is mandatory")
+    @NotBlank(message = "Notification category is mandatory")
+    private String notificationCategory;
+
+    @NotNull(message = "Visibility is mandatory")
+    private Boolean isVisible;
+
+    @Positive(message = "Negotiation id must be a positive number")
+    private Long negotiationId;
 }

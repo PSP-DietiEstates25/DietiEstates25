@@ -20,6 +20,9 @@ public class NotificationMapperDefaultImpl implements NotificationMapper {
 	public NotificationSpec toSpec(NotificationRequest request) {
 		return NotificationSpec.builder()
 				.message(request.getMessage())
+                .notificationCategory(request.getNotificationCategory())
+                .isVisible(request.getIsVisible())
+                .negotiationId(request.getNegotiationId())
 				.build();
 	}
 	
@@ -30,7 +33,9 @@ public class NotificationMapperDefaultImpl implements NotificationMapper {
 				.createdDate(notification.getCreatedDate())
 				.lastModifiedDate(notification.getLastModifiedDate())
 				.message(notification.getMessage())
-				.notificationCategoryId(notification.getNotificationCategory().getId())
+                .notificationCategory(notification.getNotificationCategory().toString())
+                .isVisible(notification.getIsVisible())
+                .realEstateId(notification.getNegotiation().getRealEstate().getId())
 				.build();
 	}
 

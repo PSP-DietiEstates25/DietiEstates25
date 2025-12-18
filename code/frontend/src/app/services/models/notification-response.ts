@@ -5,7 +5,9 @@
 export interface NotificationResponse {
   createdDate?: string;
   id?: number;
+  isVisible?: boolean;
   lastModifiedDate?: string;
   message?: string;
-  notificationCategoryId?: number;
+  notificationCategory?: string;
+  realEstateId?: number;
 }

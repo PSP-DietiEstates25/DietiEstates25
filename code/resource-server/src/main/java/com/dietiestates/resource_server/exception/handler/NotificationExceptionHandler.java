@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.dietiestates.resource_server.dto.response.ExceptionResponse;
 import com.dietiestates.resource_server.exception.notfound.NotificationNotFoundException;
-import com.dietiestates.resource_server.exception.notowned.NotificationNotOwnedByNotificationCategoryException;
+import com.dietiestates.resource_server.exception.notowned.NotificationNotOwnedByUserException;
 
 @RestControllerAdvice
 public class NotificationExceptionHandler {
@@ -17,8 +17,8 @@ public class NotificationExceptionHandler {
         return AppException.responseEntityFactory(exception);
     }
 
-    @ExceptionHandler(NotificationNotOwnedByNotificationCategoryException.class)
-    public ResponseEntity<ExceptionResponse> handleNotOwnedBy(NotificationNotOwnedByNotificationCategoryException exception) {
+    @ExceptionHandler(NotificationNotOwnedByUserException.class)
+    public ResponseEntity<ExceptionResponse> handleNotOwnedBy(NotificationNotOwnedByUserException exception) {
         return AppException.responseEntityFactory(exception);
     }
 }

@@ -12,14 +12,12 @@ import { NotificationRequest } from '../../models/notification-request';
 import { NotificationResponse } from '../../models/notification-response';
 
 export interface CreateNotification$Params {
-  notificationcategoryname: string;
       body: NotificationRequest
 }
 
 export function createNotification(http: HttpClient, rootUrl: string, params: CreateNotification$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationResponse>> {
   const rb = new RequestBuilder(rootUrl, createNotification.PATH, 'post');
   if (params) {
-    rb.path('notificationcategoryname', params.notificationcategoryname, {});
     rb.body(params.body, 'application/json');
   }
 
@@ -33,4 +31,4 @@ export function createNotification(http: HttpClient, rootUrl: string, params: Cr
   );
 }
 
-createNotification.PATH = '/notificationcategories/{notificationcategoryname}/notifications';
+createNotification.PATH = '/notifications';

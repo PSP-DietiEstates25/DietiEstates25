@@ -17,5 +17,7 @@ public class NotificationResponse {
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
     private String message;
-    private Long notificationCategoryId;
+    private String notificationCategory;
+    private Boolean isVisible;
+    private Long realEstateId;
 }

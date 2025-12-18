@@ -53,6 +53,9 @@ public class Negotiation {
     @OneToMany(mappedBy = "negotiation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Proposal> proposals = new ArrayList<>();
 
+    @OneToMany(mappedBy = "negotiation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notification> notifications = new ArrayList<>();
+
     @Builder(builderMethodName = "builder")
     public Negotiation(
             User user,
@@ -62,6 +65,11 @@ public class Negotiation {
         user.addNegotiation(this);
         estateAgent.addNegotiation(this);
         realEstate.addNegotiation(this);
+    }
+
+    public void addNotification(Notification notification) {
+        notifications.add(notification);
+        notification.setNegotiation(this);
     }
 
     public void addProposal(Proposal proposal){

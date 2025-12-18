@@ -2,9 +2,10 @@ package com.dietiestates.resource_server.servicedefaultimpl;
 
 import com.dietiestates.resource_server.dto.request.NotificationRequest;
 import com.dietiestates.resource_server.dto.response.NotificationResponse;
-import com.dietiestates.resource_server.exception.notowned.NotificationNotOwnedByNotificationCategoryException;
+import com.dietiestates.resource_server.enums.NotificationCategory;
+import com.dietiestates.resource_server.exception.notowned.NotificationNotOwnedByUserException;
 import com.dietiestates.resource_server.factory.NotificationFactory;
-import com.dietiestates.resource_server.finder.NotificationCategoryFinder;
+import com.dietiestates.resource_server.finder.NegotiationFinder;
 import com.dietiestates.resource_server.finder.NotificationFinder;
 import com.dietiestates.resource_server.finder.UserFinder;
 import com.dietiestates.resource_server.mapper.NotificationMapper;
@@ -20,7 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.util.List;
 
 @Service
@@ -32,20 +32,18 @@ public class NotificationServiceDefaultImpl implements NotificationService {
 	private final NotificationFinder notificationFinder;
 	private final NotificationVerifier notificationVerifier;
 	private final NotificationMapper notificationMapper;
-	
-	private final UserFinder userFinder;
-	private final NotificationCategoryFinder notificationCategoryFinder;
+
+    private final NegotiationFinder negotiationFinder;
+    private final UserFinder userFinder;
 	
 	@Override
 	public NotificationResponse createNotification(
-			String notificationCategoryName,
 			NotificationRequest request
     ) {
-		
 		var notificationSpec = notificationMapper.toSpec(request);
-		var notificationCategory = notificationCategoryFinder.getNotificationCategoryByName(notificationCategoryName.toUpperCase());
+		var negotiation = negotiationFinder.getNegotiationById(notificationSpec.getNegotiationId());
 	
-		var notification = notificationFactory.createNotificationFromSpec(notificationSpec, notificationCategory);
+		var notification = notificationFactory.createNotificationFromSpec(notificationSpec, negotiation);
 		notificationRepository.save(notification);
 		
 		return notificationMapper.fromEntity(notification);
@@ -56,41 +54,54 @@ public class NotificationServiceDefaultImpl implements NotificationService {
 
         searchesToNotify.forEach(search -> {
 
-            var userNewPropertiesNotificationCategory = notificationCategoryFinder.getNotificationCategoryByNameAndUserId(
-                    "NEW_PROPERTIES",
-                    search.getUser().getId()
-            );
-            var notificationSpec = NotificationSpec.builder()
-                    .message("New property available")
-                    .build();
-            var notification = notificationFactory.createNotificationFromSpec(
-                    notificationSpec,
-                    userNewPropertiesNotificationCategory
-            );
+            var user = search.getUser();
+            var userNegotiations = user.getNegotiations();
 
-            notificationRepository.save(notification);
+            userNegotiations.forEach(negotiation -> {
+
+                var notificationSpec = NotificationSpec.builder()
+                        .message("Un nuovo annuncio è disponibile per la ricerca " + search.getId())
+                        .notificationCategory(NotificationCategory.NEW_PROPERTIES.toString())
+                        .isVisible(true)
+                        .negotiationId(negotiation.getId())
+                        .build();
+
+                var notification = notificationFactory.createNotificationFromSpec(notificationSpec, negotiation);
+                notificationRepository.save(notification);
+            });
         });
     }
-	
+
 	@Override
 	public NotificationResponse getNotificationById(
-			String notificationCategoryName,
-			Long notificationId
-    ) throws NotificationNotOwnedByNotificationCategoryException {
+			Long notificationId,
+            String userEmail
+    ) throws NotificationNotOwnedByUserException {
 
-        notificationVerifier.checkNotificationOwnedByNotificationCategory(notificationId, notificationCategoryName);
+        //notificationVerifier.checkNotificationOwnedByUser(notificationId, userEmail);
 		var notification = notificationFinder.getNotificationById(notificationId);
 
 		return notificationMapper.fromEntity(notification);
 	}
 
     @Override
-    public Page<NotificationResponse> getNotificationCategoryNotifications(String notificationCategoryName, Integer page, Integer size) {
-        var notificationCategory = notificationCategoryFinder.getNotificationCategoryByName(notificationCategoryName.toUpperCase());
+    public Page<NotificationResponse> getUserNotifications(String userEmail, String notificationCategory, Integer page, Integer size){
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        var user = userFinder.getUserByEmail(userEmail);
+        var notifications = notificationFinder.getUserNotifications(user.getId(), notificationCategory, pageable);
+        return notificationMapper.createPagedNotificationsResponse(notifications);
+    }
+
+    @Override
+    public Page<NotificationResponse> getNegotiationNotifications(Long negotationId, Integer page, Integer size) {
+
+        var negotiation = negotiationFinder.getNegotiationById(negotationId);
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        var notifications = notificationFinder.getNotificationCategoryNotifications(notificationCategory.getId(), pageable);
+        var notifications = notificationFinder.getNegotiationNotifications(negotiation.getId(), pageable);
 
         return notificationMapper.createPagedNotificationsResponse(notifications);
     }
+
+
 }

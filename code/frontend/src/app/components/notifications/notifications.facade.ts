@@ -4,11 +4,9 @@ import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 import { LocalStorageService } from '../../manual_services/local-storage/local-storage.service';
 
 import { NotificationControllerService } from '../../services/services/notification-controller.service';
-import { NotificationCategoryControllerService } from '../../services/services/notification-category-controller.service';
 
 import { PageNotificationResponse } from '../../services/models/page-notification-response';
 import { NotificationResponse } from '../../services/models/notification-response';
-import { UpdateNotificationCategoryStatusRequest } from '../../services/models/update-notification-category-status-request';
 
 import {
   NotificationCategory,
@@ -28,9 +26,6 @@ export interface NotificationItemVM {
 @Injectable({ providedIn: 'root' })
 export class NotificationsFacade {
   private readonly notificationService = inject(NotificationControllerService);
-  private readonly categoryService = inject(
-    NotificationCategoryControllerService,
-  );
 
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
