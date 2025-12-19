@@ -11,6 +11,7 @@ import { NotificationsFacade } from '../../../components/notifications/notificat
 import { AuthService } from '../../../manual_services/auth/auth.service';
 import { environment } from '../../../../environments/environment.development';
 import { LocalStorageService } from '../../../manual_services/local-storage/local-storage.service';
+import { NotificationPaginatorRequest } from '../../../interfaces/notification-paginator-request';
 
 interface NavLink {
   label: string;
@@ -28,7 +29,7 @@ export class NavbarComponent implements OnInit {
   private readonly localStorageService = inject(LocalStorageService);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  
+
   readonly notifications = inject(NotificationsFacade);
 
   isMenuOpen = false;
@@ -45,7 +46,14 @@ export class NavbarComponent implements OnInit {
   ];
 
   constructor() {
-    this.notifications.init();
+    const request: NotificationPaginatorRequest = {
+      size: 5, // Scarichiamo abbastanza elementi per calcolare il badge recente
+      page: 1,
+      categories: null, // Tutte le categorie
+    };
+
+    // IMPORTANTE: .subscribe() è necessario per far partire la chiamata HTTP
+    this.notifications.fetchNotifications(request).subscribe();
   }
 
   ngOnInit(): void {
@@ -77,7 +85,6 @@ export class NavbarComponent implements OnInit {
       this.router.navigateByUrl('/');
     });
   }
-
 
   getUserInfo(): void {
     this.authService.getUserInfo().subscribe({

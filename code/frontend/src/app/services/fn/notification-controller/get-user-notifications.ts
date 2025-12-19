@@ -11,7 +11,7 @@ import { RequestBuilder } from '../../request-builder';
 import { PageNotificationResponse } from '../../models/page-notification-response';
 
 export interface GetUserNotifications$Params {
-  category?: string;
+  categories?: Array<string>;
   page?: number;
   size?: number;
 }
@@ -19,7 +19,7 @@ export interface GetUserNotifications$Params {
 export function getUserNotifications(http: HttpClient, rootUrl: string, params?: GetUserNotifications$Params, context?: HttpContext): Observable<StrictHttpResponse<PageNotificationResponse>> {
   const rb = new RequestBuilder(rootUrl, getUserNotifications.PATH, 'get');
   if (params) {
-    rb.query('category', params.category, {});
+    rb.query('categories', params.categories, {});
     rb.query('page', params.page, {});
     rb.query('size', params.size, {});
   }

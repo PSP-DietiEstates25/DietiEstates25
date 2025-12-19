@@ -806,11 +806,14 @@
         "operationId": "getUserNotifications",
         "parameters": [
           {
-            "name": "category",
+            "name": "categories",
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {

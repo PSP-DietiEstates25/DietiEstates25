@@ -1,3 +1,4 @@
+/*
 export type NotificationCategory =
   | 'NEW_PROPERTIES'
   | 'PROMOTIONAL'
@@ -36,3 +37,4 @@ export function adaptUserPreferences(
     };
   });
 }
+*/

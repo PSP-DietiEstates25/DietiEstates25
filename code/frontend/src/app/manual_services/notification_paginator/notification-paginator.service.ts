@@ -7,12 +7,12 @@ import { NotificationPaginatorRequest } from '../../interfaces/notification-pagi
 export class NotificationPaginatorService {
   private _defaultSize = 5;
   private _defaultPage = 1;
-  private _defaultCategory = null;
+  private _defaultCategories = null;
   private _notificationPaginatorRequest: WritableSignal<NotificationPaginatorRequest> =
     signal({
       size: this._defaultSize,
       page: this._defaultPage,
-      category: this._defaultCategory,
+      categories: this._defaultCategories,
     });
   private _totalPagesNumber = signal(1);
   private _notificationPaginatorRefresher = signal(0);
@@ -79,7 +79,7 @@ export class NotificationPaginatorService {
     this._notificationPaginatorRequest.set({
       size: this._defaultSize,
       page: this._defaultPage,
-      category: this._defaultCategory,
+      categories: this._defaultCategories,
     });
   }
 }

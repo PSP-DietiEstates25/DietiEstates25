@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface NotificationFinder {
 	Notification getNotificationById(Long id) throws NotificationNotFoundException;
-    Page<Notification> getUserNotifications(Long userId, String notificationCategory, Pageable pageable);
+    Page<Notification> getUserNotifications(Long userId, List<String> notificationCategories, Pageable pageable);
     Page<Notification> getNegotiationNotifications(Long negotiationId, Pageable pageable);
-    List<Notification> extractAllNegotiationsNotifications(List<Negotiation> negotiations, String notificationCategory);
+    List<Notification> extractAllNegotiationsNotifications(List<Negotiation> negotiations, List<String> notificationCategories);
 }

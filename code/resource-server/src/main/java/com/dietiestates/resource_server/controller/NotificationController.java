@@ -50,27 +50,15 @@ public class NotificationController {
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<Page<NotificationResponse>> getUserNotifications(
             @AuthenticationPrincipal Jwt jwt,
-            @RequestParam(required = false) String category,
+            @RequestParam(required = false) List<String> categories,
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "5") Integer size
     ){
 
         var userEmail = jwt.getSubject();
 
-        var notifications = notificationService.getUserNotifications(userEmail, category, page, size);
+        var notifications = notificationService.getUserNotifications(userEmail, categories, page, size);
         return ResponseEntity.status(HttpStatus.OK).body(notifications);
     }
-    /*
-    *
-    * @PutMapping("/{notificationcategoryname}")
-    public ResponseEntity<NotificationCategoryResponse> updateIsActive(
-            @PathVariable String notificationcategoryname,
-            @RequestBody UpdateNotificationCategoryStatusRequest request
-    ) {
-
-        notificationCategoryService.updateNotificationCategory(notificationcategoryname, request);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
-    }
-    * */
 }
 

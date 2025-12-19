@@ -88,10 +88,10 @@ export class NotificationPaginatorComponent {
 
   handleNotificationPaginatorPageClick(newPage: number) {
     this.notificationPaginatorService.setPage(newPage);
-    const params: Record<string, string> = {
+    const params = {
       size: String(5),
       page: String(this.page),
-      category: String(this.notificationRequest.category),
+      categories: this.notificationRequest.categories,
     };
 
     this.routerService.navigate(['/notifications'], { queryParams: params });

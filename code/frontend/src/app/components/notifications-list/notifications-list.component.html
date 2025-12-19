@@ -1,0 +1,118 @@
+<header class="mb-4 flex flex-col gap-3 rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4 shadow-sm">
+  <div class="flex items-start justify-between gap-3">
+    <div>
+      <h1 class="text-xl font-semibold text-neutral-100 md:text-2xl">
+        Notifiche
+      </h1>
+      <p class="mt-1 text-sm text-neutral-400">
+        Visualizza le tue notifiche recenti.
+      </p>
+    </div>
+
+    <div class="flex items-center gap-2 text-sm">
+      @if (facade.notificationsLoading()) {
+        <span class="text-neutral-400">Caricamento…</span>
+      }
+      @if (facade.error()) {
+        <span class="text-rose-300">{{ facade.error() }}</span>
+      }
+    </div>
+  </div>
+
+  <div class="mt-2 flex flex-col gap-3">
+    <div class="relative w-full md:w-1/2">
+       <input
+        class="input_main h-10 w-full rounded-xl border border-neutral-800 bg-neutral-950/40 px-3 text-sm"
+        placeholder="Cerca nel testo..."
+        (input)="onQuery($any($event.target).value)"
+      />
+    </div>
+
+    <div class="flex flex-wrap gap-2 items-center">
+      @for (cat of facade.allCategories; track cat) {
+        @let active = isActive(cat);
+        
+        <button type="button" 
+          class="rounded-full border px-3 py-1.5 text-xs font-medium transition cursor-pointer select-none"
+          
+          [class.border-emerald-500]="active" 
+          [class.text-emerald-200]="active" 
+          [class.bg-emerald-500/20]="active"
+          
+          [class.border-neutral-700]="!active" 
+          [class.text-neutral-400]="!active" 
+          [class.bg-neutral-900/50]="!active"
+          [class.hover:border-neutral-500]="!active"
+
+          (click)="onToggleCategory(cat)">
+          {{ labelOf(cat) }}
+        </button>
+      }
+
+      @if (facade.selectedCategories().length > 0) {
+        <button (click)="onClearFilters()" class="text-xs text-neutral-500 underline hover:text-neutral-300 ml-2">
+           Pulisci
+        </button>
+      }
+    </div>
+  </div>
+</header>
+
+<section class="space-y-3">
+  @if (!facade.notificationsLoading() && facade.notifications().length === 0) {
+    <div class="rounded-2xl border border-neutral-800 bg-neutral-900/30 p-5 text-sm text-neutral-300">
+      <div class="text-base font-medium text-neutral-100">
+        Nessuna notifica trovata
+      </div>
+      @if(facade.selectedCategories().length > 0) {
+        <div class="mt-1 text-neutral-500">
+           Nessun risultato per i filtri selezionati.
+        </div>
+      }
+    </div>
+  }
+
+  <ul class="grid gap-2">
+    @for (n of facade.notifications(); track n.id) {
+      <li class="relative rounded-2xl border border-neutral-800 bg-neutral-900/30 px-4 py-3">
+        
+        @if (isNew(n.createdDate)) {
+          <span class="absolute top-2 right-2 h-2.5 w-2.5 animate-pulse rounded-full bg-green-500 shadow-sm"></span>
+        }
+
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="rounded-full border border-neutral-800 bg-neutral-950/20 px-2 py-0.5 text-[11px] text-neutral-200">
+                {{ labelOf($any(n.notificationCategory)) }}
+              </span>
+
+              <span class="text-[11px] text-neutral-500">
+                {{ relativeTime(n.createdDate) }} ·
+                {{ n.createdDate | date: "short" }}
+              </span>
+
+              @if (isNew(n.createdDate)) {
+                <span class="text-[10px] font-bold tracking-wider text-green-400 uppercase ml-1">
+                  Nuova
+                </span>
+              }
+            </div>
+
+            <div class="mt-1 pr-4 text-sm break-words text-neutral-100">
+              {{ n.message }}
+            </div>
+
+            <div class="mt-1 text-xs text-neutral-500">
+              {{ hintOf($any(n.notificationCategory)) }}
+            </div>
+          </div>
+        </div>
+      </li>
+    }
+  </ul>
+
+  @if (facade.notificationsLoading()) {
+    <div class="pt-2 text-center text-xs text-neutral-500">Caricamento...</div>
+  }
+</section>

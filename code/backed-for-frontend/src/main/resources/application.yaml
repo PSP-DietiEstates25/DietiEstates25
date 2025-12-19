@@ -333,38 +333,20 @@ spring:
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 
-            #POST,GET /notificationcategories
-            - id: resource_server_notification_categories
+            #POST,GET /notifications
+            - id: resource_server_notifications
               uri: http://localhost:8090
               predicates:
-                - Path=/notificationcategories
+                - Path=/notifications
                 - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 
-            #GET,PUT /notificationcategories/{notificationcategoryname}
-            - id: resource_server_get_put_notification_category_by_name
-              uri: http://localhost:8090
-              predicates:
-                - Path=/notificationcategories/{notificationcategoryname}
-                - Method=GET,PUT
-              filters:
-                - RelayTokenIfExists=messaging-client-oidc
-
-            #POST,GET /notificationcategories/{notificationcategoryname}/notifications
-            - id: resource_server_notification_category_notifications
-              uri: http://localhost:8090
-              predicates:
-                - Path=/notificationcategories/{notificationcategoryname}/notifications
-                - Method=POST,GET
-              filters:
-                - RelayTokenIfExists=messaging-client-oidc
-
-            #GET /notificationcategories/{notificationcategoryname}/notifications/{notificationid}
+            #GET /notifications/{notificationid}
             - id: resource_server_get_notification_by_id
               uri: http://localhost:8090
               predicates:
-                - Path=/notificationcategories/{notificationcategoryname}/notifications/{notificationid}
+                - Path=/notifications/{notificationid}
                 - Method=GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc

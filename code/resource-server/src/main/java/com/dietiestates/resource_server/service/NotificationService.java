@@ -12,6 +12,6 @@ public interface NotificationService {
 	NotificationResponse createNotification(NotificationRequest request);
     void createNotificationsAfterRealEstateCreation(List<Search> searchesToNotify);
     NotificationResponse getNotificationById(Long notificationId, String userEmail) throws NotificationNotOwnedByUserException;
-    Page<NotificationResponse> getUserNotifications(String userEmail, String notificationCategory, Integer page, Integer size);
+    Page<NotificationResponse> getUserNotifications(String userEmail, List<String> notificationCategories, Integer page, Integer size);
     Page<NotificationResponse> getNegotiationNotifications(Long negotiationId, Integer page, Integer size);
 }

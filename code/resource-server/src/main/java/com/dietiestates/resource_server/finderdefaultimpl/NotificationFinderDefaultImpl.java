@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -33,10 +34,11 @@ public class NotificationFinderDefaultImpl implements NotificationFinder {
 	}
 
     @Override
-    public Page<Notification> getUserNotifications(Long userId, String notificationCategory, Pageable pageable) {
+    public Page<Notification> getUserNotifications(Long userId, List<String> notificationCategories, Pageable pageable) {
         List<Negotiation> allUserNegotiations = negotiationFinder.getAllUserNegotiations(userId);
-        List<Notification> allUserNotificationsByCategory = extractAllNegotiationsNotifications(allUserNegotiations, notificationCategory);
-        return PageUtils.toPage(allUserNotificationsByCategory, pageable);
+        List<Notification> allUserNotifications = extractAllNegotiationsNotifications(allUserNegotiations, notificationCategories);
+        allUserNotifications.sort(Comparator.comparing(Notification::getCreatedDate).reversed());
+        return PageUtils.toPage(allUserNotifications, pageable);
     }
 
     @Override
@@ -45,27 +47,31 @@ public class NotificationFinderDefaultImpl implements NotificationFinder {
     }
 
     @Override
-    public List<Notification> extractAllNegotiationsNotifications(List<Negotiation> negotiations, String notificationCategory){
+    public List<Notification> extractAllNegotiationsNotifications(List<Negotiation> negotiations, List<String> notificationCategories) {
         var notifications = new ArrayList<Notification>();
-        NotificationCategory requestedNotificationCategory = null;
 
-        if(NotificationUtils.checkNotificationCategoryExists(notificationCategory)){
-            requestedNotificationCategory = NotificationUtils.extractNotificationCategory(notificationCategory);
+        List<NotificationCategory> targetCategories = new ArrayList<>();
+
+        if (notificationCategories != null && !notificationCategories.isEmpty()) {
+            for (String catStr : notificationCategories) {
+                if (NotificationUtils.checkNotificationCategoryExists(catStr)) {
+                    targetCategories.add(NotificationUtils.extractNotificationCategory(catStr));
+                }
+            }
         }
-
-        var targetNotificationCategory = requestedNotificationCategory;
 
         negotiations.forEach(negotiation -> {
             var negotiationNotifications = negotiation.getNotifications();
-            if(targetNotificationCategory != null){
-                negotiationNotifications.forEach(notification -> {
-                    if(targetNotificationCategory.equals(notification.getNotificationCategory()))
-                        notifications.add(notification);
-                });
-            } else {
-                notifications.addAll(negotiationNotifications);
-            }
+
+            if (negotiationNotifications == null) return;
+
+            negotiationNotifications.forEach(notification -> {
+                if (targetCategories.isEmpty() || targetCategories.contains(notification.getNotificationCategory())) {
+                    notifications.add(notification);
+                }
+            });
         });
+
         return notifications;
     }
 }

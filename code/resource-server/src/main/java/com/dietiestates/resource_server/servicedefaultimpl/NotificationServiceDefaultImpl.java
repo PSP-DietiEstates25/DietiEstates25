@@ -85,10 +85,10 @@ public class NotificationServiceDefaultImpl implements NotificationService {
 	}
 
     @Override
-    public Page<NotificationResponse> getUserNotifications(String userEmail, String notificationCategory, Integer page, Integer size){
+    public Page<NotificationResponse> getUserNotifications(String userEmail, List<String> notificationCategories, Integer page, Integer size){
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
         var user = userFinder.getUserByEmail(userEmail);
-        var notifications = notificationFinder.getUserNotifications(user.getId(), notificationCategory, pageable);
+        var notifications = notificationFinder.getUserNotifications(user.getId(), notificationCategories, pageable);
         return notificationMapper.createPagedNotificationsResponse(notifications);
     }
 
