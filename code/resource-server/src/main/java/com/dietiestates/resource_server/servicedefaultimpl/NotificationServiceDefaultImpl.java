@@ -9,9 +9,12 @@ import com.dietiestates.resource_server.finder.NegotiationFinder;
 import com.dietiestates.resource_server.finder.NotificationFinder;
 import com.dietiestates.resource_server.finder.UserFinder;
 import com.dietiestates.resource_server.mapper.NotificationMapper;
+import com.dietiestates.resource_server.model.RealEstate;
 import com.dietiestates.resource_server.model.Search;
 import com.dietiestates.resource_server.repository.NotificationRepository;
+import com.dietiestates.resource_server.service.NegotiationService;
 import com.dietiestates.resource_server.service.NotificationService;
+import com.dietiestates.resource_server.spec.NegotiationSpec;
 import com.dietiestates.resource_server.spec.NotificationSpec;
 import com.dietiestates.resource_server.verifier.NotificationVerifier;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +37,7 @@ public class NotificationServiceDefaultImpl implements NotificationService {
 	private final NotificationMapper notificationMapper;
 
     private final NegotiationFinder negotiationFinder;
+    private final NegotiationService negotiationService;
     private final UserFinder userFinder;
 	
 	@Override
@@ -50,25 +54,33 @@ public class NotificationServiceDefaultImpl implements NotificationService {
 	}
 
     @Override
-    public void createNotificationsAfterRealEstateCreation(List<Search> searchesToNotify){
+    public void createNotificationsAfterRealEstateCreation(List<Search> searchesToNotify, RealEstate realEstate){
 
         searchesToNotify.forEach(search -> {
 
             var user = search.getUser();
-            var userNegotiations = user.getNegotiations();
 
-            userNegotiations.forEach(negotiation -> {
+            var negotiationSpec = NegotiationSpec.builder()
+                    .userEmail(user.getEmail())
+                    .estateAgentEmail(realEstate.getEstateAgent().getEmail())
+                    .realEstateId(realEstate.getId())
+                    .build();
 
-                var notificationSpec = NotificationSpec.builder()
-                        .message("Un nuovo annuncio è disponibile per la ricerca " + search.getId())
-                        .notificationCategory(NotificationCategory.NEW_PROPERTIES.toString())
-                        .isVisible(true)
-                        .negotiationId(negotiation.getId())
-                        .build();
+            var negotiation = negotiationService.setupNegotiation(negotiationSpec);
 
-                var notification = notificationFactory.createNotificationFromSpec(notificationSpec, negotiation);
-                notificationRepository.save(notification);
-            });
+            var notificationSpec = NotificationSpec.builder()
+                    .message("Un nuovo annuncio è disponibile per la ricerca a \"" +
+                            search.getDetail().getGeographicalPosition().getRegion() + ", " +
+                            search.getDetail().getGeographicalPosition().getCity() + ", " +
+                            search.getDetail().getGeographicalPosition().getMunicipality() + "\""
+                    )
+                    .notificationCategory(NotificationCategory.NEW_PROPERTIES.toString())
+                    .isVisible(true)
+                    .negotiationId(negotiation.getId())
+                    .build();
+
+            var notification = notificationFactory.createNotificationFromSpec(notificationSpec, negotiation);
+            notificationRepository.save(notification);
         });
     }
 

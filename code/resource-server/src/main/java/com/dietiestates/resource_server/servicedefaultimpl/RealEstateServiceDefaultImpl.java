@@ -75,11 +75,16 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
                 detail
         );
 
-        // Questo va bene: quando crei una casa, CERCHI le ricerche che matchano per notificare
-        var searchesToNotify = searchRealEstateMatchingService.getSearchesByRealEstateFilter(realEstate);
         realEstateRepository.save(realEstate);
 
-        notificationService.createNotificationsAfterRealEstateCreation(searchesToNotify);
+        var searchesToNotify = searchRealEstateMatchingService.getSearchesByRealEstateFilter(realEstate);
+        System.out.println("====================SEARCHTONOTIFY========================");
+        searchesToNotify.forEach(search -> {
+            System.out.println("searchid: " + search.getId());
+        });
+        System.out.println("====================SEARCHTONOTIFY========================");
+
+        notificationService.createNotificationsAfterRealEstateCreation(searchesToNotify, realEstate);
 
         return realEstateMapper.fromEntity(realEstate);
     }
@@ -116,25 +121,15 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
 
     @Override
     public Page<RealEstateResponse> getSearchRealEstates(Long searchId, Integer page, Integer size) {
-        // MODIFICA CRUCIALE: Riesecuzione Dinamica
-        // Invece di leggere la tabella statica (che ora è vuota per le nuove ricerche),
-        // recuperiamo la Search e rilanciamo il filtro.
-
-        // 1. Recupera la definizione della ricerca
-        // Nota: Assicurati che searchFinder abbia un metodo getSearchById o usa searchRepository
         var search = searchFinder.getSearchById(searchId);
 
-        // 2. Esegui la query "live" sui RealEstate attuali
         var matchingRealEstates = searchRealEstateMatchingService.getRealEstatesBySearchFilter(search);
 
-        // 3. Gestisci la paginazione manualmente (poiché il filtro restituisce una List)
-        // Se matchingRealEstates diventa molto grande, dovrai spostare la paginazione nel DB (JPA Specification).
-        // Per ora, paginiamo la lista in memoria.
+
         int start = Math.min((int)PageRequest.of(page, size).getOffset(), matchingRealEstates.size());
         int end = Math.min((start + size), matchingRealEstates.size());
 
         List<RealEstate> pagedList = matchingRealEstates.subList(start, end);
-
         Page<RealEstate> realEstatePage = new PageImpl<>(pagedList, PageRequest.of(page, size), matchingRealEstates.size());
 
         return realEstateMapper.createPagedRealEstatesResponse(realEstatePage);

@@ -35,7 +35,7 @@ public class SearchFilterDefaultImpl implements SearchFilter {
     public List<Search> filterSearchesByUtility(Utility utility, List<Search> searchesToFilter) {
 
         return searchesToFilter.stream()
-                .filter(search -> matchesUtilities(utility, search.getDetail().getUtility()))
+                .filter(search -> matchesUtilities(search.getDetail().getUtility(), utility))
                 .toList();
     }
 
