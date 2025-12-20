@@ -61,6 +61,10 @@
                 </span>
               </div>
 
+              <div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">
+                Data: {{ offer.createdDate | date: "dd/MM/yyyy" }}, {{offer.createdDate | date: "HH:mm"}}
+              </div>
+
               <div class="mt-4 flex items-center justify-between">
                 <div
                   class="text-sm font-bold text-amber-700 dark:text-amber-300"
@@ -74,10 +78,6 @@
                 >
                   Vai al dettaglio →
                 </a>
-              </div>
-
-              <div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">
-                Data: {{ offer.createdDate | date: "dd/MM/yyyy" }}, {{offer.createdDate | date: "HH:mm"}}
               </div>
             </article>
 
@@ -102,6 +102,12 @@
                   </span>
                 </div>
 
+                <div
+                    class="mt-2 text-[11px] text-slate-500 dark:text-slate-400"
+                  >
+                    Data: {{ offer.createdDate | date: "dd/MM/yyyy" }}, {{offer.createdDate | date: "HH:mm"}}
+                </div>
+
                 <div class="flex flex-col">
                   <div class="mt-4 flex items-center justify-between">
                     <div
@@ -117,12 +123,6 @@
                       Vai al dettaglio →
                     </a>
                   </div>
-
-                  <div
-                    class="mt-2 text-[11px] text-slate-500 dark:text-slate-400"
-                  >
-                    Data: {{ offer.createdDate | date: "dd/MM/yyyy" }}, {{offer.createdDate | date: "HH:mm"}}
-                  </div>
                 </div>
               </article>
             } @else {
@@ -130,7 +130,7 @@
                 class="flex w-full flex-1 flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-xs dark:border-slate-800 dark:bg-slate-900"
               >
                 <h1 class="self-center text-[13px]">
-                  Non è presente una contro offerta
+                  Non è presente una controfferta
                 </h1>
               </article>
             }
