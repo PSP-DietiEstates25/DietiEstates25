@@ -5,17 +5,14 @@ import {
   DestroyRef,
   OnDestroy,
   effect,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink, TitleStrategy } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CreateAdFacade } from '../create-ad/create-ad.facade';
-import { switchMap } from 'rxjs/operators';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AgentDashboardFacade,
-  VisitVM,
-  OfferVM,
 } from './agent-dashboard.facade';
 import { AuthService } from '../../manual_services/auth/auth.service';
 import { environment } from '../../../environments/environment.development';
@@ -37,6 +34,7 @@ import { AdsPaginatorComponent } from '../ads-paginator/ads-paginator.component'
 import { AdsPaginatorService } from '../../manual_services/ads_paginator/ads-paginator.service';
 import { FullRealEstate } from '../../interfaces/full-real-estate';
 import { PaginatorRequest } from '../../interfaces/paginator-request';
+import { LocalStorageService } from '../../manual_services/local-storage/local-storage.service';
 
 @Component({
   selector: 'app-agent-dashboard',
@@ -59,11 +57,10 @@ export class AgentDashboardComponent implements OnDestroy {
   offerPaginatorService = inject(OffersPaginatorService);
   visitPaginatorService = inject(VisitPaginatorService);
   adsPaginatorService = inject(AdsPaginatorService);
-
+  localStorageService = inject(LocalStorageService);
   routerService = inject(Router);
   toastrService = inject(ToastrService);
 
-  private destroyRef = inject(DestroyRef);
   private readonly authService = inject(AuthService);
 
   createAdFacade = inject(CreateAdFacade);
@@ -126,18 +123,6 @@ export class AgentDashboardComponent implements OnDestroy {
         this.fetchEstateAgentOffers();
       }
     });
-  }
-
-  ngOnInit(): void {
-    /*
-    this.createAdFacade.published$
-      .pipe(
-        switchMap(() => this.facade.fetchRealEstates()()),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe();
-    
-      */
   }
 
   setTab(t: 'visits' | 'ads' | 'offers') {
@@ -216,11 +201,6 @@ export class AgentDashboardComponent implements OnDestroy {
   }
 
   // ADS
-  /*
-  loadAds() {
-    this.facade.loadAds().subscribe();
-  }
-  */
   goToCreateAd() {
     this.routerService.navigate(['/basics']);
   }
@@ -289,13 +269,17 @@ export class AgentDashboardComponent implements OnDestroy {
     this.adsPaginatorService.refresh();
   }
 
-  logout() {
+  logout(): void {
     this.authService.logout().subscribe(() => {
       this.isAuthenticated = false;
       this.email = '';
-      this.routerService.navigateByUrl(
-        `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`,
-      );
+
+      this.localStorageService.removeItem('isAuthenticated');
+      this.localStorageService.removeItem('role');
+
+      this.routerService.navigateByUrl('/').then(() => {
+         window.location.reload();
+      });
     });
   }
 }

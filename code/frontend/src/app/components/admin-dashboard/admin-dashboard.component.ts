@@ -27,6 +27,7 @@ import { FullRealEstate } from '../../interfaces/full-real-estate';
 import { PaginatorRequest } from '../../interfaces/paginator-request';
 import { throttleTime } from 'rxjs';
 import { AdminAdsListComponent } from '../admin-ads-list/admin-ads-list.component';
+import { LocalStorageService } from '../../manual_services/local-storage/local-storage.service';
 
 function matchValidator(a: string, b: string) {
   return (ctrl: AbstractControl) => {
@@ -54,6 +55,7 @@ export class AdminDashboardComponent {
   adsPaginatorService = inject(AdsPaginatorService);
   formBuilder = inject(FormBuilder);
   routerService = inject(Router);
+  localStorageService = inject(LocalStorageService);
   toastrService = inject(ToastrService);
 
   private readonly authService = inject(AuthService);
@@ -105,13 +107,6 @@ export class AdminDashboardComponent {
     if (t === 'ads' && this.realEstates.length) {
       this.fetchAdminRealEstates();
     }
-    // else if (t === 'users') {
-    //   this.createForm.reset({
-    //     email: '',
-    //     role: 'ESTATE_AGENT',
-    //     password: '',
-    //   });
-    // }
   }
 
   fetchAdminRealEstates() {
@@ -162,13 +157,17 @@ export class AdminDashboardComponent {
     });
   }
 
-  logout() {
+  logout(): void {
     this.authService.logout().subscribe(() => {
       this.isAuthenticated = false;
       this.email = '';
-      this.routerService.navigateByUrl(
-        `${environment.apiBaseUrl}/oauth2/authorization/messaging-client-oidc?prompt=login`,
-      );
+
+      this.localStorageService.removeItem('isAuthenticated');
+      this.localStorageService.removeItem('role');
+
+      this.routerService.navigateByUrl('/').then(() => {
+         window.location.reload();
+      });
     });
   }
 
