@@ -24,7 +24,7 @@ import { ToastrService } from 'ngx-toastr';
 import { GeoapifyService } from '../../manual_services/geoapify/geoapify.service';
 import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.component';
 import { NearTag } from '../../manual_services/geoapify/geoapify.service';
-import { switchMap, pipe } from 'rxjs';
+import { switchMap, pipe, finalize } from 'rxjs';
 
 @Component({
   selector: 'app-step-details',
@@ -40,6 +40,7 @@ export class StepDetailsComponent {
   private facade = inject(CreateAdFacade);
   private routerService = inject(Router);
 
+  isLoading = signal(false);
   submitted = false;
   isDiscardModalOpen = false;
 
@@ -102,16 +103,6 @@ export class StepDetailsComponent {
     });
   }
 
-  /*
-  ngOnInit(): void {
-    const utility = this.facade.utility();
-    if (utility) this.utilitiesForm.patchValue(utility, { emitEvent: false });
-
-    const geographicalPosition = this.facade.geographicalPosition();
-    if (geographicalPosition) this.positionForm.patchValue(geographicalPosition, { emitEvent: false });
-  }
-  */
-
   get address() {
     return this.positionForm.get('address');
   }
@@ -171,13 +162,7 @@ export class StepDetailsComponent {
     const latitude = Number(this.positionForm.value.latitude);
     const longitude = Number(this.positionForm.value.longitude);
 
-    /*
-  if (this.utilitiesForm.invalid || this.positionForm.invalid) {
-    this.utilitiesForm.markAllAsTouched();
-    this.positionForm.markAllAsTouched();
-    return;
-  }
-  */
+    this.isLoading.set(true);
 
     this.geoapifyService
       .getLatitudeLongitudeData(latitude, longitude)
@@ -217,6 +202,7 @@ export class StepDetailsComponent {
               }),
             );
         }),
+        finalize(() => this.isLoading.set(false))
       )
       .subscribe({
         next: (nearTagsResponse: NearTag[]) => {

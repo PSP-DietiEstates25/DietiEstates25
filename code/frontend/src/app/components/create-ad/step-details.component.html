@@ -134,7 +134,11 @@
           !positionForm.get('longitude')?.value
         "
       >
-        Avanti
+        @if (isLoading()) {
+          <span>Caricamento...</span>
+        } @else {
+          <span>Avanti</span>
+        }
       </button>
     </div>
   </div>
