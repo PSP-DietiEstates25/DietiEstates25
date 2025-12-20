@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface FileDataRepository extends CrudRepository<FileData, String> {
     Optional<FileData> findByName(String name);
+    Optional<FileData> findByPath(String path);
 }

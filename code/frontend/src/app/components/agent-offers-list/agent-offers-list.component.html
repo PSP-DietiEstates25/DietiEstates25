@@ -27,7 +27,6 @@
       </div>
     </div>
   } @else {
-    <!--visibleItems si trasforma in realEstateOffers perchè si deve visualizzare una lista di real estates che hanno un offerta-->
     <section class="flex flex-col items-center justify-center gap-5">
       @for (offer of offers(); track offer.id) {
         @if (offer.category === "OFFER") {
@@ -49,7 +48,7 @@
                   >
                     Da
                     <span class="font-medium">{{ offer.userEmail }}</span>
-                    • {{ offer.createdDate | date: "dd/MM/yyyy" }}
+                    • {{ offer.createdDate | date: "dd/MM/yyyy" }}, {{ offer.createdDate | date: "HH:mm"}}
                   </div>
                 </div>
 
@@ -74,10 +73,6 @@
                 >
                   Vai al dettaglio →
                 </a>
-              </div>
-
-              <div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">
-                Ultima offerta: {{ offer.createdDate | date: "dd/MM/yyyy" }}
               </div>
 
               @if (offer.status === "PENDING") {

@@ -58,27 +58,4 @@ public class RealEstateFinderDefaultImpl implements RealEstateFinder {
 
         return realEstates;
     }
-
-	/*
-	@Override
-	public List<RealEstate> getRealEstatesByCadastralFilter(CadastralFilter cadastralFilter) {
-		var cadastralFilterRealEstates = new ArrayList<RealEstate>();
-		var allRealEstates = this.getAllRealEstates();
-		
-		allRealEstates.forEach(realEstate -> {
-			var realEstateCadastralData = realEstate.getCadastralData();
-			if(
-					cadastralFilter.getPriceRange().contains(realEstateCadastralData.getPrice()) &&
-					cadastralFilter.getSquareMetersRange().contains(realEstateCadastralData.getSquareMeters()) &&
-					cadastralFilter.getEnergyClassRange().contains(realEstateCadastralData.getEnergyClass().getOrder()) &&
-					cadastralFilter.getRoomsRange().contains(realEstateCadastralData.getRooms()) &&
-					cadastralFilter.getFloorRange().contains(realEstateCadastralData.getFloor())
-				)
-				cadastralFilterRealEstates.add(realEstate);
-		});
-		
-		return cadastralFilterRealEstates;
-	}
-	*/
-
 }

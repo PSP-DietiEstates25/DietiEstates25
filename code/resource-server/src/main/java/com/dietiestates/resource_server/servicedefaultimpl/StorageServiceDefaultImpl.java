@@ -4,6 +4,7 @@ import com.dietiestates.resource_server.factory.FileDataFactory;
 import com.dietiestates.resource_server.factory.ImageDataFactory;
 import com.dietiestates.resource_server.finder.FileDataFinder;
 import com.dietiestates.resource_server.finder.ImageDataFinder;
+import com.dietiestates.resource_server.model.FileData;
 import com.dietiestates.resource_server.repository.FileDataRepository;
 import com.dietiestates.resource_server.repository.ImageDataRepository;
 import com.dietiestates.resource_server.service.StorageService;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -86,5 +88,24 @@ public class StorageServiceDefaultImpl implements StorageService {
         var fileData = fileDataFinder.getByName(fileName);
         var filePath = fileData.getPath();
         return Files.readAllBytes(new File(filePath).toPath());
+    }
+
+    @Override
+    public void deleteImageFromFileSystem(String imageUrl) throws IOException {
+        String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+        Path folder = Paths.get(imagesFolderPath);
+        Path filePath = folder.resolve(fileName);
+        String absolutePathStr = filePath.toString();
+
+        Files.deleteIfExists(filePath);
+
+        Optional<FileData> fileDataOpt = fileDataRepository.findByPath(absolutePathStr);
+
+        if (fileDataOpt.isPresent()) {
+            fileDataRepository.delete(fileDataOpt.get());
+        } else {
+            // Opzionale: Loggare che il record DB non è stato trovato (magari era già cancellato)
+            System.out.println("Warning: Nessun record FileData trovato per il path: " + absolutePathStr);
+        }
     }
 }

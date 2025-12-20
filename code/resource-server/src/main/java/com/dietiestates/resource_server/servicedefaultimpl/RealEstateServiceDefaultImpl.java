@@ -78,12 +78,6 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
         realEstateRepository.save(realEstate);
 
         var searchesToNotify = searchRealEstateMatchingService.getSearchesByRealEstateFilter(realEstate);
-        System.out.println("====================SEARCHTONOTIFY========================");
-        searchesToNotify.forEach(search -> {
-            System.out.println("searchid: " + search.getId());
-        });
-        System.out.println("====================SEARCHTONOTIFY========================");
-
         notificationService.createNotificationsAfterRealEstateCreation(searchesToNotify, realEstate);
 
         return realEstateMapper.fromEntity(realEstate);
@@ -175,11 +169,28 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
     @Override
     @Transactional
     public void deleteRealEstate(Long realEstateId) {
+
         var realEstate = realEstateFinder.getRealEstateById(realEstateId);
+
         for (Negotiation negotiation : realEstate.getNegotiations()) {
             negotiation.setRealEstate(null);
             negotiationRepository.save(negotiation);
         }
+
+        List<String> images = realEstate.getImages();
+        if (images != null && !images.isEmpty()) {
+            // Creiamo una copia della lista per evitare ConcurrentModificationException se necessario,
+            // anche se qui stiamo solo leggendo.
+            for (String imageUrl : images) {
+                try {
+                    storageService.deleteImageFromFileSystem(imageUrl);
+                } catch (IOException e) {
+                    // Log dell'errore, ma continuiamo per provare a cancellare le altre immagini
+                    System.err.println("Errore durante l'eliminazione dell'immagine: " + imageUrl + " - " + e.getMessage());
+                }
+            }
+        }
+        
         realEstateRepository.delete(realEstate);
     }
 }

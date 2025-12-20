@@ -7,8 +7,7 @@ import java.io.IOException;
 public interface StorageService {
     String uploadImage(MultipartFile imageFile) throws IOException;
     byte[] downloadImage(String fileName);
-
     String uploadImageToFileSystem(MultipartFile file) throws IOException;
-
     byte[] downloadImageFromFileSystem(String fileName) throws IOException;
+    void deleteImageFromFileSystem(String imageUrl) throws IOException;
 }
