@@ -73,10 +73,10 @@
   }
 
   <ul class="grid gap-2">
-    @for (n of facade.notifications(); track n.id) {
-      <li class="relative rounded-2xl border border-neutral-800 bg-neutral-900/30 px-4 py-3">
+    @for (notification of facade.notifications(); track notification.id) {
+      <li class="relative  flex flex-col items-start justify-center gap-2 rounded-2xl border border-neutral-800 bg-neutral-900/30 px-4 py-3">
         
-        @if (isNew(n.createdDate)) {
+        @if (isNew(notification.createdDate)) {
           <span class="absolute top-2 right-2 h-2.5 w-2.5 animate-pulse rounded-full bg-green-500 shadow-sm"></span>
         }
 
@@ -84,15 +84,15 @@
           <div class="min-w-0">
             <div class="flex flex-wrap items-center gap-2">
               <span class="rounded-full border border-neutral-800 bg-neutral-950/20 px-2 py-0.5 text-[11px] text-neutral-200">
-                {{ labelOf($any(n.notificationCategory)) }}
+                {{ labelOf($any(notification.notificationCategory)) }}
               </span>
 
               <span class="text-[11px] text-neutral-500">
-                {{ relativeTime(n.createdDate) }} ·
-                {{ n.createdDate | date: "short" }}
+                {{ relativeTime(notification.createdDate) }} ·
+                {{ notification.createdDate | date: "short" }}
               </span>
 
-              @if (isNew(n.createdDate)) {
+              @if (isNew(notification.createdDate)) {
                 <span class="text-[10px] font-bold tracking-wider text-green-400 uppercase ml-1">
                   Nuova
                 </span>
@@ -100,14 +100,18 @@
             </div>
 
             <div class="mt-1 pr-4 text-sm break-words text-neutral-100">
-              {{ n.message }}
+              {{ notification.message }}
             </div>
 
-            <div class="mt-1 text-xs text-neutral-500">
-              {{ hintOf($any(n.notificationCategory)) }}
-            </div>
           </div>
         </div>
+
+        <a
+          class="text-xs text-amber-700 hover:underline dark:text-amber-300"
+          [routerLink]="['/ad', notification.realEstateId]"
+        >
+          Vai all'annuncio →
+        </a>
       </li>
     }
   </ul>

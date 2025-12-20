@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { NotificationsFacade } from '../notifications/notifications.facade';
 import { NotificationCategory } from '../../enums/notification-category.enum';
 import { NotificationPaginatorService } from '../../manual_services/notification_paginator/notification-paginator.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-notifications-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './notifications-list.component.html',
   styleUrl: './notifications-list.component.scss',
 })
@@ -16,43 +17,33 @@ export class NotificationsListComponent implements OnInit {
   readonly facade = inject(NotificationsFacade);
   notificationPaginatorService = inject(NotificationPaginatorService);
   notifications = this.facade.notifications;
-  private viewReferenceTime = 0;
+  private sessionEntryTime = 0;
 
   ngOnInit(): void {
-    const lastSeenIso = this.facade.lastSeen();
-    this.viewReferenceTime = lastSeenIso ? new Date(lastSeenIso).getTime() : 0;
+    const lastSeenIso = this.facade.lastSeen();    
+    this.sessionEntryTime = lastSeenIso ? new Date(lastSeenIso).getTime() : 0;
     this.facade.markAllSeen();
+    this.facade.fetchBadgeData();
   }
 
   isNew(dateIso: string | undefined): boolean {
     if (!dateIso) return false;
-    if (this.viewReferenceTime === 0) return true;
-    const t = new Date(dateIso).getTime();
-    return t > this.viewReferenceTime;
+    if (this.sessionEntryTime === null) return false;
+    const time = new Date(dateIso).getTime();
+    return time > this.sessionEntryTime;
   }
 
   onQuery(q: string) {
     this.facade.setQuery(q ?? '');
   }
 
-  // --- GESTIONE FILTRI ---
   onToggleCategory(cat: NotificationCategory) {
-    // 1. Aggiorna il signal locale nel facade (aggiunge/rimuove dall'array)
     this.facade.toggleCategory(cat);
-
-    // 2. Resetta la pagina a 1
-    this.notificationPaginatorService.setPage(0); // 0-based index se il tuo paginator lavora così, altrimenti 1
-
-    // 3. Recupera la request attuale dal service
+    this.notificationPaginatorService.setPage(1)
     const currentRequest =
       this.notificationPaginatorService.notificationRequest();
-
-    // 4. Aggiorna la request con il NUOVO array di categorie dal Facade
-    // (Prima era currentRequest.category = cat)
     currentRequest.categories = this.facade.selectedCategories();
-    currentRequest.page = 1; // Reset pagina logica
-
-    // 5. Fetch
+    currentRequest.page = 1;
     this.facade.fetchNotifications(currentRequest).subscribe();
   }
 

@@ -46,14 +46,7 @@ export class NavbarComponent implements OnInit {
   ];
 
   constructor() {
-    const request: NotificationPaginatorRequest = {
-      size: 5, // Scarichiamo abbastanza elementi per calcolare il badge recente
-      page: 1,
-      categories: null, // Tutte le categorie
-    };
-
-    // IMPORTANTE: .subscribe() è necessario per far partire la chiamata HTTP
-    this.notifications.fetchNotifications(request).subscribe();
+    this.notifications.fetchBadgeData();
   }
 
   ngOnInit(): void {

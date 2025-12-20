@@ -18,6 +18,7 @@ export class LocalStorageService {
   }
 
   clear(){
-    localStorage.clear();
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("role");
   }
 }
