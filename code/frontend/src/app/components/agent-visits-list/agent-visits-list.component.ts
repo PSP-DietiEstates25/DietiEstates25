@@ -5,12 +5,12 @@ import { VisitControllerService } from '../../services/services';
 import { VisitPaginatorService } from '../../manual_services/visit_paginator/visit-paginator.service';
 import { ToastrService } from 'ngx-toastr';
 import { VisitResponse } from '../../services/models';
-import { DatePipe } from '@angular/common';
+import { DatePipe, SlicePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-agent-visits-list',
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, RouterLink, SlicePipe],
   templateUrl: './agent-visits-list.component.html',
   styleUrl: './agent-visits-list.component.scss',
 })
