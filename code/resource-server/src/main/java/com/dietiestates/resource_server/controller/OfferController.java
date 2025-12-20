@@ -26,7 +26,7 @@ public class OfferController {
     private final OfferService offerService;
 
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('USER', 'ESTATE_AGENT')")
+    @PreAuthorize("hasAnyAuthority('USER', 'ESTATE_AGENT', 'OIDC_USER')")
     public ResponseEntity<OfferResponse> createOffer(
             @RequestBody OfferRequest request,
             @RequestParam Long realestateid,
@@ -55,7 +55,7 @@ public class OfferController {
 
     //può ritornare a seconda della presenza di ?realestateid le offerte paginate del realestate o dell'utente o dell'agente
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('USER', 'ESTATE_AGENT')")
+    @PreAuthorize("hasAnyAuthority('USER', 'ESTATE_AGENT', 'OIDC_USER')")
     public ResponseEntity<Page<OfferResponse>> getOffers(
             @RequestParam(required = false) Long realestateid,
             @RequestParam(required = false) String status,

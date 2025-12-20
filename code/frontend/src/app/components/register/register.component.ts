@@ -73,9 +73,6 @@ export class RegisterComponent {
     try {
       await firstValueFrom(this.authService.getCsrf());
       await firstValueFrom(this.authService.register(body));
-      await firstValueFrom(
-        this.userService.registerUser({ body: { email: email } }),
-      );
       window.location.href = environment.loginUrl;
     } catch (err: any) {
       this.errorMsg.set(err?.error?.message || 'Registrazione non riuscita');

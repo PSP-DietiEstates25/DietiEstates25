@@ -81,7 +81,7 @@ export class AuthService {
   }
 
   isUser() {
-    return this.localStorageService.getItem('role') === 'USER';
+    return this.localStorageService.getItem('role') === 'USER' || this.localStorageService.getItem('role') === 'OIDC_USER';
   }
 
   setRole(role: string) {

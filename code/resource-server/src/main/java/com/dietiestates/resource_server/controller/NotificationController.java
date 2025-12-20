@@ -47,7 +47,7 @@ public class NotificationController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('USER')")
+    @PreAuthorize("hasAnyAuthority('USER', 'OIDC_USER')")
     public ResponseEntity<Page<NotificationResponse>> getUserNotifications(
             @AuthenticationPrincipal Jwt jwt,
             @RequestParam(required = false) List<String> categories,

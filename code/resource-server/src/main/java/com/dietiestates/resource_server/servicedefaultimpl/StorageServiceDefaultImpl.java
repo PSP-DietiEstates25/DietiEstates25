@@ -103,9 +103,6 @@ public class StorageServiceDefaultImpl implements StorageService {
 
         if (fileDataOpt.isPresent()) {
             fileDataRepository.delete(fileDataOpt.get());
-        } else {
-            // Opzionale: Loggare che il record DB non è stato trovato (magari era già cancellato)
-            System.out.println("Warning: Nessun record FileData trovato per il path: " + absolutePathStr);
         }
     }
 }

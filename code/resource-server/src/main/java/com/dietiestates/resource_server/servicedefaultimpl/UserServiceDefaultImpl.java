@@ -8,6 +8,7 @@ import com.dietiestates.resource_server.finder.UserFinder;
 import com.dietiestates.resource_server.mapper.UserMapper;
 import com.dietiestates.resource_server.repository.UserRepository;
 import com.dietiestates.resource_server.service.UserService;
+import com.dietiestates.resource_server.verifier.UserVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +19,18 @@ public class UserServiceDefaultImpl implements UserService {
     private final UserFactory userFactory;
 	private final UserFinder userFinder;
 	private final UserMapper userMapper;
+    private final UserVerifier userVerifier;
     private final UserRepository userRepository;
 
-	@Override
+    @Override
+    public UserResponse setupRegister(UserRequest request) {
+        if(!userVerifier.checkUserAlreadyExists(request.getEmail()))
+            return register(request);
+        else
+            return getUserByEmail(request.getEmail());
+    }
+
+    @Override
 	public UserResponse register(UserRequest request) throws RoleNotFoundException {
 		
 		var userSpec = userMapper.toSpec(request);
@@ -33,6 +43,12 @@ public class UserServiceDefaultImpl implements UserService {
     @Override
     public UserResponse getUserById(Long userid) {
         var user = userFinder.getUserById(userid);
+        return userMapper.fromEntity(user);
+    }
+
+    @Override
+    public UserResponse getUserByEmail(String userEmail){
+        var user = userFinder.getUserByEmail(userEmail);
         return userMapper.fromEntity(user);
     }
 }

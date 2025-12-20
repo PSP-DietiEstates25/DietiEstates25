@@ -24,7 +24,7 @@ public class UserController {
             @RequestBody UserRequest request
     ) throws RoleNotFoundException {
 
-        var user = userService.register(request);
+        var user = userService.setupRegister(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 

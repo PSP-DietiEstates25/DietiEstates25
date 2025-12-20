@@ -26,8 +26,6 @@ import { environmentMap } from '../../../environments/environment.map';
 })
 export class HomeSelectorComponent implements OnInit {
   private readonly localStorageService = inject(LocalStorageService);
-  private readonly authService = inject(AuthService);
-  private readonly routerService = inject(Router);
 
   role!: string | null;
 
@@ -37,13 +35,11 @@ export class HomeSelectorComponent implements OnInit {
     const savedRole = this.localStorageService.getItem('role');
 
     if (!isAuthenticated) {
-      // Non autenticato / ruolo non presente → vai subito al login
       this.login();
       return;
     }
 
     this.role = savedRole;
-    // Niente chiamata a getUserInfo qui: è già stata fatta da AuthCallbackComponent
   }
 
   private login(): void {
