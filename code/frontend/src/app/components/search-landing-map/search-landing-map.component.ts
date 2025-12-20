@@ -131,7 +131,6 @@ export class SearchLandingMapComponent
     this.boundariesLayer.addTo(this.map);
     this.markersLayer.addTo(this.map);
 
-    // Esecuzione immediata senza setTimeout
     const currentCards = this.facade.searchCards();
     const isReplay = currentCards.length > 0;
 
@@ -258,7 +257,6 @@ export class SearchLandingMapComponent
     let targetLayer: any = null;
     const targetName = name.trim().toLowerCase();
     
-    // Pulizia per match più flessibili
     const cleanTarget = targetName.replace('municipalità', '').trim();
 
     this.geojson.eachLayer((layer: any) => {

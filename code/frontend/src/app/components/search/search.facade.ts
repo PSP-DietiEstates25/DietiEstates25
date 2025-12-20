@@ -1,5 +1,5 @@
 import { Injectable, inject, signal, computed, Sanitizer } from '@angular/core';
-import { of, defer, iif, forkJoin, from, VirtualTimeScheduler } from 'rxjs';
+import { of, forkJoin, from, VirtualTimeScheduler } from 'rxjs';
 import { map, switchMap, tap, catchError, finalize } from 'rxjs/operators';
 
 import { SearchControllerService } from '../../services/services/search-controller.service';
@@ -310,32 +310,22 @@ export class SearchFacade {
     return forkJoin(requests);
   }
 
-  // --- METODO MODIFICATO PER USARE LA GET ---
   replaySearch(search: FullSearch) {
     this.resetContext();
     this.loading.set(true);
     this.error.set(null);
 
-    // 1. Aggiorna la cache visiva (per il Filter Panel)
     this._cachedGeographicalPosition.set(search.geographicalPosition);
     this._cachedUtility.set(search.utility);
     this._cachedCadastralFilter.set(search.cadastralFilter!);
     this._cachedCategory.set(search.category as AdCategory);
 
-    // 2. Chiama l'endpoint GET per rieseguire la ricerca on-demand
-    // NOTA: Assicurati che runSavedSearch esista nel tuo SearchControllerService
-    // come discusso in precedenza.
     return this.searchService.getSearch({ searchid: search.id! }).pipe(
-      // 3. Arricchisci i risultati grezzi
       switchMap((realEstates) =>
         this.mapRealEstatesToFullRealEstates(realEstates),
       ),
       tap((searchCards) => {
-        // 4. Aggiorna i segnali
         this.searchCards.set(searchCards);
-        // Opzionale: se vuoi aggiornare anche lo storico visualizzato, ma di solito
-        // savedSearches contiene le "definizioni" delle ricerche, non i risultati.
-        // Se searchCards è quello che alimenta la lista risultati, basta questo.
       }),
       catchError((error) => {
         this.error.set(error);

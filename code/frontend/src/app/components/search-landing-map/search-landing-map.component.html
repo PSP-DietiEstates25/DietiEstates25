@@ -235,6 +235,25 @@
   <main
     class="relative hidden h-full w-full bg-slate-100 md:col-span-2 md:flex"
   >
+    @if (loading) {
+      <div 
+        class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-slate-50/90 backdrop-blur-[2px] transition-all duration-300"
+      >
+        <div class="relative flex h-16 w-16 items-center justify-center">
+          <div class="absolute h-full w-full animate-ping rounded-full bg-blue-100 opacity-75"></div>
+          <div class="relative h-12 w-12 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div>
+        </div>
+
+        <div class="mt-6 flex flex-col items-center gap-1 text-center">
+          <h3 class="text-lg font-bold text-blue-900">
+            Caricamento della mappa...
+          </h3>
+          <p class="text-sm text-gray-500 animate-pulse">
+            {{ infoMessage || 'Recupero confini e immobili...' }}
+          </p>
+        </div>
+      </div>
+    }
     <div #mapContainer class="z-0 h-full w-full"></div>
   </main>
 </div>
