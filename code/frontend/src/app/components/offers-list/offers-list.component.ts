@@ -5,10 +5,11 @@ import { OfferControllerService } from '../../services/services';
 import { ToastrService } from 'ngx-toastr';
 import { FullOffer } from '../../interfaces/full-offer';
 import { RouterLink } from '@angular/router';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-offers-list',
-  imports: [RouterLink],
+  imports: [RouterLink, DatePipe],
   templateUrl: './offers-list.component.html',
   styleUrl: './offers-list.component.scss',
 })

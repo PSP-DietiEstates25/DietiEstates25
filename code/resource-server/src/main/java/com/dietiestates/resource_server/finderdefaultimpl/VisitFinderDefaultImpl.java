@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -40,6 +41,7 @@ public class VisitFinderDefaultImpl implements VisitFinder {
     public Page<Visit> getAllEstateAgentVisits(Long estateAgentId, String status, Pageable pageable) {
         List<Negotiation> allEstateAgentNegotiations = negotiationFinder.getAllEstateAgentNegotiations(estateAgentId);
         List<Visit> allNegotiationVisits = extractAllNegotiationsVisits(allEstateAgentNegotiations, status);
+        allNegotiationVisits.sort(Comparator.comparing(Visit::getCreatedDate).reversed());
         return PageUtils.toPage(allNegotiationVisits, pageable);
     }
 

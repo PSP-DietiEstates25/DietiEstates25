@@ -8,6 +8,7 @@ import com.dietiestates.resource_server.finder.NegotiationFinder;
 import com.dietiestates.resource_server.finder.OfferFinder;
 import com.dietiestates.resource_server.finder.UserFinder;
 import com.dietiestates.resource_server.model.Negotiation;
+import com.dietiestates.resource_server.model.Notification;
 import com.dietiestates.resource_server.model.Offer;
 import com.dietiestates.resource_server.repository.OfferRepository;
 import com.dietiestates.resource_server.utils.PageUtils;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -52,6 +54,7 @@ public class OfferFinderDefaultImpl implements OfferFinder {
     public Page<Offer> getAllUserOffers(Long userId, String status, Pageable pageable){
         List<Negotiation> allUserNegotiations = negotiationFinder.getAllUserNegotiations(userId);
         List<Offer> allNegotiationsOffers = extractAllNegotiationsOffers(allUserNegotiations, status);
+        allNegotiationsOffers.sort(Comparator.comparing(Offer::getCreatedDate).reversed());
         return PageUtils.toPage(allNegotiationsOffers, pageable);
     }
 
@@ -59,6 +62,7 @@ public class OfferFinderDefaultImpl implements OfferFinder {
     public Page<Offer> getAllEstateAgentOffers(Long estateAgentId, String status, Pageable pageable){
         List<Negotiation> allEstateAgentNegotiations = negotiationFinder.getAllEstateAgentNegotiations(estateAgentId);
         List<Offer> allNegotiationOffers = extractAllNegotiationsOffers(allEstateAgentNegotiations, status);
+        allNegotiationOffers.sort(Comparator.comparing(Offer::getCreatedDate).reversed());
         return PageUtils.toPage(allNegotiationOffers, pageable);
     }
 
