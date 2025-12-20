@@ -9,7 +9,7 @@
       </h1>
       <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
         Gestisci richieste di visita, annunci pubblicati e offerte ricevute in
-        un unico posto.
+        un unico punto.
       </p>
     </div>
 
@@ -42,6 +42,17 @@
   <!-- VISITS -->
   @if (active() === "visits") {
     <section class="space-y-4">
+      <header class="flex items-end justify-between gap-3">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+            Visite
+          </h1>
+          <p class="text-sm text-slate-600 dark:text-slate-400">
+            Visite proposte dagli utenti sugli annunci pubblicati.
+          </p>
+        </div>
+      </header>
+
       <!-- Filtro -->
       <div
         class="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 bg-white/70 px-3 py-3 dark:border-slate-700 dark:bg-slate-900/70"
@@ -66,18 +77,6 @@
           </select>
         </div>
       </div>
-
-      <!-- Lista -->
-      <header class="flex items-end justify-between gap-3">
-        <div>
-          <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
-            Visite
-          </h1>
-          <p class="text-sm text-slate-600 dark:text-slate-400">
-            Visite proposte dagli utenti sugli annunci pubblicati.
-          </p>
-        </div>
-      </header>
 
       <app-agent-visits-list></app-agent-visits-list>
       <app-visits-paginator></app-visits-paginator>
@@ -109,7 +108,17 @@
   <!-- OFFERS -->
   @if (active() === "offers") {
     <section class="space-y-4">
-      <!-- Filtro -->
+      <header class="flex items-end justify-between gap-3">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+            Offers
+          </h1>
+          <p class="text-sm text-slate-600 dark:text-slate-400">
+            Offerte proposte dagli utenti sugli annunci pubblicati.
+          </p>
+        </div>
+      </header>
+
       <div
         class="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 bg-white/70 px-3 py-3 dark:border-slate-700 dark:bg-slate-900/70"
       >
@@ -134,17 +143,6 @@
           </select>
         </div>
       </div>
-
-      <header class="flex items-end justify-between gap-3">
-        <div>
-          <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
-            Offers
-          </h1>
-          <p class="text-sm text-slate-600 dark:text-slate-400">
-            Offerte proposte dagli utenti sugli annunci pubblicati.
-          </p>
-        </div>
-      </header>
 
       <app-agent-offers-list></app-agent-offers-list>
       <app-offers-paginator></app-offers-paginator>
