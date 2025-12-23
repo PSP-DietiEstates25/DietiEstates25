@@ -3,6 +3,7 @@ package com.dietiestates.auth.config;
 import com.dietiestates.auth.federation.FederatedIdentityAuthenticationSuccessHandler;
 import com.dietiestates.auth.federation.UserRepositoryOAuth2UserHandler;
 import com.dietiestates.auth.repository.JpaRegisteredClientRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -27,16 +28,10 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Value("${loginUrl}")
-    private String loginUrl;
-
-    @Value("${registerUrl}")
-    private String registerUrl;
-
-    @Value("${loginProcessingUrl}")
-    private String loginProcessingUrl;
+    private final AuthorizationServerProperties properties;
 
     @Bean
     @Order(2)
@@ -52,17 +47,15 @@ public class SecurityConfig {
         http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/auth/register", "/auth/csrf")
+                        .ignoringRequestMatchers(properties.registerUrl(), properties.csrfUrl())
                         .csrfTokenRepository(csrfRepository)
                         .csrfTokenRequestHandler(csrfHandler)
                 )
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers(HttpMethod.POST, registerUrl).permitAll()
-                        .requestMatchers(loginProcessingUrl).permitAll()
+                        .requestMatchers(HttpMethod.POST, properties.registerUrl()).permitAll()
+                        .requestMatchers(properties.loginProcessingUrl()).permitAll()
                         .requestMatchers("/auth/**", "/.well-known/**").permitAll()
-                        //federazione Google
                         .requestMatchers("/oauth2/authorization/**", "/login/oauth2/**").permitAll()
-                        //swagger
                         .requestMatchers(
                                 "/v2/api-docs","/v3/api-docs","/v3/api-docs/**",
                                 "/swagger-resources","/swagger-resources/**",
@@ -72,20 +65,20 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage(loginUrl)
-                        .loginProcessingUrl(loginProcessingUrl)
+                        .loginPage(properties.loginUrl())
+                        .loginProcessingUrl(properties.loginProcessingUrl())
                         .usernameParameter("username")
                         .passwordParameter("password")
                         .permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage(loginUrl)
+                        .loginPage(properties.loginUrl())
                         .successHandler(userRepositoryOAuth2UserHandler)
                 )
                 .oauth2Client(Customizer.withDefaults())
                 .exceptionHandling(ex -> ex
                         .defaultAuthenticationEntryPointFor(
-                                new LoginUrlAuthenticationEntryPoint(loginUrl),
+                                new LoginUrlAuthenticationEntryPoint(properties.loginUrl()),
                                 new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
                         )
                         .defaultAuthenticationEntryPointFor(

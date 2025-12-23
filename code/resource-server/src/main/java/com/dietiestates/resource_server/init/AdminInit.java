@@ -1,5 +1,6 @@
 package com.dietiestates.resource_server.init;
 
+import com.dietiestates.resource_server.config.ResourceServerProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
@@ -14,17 +15,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AdminInit {
 
-    @Value("${defaultAdminEmail}")
-    private String defaultAdminEmail;
-
+    private final ResourceServerProperties properties;
     private final AdminRepository adminRepository;
 
     @PostConstruct
     public void init() {
-        if(adminRepository.findByEmail(defaultAdminEmail).isEmpty()) {
+        if(adminRepository.findByEmail(properties.superAdminEmail()).isEmpty()) {
 
             var admin = new Admin();
-            admin.setEmail(defaultAdminEmail);
+            admin.setEmail(properties.superAdminEmail());
             admin.setAdmin(admin);
 
             adminRepository.save(admin);

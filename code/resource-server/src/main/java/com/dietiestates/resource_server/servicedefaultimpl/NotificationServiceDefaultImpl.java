@@ -16,7 +16,6 @@ import com.dietiestates.resource_server.service.NegotiationService;
 import com.dietiestates.resource_server.service.NotificationService;
 import com.dietiestates.resource_server.spec.NegotiationSpec;
 import com.dietiestates.resource_server.spec.NotificationSpec;
-import com.dietiestates.resource_server.verifier.NotificationVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +32,6 @@ public class NotificationServiceDefaultImpl implements NotificationService {
 	private final NotificationRepository notificationRepository;
 	private final NotificationFactory notificationFactory;
 	private final NotificationFinder notificationFinder;
-	private final NotificationVerifier notificationVerifier;
 	private final NotificationMapper notificationMapper;
 
     private final NegotiationFinder negotiationFinder;

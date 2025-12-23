@@ -1,9 +1,6 @@
 package com.dietiestates.resource_server.repository;
 
-import com.dietiestates.resource_server.model.EstateAgent;
 import com.dietiestates.resource_server.model.Negotiation;
-import com.dietiestates.resource_server.model.RealEstate;
-import com.dietiestates.resource_server.model.User;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

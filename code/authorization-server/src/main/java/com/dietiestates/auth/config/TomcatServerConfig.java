@@ -1,5 +1,6 @@
 package com.dietiestates.auth.config;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.catalina.connector.Connector;
 
 import org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory;
@@ -10,7 +11,10 @@ import org.springframework.context.annotation.Profile;
 
 @Profile("!test")
 @Configuration(proxyBeanMethods = false)
+@RequiredArgsConstructor
 public class TomcatServerConfig {
+
+    private final AuthorizationServerProperties properties;
 
     @Bean
     public WebServerFactoryCustomizer<TomcatServletWebServerFactory> connectorCustomizer() {
@@ -20,10 +24,9 @@ public class TomcatServerConfig {
     private Connector createHttpConnector() {
         Connector connector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
         connector.setScheme("http");
-        connector.setPort(9000);
+        connector.setPort(properties.authorizationServerBaseHttpPort());
         connector.setSecure(false);
-        connector.setRedirectPort(9443);
+        connector.setRedirectPort(properties.authorizationServerBaseHttpsPort());
         return connector;
     }
-
 }

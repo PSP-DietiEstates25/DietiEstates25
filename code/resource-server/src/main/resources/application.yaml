@@ -1,16 +1,40 @@
+server:
+  port: ${SERVER_PORT:8090}
+
 spring:
-  profiles:
-    active: dev
+  application:
+    name: resource-server
   servlet:
     multipart:
-      max-file-size: 50MB
+      max-file-size: ${SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE:50MB}
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/dietiestates_resource_server}
+    username: ${SPRING_DATASOURCE_USERNAME:dietiestates}
+    password: ${SPRING_DATASOURCE_PASSWORD:dietiestates}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+    show-sql: ${SPRING_JPA_SHOW_SQL:false}
+    properties:
+      hibernate:
+        format_sql: ${SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL:true}
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${AUTHORIZATION_SERVER_ISSUER_URI:https://localhost:9443}
 
 springdoc:
   default-produces-media-type: application/json
 
-server:
-  port: 8090
-
 logging:
   level:
-    root: INFO
+    org.hibernate.SQL: ${LOGGING_LEVEL_HIBERNATE_SQL:INFO}
+    org.hibernate.type.descriptor.sql.BasicBinder: ${LOGGING_LEVEL_HIBERNATE_TYPE_DESCRIPTOR_SQL_BASIC_BINDER:OFF}
+
+app:
+  super-admin-email: ${SUPER_ADMIN_EMAIL:admin@admin.com}
+  images-folder-path: ${IMAGES_FOLDER_PATH:${user.home}/DietiEstates25/images/}

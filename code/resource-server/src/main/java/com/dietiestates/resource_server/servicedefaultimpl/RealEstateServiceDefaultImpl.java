@@ -9,7 +9,6 @@ import com.dietiestates.resource_server.finder.*;
 import com.dietiestates.resource_server.mapper.RealEstateMapper;
 import com.dietiestates.resource_server.model.Negotiation;
 import com.dietiestates.resource_server.model.RealEstate;
-import com.dietiestates.resource_server.model.Search;
 import com.dietiestates.resource_server.repository.NegotiationRepository;
 import com.dietiestates.resource_server.repository.RealEstateRepository;
 import com.dietiestates.resource_server.service.*;
@@ -34,7 +33,6 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
     private final RealEstateRepository realEstateRepository;
     private final RealEstateFactory realEstateFactory;
     private final RealEstateFinder realEstateFinder;
-    private final RealEstateFilter realEstateFilter;
     private final RealEstateMapper realEstateMapper;
 
     private final EstateAgentFinder estateAgentFinder;

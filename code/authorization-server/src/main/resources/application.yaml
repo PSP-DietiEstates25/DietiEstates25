@@ -1,35 +1,26 @@
 server:
-  port: 9443
+  port: ${SERVER_PORT:9443}
   ssl:
+    enabled: true
     bundle: authorization-server
     client-auth: want
+  forward-headers-strategy: framework
 
 spring:
   application:
     name: authorization-server
-  ssl:
-    bundle:
-      jks:
-        authorization-server:
-          key:
-            alias: as
-            password: changeit
-          keystore:
-            location: "/home/luca/certs/apps/as-keystore.p12"
-            type: PKCS12
-            password: changeit
   datasource:
-    url: jdbc:postgresql://localhost:5431/dietiestates_authorization_server
-    username: dietiestates
-    password: dietiestates
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5431/dietiestates_authorization_server}
+    username: ${SPRING_DATASOURCE_USERNAME:dietiestates}
+    password: ${SPRING_DATASOURCE_PASSWORD:dietiestates}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+    show-sql: ${SPRING_JPA_SHOW_SQL:false}
     properties:
       hibernate:
-        format_sql: true
+        format_sql: ${AUTHORIZATION_SERVER_JPA_FORMAT_SQL:true}
         jdbc:
           lob:
             non_contextual_creation: true
@@ -41,15 +32,15 @@ spring:
         registration:
           google-idp:
             provider: google
-            client-id: 817273458156-ljdvlbv3bl3ekjhm3m98fo40am16j5hf.apps.googleusercontent.com
-            client-secret: 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
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope: openid, https://www.googleapis.com/auth/userinfo.profile, https://www.googleapis.com/auth/userinfo.email
             client-name: Sign in with Google
           github-idp:
             provider: github
-            client-id: Ov23linKVInaiBsIezOM
-            client-secret: ef0669c73ab5433a3afff298bd6db896fac2ee01
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
             scope: user:email, read:user
             client-name: Sign in with GitHub
         provider:
@@ -61,23 +52,31 @@ spring:
 
 logging:
   level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    org.springframework.transaction: DEBUG
-    org.springframework.orm.jpa: DEBUG
-    org.springframework.security: DEBUG
+    root: ${LOGGING_LEVEL_ROOT:INFO}
+    org.hibernate.SQL: ${LOGGING_LEVEL_HIBERNATE_SQL:WARN}
+    org.hibernate.type.descriptor.sql.BasicBinder: ${LOGGING_LEVEL_HIBERNATE_TYPE_DESCRIPTOR_SQL_BASIC_BINDER:OFF}
+    org.springframework.transaction: ${LOGGING_LEVEL_SPRINGFRAMEWORK_TRANSACTION:INFO}
+    org.springframework.orm.jpa: ${LOGGING_LEVEL_SPRINGFRAMEWORK_ORM_JPA:INFO}
+    org.springframework.security: ${LOGGING_LEVEL_SPRINGFRAMEWORK_SECURITY:INFO}
 
-loginUrl: "/auth/login"
-registerUrl: "/auth/register"
-loginProcessingUrl: "/auth/login/process"
+authorizationServerBaseHttpPort: ${AUTHORIZATION_SERVER_BASE_HTTP_PORT:9000}
+authorizationServerBaseHttpsPort: ${AUTHORIZATION_SERVER_BASE_HTTPS_PORT:9443}
+authorizationServerBaseUri: ${AUTHORIZATION_SERVER_BASE_URI:https://localhost:9443}
 
-allowedOrigin: "http://localhost:4200"
+loginUrl: ${AUTHORIZATION_SERVER_LOGIN_URL:/auth/login}
+registerUrl: ${AUTHORIZATION_SERVER_REGISTER_URL:/auth/register}
+csrfUrl: ${AUTHORIZATION_SERVER_CSRF_URL:/auth/csrf}
+loginProcessingUrl: ${AUTHORIZATION_SERVER_LOGIN_PROCESSING_URL:/auth/login/process}
 
-clientId: "dietiestates"
-clientSecret: "secret"
-redirectUriOidc: "http://localhost:8080/login/oauth2/code/messaging-client-oidc"
-redirectUri: "http://localhost:8080/authorized"
-postLogoutRedirectUri: "http://localhost:4200/"
+allowedOrigin: ${AUTHORIZATION_SERVER_ALLOWED_ORIGIN:http://localhost:4200}
 
-superAdminEmail: "admin@admin.com"
-superAdminPassword: "adminpassword"
+#OIDC PER BFF SERVER
+clientId: ${BFF_SERVER_CLIENT_ID:dietiestates}
+clientSecret: ${BFF_SERVER_CLIENT_SECRET:secret}
+redirectUriOidc: ${BFF_SERVER_REDIRECT_URI_OIDC:http://localhost:8080/login/oauth2/code/messaging-client-oidc}
+redirectUri: ${BFF_SERVER_REDIRECT_URI:http://localhost:8080/authorized}
+postLogoutRedirectUri: ${FRONTEND_SERVER_POST_LOGOUT_REDIRECT_URI:http://localhost:4200/}
+
+#Credenziali amministrative globali
+superAdminEmail: ${SUPER_ADMIN_EMAIL:admin@admin.com}
+superAdminPassword: ${SUPER_ADMIN_PASSWORD:password}

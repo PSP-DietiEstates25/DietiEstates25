@@ -5,17 +5,13 @@ import com.dietiestates.resource_server.dto.response.StafferResponse;
 import com.dietiestates.resource_server.exception.notfound.AdminNotFoundException;
 import com.dietiestates.resource_server.service.AdminService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-
 import com.dietiestates.resource_server.dto.request.StafferRequest;
-
-import javax.management.relation.RoleNotFoundException;
 
 @RestController
 @RequestMapping("/admins")

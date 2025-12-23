@@ -26,6 +26,11 @@
             "assets": [
               "src/assets",
               {
+                "glob": "staticwebapp.config.json",
+                "input": "src",
+                "output": "/"
+              },
+              {
                 "glob": "**/*",
                 "input": "node_modules/leaflet/dist/images",
                 "output": "assets/leaflet/"
@@ -92,6 +97,11 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/assets",
+              {
+                "glob": "staticwebapp.config.json",
+                "input": "src",
+                "output": "/"
+              },
               {
                 "glob": "**/*",
                 "input": "node_modules/leaflet/dist/images",

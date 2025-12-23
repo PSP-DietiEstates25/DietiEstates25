@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CadastralDataMapperDefaualtImpl implements CadastralDataMapper {
+public class CadastralDataMapperDefaultImpl implements CadastralDataMapper {
 	@Override
 	public CadastralDataSpec toSpec(CadastralDataRequest request) {
 		return CadastralDataSpec.builder()

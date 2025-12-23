@@ -1,24 +1,25 @@
 package com.dietiestate.bff.controller;
 
+import com.dietiestate.bff.config.BackendForFrontendServerProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
+@RequiredArgsConstructor
 public class WebController {
 
-    @Value("${app.base-uri}")
-    private String appBaseUri;
+    private final BackendForFrontendServerProperties properties;
 
     @GetMapping("/")
     public String root() {
-        return "redirect:" + this.appBaseUri;
+        return "redirect:" + properties.baseUri();
     }
 
-    // '/authorized' is the registered 'redirect_uri' for authorization_code
     @GetMapping("/authorized")
     public String authorized() {
-        return "redirect:" + this.appBaseUri;
+        return "redirect:" + properties.baseUri();
     }
 
 }

@@ -19,6 +19,7 @@ import com.dietiestates.auth.repository.AuthorizationConsentRepository;
 
 @Component
 public class JpaOAuth2AuthorizationConsentService implements OAuth2AuthorizationConsentService {
+
     private final AuthorizationConsentRepository repository;
     private final RegisteredClientRepository registeredClientRepository;
 
@@ -53,29 +54,29 @@ public class JpaOAuth2AuthorizationConsentService implements OAuth2Authorization
 
     private OAuth2AuthorizationConsent toObject(AuthorizationConsent entity) {
         String registeredClientId = entity.getRegisteredClientId();
-        RegisteredClient rc = this.registeredClientRepository.findById(registeredClientId);
-        if (rc == null) {
+        RegisteredClient registeredClient = this.registeredClientRepository.findById(registeredClientId);
+        if (registeredClient == null) {
             throw new DataRetrievalFailureException("RegisteredClient id '" + registeredClientId + "' not found.");
         }
-        OAuth2AuthorizationConsent.Builder b = OAuth2AuthorizationConsent.withId(registeredClientId, entity.getPrincipalName());
+        OAuth2AuthorizationConsent.Builder builder = OAuth2AuthorizationConsent.withId(registeredClientId, entity.getPrincipalName());
         if (entity.getAuthorities() != null) {
-            for (String a : StringUtils.commaDelimitedListToSet(entity.getAuthorities())) {
-                b.authority(new SimpleGrantedAuthority(a));
+            for (String grantedAuthority : StringUtils.commaDelimitedListToSet(entity.getAuthorities())) {
+                builder.authority(new SimpleGrantedAuthority(grantedAuthority));
             }
         }
-        return b.build();
+        return builder.build();
     }
 
-    private AuthorizationConsent toEntity(OAuth2AuthorizationConsent c) {
-        AuthorizationConsent e = new AuthorizationConsent();
-        e.setRegisteredClientId(c.getRegisteredClientId());
-        e.setPrincipalName(c.getPrincipalName());
+    private AuthorizationConsent toEntity(OAuth2AuthorizationConsent oAuth2AuthorizationConsent) {
+        AuthorizationConsent authorizationConsent = new AuthorizationConsent();
+        authorizationConsent.setRegisteredClientId(oAuth2AuthorizationConsent.getRegisteredClientId());
+        authorizationConsent.setPrincipalName(oAuth2AuthorizationConsent.getPrincipalName());
         Set<String> authorities = new HashSet<>();
-        for (GrantedAuthority a : c.getAuthorities()) {
-            authorities.add(a.getAuthority());
+        for (GrantedAuthority grantedAuthority : oAuth2AuthorizationConsent.getAuthorities()) {
+            authorities.add(grantedAuthority.getAuthority());
         }
-        e.setAuthorities(StringUtils.collectionToCommaDelimitedString(authorities));
-        return e;
+        authorizationConsent.setAuthorities(StringUtils.collectionToCommaDelimitedString(authorities));
+        return authorizationConsent;
     }
 }
 

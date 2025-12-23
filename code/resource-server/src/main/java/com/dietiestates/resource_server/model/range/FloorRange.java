@@ -10,7 +10,6 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-//@EqualsAndHashCode
 @Embeddable
 public class FloorRange {
 	

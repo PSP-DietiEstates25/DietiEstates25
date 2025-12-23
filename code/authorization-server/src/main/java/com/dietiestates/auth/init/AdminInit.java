@@ -1,6 +1,6 @@
 package com.dietiestates.auth.init;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.dietiestates.auth.config.AuthorizationServerProperties;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -19,11 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AdminInit {
 
-    @Value("${superAdminEmail}")
-    private String superAdminEmail;
-
-    @Value("${superAdminPassword}")
-    private String superAdminPassword;
+    private final AuthorizationServerProperties properties;
 
     private final RoleRepository roleRepository;
     private final DefaultAccountRepository defaultAccountRepository;
@@ -31,11 +27,11 @@ public class AdminInit {
 
     @PostConstruct
     public void init() {
-        if(defaultAccountRepository.findByEmail(superAdminEmail).isEmpty()) {
+        if(defaultAccountRepository.findByEmail(properties.superAdminEmail()).isEmpty()) {
 
             var defaultAccount = DefaultAccount.builder()
-                    .email(superAdminEmail)
-                    .password(passwordEncoder.encode(superAdminPassword))
+                    .email(properties.superAdminEmail())
+                    .password(passwordEncoder.encode(properties.superAdminPassword()))
                     .role(roleRepository.findByName(RoleName.ADMIN).get())
                     .build();
             var securityAccountDecorator = SecurityAccount.builder()

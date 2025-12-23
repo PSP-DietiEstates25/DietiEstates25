@@ -4,7 +4,6 @@ import com.dietiestates.resource_server.exception.notfound.RealEstateNotFoundExc
 import com.dietiestates.resource_server.finder.RealEstateFinder;
 import com.dietiestates.resource_server.model.Admin;
 import com.dietiestates.resource_server.model.RealEstate;
-import com.dietiestates.resource_server.model.User;
 import com.dietiestates.resource_server.repository.RealEstateRepository;
 import com.dietiestates.resource_server.utils.PageUtils;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,6 @@ import java.util.List;
 public class RealEstateFinderDefaultImpl implements RealEstateFinder {
 
 	private final RealEstateRepository realEstateRepository;
-    private final PageUtils pageUtils;
 	
 	@Override
 	public RealEstate getRealEstateById(Long id) throws RealEstateNotFoundException {

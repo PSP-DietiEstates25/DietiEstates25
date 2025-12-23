@@ -9,14 +9,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-
 import com.dietiestates.resource_server.dto.request.RealEstateRequest;
 import com.dietiestates.resource_server.dto.response.RealEstateResponse;
 import com.dietiestates.resource_server.service.RealEstateService;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.List;
 

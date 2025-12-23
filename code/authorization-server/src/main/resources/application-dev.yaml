@@ -1,0 +1,21 @@
+server:
+  port: ${SERVER_PORT:9443}
+  ssl:
+    enabled: true
+    bundle: authorization-server
+    client-auth: want
+  forward-headers-strategy: framework
+
+spring:
+  ssl:
+    bundle:
+      jks:
+        authorization-server:
+          key:
+            alias: ${SPRING_SSL_BUNDLE_JKS_AUTHORIZATION_SERVER_KEY_ALIAS:as}
+            password: ${SPRING_SSL_BUNDLE_JKS_AUTHORIZATION_SERVER_KEY_PASSWORD:changeit}
+          keystore:
+            # mkcert/keystore locale
+            location: ${SPRING_SSL_BUNDLE_JKS_AUTHORIZATION_SERVER_KEYSTORE_LOCATION:file:${user.home}/certs/apps/as-keystore.p12}
+            type: ${SPRING_SSL_BUNDLE_JKS_AUTHORIZATION_SERVER_KEYSTORE_TYPE:PKCS12}
+            password: ${SPRING_SSL_BUNDLE_JKS_AUTHORIZATION_SERVER_KEYSTORE_PASSWORD:changeit}

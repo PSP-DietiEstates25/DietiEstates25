@@ -5,7 +5,6 @@ import com.dietiestates.resource_server.model.ImageData;
 import com.dietiestates.resource_server.utils.ImageUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 
 @Component

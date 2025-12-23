@@ -1,15 +1,11 @@
 package com.dietiestates.resource_server.controller;
 
-import com.dietiestates.resource_server.dto.response.DetailResponse;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import com.dietiestates.resource_server.dto.request.UtilityRequest;
 import com.dietiestates.resource_server.dto.response.UtilityResponse;
 import com.dietiestates.resource_server.service.UtilityService;
-
 import lombok.RequiredArgsConstructor;
 
 @RestController

@@ -3,11 +3,9 @@ package com.dietiestates.resource_server.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import com.dietiestates.resource_server.dto.request.CadastralDataRequest;
 import com.dietiestates.resource_server.dto.response.CadastralDataResponse;
 import com.dietiestates.resource_server.service.CadastralDataService;
-
 import lombok.RequiredArgsConstructor;
 
 @RestController

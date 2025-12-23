@@ -64,52 +64,53 @@ public class JpaRegisteredClientRepository implements RegisteredClientRepository
                 .clientSecret(client.getClientSecret())
                 .clientSecretExpiresAt(client.getClientSecretExpiresAt())
                 .clientName(client.getClientName())
-                .clientAuthenticationMethods(m ->
-                        clientAuthenticationMethods.forEach(am -> m.add(resolveClientAuthenticationMethod(am))))
-                .authorizationGrantTypes(g ->
-                        authorizationGrantTypes.forEach(gt -> g.add(resolveAuthorizationGrantType(gt))))
+                .clientAuthenticationMethods(clientAuthenticationMethodsConsumer ->
+                        clientAuthenticationMethods.forEach(authenticationMethod ->
+                                clientAuthenticationMethodsConsumer.add(resolveClientAuthenticationMethod(authenticationMethod))
+                        )
+                )
+                .authorizationGrantTypes(grantTypeConsumer ->
+                        authorizationGrantTypes.forEach(grantType ->
+                                grantTypeConsumer.add(resolveAuthorizationGrantType(grantType))
+                        )
+                )
                 .redirectUris(uris -> uris.addAll(redirectUris))
                 .postLogoutRedirectUris(uris -> uris.addAll(postLogoutRedirectUris))
-                .scopes(sc -> sc.addAll(clientScopes));
+                .scopes(scopes -> scopes.addAll(clientScopes));
 
-        // --- ClientSettings (normalizzati) ---
         Map<String, Object> clientSettingsMap = parseMap(client.getClientSettings());
         builder.clientSettings(buildClientSettings(clientSettingsMap));
 
-        // --- TokenSettings (normalizzati) ---
         Map<String, Object> tokenSettingsMap = parseMap(client.getTokenSettings());
         builder.tokenSettings(buildTokenSettings(tokenSettingsMap));
 
         return builder.build();
     }
 
-    private Client toEntity(RegisteredClient rc) {
-        List<String> authMethods = new ArrayList<>(rc.getClientAuthenticationMethods().size());
-        rc.getClientAuthenticationMethods().forEach(cam -> authMethods.add(cam.getValue()));
+    private Client toEntity(RegisteredClient registeredClient) {
+        List<String> authMethods = new ArrayList<>(registeredClient.getClientAuthenticationMethods().size());
+        registeredClient.getClientAuthenticationMethods().forEach(cam -> authMethods.add(cam.getValue()));
 
-        List<String> grantTypes = new ArrayList<>(rc.getAuthorizationGrantTypes().size());
-        rc.getAuthorizationGrantTypes().forEach(gt -> grantTypes.add(gt.getValue()));
+        List<String> grantTypes = new ArrayList<>(registeredClient.getAuthorizationGrantTypes().size());
+        registeredClient.getAuthorizationGrantTypes().forEach(gt -> grantTypes.add(gt.getValue()));
 
-        Client e = new Client();
-        e.setId(rc.getId());
-        e.setClientId(rc.getClientId());
-        e.setClientIdIssuedAt(rc.getClientIdIssuedAt());
-        e.setClientSecret(rc.getClientSecret());
-        e.setClientSecretExpiresAt(rc.getClientSecretExpiresAt());
-        e.setClientName(rc.getClientName());
-        e.setClientAuthenticationMethods(StringUtils.collectionToCommaDelimitedString(authMethods));
-        e.setAuthorizationGrantTypes(StringUtils.collectionToCommaDelimitedString(grantTypes));
-        e.setRedirectUris(StringUtils.collectionToCommaDelimitedString(rc.getRedirectUris()));
-        e.setPostLogoutRedirectUris(StringUtils.collectionToCommaDelimitedString(rc.getPostLogoutRedirectUris()));
-        e.setScopes(StringUtils.collectionToCommaDelimitedString(rc.getScopes()));
-        e.setClientSettings(writeMap(rc.getClientSettings().getSettings()));
-        e.setTokenSettings(writeMap(rc.getTokenSettings().getSettings()));
-        return e;
+        Client client = new Client();
+        client.setId(registeredClient.getId());
+        client.setClientId(registeredClient.getClientId());
+        client.setClientIdIssuedAt(registeredClient.getClientIdIssuedAt());
+        client.setClientSecret(registeredClient.getClientSecret());
+        client.setClientSecretExpiresAt(registeredClient.getClientSecretExpiresAt());
+        client.setClientName(registeredClient.getClientName());
+        client.setClientAuthenticationMethods(StringUtils.collectionToCommaDelimitedString(authMethods));
+        client.setAuthorizationGrantTypes(StringUtils.collectionToCommaDelimitedString(grantTypes));
+        client.setRedirectUris(StringUtils.collectionToCommaDelimitedString(registeredClient.getRedirectUris()));
+        client.setPostLogoutRedirectUris(StringUtils.collectionToCommaDelimitedString(registeredClient.getPostLogoutRedirectUris()));
+        client.setScopes(StringUtils.collectionToCommaDelimitedString(registeredClient.getScopes()));
+        client.setClientSettings(writeMap(registeredClient.getClientSettings().getSettings()));
+        client.setTokenSettings(writeMap(registeredClient.getTokenSettings().getSettings()));
+        return client;
     }
 
-    // ----------------------------
-    // (De)serializzazione robusta
-    // ----------------------------
     private Map<String, Object> parseMap(String data) {
         try {
             if (!StringUtils.hasText(data)) return Map.of();
@@ -127,12 +128,8 @@ public class JpaRegisteredClientRepository implements RegisteredClientRepository
         }
     }
 
-    // ----------------------------
-    // Normalizzazione settings
-    // ----------------------------
     private ClientSettings buildClientSettings(Map<String, Object> raw) {
         Map<String, Object> fixed = new HashMap<>(raw);
-        // Booleane note (varie notazioni usate in dump/legacy)
         fixBoolean(fixed, "require-authorization-consent");
         fixBoolean(fixed, "requireAuthorizationConsent");
         fixBoolean(fixed, "require-proof-key");
@@ -142,8 +139,6 @@ public class JpaRegisteredClientRepository implements RegisteredClientRepository
 
     private TokenSettings buildTokenSettings(Map<String, Object> raw) {
         Map<String, Object> fixed = new HashMap<>(raw);
-
-        // Durations (accetta kebab-case e snake_case)
         fixDuration(fixed, "authorization_code.time-to-live");
         fixDuration(fixed, "authorization_code_time_to_live");
 
@@ -156,44 +151,38 @@ public class JpaRegisteredClientRepository implements RegisteredClientRepository
         fixDuration(fixed, "device_code.time-to-live");
         fixDuration(fixed, "device_code_time_to_live");
 
-        // Booleane
         fixBoolean(fixed, "reuse_refresh_tokens");
         fixBoolean(fixed, "reuse-refresh-tokens");
 
         return TokenSettings.withSettings(fixed).build();
     }
 
-    private void fixDuration(Map<String, Object> m, String key) {
-        Object v = m.get(key);
-        if (v == null || v instanceof Duration) return;
-        if (v instanceof Number num) {
-            m.put(key, Duration.ofMillis(num.longValue()));
+    private void fixDuration(Map<String, Object> map, String key) {
+        Object value = map.get(key);
+        if (value == null || value instanceof Duration) return;
+        if (value instanceof Number num) {
+            map.put(key, Duration.ofMillis(num.longValue()));
             return;
         }
-        if (v instanceof CharSequence cs) {
-            String s = cs.toString().trim();
-            // ISO-8601 (PT5M, P30D, …)
-            try { m.put(key, Duration.parse(s)); return; } catch (Exception ignored) {}
-            // fallback: secondi interi
-            try { m.put(key, Duration.ofSeconds(Long.parseLong(s))); } catch (Exception ignored) {}
+        if (value instanceof CharSequence charSequence) {
+            String string = charSequence.toString().trim();
+            try { map.put(key, Duration.parse(string)); return; } catch (Exception ignored) {}
+            try { map.put(key, Duration.ofSeconds(Long.parseLong(string))); } catch (Exception ignored) {}
         }
     }
 
-    private void fixBoolean(Map<String, Object> m, String key) {
-        Object v = m.get(key);
-        if (v == null || v instanceof Boolean) return;
-        if (v instanceof Number num) {
-            m.put(key, num.intValue() != 0);
+    private void fixBoolean(Map<String, Object> map, String key) {
+        Object value = map.get(key);
+        if (value == null || value instanceof Boolean) return;
+        if (value instanceof Number num) {
+            map.put(key, num.intValue() != 0);
             return;
         }
-        if (v instanceof CharSequence cs) {
-            m.put(key, Boolean.parseBoolean(cs.toString().trim()));
+        if (value instanceof CharSequence charSequence) {
+            map.put(key, Boolean.parseBoolean(charSequence.toString().trim()));
         }
     }
 
-    // ----------------------------
-    // Risoluzione costanti
-    // ----------------------------
     private static AuthorizationGrantType resolveAuthorizationGrantType(String v) {
         if (AuthorizationGrantType.AUTHORIZATION_CODE.getValue().equals(v)) return AuthorizationGrantType.AUTHORIZATION_CODE;
         if (AuthorizationGrantType.CLIENT_CREDENTIALS.getValue().equals(v)) return AuthorizationGrantType.CLIENT_CREDENTIALS;

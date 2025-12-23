@@ -6,15 +6,13 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import com.dietiestates.auth.federation.FederatedIdentityIdTokenCustomizer;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -40,10 +38,10 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
 @Configuration
+@RequiredArgsConstructor
 public class AuthorizationServerConfig {
 
-    @Value("${loginUrl}")
-    private String loginUrl;
+    private final AuthorizationServerProperties properties;
 
     @Bean
     @Order(1)
@@ -67,7 +65,7 @@ public class AuthorizationServerConfig {
                 )
                 .exceptionHandling((exceptions) -> exceptions
                         .defaultAuthenticationEntryPointFor(
-                                new LoginUrlAuthenticationEntryPoint(loginUrl),
+                                new LoginUrlAuthenticationEntryPoint(properties.loginUrl()),
                                 new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
                         )
                 );
@@ -92,7 +90,7 @@ public class AuthorizationServerConfig {
 
             return new OidcUserInfo(toExpose);
         };
-    };
+    }
 
     @Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtTokenCustomizer() {
@@ -145,7 +143,7 @@ public class AuthorizationServerConfig {
     @Bean
     public AuthorizationServerSettings authorizationServerSettings() {
         return AuthorizationServerSettings.builder()
-                .issuer("https://localhost:9443")
+                .issuer(properties.authorizationServerBaseUri())
                 .build();
     }
 }

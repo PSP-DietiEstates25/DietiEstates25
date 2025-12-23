@@ -1,7 +1,6 @@
 package com.dietiestates.resource_server.factorydefaultimpl;
 
 import org.springframework.stereotype.Component;
-
 import com.dietiestates.resource_server.factory.DetailFactory;
 import com.dietiestates.resource_server.model.Detail;
 import com.dietiestates.resource_server.model.GeographicalPosition;

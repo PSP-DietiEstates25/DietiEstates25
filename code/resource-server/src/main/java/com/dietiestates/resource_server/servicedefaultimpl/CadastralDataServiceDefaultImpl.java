@@ -5,7 +5,6 @@ import com.dietiestates.resource_server.dto.response.CadastralDataResponse;
 import com.dietiestates.resource_server.enums.EnergyClass;
 import com.dietiestates.resource_server.factory.CadastralDataFactory;
 import com.dietiestates.resource_server.finder.CadastralDataFinder;
-import com.dietiestates.resource_server.finder.RealEstateFinder;
 import com.dietiestates.resource_server.mapper.CadastralDataMapper;
 import com.dietiestates.resource_server.repository.CadastralDataRepository;
 import com.dietiestates.resource_server.service.CadastralDataService;
@@ -19,7 +18,6 @@ public class CadastralDataServiceDefaultImpl implements CadastralDataService {
 	private final CadastralDataRepository cadastralDataRepository;
 	private final CadastralDataFactory cadastralDataFactory;
 	private final CadastralDataFinder cadastralDataFinder;
-	//private final CadastralDataVerifier cadastralDataVerifier;
 	private final CadastralDataMapper cadastralDataMapper;
 	
 	@Override

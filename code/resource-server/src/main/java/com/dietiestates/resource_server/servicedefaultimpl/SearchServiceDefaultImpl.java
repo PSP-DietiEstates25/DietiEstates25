@@ -4,15 +4,12 @@ import com.dietiestates.resource_server.dto.request.SearchRequest;
 import com.dietiestates.resource_server.dto.response.RealEstateResponse;
 import com.dietiestates.resource_server.dto.response.SearchResponse;
 import com.dietiestates.resource_server.factory.SearchFactory;
-import com.dietiestates.resource_server.filter.SearchFilter;
 import com.dietiestates.resource_server.finder.CadastralFilterFinder;
 import com.dietiestates.resource_server.finder.DetailFinder;
 import com.dietiestates.resource_server.finder.SearchFinder;
 import com.dietiestates.resource_server.finder.UserFinder;
 import com.dietiestates.resource_server.mapper.RealEstateMapper;
 import com.dietiestates.resource_server.mapper.SearchMapper;
-import com.dietiestates.resource_server.model.RealEstate;
-import com.dietiestates.resource_server.model.Search;
 import com.dietiestates.resource_server.repository.SearchRepository;
 import com.dietiestates.resource_server.service.*;
 import com.dietiestates.resource_server.verifier.SearchVerifier;
@@ -28,9 +25,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class SearchServiceDefaultImpl implements SearchService {
-
-    private final RealEstateService realEstateService;
-	private final CadastralFilterService cadastralFilterService;
 	
 	private final SearchRepository searchRepository;
 	private final SearchFactory searchFactory;

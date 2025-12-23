@@ -10,11 +10,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import com.dietiestates.resource_server.dto.request.OfferRequest;
 import com.dietiestates.resource_server.dto.response.OfferResponse;
 import com.dietiestates.resource_server.service.OfferService;
-
 import lombok.RequiredArgsConstructor;
 
 @RestController

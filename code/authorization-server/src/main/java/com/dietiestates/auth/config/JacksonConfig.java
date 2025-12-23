@@ -34,25 +34,23 @@ import org.springframework.security.web.jackson2.WebServletJackson2Module;
 
 /**
  * Jackson configuration:
- * - mantiene i tuoi mixin e (de)serializer per DefaultAccount/SecurityAccount/Role
- * - registra tutti i moduli Spring Security necessari (incluso oauth2-client)
- * - espone un ObjectMapper @Primary con tutti i moduli registrati
+ * mantiene mixins per defaultAccount, securityAccount, role
+ * registra tutti i moduli di spring security
+ * espone un objectMapper @Primary con tutti i moduli registrati
  */
 @Configuration
 public class JacksonConfig {
 
-    // ====== MIXIN & (DE)SERIALIZER PERSONALIZZATI ======
-
     @Bean
     public Module securityMixinsModule() {
-        SimpleModule m = new SimpleModule();
-        m.setMixInAnnotation(com.dietiestates.auth.model.SecurityAccount.class, SecurityAccountDecoratorMixin.class);
-        m.setMixInAnnotation(com.dietiestates.auth.model.DefaultAccount.class, DefaultAccountMixin.class);
-        m.setMixInAnnotation(com.dietiestates.auth.model.Role.class, RoleMixin.class);
-        m.addDeserializer(SimpleGrantedAuthority.class, new SimpleGrantedAuthorityDeserializer());
-        m.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer());
-        m.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer());
-        return m;
+        SimpleModule simpleModule = new SimpleModule();
+        simpleModule.setMixInAnnotation(com.dietiestates.auth.model.SecurityAccount.class, SecurityAccountDecoratorMixin.class);
+        simpleModule.setMixInAnnotation(com.dietiestates.auth.model.DefaultAccount.class, DefaultAccountMixin.class);
+        simpleModule.setMixInAnnotation(com.dietiestates.auth.model.Role.class, RoleMixin.class);
+        simpleModule.addDeserializer(SimpleGrantedAuthority.class, new SimpleGrantedAuthorityDeserializer());
+        simpleModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer());
+        simpleModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer());
+        return simpleModule;
     }
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
@@ -106,28 +104,26 @@ public class JacksonConfig {
 
     public static class SimpleGrantedAuthorityDeserializer extends JsonDeserializer<SimpleGrantedAuthority> {
         @Override
-        public SimpleGrantedAuthority deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-            JsonNode node = p.getCodec().readTree(p);
+        public SimpleGrantedAuthority deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+            JsonNode node = jsonParser.getCodec().readTree(jsonParser);
             String authority = node.get("authority").asText();
             return new SimpleGrantedAuthority(authority);
         }
     }
 
     public static class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime> {
-        private static final DateTimeFormatter F = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-        @Override public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            gen.writeString(value.format(F));
+        private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        @Override public void serialize(LocalDateTime value, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+            jsonGenerator.writeString(value.format(dateTimeFormatter));
         }
     }
 
     public static class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
-        private static final DateTimeFormatter F = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-        @Override public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-            return LocalDateTime.parse(p.getValueAsString(), F);
+        private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        @Override public LocalDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+            return LocalDateTime.parse(jsonParser.getValueAsString(), dateTimeFormatter);
         }
     }
-
-    // ====== MODULI SPRING SECURITY / OAUTH2 / WEB / CLIENT ======
 
     @Bean
     public Module springSecurityCoreModule() {
@@ -149,7 +145,6 @@ public class JacksonConfig {
         return new JavaTimeModule();
     }
 
-    /** Modulo chiave per la allowlist di OAuth2AuthenticationToken (login Google) */
     @Bean
     public Module oauth2ClientJackson2Module() {
         return new org.springframework.security.oauth2.client.jackson2.OAuth2ClientJackson2Module();
@@ -157,22 +152,18 @@ public class JacksonConfig {
 
     /**
      * ObjectMapper primario con TUTTI i moduli registrati.
-     * - registra i @Bean Module dichiarati in questo config
-     * - aggiunge anche il “bundle” SecurityJackson2Modules
      */
     @Bean
     @Primary
     public ObjectMapper objectMapper(List<Module> declaredModules) {
         ObjectMapper mapper = new ObjectMapper();
 
-        // 1) Moduli dichiarati come @Bean (mixin, JavaTime, Core, AuthServer, Web, Client, ecc.)
-        for (Module m : declaredModules) {
-            mapper.registerModule(m);
+        for (Module module : declaredModules) {
+            mapper.registerModule(module);
         }
 
-        // 2) Bundle Spring Security (copre altre classi allowlisted)
-        for (Module m : SecurityJackson2Modules.getModules(getClass().getClassLoader())) {
-            mapper.registerModule(m);
+        for (Module module : SecurityJackson2Modules.getModules(getClass().getClassLoader())) {
+            mapper.registerModule(module);
         }
 
         return mapper;

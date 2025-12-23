@@ -3,18 +3,15 @@ package com.dietiestates.resource_server.controller;
 import java.util.List;
 
 import com.dietiestates.resource_server.dto.response.SearchResponse;
-import com.dietiestates.resource_server.model.Search;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-
 import com.dietiestates.resource_server.dto.request.SearchRequest;
 import com.dietiestates.resource_server.dto.response.RealEstateResponse;
 import com.dietiestates.resource_server.service.SearchService;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 

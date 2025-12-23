@@ -5,8 +5,6 @@ import com.dietiestates.resource_server.model.EstateAgent;
 import com.dietiestates.resource_server.model.Negotiation;
 import com.dietiestates.resource_server.model.RealEstate;
 import com.dietiestates.resource_server.model.User;
-import com.dietiestates.resource_server.spec.NegotiationSpec;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component

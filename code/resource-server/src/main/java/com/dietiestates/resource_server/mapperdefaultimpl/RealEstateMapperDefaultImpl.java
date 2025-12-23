@@ -1,10 +1,8 @@
 package com.dietiestates.resource_server.mapperdefaultimpl;
 
 import com.dietiestates.resource_server.dto.request.RealEstateRequest;
-import com.dietiestates.resource_server.dto.response.OfferResponse;
 import com.dietiestates.resource_server.dto.response.RealEstateResponse;
 import com.dietiestates.resource_server.mapper.RealEstateMapper;
-import com.dietiestates.resource_server.model.Offer;
 import com.dietiestates.resource_server.model.RealEstate;
 import com.dietiestates.resource_server.spec.RealEstateSpec;
 import lombok.RequiredArgsConstructor;

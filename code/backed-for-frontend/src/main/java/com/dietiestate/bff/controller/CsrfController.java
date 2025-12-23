@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CsrfController {
     @GetMapping("/csrf-token")
     public ResponseEntity<Void> csrf(CsrfToken token) {
-        // solo accedendo al CsrfToken lo forzi a essere generato & serializzato nel cookie
+        // accedendo, si forza la generazione e la serializzazione nel cookie
         return ResponseEntity.noContent().build();
     }
 }

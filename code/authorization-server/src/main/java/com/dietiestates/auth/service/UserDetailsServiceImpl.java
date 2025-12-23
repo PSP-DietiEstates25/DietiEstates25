@@ -1,7 +1,6 @@
 package com.dietiestates.auth.service;
 
 import com.dietiestates.auth.finder.DefaultAccountFinder;
-import com.dietiestates.auth.repository.DefaultAccountRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

@@ -5,7 +5,6 @@ import com.dietiestates.resource_server.exception.notfound.VisitNotFoundExceptio
 import com.dietiestates.resource_server.finder.NegotiationFinder;
 import com.dietiestates.resource_server.finder.VisitFinder;
 import com.dietiestates.resource_server.model.Negotiation;
-import com.dietiestates.resource_server.model.Offer;
 import com.dietiestates.resource_server.model.Visit;
 import com.dietiestates.resource_server.repository.VisitRepository;
 import com.dietiestates.resource_server.utils.PageUtils;

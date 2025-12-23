@@ -3,7 +3,7 @@ package com.dietiestate.bff.config;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -29,13 +29,14 @@ import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Value("${app.base-uri}")
-    private String appBaseUri;
+    private final BackendForFrontendServerProperties properties;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -56,21 +57,21 @@ public class SecurityConfig {
                         .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
                 )
                 .cors(cors -> cors.configurationSource(request -> {
-                    var c = new org.springframework.web.cors.CorsConfiguration();
-                    c.setAllowedOrigins(List.of("http://localhost:4200"));
-                    c.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
-                    c.setAllowedHeaders(List.of("Authorization","Content-Type","X-Requested-With","X-XSRF-TOKEN"));
-                    c.setExposedHeaders(List.of("Set-Cookie"));
-                    c.setAllowCredentials(true);
-                    return c;
+                    var corsConfiguration = new CorsConfiguration();
+                    corsConfiguration.setAllowedOrigins(List.of(properties.allowedOrigin()));
+                    corsConfiguration.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
+                    corsConfiguration.setAllowedHeaders(List.of("Authorization","Content-Type","X-Requested-With","X-XSRF-TOKEN"));
+                    corsConfiguration.setExposedHeaders(List.of("Set-Cookie"));
+                    corsConfiguration.setAllowCredentials(true);
+                    return corsConfiguration;
                 }))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST,
-                                "/auth/register",
+                                properties.registerUrl(),
                                 "/users",
                                 "/users/**"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/", "/error", "/actuator/health", "/csrf-token").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/", "/error", "/actuator/health", properties.csrfTokenUrl()).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
                                 "/swagger-ui/**",
@@ -83,9 +84,9 @@ public class SecurityConfig {
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint()))
                 .oauth2Login(oauth2 -> oauth2
-                        .successHandler(new SimpleUrlAuthenticationSuccessHandler(this.appBaseUri + "/auth/callback")))
+                        .successHandler(new SimpleUrlAuthenticationSuccessHandler(properties.baseUri() + properties.callbackUrl())))
                 .logout(logout -> logout
-                        .logoutUrl("/logout")
+                        .logoutUrl(properties.logoutUrl())
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
                         .deleteCookies("BFFSESSION", "XSRF-TOKEN", "JSESSIONID")
@@ -96,7 +97,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // Persistenza dei client autorizzati in HttpSession (che è su DB via Spring Session JDBC)
     @Bean
     OAuth2AuthorizedClientRepository authorizedClientRepository() {
         return new HttpSessionOAuth2AuthorizedClientRepository();
@@ -105,11 +105,10 @@ public class SecurityConfig {
     @Bean
     LogoutSuccessHandler oidcLogout(ClientRegistrationRepository clients) {
         var handler = new OidcClientInitiatedLogoutSuccessHandler(clients);
-        handler.setPostLogoutRedirectUri(appBaseUri);
+        handler.setPostLogoutRedirectUri(properties.baseUri());
         return handler;
     }
 
-    //registrazione funzioni presenti nel gateway filter
     @Bean
     public GatewayFilterFunctions.FilterSupplier relayTokenIfExistsSupplier() {
         return new GatewayFilterFunctions.FilterSupplier();

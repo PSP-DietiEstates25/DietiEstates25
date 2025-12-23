@@ -1,14 +1,11 @@
 package com.dietiestates.resource_server.controller;
 
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import com.dietiestates.resource_server.dto.request.CadastralFilterRequest;
 import com.dietiestates.resource_server.dto.response.CadastralFilterResponse;
 import com.dietiestates.resource_server.service.CadastralFilterService;
-
 import lombok.RequiredArgsConstructor;
 
 @RestController

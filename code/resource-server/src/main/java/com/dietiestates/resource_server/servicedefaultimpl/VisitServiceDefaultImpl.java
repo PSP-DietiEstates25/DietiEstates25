@@ -10,7 +10,6 @@ import com.dietiestates.resource_server.exception.notowned.VisitNotOwnedByRealEs
 import com.dietiestates.resource_server.factory.VisitFactory;
 import com.dietiestates.resource_server.finder.*;
 import com.dietiestates.resource_server.mapper.VisitMapper;
-import com.dietiestates.resource_server.model.Offer;
 import com.dietiestates.resource_server.model.Visit;
 import com.dietiestates.resource_server.repository.VisitRepository;
 import com.dietiestates.resource_server.service.NegotiationService;

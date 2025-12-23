@@ -1,7 +1,6 @@
 package com.dietiestates.resource_server.finder;
 
 import java.util.List;
-
 import com.dietiestates.resource_server.exception.notfound.UserNotFoundException;
 import com.dietiestates.resource_server.model.User;
 

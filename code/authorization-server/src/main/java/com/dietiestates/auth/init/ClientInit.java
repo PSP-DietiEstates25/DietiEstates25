@@ -2,6 +2,8 @@ package com.dietiestates.auth.init;
 
 import java.util.UUID;
 
+import com.dietiestates.auth.config.AuthorizationServerProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -17,36 +19,24 @@ import org.springframework.security.oauth2.server.authorization.settings.ClientS
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 
 @Configuration
+@RequiredArgsConstructor
 public class ClientInit {
 
-    @Value("${clientId}")
-    private String clientId;
-
-    @Value("${clientSecret}")
-    private String clientSecret;
-
-    @Value("${redirectUriOidc}")
-    private String redirectUriOidc;
-
-    @Value("${redirectUri}")
-    private String redirectUri;
-
-    @Value("${postLogoutRedirectUri}")
-    private String postLogoutRedirectUri;
+    private final AuthorizationServerProperties properties;
 
     @Bean
     CommandLineRunner clientInitializer(RegisteredClientRepository clients, PasswordEncoder passwordEncoder) {
 
         return args -> {
-            if (clients.findByClientId(clientId) == null) {
+            if (clients.findByClientId(properties.clientId()) == null) {
                 RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                        .clientId(clientId)
-                        .clientSecret(passwordEncoder.encode(clientSecret))
+                        .clientId(properties.clientId())
+                        .clientSecret(passwordEncoder.encode(properties.clientSecret()))
                         .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                         .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                         .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                        .redirectUri("http://localhost:8080/login/oauth2/code/messaging-client-oidc")
-                        .redirectUri("http://localhost:8080/authorized")
+                        .redirectUri(properties.redirectUriOidc())
+                        .redirectUri(properties.redirectUri())
                         .scope(OidcScopes.OPENID)
                         .scope(OidcScopes.PROFILE)
                         .clientSettings(ClientSettings.builder()

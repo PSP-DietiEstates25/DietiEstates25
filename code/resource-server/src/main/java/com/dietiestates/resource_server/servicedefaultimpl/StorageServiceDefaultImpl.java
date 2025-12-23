@@ -1,5 +1,6 @@
 package com.dietiestates.resource_server.servicedefaultimpl;
 
+import com.dietiestates.resource_server.config.ResourceServerProperties;
 import com.dietiestates.resource_server.factory.FileDataFactory;
 import com.dietiestates.resource_server.factory.ImageDataFactory;
 import com.dietiestates.resource_server.finder.FileDataFinder;
@@ -11,7 +12,6 @@ import com.dietiestates.resource_server.service.StorageService;
 import com.dietiestates.resource_server.utils.ImageUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,8 +28,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class StorageServiceDefaultImpl implements StorageService {
 
-    @Value("${imagesFolderPath}")
-    private String imagesFolderPath;
+    private final ResourceServerProperties properties;
 
     private final ImageDataFinder imageDataFinder;
     private final FileDataFinder fileDataFinder;
@@ -40,7 +39,7 @@ public class StorageServiceDefaultImpl implements StorageService {
 
     @PostConstruct
     public void init() throws IOException {
-        Path folder = Paths.get(imagesFolderPath);
+        Path folder = Paths.get(properties.imagesFolderPath());
         Files.createDirectories(folder);
     }
 
@@ -70,7 +69,7 @@ public class StorageServiceDefaultImpl implements StorageService {
 
         String storedFileName = UUID.randomUUID() + ext;
 
-        Path folder = Paths.get(imagesFolderPath);
+        Path folder = Paths.get(properties.imagesFolderPath());
         Files.createDirectories(folder);
 
         Path filePath = folder.resolve(storedFileName);
@@ -93,7 +92,7 @@ public class StorageServiceDefaultImpl implements StorageService {
     @Override
     public void deleteImageFromFileSystem(String imageUrl) throws IOException {
         String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
-        Path folder = Paths.get(imagesFolderPath);
+        Path folder = Paths.get(properties.imagesFolderPath());
         Path filePath = folder.resolve(fileName);
         String absolutePathStr = filePath.toString();
 

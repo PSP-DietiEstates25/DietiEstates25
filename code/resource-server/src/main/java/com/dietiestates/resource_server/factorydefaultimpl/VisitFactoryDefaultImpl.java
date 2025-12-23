@@ -2,13 +2,9 @@ package com.dietiestates.resource_server.factorydefaultimpl;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-
 import com.dietiestates.resource_server.model.Negotiation;
 import org.springframework.stereotype.Component;
-
 import com.dietiestates.resource_server.factory.VisitFactory;
-import com.dietiestates.resource_server.model.RealEstate;
-import com.dietiestates.resource_server.model.User;
 import com.dietiestates.resource_server.model.Visit;
 import com.dietiestates.resource_server.spec.VisitSpec;
 

@@ -2,13 +2,11 @@ package com.dietiestates.resource_server.finderdefaultimpl;
 
 import com.dietiestates.resource_server.enums.ProposalStatus;
 import com.dietiestates.resource_server.exception.notfound.OfferNotFoundException;
-import com.dietiestates.resource_server.exception.notfound.ProposalStatusNotFoundException;
 import com.dietiestates.resource_server.finder.EstateAgentFinder;
 import com.dietiestates.resource_server.finder.NegotiationFinder;
 import com.dietiestates.resource_server.finder.OfferFinder;
 import com.dietiestates.resource_server.finder.UserFinder;
 import com.dietiestates.resource_server.model.Negotiation;
-import com.dietiestates.resource_server.model.Notification;
 import com.dietiestates.resource_server.model.Offer;
 import com.dietiestates.resource_server.repository.OfferRepository;
 import com.dietiestates.resource_server.utils.PageUtils;
@@ -27,9 +25,6 @@ import java.util.List;
 public class OfferFinderDefaultImpl implements OfferFinder {
 
 	private final OfferRepository offerRepository;
-    private final UserFinder userFinder;
-    private final EstateAgentFinder estateAgentFinder;
-    private final PageUtils pageUtils;
     private final NegotiationFinder negotiationFinder;
 
 	@Override

@@ -2,10 +2,7 @@ package com.dietiestates.resource_server.mapperdefaultimpl;
 
 import com.dietiestates.resource_server.dto.request.UserRequest;
 import com.dietiestates.resource_server.dto.response.UserResponse;
-import com.dietiestates.resource_server.mapper.OfferMapper;
-import com.dietiestates.resource_server.mapper.SearchMapper;
 import com.dietiestates.resource_server.mapper.UserMapper;
-import com.dietiestates.resource_server.mapper.VisitMapper;
 import com.dietiestates.resource_server.model.User;
 import com.dietiestates.resource_server.spec.UserSpec;
 import lombok.RequiredArgsConstructor;

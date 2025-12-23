@@ -2,7 +2,6 @@ package com.dietiestates.resource_server.finderdefaultimpl;
 
 import com.dietiestates.resource_server.exception.notfound.SearchNotFoundException;
 import com.dietiestates.resource_server.finder.SearchFinder;
-import com.dietiestates.resource_server.model.RealEstate;
 import com.dietiestates.resource_server.model.Search;
 import com.dietiestates.resource_server.repository.SearchRepository;
 import lombok.RequiredArgsConstructor;

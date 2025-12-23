@@ -1,6 +1,5 @@
 package com.dietiestates.resource_server.finder;
 
-import com.dietiestates.resource_server.enums.ProposalStatus;
 import com.dietiestates.resource_server.exception.notfound.OfferNotFoundException;
 import com.dietiestates.resource_server.model.Negotiation;
 import com.dietiestates.resource_server.model.Offer;

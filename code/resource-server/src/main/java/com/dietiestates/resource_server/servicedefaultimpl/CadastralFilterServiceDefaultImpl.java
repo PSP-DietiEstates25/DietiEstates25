@@ -17,7 +17,6 @@ public class CadastralFilterServiceDefaultImpl implements CadastralFilterService
 	private final CadastralFilterRepository cadastralFilterRepository;
 	private final CadastralFilterFactory cadastralFilterFactory;
 	private final CadastralFilterFinder cadastralFilterFinder;
-	//private final CadastralFilterVerifier cadastralFilterVerifier;
 	private final CadastralFilterMapper cadastralFilterMapper;
 	
 	@Override

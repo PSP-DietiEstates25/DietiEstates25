@@ -4,17 +4,13 @@ import javax.management.relation.RoleNotFoundException;
 
 import com.dietiestates.auth.factory.SecurityAccountFactory;
 import com.dietiestates.auth.mapper.RegisterMapper;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.auth.dto.request.RegisterRequest;
 import com.dietiestates.auth.dto.response.RegisterResponse;
 import com.dietiestates.auth.factory.DefaultAccountFactory;
-import com.dietiestates.auth.factory.SecurityAccountFactory;
 import com.dietiestates.auth.finder.RoleFinder;
-import com.dietiestates.auth.mapper.RegisterMapper;
 import com.dietiestates.auth.repository.DefaultAccountRepository;
 
 import lombok.RequiredArgsConstructor;

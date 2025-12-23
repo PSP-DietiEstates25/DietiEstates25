@@ -50,7 +50,7 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
         Assert.notNull(objectMapper, "objectMapper cannot be null");
         this.authorizationRepository = authorizationRepository;
         this.registeredClientRepository = registeredClientRepository;
-        this.objectMapper = objectMapper; // mapper @Primary con tutti i moduli registrati
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -99,120 +99,155 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
     }
 
     private OAuth2Authorization toObject(Authorization entity) {
-        RegisteredClient rc = this.registeredClientRepository.findById(entity.getRegisteredClientId());
-        if (rc == null) {
+        RegisteredClient registeredClient = this.registeredClientRepository.findById(entity.getRegisteredClientId());
+        if (registeredClient == null) {
             throw new DataRetrievalFailureException(
                     "RegisteredClient id '" + entity.getRegisteredClientId() + "' not found.");
         }
 
-        OAuth2Authorization.Builder b = OAuth2Authorization.withRegisteredClient(rc)
+        OAuth2Authorization.Builder oAuth2AuthorizationBuilder = OAuth2Authorization.withRegisteredClient(registeredClient)
                 .id(entity.getId())
                 .principalName(entity.getPrincipalName())
                 .authorizationGrantType(resolveAuthorizationGrantType(entity.getAuthorizationGrantType()))
                 .authorizedScopes(StringUtils.commaDelimitedListToSet(entity.getAuthorizedScopes()))
-                .attributes(attrs -> attrs.putAll(parseMap(entity.getAttributes())));
+                .attributes(attributes -> attributes.putAll(parseMap(entity.getAttributes())));
 
         if (entity.getState() != null) {
-            b.attribute(OAuth2ParameterNames.STATE, entity.getState());
+            oAuth2AuthorizationBuilder.attribute(OAuth2ParameterNames.STATE, entity.getState());
         }
 
-        var codeTok = entity.getAuthorizationCodeValue();
-        if (codeTok != null) {
+        var authorizationCodeValue = entity.getAuthorizationCodeValue();
+        if (authorizationCodeValue != null) {
             OAuth2AuthorizationCode code = new OAuth2AuthorizationCode(
-                    codeTok, entity.getAuthorizationCodeIssuedAt(), entity.getAuthorizationCodeExpiresAt());
-            b.token(code, md -> md.putAll(parseMap(entity.getAuthorizationCodeMetadata())));
+                    authorizationCodeValue, entity.getAuthorizationCodeIssuedAt(), entity.getAuthorizationCodeExpiresAt());
+            oAuth2AuthorizationBuilder.token(code, metaData -> metaData.putAll(parseMap(entity.getAuthorizationCodeMetadata())));
         }
 
-        var atVal = entity.getAccessTokenValue();
-        if (atVal != null) {
-            OAuth2AccessToken at = new OAuth2AccessToken(
-                    OAuth2AccessToken.TokenType.BEARER, atVal,
+        var accessTokenValue = entity.getAccessTokenValue();
+        if (accessTokenValue != null) {
+            OAuth2AccessToken accessToken = new OAuth2AccessToken(
+                    OAuth2AccessToken.TokenType.BEARER, accessTokenValue,
                     entity.getAccessTokenIssuedAt(), entity.getAccessTokenExpiresAt(),
                     StringUtils.commaDelimitedListToSet(entity.getAccessTokenScopes()));
-            b.token(at, md -> md.putAll(parseMap(entity.getAccessTokenMetadata())));
+            oAuth2AuthorizationBuilder.token(accessToken, metaData -> metaData.putAll(parseMap(entity.getAccessTokenMetadata())));
         }
 
-        var rtVal = entity.getRefreshTokenValue();
-        if (rtVal != null) {
-            OAuth2RefreshToken rt = new OAuth2RefreshToken(
-                    rtVal, entity.getRefreshTokenIssuedAt(), entity.getRefreshTokenExpiresAt());
-            b.token(rt, md -> md.putAll(parseMap(entity.getRefreshTokenMetadata())));
+        var refreshTokenValue = entity.getRefreshTokenValue();
+        if (refreshTokenValue != null) {
+            OAuth2RefreshToken refreshToken = new OAuth2RefreshToken(
+                    refreshTokenValue, entity.getRefreshTokenIssuedAt(), entity.getRefreshTokenExpiresAt());
+            oAuth2AuthorizationBuilder.token(refreshToken, metaData -> metaData.putAll(parseMap(entity.getRefreshTokenMetadata())));
         }
 
-        var idVal = entity.getOidcIdTokenValue();
-        if (idVal != null) {
-            OidcIdToken idt = new OidcIdToken(
-                    idVal, entity.getOidcIdTokenIssuedAt(), entity.getOidcIdTokenExpiresAt(),
+        var oidcIdTokenValue = entity.getOidcIdTokenValue();
+        if (oidcIdTokenValue != null) {
+            OidcIdToken token = new OidcIdToken(
+                    oidcIdTokenValue, entity.getOidcIdTokenIssuedAt(), entity.getOidcIdTokenExpiresAt(),
                     parseMap(entity.getOidcIdTokenClaims()));
-            b.token(idt, md -> md.putAll(parseMap(entity.getOidcIdTokenMetadata())));
+            oAuth2AuthorizationBuilder.token(token, metaData -> metaData.putAll(parseMap(entity.getOidcIdTokenMetadata())));
         }
 
-        var ucVal = entity.getUserCodeValue();
-        if (ucVal != null) {
-            OAuth2UserCode uc = new OAuth2UserCode(
-                    ucVal, entity.getUserCodeIssuedAt(), entity.getUserCodeExpiresAt());
-            b.token(uc, md -> md.putAll(parseMap(entity.getUserCodeMetadata())));
+        var userCodeValue = entity.getUserCodeValue();
+        if (userCodeValue != null) {
+            OAuth2UserCode userCode = new OAuth2UserCode(
+                    userCodeValue, entity.getUserCodeIssuedAt(), entity.getUserCodeExpiresAt());
+            oAuth2AuthorizationBuilder.token(userCode, metaData -> metaData.putAll(parseMap(entity.getUserCodeMetadata())));
         }
 
-        var dcVal = entity.getDeviceCodeValue();
-        if (dcVal != null) {
-            OAuth2DeviceCode dc = new OAuth2DeviceCode(
-                    dcVal, entity.getDeviceCodeIssuedAt(), entity.getDeviceCodeExpiresAt());
-            b.token(dc, md -> md.putAll(parseMap(entity.getDeviceCodeMetadata())));
+        var deviceCodeValue = entity.getDeviceCodeValue();
+        if (deviceCodeValue != null) {
+            OAuth2DeviceCode deviceCode = new OAuth2DeviceCode(
+                    deviceCodeValue, entity.getDeviceCodeIssuedAt(), entity.getDeviceCodeExpiresAt());
+            oAuth2AuthorizationBuilder.token(deviceCode, metaData -> metaData.putAll(parseMap(entity.getDeviceCodeMetadata())));
         }
 
-        return b.build();
+        return oAuth2AuthorizationBuilder.build();
     }
 
-    private Authorization toEntity(OAuth2Authorization a) {
-        Authorization e = new Authorization();
-        e.setId(a.getId());
-        e.setRegisteredClientId(a.getRegisteredClientId());
-        e.setPrincipalName(a.getPrincipalName());
-        e.setAuthorizationGrantType(a.getAuthorizationGrantType().getValue());
-        e.setAuthorizedScopes(StringUtils.collectionToDelimitedString(a.getAuthorizedScopes(), ","));
-        e.setAttributes(writeMap(a.getAttributes()));
-        e.setState(a.getAttribute(OAuth2ParameterNames.STATE));
+    private Authorization toEntity(OAuth2Authorization oAuth2Authorization) {
+        Authorization authorization = new Authorization();
+        authorization.setId(oAuth2Authorization.getId());
+        authorization.setRegisteredClientId(oAuth2Authorization.getRegisteredClientId());
+        authorization.setPrincipalName(oAuth2Authorization.getPrincipalName());
+        authorization.setAuthorizationGrantType(oAuth2Authorization.getAuthorizationGrantType().getValue());
+        authorization.setAuthorizedScopes(StringUtils.collectionToDelimitedString(oAuth2Authorization.getAuthorizedScopes(), ","));
+        authorization.setAttributes(writeMap(oAuth2Authorization.getAttributes()));
+        authorization.setState(oAuth2Authorization.getAttribute(OAuth2ParameterNames.STATE));
 
-        setTokenValues(a.getToken(OAuth2AuthorizationCode.class),
-                e::setAuthorizationCodeValue, e::setAuthorizationCodeIssuedAt, e::setAuthorizationCodeExpiresAt, e::setAuthorizationCodeMetadata);
+        setTokenValues(
+                oAuth2Authorization.getToken(OAuth2AuthorizationCode.class),
+                authorization::setAuthorizationCodeValue,
+                authorization::setAuthorizationCodeIssuedAt,
+                authorization::setAuthorizationCodeExpiresAt,
+                authorization::setAuthorizationCodeMetadata
+        );
 
-        OAuth2Authorization.Token<OAuth2AccessToken> at = a.getToken(OAuth2AccessToken.class);
-        setTokenValues(at,
-                e::setAccessTokenValue, e::setAccessTokenIssuedAt, e::setAccessTokenExpiresAt, e::setAccessTokenMetadata);
-        if (at != null && at.getToken().getScopes() != null) {
-            e.setAccessTokenScopes(StringUtils.collectionToDelimitedString(at.getToken().getScopes(), ","));
+        OAuth2Authorization.Token<OAuth2AccessToken> oauth2AccessToken = oAuth2Authorization.getToken(OAuth2AccessToken.class);
+        setTokenValues(
+                oauth2AccessToken,
+                authorization::setAccessTokenValue,
+                authorization::setAccessTokenIssuedAt,
+                authorization::setAccessTokenExpiresAt,
+                authorization::setAccessTokenMetadata
+        );
+
+        if (oauth2AccessToken != null && oauth2AccessToken.getToken().getScopes() != null) {
+            authorization.setAccessTokenScopes(StringUtils.collectionToDelimitedString(oauth2AccessToken.getToken().getScopes(), ","));
         }
 
-        OAuth2Authorization.Token<OidcIdToken> idt = a.getToken(OidcIdToken.class);
-        setTokenValues(idt,
-                e::setOidcIdTokenValue, e::setOidcIdTokenIssuedAt, e::setOidcIdTokenExpiresAt, e::setOidcIdTokenMetadata);
-        if (idt != null) {
-            e.setOidcIdTokenClaims(writeMap(idt.getClaims()));
+        //aggiunta
+        setTokenValues(
+                oAuth2Authorization.getToken(OAuth2RefreshToken.class),
+                authorization::setRefreshTokenValue,
+                authorization::setRefreshTokenIssuedAt,
+                authorization::setRefreshTokenExpiresAt,
+                authorization::setRefreshTokenMetadata
+        );
+
+        OAuth2Authorization.Token<OidcIdToken> oidcIdToken = oAuth2Authorization.getToken(OidcIdToken.class);
+        setTokenValues(
+                oidcIdToken,
+                authorization::setOidcIdTokenValue,
+                authorization::setOidcIdTokenIssuedAt,
+                authorization::setOidcIdTokenExpiresAt,
+                authorization::setOidcIdTokenMetadata
+        );
+        if (oidcIdToken != null) {
+            authorization.setOidcIdTokenClaims(writeMap(oidcIdToken.getClaims()));
         }
 
-        setTokenValues(a.getToken(OAuth2UserCode.class),
-                e::setUserCodeValue, e::setUserCodeIssuedAt, e::setUserCodeExpiresAt, e::setUserCodeMetadata);
+        setTokenValues(
+                oAuth2Authorization.getToken(OAuth2UserCode.class),
+                authorization::setUserCodeValue,
+                authorization::setUserCodeIssuedAt,
+                authorization::setUserCodeExpiresAt,
+                authorization::setUserCodeMetadata
+        );
 
-        setTokenValues(a.getToken(OAuth2DeviceCode.class),
-                e::setDeviceCodeValue, e::setDeviceCodeIssuedAt, e::setDeviceCodeExpiresAt, e::setDeviceCodeMetadata);
+        setTokenValues(
+                oAuth2Authorization.getToken(OAuth2DeviceCode.class),
+                authorization::setDeviceCodeValue,
+                authorization::setDeviceCodeIssuedAt,
+                authorization::setDeviceCodeExpiresAt,
+                authorization::setDeviceCodeMetadata
+        );
 
-        return e;
+        return authorization;
     }
 
     private void setTokenValues(
             OAuth2Authorization.Token<?> token,
-            Consumer<String> valueC,
-            Consumer<Instant> issuedC,
-            Consumer<Instant> expC,
-            Consumer<String> metaC) {
+            Consumer<String> valueConsumer,
+            Consumer<Instant> issuedConsumer,
+            Consumer<Instant> expConsumer,
+            Consumer<String> metaConsumer) {
         if (token != null) {
-            OAuth2Token t = token.getToken();
-            valueC.accept(t.getTokenValue());
-            issuedC.accept(t.getIssuedAt());
-            expC.accept(t.getExpiresAt());
+            OAuth2Token oAuth2Token = token.getToken();
+            valueConsumer.accept(oAuth2Token.getTokenValue());
+            issuedConsumer.accept(oAuth2Token.getIssuedAt());
+            expConsumer.accept(oAuth2Token.getExpiresAt());
             if (token.getMetadata() != null && !token.getMetadata().isEmpty()) {
-                metaC.accept(writeMap(token.getMetadata()));
+                metaConsumer.accept(writeMap(token.getMetadata()));
             }
         }
     }

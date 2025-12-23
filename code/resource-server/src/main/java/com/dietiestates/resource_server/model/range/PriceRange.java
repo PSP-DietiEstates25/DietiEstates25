@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-//@EqualsAndHashCode
 @Embeddable
 public class PriceRange {
 

@@ -1,36 +1,36 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
   servlet:
     session:
       cookie:
-        name: BFFSESSION
+        name: ${SERVER_SERVLET_SESSION_COOKIE_NAME:BFFSESSION}
         http-only: true
-        secure: false
-        same-site: LAX
+        secure: ${SERVER_SERVLET_SESSION_COOKIE_SECURE:false}
+        same-site: ${SERVER_SERVLET_SESSION_COOKIE_SAMESITE:LAX}
 
 logging:
   level:
-    root: DEBUG
-    org.springframework.web: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.security.oauth2: DEBUG
+    root: ${LOGGING_LEVEL_ROOT:INFO}
+    org.springframework.web: ${LOGGING_LEVEL_SPRINGFRAMEWORK_WEB:INFO}
+    org.springframework.security: ${LOGGING_LEVEL_SPRINGFRAMEWORK_SECURITY:INFO}
+    org.springframework.security.oauth2: ${LOGGING_LEVEL_SPRINGFRAMEWORK_SECURITY_OAUTH2:INFO}
 
 spring:
   application:
     name: backend-for-frontend
   datasource:
-    url: jdbc:postgresql://localhost:5432/dietiestates_bff_server
-    username: dietiestates
-    password: dietiestates
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/dietiestates_bff_server}
+    username: ${SPRING_DATASOURCE_USERNAME:dietiestates}
+    password: ${SPRING_DATASOURCE_PASSWORD:dietiestates}
     driver-class-name: org.postgresql.Driver
   session:
     store-type: jdbc
     jdbc:
-      initialize-schema: always
+      initialize-schema: ${SPRING_SESSION_JDBC_INITIALIZE_SCHEMA:always}
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: update   # oppure 'validate' in prod
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -41,25 +41,25 @@ spring:
         registration:
           messaging-client-oidc:
             provider: spring
-            client-id: dietiestates
-            client-secret: secret
+            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_MESSAGING_CLIENT_OIDC_CLIENT_ID:dietiestates}
+            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_MESSAGING_CLIENT_OIDC_CLIENT_SECRET:secret}
             client-authentication-method: client_secret_basic
             authorization-grant-type: authorization_code
-            redirect-uri: "http://localhost:8080/login/oauth2/code/{registrationId}"
+            redirect-uri: ${BFF_SERVER_BASE_URL:http://localhost:8080}/login/oauth2/code/{registrationId}
             scope: openid,profile
             client-name: messaging-client-oidc
           messaging-client-authorization-code:
             provider: spring
-            client-id: dietiestates
-            client-secret: secret
+            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_MESSAGING_CLIENT_AUTHORIZATION_CODE_CLIENT_ID:dietiestates}
+            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_MESSAGING_CLIENT_AUTHORIZATION_CODE_CLIENT_SECRET:secret}
             client-authentication-method: client_secret_basic
             authorization-grant-type: authorization_code
-            redirect-uri: "http://localhost:8080/authorized"
+            redirect-uri: ${BFF_SERVER_BASE_URL:http://localhost:8080}/authorized
             scope: message.read,message.write
             client-name: messaging-client-authorization-code
         provider:
           spring:
-            issuer-uri: https://localhost:9443
+            issuer-uri: ${AUTHORIZATION_SERVER_ISSUER_URI:https://localhost:9443}
   cloud:
     gateway:
       server:
@@ -67,7 +67,7 @@ spring:
           routes:
             # AUTH SERVER /auth/login
             - id: auth_server_userinfo
-              uri: https://localhost:9443
+              uri: ${app.authorization-server-base-url:https://localhost:9443}
               predicates:
                 - Path=/userinfo
               filters:
@@ -76,7 +76,7 @@ spring:
 
             # AUTH SERVER /account/password
             - id: auth_server_account_password
-              uri: https://localhost:9443
+              uri: ${app.authorization-server-base-url:https://localhost:9443}
               predicates:
                 - Path=/account/password
               filters:
@@ -85,39 +85,39 @@ spring:
 
             # /auth/register
             - id: auth_server_register_account
-              uri: https://localhost:9443
+              uri: ${app.authorization-server-base-url:https://localhost:9443}
               predicates:
                 - Path=/auth/register
 
             # RESOURCE SERVER
             # Swagger UI (springdoc default)
             - id: resource_server_swagger_ui
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/swagger-ui/**,/api/v1/swagger-ui.html
 
             # OpenAPI JSON (springdoc default v3)
             - id: resource_server_openapi_json
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/v3/api-docs/**
 
             # (Opzionale ma utile) swagger-config usato dalla UI
             - id: resource_server_swagger_config
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/v3/api-docs/swagger-config
 
             #POST /users
             - id: resource_server_register_user
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/users
                 - Method=POST
 
             #GET /users/{userid}
             - id: resource_server_get_user_by_id
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/users/{userid}
                 - Method=GET
@@ -126,7 +126,7 @@ spring:
 
             #POST,GET /admins
             - id: resource_server_register_admin
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/admins
                 - Method=POST,GET
@@ -135,7 +135,7 @@ spring:
 
             # GET /admins/{adminid}
             - id: resource_server_get_admin_by_id
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/admins/{adminid}
                 - Method=GET
@@ -144,7 +144,7 @@ spring:
 
             #POST /estateagents
             - id: resource_server_register_estate_agents
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/estateagents
                 - Method=POST
@@ -153,7 +153,7 @@ spring:
 
             #GET /estateagents/{estateagentid}
             - id: resource_server_register_get_estate_agent_by_id
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/estateagents/{estateagentid}
                 - Method=GET
@@ -162,7 +162,7 @@ spring:
 
             #POST,GET /realestates
             - id: resource_server_real_estates
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/realestates
                 - Method=POST,GET
@@ -172,7 +172,7 @@ spring:
 
             #GET,PUT,DELETE realestates/{realestateid}
             - id: resource_server_get_put_delete_real_estate_by_id
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/realestates/{realestateid}
                 - Method=GET,PUT,DELETE
@@ -182,7 +182,7 @@ spring:
 
             #GET /images
             - id: resource_server_realestate_images
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/images/**
               filters:
@@ -191,7 +191,7 @@ spring:
 
             #POST,GET /searches
             - id: resource_server_searches
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/searches
                 - Method=POST,GET
@@ -200,7 +200,7 @@ spring:
 
             #GET /searches/{searchid}
             - id: resource_server_get_search_by_id
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/searches/{searchid}
                 - Method=GET
@@ -209,7 +209,7 @@ spring:
 
             #POST /detais
             - id: resource_server_details
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/details
                 - Method=POST
@@ -218,7 +218,7 @@ spring:
 
             #GET,PUT /details/{detailid}
             - id: resource_server_get_put_detail_by_id
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/details/{detailid}
                 - Method=GET,PUT
@@ -227,7 +227,7 @@ spring:
 
             #POST,GET /geographicalpositions
             - id: resource_server_geographical_positions
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/geographicalpositions
                 - Method=POST,GET
@@ -236,7 +236,7 @@ spring:
 
             #GET,PUT /geographicalpositions/{geographicalpositionid}
             - id: resource_server_get_put_geographical_position_by_id
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/geographicalpositions/{geographicalpositionid}
                 - Method=GET,PUT
@@ -245,7 +245,7 @@ spring:
 
             #POST,GET /utilities
             - id: resource_server_utilities
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/utilities
                 - Method=POST,GET
@@ -254,7 +254,7 @@ spring:
 
             #GET,PUT /utilities/{utilityid}
             - id: resource_server_get_put_utility_by_id
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/utilities/{utilityid}
                 - Method=POST,GET
@@ -263,7 +263,7 @@ spring:
 
             #POST,GET /cadastraldata
             - id: resource_server_cadastral_data
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/cadastraldata
                 - Method=POST,GET
@@ -272,7 +272,7 @@ spring:
 
             #GET,PUT /cadastraldata/{cadastraldataid}
             - id: resource_server_get_put_cadastral_data_by_id
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/cadastraldata/{cadastraldataid}
                 - Method=GET,PUT
@@ -281,7 +281,7 @@ spring:
 
             #POST,GET /cadastralfilters
             - id: resource_server_cadastral_filters
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/cadastralfilters
                 - Method=POST,GET
@@ -290,7 +290,7 @@ spring:
 
             #GET /cadastralfilters/{cadastralfilterid}
             - id: resource_server_get_put_cadastral_filter_by_id
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/cadastralfilters/{cadastralfilterid}
                 - Method=GET
@@ -299,7 +299,7 @@ spring:
 
             #POST,GET /offers
             - id: resource_server_realestate_offers
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/offers
                 - Method=POST,GET
@@ -308,7 +308,7 @@ spring:
 
             #GET,PATCH /offers/{offerid}
             - id: resource_server_get_patch_offer_by_id
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/offers/{offerid}
                 - Method=GET,PATCH
@@ -317,7 +317,7 @@ spring:
 
             #POST,GET /visits
             - id: resource_server_realestate_visits
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/visits
                 - Method=POST,GET
@@ -326,7 +326,7 @@ spring:
 
             #GET,PATCH /visits/{visitid}
             - id: resource_server_get_patch_visit_by_id
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/visits/{visitid}
                 - Method=GET,PATCH
@@ -335,7 +335,7 @@ spring:
 
             #POST,GET /notifications
             - id: resource_server_notifications
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/notifications
                 - Method=POST,GET
@@ -344,13 +344,21 @@ spring:
 
             #GET /notifications/{notificationid}
             - id: resource_server_get_notification_by_id
-              uri: http://localhost:8090
+              uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/notifications/{notificationid}
                 - Method=GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 app:
-  base-uri: http://localhost:4200
+  base-uri: ${APP_BASE_URI:http://localhost:4200}
+  authorization-server-base-url: ${AUTHORIZATION_SERVER_BASE_URL:https://localhost:9443}
+  resource-server-base-url: ${RESOURCE_SERVER_BASE_URL:http://localhost:8090}
+  backend-for-frontend-server-base-url: ${BFF_SERVER_BASE_URL:http://localhost:8080}
+  register-url: ${BFF_SERVER_REGISTER_URL:/auth/register}
+  allowed-origin: ${BFF_SERVER_ALLOWED_ORIGIN:http://localhost:4200}
+  logout-url: ${BFF_SERVER_LOGOUT_URL:/logout}
+  callback-url: ${BFF_CALLBACK_URL:/auth/callback}
+  csrf-token-url: ${BFF_CSRF_URL:/csrf-token}
 
 
