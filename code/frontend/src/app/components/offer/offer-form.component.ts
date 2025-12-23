@@ -7,7 +7,7 @@ import {
   input,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { OfferControllerService } from '../../services/services';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../manual_services/auth/auth.service';
@@ -16,7 +16,7 @@ import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-offer-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './offer-form.component.html',
 })
 export class OfferFormComponent {

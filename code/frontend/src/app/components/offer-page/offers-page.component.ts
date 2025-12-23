@@ -1,5 +1,5 @@
 import { Component, effect, inject, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { OffersFacade } from './offers.facade';
@@ -15,11 +15,10 @@ import { OffersPaginatorComponent } from '../offers-paginator/offers-paginator.c
   selector: 'app-offers-page',
   standalone: true,
   imports: [
-    CommonModule,
     NavbarComponent,
     OffersListComponent,
-    OffersPaginatorComponent,
-  ],
+    OffersPaginatorComponent
+],
   templateUrl: './offers-page.component.html',
 })
 export class OffersPageComponent implements OnDestroy {

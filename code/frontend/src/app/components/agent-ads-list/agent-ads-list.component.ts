@@ -44,7 +44,6 @@ import { HttpErrorResponse } from '@angular/common/http';
     FloorIconComponent,
     RoomsIconComponent,
     EnergyClassIconComponent,
-    GeographicalPositionIconComponent,
     AirConditioningIconComponent,
     ElevatorIconComponent,
     DoormanIconComponent,

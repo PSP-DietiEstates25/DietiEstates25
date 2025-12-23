@@ -1,5 +1,5 @@
 import { Component, effect, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -41,13 +41,12 @@ function matchValidator(a: string, b: string) {
   selector: 'app-admin-dashboard',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     RouterLink,
     AdsPaginatorComponent,
-    AdminAdsListComponent,
-  ],
+    AdminAdsListComponent
+],
   templateUrl: './admin-dashboard.component.html',
 })
 export class AdminDashboardComponent {

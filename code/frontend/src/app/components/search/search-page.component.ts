@@ -7,7 +7,7 @@ import {
   effect,
   Sanitizer,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import {
   HttpBackend,
   HttpClient,
@@ -36,12 +36,11 @@ const looksPng = (b64: string) => b64?.startsWith('iVBOR');
   selector: 'app-search-page',
   standalone: true,
   imports: [
-    CommonModule,
     NavbarComponent,
     FilterPanelComponent,
     RecentSearchesComponent,
-    SearchesPaginatorComponent,
-  ],
+    SearchesPaginatorComponent
+],
   templateUrl: './search-page.component.html',
 })
 export class SearchPageComponent implements OnDestroy {

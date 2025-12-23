@@ -6,7 +6,7 @@ import {
   effect,
   ChangeDetectorRef,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import {
   FormBuilder,
   FormsModule,
@@ -23,7 +23,7 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 @Component({
   selector: 'app-filter-panel',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [FormsModule, ReactiveFormsModule],
   templateUrl: './filter-panel.component.html',
 })
 export class FilterPanelComponent implements OnInit {

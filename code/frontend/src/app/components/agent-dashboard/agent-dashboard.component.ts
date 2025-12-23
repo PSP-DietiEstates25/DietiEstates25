@@ -7,7 +7,7 @@ import {
   effect,
   ChangeDetectorRef,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CreateAdFacade } from '../create-ad/create-ad.facade';
@@ -40,7 +40,6 @@ import { LocalStorageService } from '../../manual_services/local-storage/local-s
   selector: 'app-agent-dashboard',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     RouterLink,
     AgentOffersListComponent,
@@ -48,8 +47,8 @@ import { LocalStorageService } from '../../manual_services/local-storage/local-s
     AgentVisitsListComponent,
     VisitsPaginatorComponent,
     AgentAdsListComponent,
-    AdsPaginatorComponent,
-  ],
+    AdsPaginatorComponent
+],
   templateUrl: './agent-dashboard.component.html',
 })
 export class AgentDashboardComponent implements OnDestroy {

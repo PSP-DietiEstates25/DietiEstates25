@@ -1,13 +1,13 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { VisitControllerService } from '../../services/services';
 import { firstValueFrom } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-visit-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './visit-form.component.html',
 })
 export class VisitFormComponent {

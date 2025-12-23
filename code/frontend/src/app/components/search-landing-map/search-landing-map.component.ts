@@ -13,7 +13,7 @@ import {
   createComponent,
   effect,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import * as L from 'leaflet';
@@ -58,15 +58,14 @@ export interface MunicipalityToSelect {
   selector: 'app-search-landing-map',
   standalone: true,
   imports: [
-    CommonModule,
     RouterLink,
     NavbarComponent,
     PriceIconComponent,
     RoomsIconComponent,
     SquareMetersIconComponent,
     FloorIconComponent,
-    EnergyClassIconComponent,
-  ],
+    EnergyClassIconComponent
+],
   templateUrl: './search-landing-map.component.html',
   styleUrls: ['./search-landing-map.component.scss'],
 })

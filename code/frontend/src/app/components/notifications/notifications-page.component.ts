@@ -5,7 +5,7 @@ import {
   inject,
   OnDestroy,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { NotificationsFacade } from './notifications.facade';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
@@ -22,12 +22,11 @@ import { NotificationCategory } from '../../enums/notification-category.enum';
   selector: 'app-notifications-page',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     NavbarComponent,
     NotificationsListComponent,
-    NotificationPaginatorComponent,
-  ],
+    NotificationPaginatorComponent
+],
   templateUrl: './notifications-page.component.html',
 })
 export class NotificationsPageComponent implements OnDestroy {

@@ -5,7 +5,7 @@ import {
   RouterLink,
   RouterLinkActive,
 } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { MenuToggleComponent } from '../../buttons/menu_toggle/menu-toggle.component';
 import { NotificationsFacade } from '../../../components/notifications/notifications.facade';
 import { AuthService } from '../../../manual_services/auth/auth.service';
@@ -21,7 +21,7 @@ interface NavLink {
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, MenuToggleComponent],
+  imports: [RouterLink, RouterLinkActive, MenuToggleComponent],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
