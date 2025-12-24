@@ -1,6 +1,6 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { EMPTY, Observable, Subject } from 'rxjs';
+import { EMPTY, Subject } from 'rxjs';
 import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 
 import {
@@ -16,41 +16,10 @@ import { CadastralDataRequest } from '../../services/models/cadastral-data-reque
 import { DetailRequest } from '../../services/models/detail-request';
 import { UtilityRequest } from '../../services/models/utility-request';
 import { RealEstateRequest } from '../../services/models/real-estate-request';
-
-export type Category = 'SALE' | 'RENT';
-
-export interface BasicsDraft {
-  category: Category;
-  description: string;
-}
-
-export interface UtilitiesDraft {
-  hasElevator: boolean;
-  hasDoorman: boolean;
-  hasAirConditioning: boolean;
-
-  nearPark: boolean;
-  nearPublicTransport: boolean;
-  nearSchool: boolean;
-}
-
-export interface PositionDraft {
-  address: string;
-  region: string;
-  city: string;
-  municipality: string;
-  latitude: number;
-  longitude: number;
-  radius?: number;
-}
-
-export interface CadastralDraft {
-  price: number;
-  rooms: number;
-  floor: number;
-  energyClass: 'A4' | 'A3' | 'A2' | 'A1' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
-  squareMeters: number;
-}
+import { BasicsDraft } from '../../interfaces/create-ad/basic-draft';
+import { UtilitiesDraft } from '../../interfaces/create-ad/utilities-draft';
+import { PositionDraft } from '../../interfaces/create-ad/position-draft';
+import { CadastralDraft } from '../../interfaces/create-ad/cadastral-draft';
 
 @Injectable({ providedIn: 'root' })
 export class CreateAdFacade {
@@ -136,10 +105,6 @@ export class CreateAdFacade {
     this.images.set(arr);
   }
 
-  /**
-   * CREATE FLOW:
-   * Utility -> GeographicalPosition -> Detail -> CadastralData -> RealEstate (multipart: { data, images })
-   */
   createAd() {
     const basics = this.basics();
     const utility = this.utility();
@@ -217,7 +182,6 @@ export class CreateAdFacade {
             ),
         ),
 
-        // 3) Detail creato -> { detailId }
         switchMap(({ utilityId, geographicalPositionId }) =>
           this.detailService
             .createDetail$Response({
@@ -242,7 +206,6 @@ export class CreateAdFacade {
             ),
         ),
 
-        // 4) CadastralData creata -> { detailId, cadastralId }
         switchMap(({ detailId }) =>
           this.cadastralDataService
             .createCadastralData$Response({ body: cadastralDataRequest })

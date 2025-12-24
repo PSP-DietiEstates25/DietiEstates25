@@ -22,49 +22,8 @@ import {
 } from '../../services/services';
 import { UtilityResponse } from '../../services/models/utility-response';
 import { environment } from '../../../environments/environment';
-import { AuthService } from '../../manual_services/auth/auth.service';
-
-export type AdVM = {
-  realEstateId: number;
-  detailId: number;
-  title: string;
-  description?: string | null;
-  price?: number | null;
-  city?: string | null;
-  surface?: number | null;
-  rooms?: number | null;
-
-  // mantenuti
-  type?: string | null;
-  floor?: number | null;
-  energyClass?: string | null;
-
-  images: string[];
-  coverUrl?: string;
-  agent?: { email?: string | null };
-  position?: {
-    latitude?: number | null;
-    longitude?: number | null;
-    address?: string | null;
-    municipality?: string | null;
-  };
-
-  proximityTags?: ProximityTag[];
-  utilities?: string[];
-};
-
-export type MyOfferVM = {
-  id: number;
-  amount: number;
-  status: 'PENDING' | 'ACCEPTED' | 'DECLINED' | 'COUNTERED' | string;
-  createdAt?: string | null;
-};
-
-export enum ProximityTag {
-  NEAR_SCHOOLS = 'NEAR_SCHOOLS',
-  NEAR_PARKS = 'NEAR_PARKS',
-  NEAR_PUBLIC_TRANSPORT = 'NEAR_PUBLIC_TRANSPORT',
-}
+import { MyOfferVM } from '../../interfaces/my-offer-vm';
+import { AdVM } from '../../interfaces/ad-vm';
 
 @Injectable({ providedIn: 'root' })
 export class AdDetailFacade {
@@ -115,7 +74,6 @@ export class AdDetailFacade {
     const images = realEstateResponse.images ?? [];
     const cover = images[0] ?? null;
 
-    // preferisci det → cad → re
     const price =
       (realEstateResponse as any)?.price ??
       cadastralDataResponse?.price ??

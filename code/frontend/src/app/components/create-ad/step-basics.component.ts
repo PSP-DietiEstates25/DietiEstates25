@@ -1,17 +1,11 @@
-import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  effect,
-  Signal,
-  computed,
-} from '@angular/core';
+import { Component, inject, effect, Signal, computed } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { CreateAdFacade, Category, BasicsDraft } from './create-ad.facade';
+import { CreateAdFacade } from './create-ad.facade';
 import { ToastrService } from 'ngx-toastr';
 import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.component';
+import { BasicsDraft } from '../../interfaces/create-ad/basic-draft';
+import { Category } from '../../interfaces/category';
 
 @Component({
   selector: 'app-step-basics',
@@ -53,13 +47,6 @@ export class StepBasicsComponent {
       }
     });
   }
-
-  /*
-  ngOnInit(): void {
-    const basics = this.facade.basics();
-    if (basics) this.form.patchValue(basics, { emitEvent: false });
-  }
-  */
 
   openDiscardModal() {
     this.isDiscardModalOpen = true;

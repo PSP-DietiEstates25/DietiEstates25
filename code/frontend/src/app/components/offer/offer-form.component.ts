@@ -10,7 +10,6 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 
 import { OfferControllerService } from '../../services/services';
 import { firstValueFrom } from 'rxjs';
-import { AuthService } from '../../manual_services/auth/auth.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({

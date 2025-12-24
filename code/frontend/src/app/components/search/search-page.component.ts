@@ -1,18 +1,6 @@
-import {
-  Component,
-  inject,
-  signal,
-  OnDestroy,
-  OnInit,
-  effect,
-  Sanitizer,
-} from '@angular/core';
+import { Component, inject, OnDestroy, effect } from '@angular/core';
 
-import {
-  HttpBackend,
-  HttpClient,
-  HttpErrorResponse,
-} from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { FilterPanelComponent } from '../../shared/components/filter-panel/filter-panel.component';
@@ -22,15 +10,10 @@ import { SearchFacade } from './search.facade';
 import { SearchesPaginatorComponent } from '../searches-paginator/searches-paginator.component';
 import { SearchPaginatorService } from '../../manual_services/search-paginator/search-paginator.service';
 import { SearchControllerService } from '../../services/services';
-import { Router, TitleStrategy } from '@angular/router';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Search, SearchResponse } from '../../services/models';
+import { SearchResponse } from '../../services/models';
 import { SearchPaginatorRequest } from '../../interfaces/search-paginator-request';
-
-const isHttp = (s: string) => /^https?:\/\//i.test(s);
-const isData = (s: string) => /^data:/i.test(s);
-const looksJpeg = (b64: string) => b64?.startsWith('/9j/');
-const looksPng = (b64: string) => b64?.startsWith('iVBOR');
 
 @Component({
   selector: 'app-search-page',
@@ -39,8 +22,8 @@ const looksPng = (b64: string) => b64?.startsWith('iVBOR');
     NavbarComponent,
     FilterPanelComponent,
     RecentSearchesComponent,
-    SearchesPaginatorComponent
-],
+    SearchesPaginatorComponent,
+  ],
   templateUrl: './search-page.component.html',
 })
 export class SearchPageComponent implements OnDestroy {

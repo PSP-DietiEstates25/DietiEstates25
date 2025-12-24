@@ -44,7 +44,7 @@ const iconDefault = L.icon({
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   tooltipAnchor: [16, -28],
-  shadowSize: [41, 41]
+  shadowSize: [41, 41],
 });
 L.Marker.prototype.options.icon = iconDefault;
 // ----------------------------------------------------------------
@@ -64,8 +64,8 @@ export interface MunicipalityToSelect {
     RoomsIconComponent,
     SquareMetersIconComponent,
     FloorIconComponent,
-    EnergyClassIconComponent
-],
+    EnergyClassIconComponent,
+  ],
   templateUrl: './search-landing-map.component.html',
   styleUrls: ['./search-landing-map.component.scss'],
 })
@@ -79,7 +79,7 @@ export class SearchLandingMapComponent
   private changeDetector = inject(ChangeDetectorRef);
   private injector = inject(EnvironmentInjector);
   private appRef = inject(ApplicationRef);
-  
+
   readonly placeholder = '/assets/placeholder.jpg';
 
   @ViewChild('mapContainer') mapContainer!: ElementRef;
@@ -110,7 +110,7 @@ export class SearchLandingMapComponent
     effect(() => {
       const cards = this.facade.searchCards();
       if (this.map && cards.length > 0 && !this.loading) {
-         this.addMarkers(cards, true);
+        this.addMarkers(cards, true);
       }
     });
   }
@@ -118,9 +118,9 @@ export class SearchLandingMapComponent
   ngOnInit(): void {
     const cachedGeo = this.facade.getCachedGeographicalPosition();
     if (cachedGeo) {
-        this.cityName = cachedGeo.city!;
-        this.regionName = (cachedGeo as any).state!;
-        this.preselectedMunicipality = cachedGeo.municipality || null;
+      this.cityName = cachedGeo.city!;
+      this.regionName = (cachedGeo as any).state!;
+      this.preselectedMunicipality = cachedGeo.municipality || null;
     }
   }
 
@@ -137,11 +137,11 @@ export class SearchLandingMapComponent
       this.isSelectingMunicipalities = false;
       this.infoMessage = `Visualizzazione risultati salvati (${currentCards.length})`;
       this.addMarkers(currentCards, false);
-      this.loadBoundaries(true); 
+      this.loadBoundaries(true);
     } else {
       this.loadBoundaries(false);
     }
-    
+
     this.changeDetector.detectChanges();
   }
 
@@ -174,36 +174,44 @@ export class SearchLandingMapComponent
 
     L.control.zoom({ position: 'bottomright' }).addTo(this.map);
 
-    this.map.on('movestart zoomstart', () => { this.isMapMoving = true; });
-    this.map.on('moveend zoomend', () => { this.isMapMoving = false; });
+    this.map.on('movestart zoomstart', () => {
+      this.isMapMoving = true;
+    });
+    this.map.on('moveend zoomend', () => {
+      this.isMapMoving = false;
+    });
   }
 
   async loadBoundaries(isReplay: boolean = false) {
     if (!this.cityName) {
-        this.loading = false;
-        return;
+      this.loading = false;
+      return;
     }
 
     this.loading = true;
-    if (!isReplay) this.infoMessage = `Ricerca dei confini per ${this.cityName}...`;
-    
+    if (!isReplay)
+      this.infoMessage = `Ricerca dei confini per ${this.cityName}...`;
+
     try {
       // 1. Cerchiamo l'ID forzando "type=city" per evitare la provincia
-      const apiKey = 'd6ef1142975941368b3831ce8487681b'; 
+      const apiKey = 'd6ef1142975941368b3831ce8487681b';
       const searchUrl = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(this.cityName)}&type=city&limit=1&apiKey=${apiKey}`;
-      
+
       const searchResult: any = await lastValueFrom(this.http.get(searchUrl));
-      
+
       let placeId = '';
       if (searchResult.features && searchResult.features.length > 0) {
         placeId = searchResult.features[0].properties.place_id;
         console.log(`[DEBUG] City ID trovato (type=city): ${placeId}`);
       } else {
         placeId = await lastValueFrom(
-            this.geoapifyService.getPlaceIdByCityAndRegion(this.cityName, this.regionName)
+          this.geoapifyService.getPlaceIdByCityAndRegion(
+            this.cityName,
+            this.regionName,
+          ),
         );
       }
-      
+
       // 2. Otteniamo i confini
       let boundaryData: FeatureCollection = await lastValueFrom(
         this.geoapifyService.getCityMunicipality(placeId),
@@ -212,7 +220,7 @@ export class SearchLandingMapComponent
       // 3. Fallback per città singole
       if (!boundaryData.features || boundaryData.features.length === 0) {
         boundaryData = await lastValueFrom(
-            this.geoapifyService.getPlaceDetailsGeometry(placeId)
+          this.geoapifyService.getPlaceDetailsGeometry(placeId),
         );
       }
 
@@ -227,20 +235,19 @@ export class SearchLandingMapComponent
       this.boundariesLayer.addLayer(this.geojson);
 
       if (!isReplay) {
-         if (features.length > 0) {
-            this.showSelections(features);
-            this.map.fitBounds(this.geojson.getBounds());
-         } else {
-            this.infoMessage = "Nessun confine trovato.";
-         }
+        if (features.length > 0) {
+          this.showSelections(features);
+          this.map.fitBounds(this.geojson.getBounds());
+        } else {
+          this.infoMessage = 'Nessun confine trovato.';
+        }
       }
 
       if (isReplay && this.preselectedMunicipality) {
-          this.highlightSavedMunicipality(this.preselectedMunicipality);
+        this.highlightSavedMunicipality(this.preselectedMunicipality);
       } else if (isReplay) {
-          this.zoomToMarkers();
+        this.zoomToMarkers();
       }
-
     } catch (error) {
       console.error('Errore boundaries:', error);
       if (!isReplay) this.infoMessage = 'Errore nel caricamento della mappa.';
@@ -255,30 +262,35 @@ export class SearchLandingMapComponent
 
     let targetLayer: any = null;
     const targetName = name.trim().toLowerCase();
-    
+
     const cleanTarget = targetName.replace('municipalità', '').trim();
 
     this.geojson.eachLayer((layer: any) => {
       const props = layer.feature.properties;
-      
+
       const possibleNames = [
         props.name,
         props['name:it'],
         props.official_name,
-        props.ref 
-      ].filter(n => !!n).map(n => n.toString().trim().toLowerCase());
+        props.ref,
+      ]
+        .filter((n) => !!n)
+        .map((n) => n.toString().trim().toLowerCase());
 
-      const isMatch = possibleNames.some(pName => {
-         const cleanPName = pName.replace('municipalità', '').trim();
-         return pName === targetName || 
-                pName.includes(targetName) || 
-                targetName.includes(pName) ||
-                (cleanTarget.length > 0 && cleanPName === cleanTarget);
+      const isMatch = possibleNames.some((pName) => {
+        const cleanPName = pName.replace('municipalità', '').trim();
+        return (
+          pName === targetName ||
+          pName.includes(targetName) ||
+          targetName.includes(pName) ||
+          (cleanTarget.length > 0 && cleanPName === cleanTarget)
+        );
       });
 
       if (isMatch) {
         this.selectedLayer = layer;
-        if (typeof layer.setStyle === 'function') layer.setStyle(this.getSelectedStyle());
+        if (typeof layer.setStyle === 'function')
+          layer.setStyle(this.getSelectedStyle());
         if (typeof layer.bringToFront === 'function') layer.bringToFront();
         targetLayer = layer;
       } else {
@@ -287,9 +299,12 @@ export class SearchLandingMapComponent
     });
 
     if (targetLayer && targetLayer.getBounds) {
-      this.map.fitBounds(targetLayer.getBounds(), { padding: [30, 30], animate: true });
+      this.map.fitBounds(targetLayer.getBounds(), {
+        padding: [30, 30],
+        animate: true,
+      });
     } else {
-        this.zoomToMarkers();
+      this.zoomToMarkers();
     }
   }
 
@@ -311,21 +326,34 @@ export class SearchLandingMapComponent
       const lat = first.geographicalPosition.latitude;
       const lon = first.geographicalPosition.longitude;
 
-      const iconToUse = count > 1 ? this.geoapifyService.getCounterIcon(count) : this.markerIcon;
+      const iconToUse =
+        count > 1
+          ? this.geoapifyService.getCounterIcon(count)
+          : this.markerIcon;
       const marker = L.marker([lat, lon], { icon: iconToUse });
 
-      marker.bindPopup(() => {
-          const componentRef = createComponent(MapPopupComponent, { environmentInjector: this.injector });
+      marker.bindPopup(
+        () => {
+          const componentRef = createComponent(MapPopupComponent, {
+            environmentInjector: this.injector,
+          });
           componentRef.setInput('cards', groupCards);
           this.appRef.attachView(componentRef.hostView);
-          const domElem = (componentRef.hostView as any).rootNodes[0] as HTMLElement;
-          domElem.addEventListener('remove', () => {
+          const domElem = (componentRef.hostView as any)
+            .rootNodes[0] as HTMLElement;
+          domElem.addEventListener(
+            'remove',
+            () => {
               this.appRef.detachView(componentRef.hostView);
               componentRef.destroy();
-            }, { once: true });
+            },
+            { once: true },
+          );
           componentRef.changeDetectorRef.detectChanges();
           return domElem;
-        }, { minWidth: 280, maxWidth: 280, className: 'de-leaflet-popup' });
+        },
+        { minWidth: 280, maxWidth: 280, className: 'de-leaflet-popup' },
+      );
 
       this.markersLayer.addLayer(marker);
     });
@@ -336,7 +364,9 @@ export class SearchLandingMapComponent
   filteredMunicipalities(): MunicipalityToSelect[] {
     const q = (this.query || '').trim().toLowerCase();
     if (!q) return this.municipalitiesSelection;
-    return this.municipalitiesSelection.filter((m) => (m.name || '').toLowerCase().includes(q));
+    return this.municipalitiesSelection.filter((m) =>
+      (m.name || '').toLowerCase().includes(q),
+    );
   }
 
   resetToMunicipalities() {
@@ -353,29 +383,45 @@ export class SearchLandingMapComponent
 
   zoomToMarkers() {
     const latlngs: L.LatLng[] = [];
-    this.markersLayer.eachLayer((layer: any) => { if (layer.getLatLng) latlngs.push(layer.getLatLng()); });
-    if (latlngs.length) this.map.fitBounds(L.latLngBounds(latlngs), { padding: [40, 40], animate: true });
+    this.markersLayer.eachLayer((layer: any) => {
+      if (layer.getLatLng) latlngs.push(layer.getLatLng());
+    });
+    if (latlngs.length)
+      this.map.fitBounds(L.latLngBounds(latlngs), {
+        padding: [40, 40],
+        animate: true,
+      });
   }
 
-  onMunicipalityChange(name: string) { this.selectMunicipality(name); }
+  onMunicipalityChange(name: string) {
+    this.selectMunicipality(name);
+  }
 
   showSelections(features: any[]) {
     this.isSelectingMunicipalities = true;
     this.municipalitiesSelection = [];
     for (const feature of features) {
-      const name = feature.properties?.name || feature.properties?.city || 'Zona sconosciuta';
+      const name =
+        feature.properties?.name ||
+        feature.properties?.city ||
+        'Zona sconosciuta';
       this.municipalitiesSelection.push({ name: name, isSelected: false });
     }
-    this.municipalitiesSelection.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+    this.municipalitiesSelection.sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { numeric: true }),
+    );
   }
 
   selectMunicipality(name: string | null) {
     this.selectedMunicipality = name || '';
-    this.municipalitiesSelection.forEach((m) => (m.isSelected = m.name === name));
+    this.municipalitiesSelection.forEach(
+      (m) => (m.isSelected = m.name === name),
+    );
 
     if (this.geojson) {
       this.geojson.eachLayer((layer: any) => {
-        const featureName = layer.feature.properties.name || layer.feature.properties['name:it'];
+        const featureName =
+          layer.feature.properties.name || layer.feature.properties['name:it'];
         if (featureName === name) {
           this.selectedLayer = layer;
           layer.setStyle(this.getSelectedStyle());
@@ -407,15 +453,19 @@ export class SearchLandingMapComponent
     const layer = mouseEvent.target;
     if (layer !== this.selectedLayer) {
       this.geojson.resetStyle(layer);
-      if (this.selectedLayer && typeof (this.selectedLayer as any).bringToFront === 'function') {
-         (this.selectedLayer as any).bringToFront();
+      if (
+        this.selectedLayer &&
+        typeof (this.selectedLayer as any).bringToFront === 'function'
+      ) {
+        (this.selectedLayer as any).bringToFront();
       }
     }
   };
 
   handleLayerClick = (mouseEvent: any, feature: any) => {
     if (!this.isSelectingMunicipalities) return;
-    const zoneName = feature.properties.name || feature.properties['name:it'] || '';
+    const zoneName =
+      feature.properties.name || feature.properties['name:it'] || '';
     const clickedLayer = mouseEvent.target;
     if (this.selectedLayer === clickedLayer) this.selectMunicipality(null);
     else this.selectMunicipality(zoneName);
@@ -425,19 +475,38 @@ export class SearchLandingMapComponent
     layer.on({
       mouseover: this.highlightFeature,
       mouseout: this.resetHighlight,
-      click: (e: L.LeafletMouseEvent) => this.ngZone.run(() => this.handleLayerClick(e, feature)),
+      click: (e: L.LeafletMouseEvent) =>
+        this.ngZone.run(() => this.handleLayerClick(e, feature)),
       dblclick: (e) => L.DomEvent.stopPropagation(e),
     });
   };
 
   getDefaultStyle() {
-    return { fillColor: '#FFFFFF', weight: 1, opacity: 1, color: '#094585', fillOpacity: 0 };
+    return {
+      fillColor: '#FFFFFF',
+      weight: 1,
+      opacity: 1,
+      color: '#094585',
+      fillOpacity: 0,
+    };
   }
   getHoverStyle() {
-    return { weight: 2, color: '#094585', fillColor: '#5ea8f7', dashArray: '', fillOpacity: 0.2 };
+    return {
+      weight: 2,
+      color: '#094585',
+      fillColor: '#5ea8f7',
+      dashArray: '',
+      fillOpacity: 0.2,
+    };
   }
   getSelectedStyle() {
-    return { weight: 3, color: '#094585', fillColor: '#5ea8f7', dashArray: '', fillOpacity: 0.2 };
+    return {
+      weight: 3,
+      color: '#094585',
+      fillColor: '#5ea8f7',
+      dashArray: '',
+      fillOpacity: 0.2,
+    };
   }
 
   onSearch() {
@@ -459,12 +528,14 @@ export class SearchLandingMapComponent
     this.facade.geographicalPositionId.set(null);
     this.facade.detailId.set(null);
 
-    this.facade.runFullSearch({
+    this.facade
+      .runFullSearch({
         category: AdCategory.Sale,
         geographicalPosition: { ...geoPos, municipality: municipality || '' },
         utility: utility,
         cadastralFilter: cadastral,
-    }).subscribe({
+      })
+      .subscribe({
         next: () => {
           const cards = this.facade.searchCards();
           this.infoMessage = `Trovati ${cards.length} immobili a ${municipality || this.cityName}.`;
@@ -475,7 +546,7 @@ export class SearchLandingMapComponent
           this.infoMessage = 'Nessun immobile trovato in questa zona.';
           this.changeDetector.detectChanges();
         },
-    });
+      });
   }
 
   ngOnDestroy(): void {

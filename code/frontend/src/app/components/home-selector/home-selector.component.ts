@@ -1,21 +1,9 @@
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  OnInit,
-  Signal,
-  signal,
-} from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { LocalStorageService } from '../../manual_services/local-storage/local-storage.service';
 import { HomeComponent } from '../home/home.component';
 import { AgentDashboardComponent } from '../agent-dashboard/agent-dashboard.component';
 import { AdminDashboardComponent } from '../admin-dashboard/admin-dashboard.component';
-import { Router } from '@angular/router';
-import { single, windowTime } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AuthService } from '../../manual_services/auth/auth.service';
-import { environmentMap } from '../../../environments/environment.map';
 
 @Component({
   selector: 'app-home-selector',

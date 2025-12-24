@@ -1,5 +1,4 @@
 import { Component, effect, inject, signal } from '@angular/core';
-
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -8,26 +7,20 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
-import {
-  AdminDashboardFacade,
-  AdminAd,
-  AdminUser,
-  Role,
-} from './admin-dashboard.facade';
+import { AdminDashboardFacade } from './admin-dashboard.facade';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
 import { AuthService } from '../../manual_services/auth/auth.service';
-import { environment } from '../../../environments/environment.development';
-import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { AgentAdsListComponent } from '../agent-ads-list/agent-ads-list.component';
+import { HttpErrorResponse } from '@angular/common/http';
 import { AdsPaginatorComponent } from '../ads-paginator/ads-paginator.component';
 import { AdsPaginatorService } from '../../manual_services/ads_paginator/ads-paginator.service';
 import { FullRealEstate } from '../../interfaces/full-real-estate';
 import { PaginatorRequest } from '../../interfaces/paginator-request';
-import { throttleTime } from 'rxjs';
 import { AdminAdsListComponent } from '../admin-ads-list/admin-ads-list.component';
 import { LocalStorageService } from '../../manual_services/local-storage/local-storage.service';
+import { Role } from '../../interfaces/role';
+import { AdminUser } from '../../interfaces/admin-user';
 
 function matchValidator(a: string, b: string) {
   return (ctrl: AbstractControl) => {
@@ -45,8 +38,8 @@ function matchValidator(a: string, b: string) {
     ReactiveFormsModule,
     RouterLink,
     AdsPaginatorComponent,
-    AdminAdsListComponent
-],
+    AdminAdsListComponent,
+  ],
   templateUrl: './admin-dashboard.component.html',
 })
 export class AdminDashboardComponent {
@@ -165,7 +158,7 @@ export class AdminDashboardComponent {
       this.localStorageService.removeItem('role');
 
       this.routerService.navigateByUrl('/').then(() => {
-         window.location.reload();
+        window.location.reload();
       });
     });
   }

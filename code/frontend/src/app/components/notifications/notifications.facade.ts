@@ -43,20 +43,17 @@ export class NotificationsFacade {
 
   private readonly LAST_SEEN_KEY = 'notifications_last_seen';
 
-  // Inizializzazione: Leggiamo direttamente dal Service
   private readonly _lastSeen = signal<string | null>(
-    this.localStorage.getItem(this.LAST_SEEN_KEY)
+    this.localStorage.getItem(this.LAST_SEEN_KEY),
   );
   readonly lastSeen = this._lastSeen.asReadonly();
 
   readonly unreadCount = computed(() => {
     const lastSeenIso = this._lastSeen();
     const latestItems = this._badgeNotifications();
-    
-    // Se lastSeenIso è null (mai visitato), tecnicamente sono tutte non lette.
-    // Il componente visuale gestirà il fatto di non mostrare pallini verdi al primo avvio.
+
     if (!lastSeenIso) return latestItems.length;
-    
+
     const last = new Date(lastSeenIso).getTime();
     return latestItems.filter((n) => {
       const d = n.createdDate || n.lastModifiedDate;
@@ -65,11 +62,9 @@ export class NotificationsFacade {
     }).length;
   });
 
-  // --- METODI --
   markAllSeen(): void {
     let now = new Date().getTime();
 
-    // Recuperiamo tutte le notifiche attualmente in memoria per calcolare il tempo massimo
     const pageItems = this._pageNotifications();
     const badgeItems = this._badgeNotifications();
     const allItems = [...pageItems, ...badgeItems];
@@ -82,20 +77,14 @@ export class NotificationsFacade {
       }
     });
 
-    // CORREZIONE CRITICA:
-    // Se l'ultima notifica è nel "futuro" o uguale ad adesso (disallineamento server/client),
-    // forziamo il "lastSeen" a 1 millisecondo DOPO quella notifica.
     if (maxNotificationTime >= now) {
       now = maxNotificationTime + 1;
     }
 
     const isoString = new Date(now).toISOString();
-    console.log('[Facade] Updating Last Seen via Service to:', isoString);
 
-    // 1. Aggiorna il Signal (Memoria immediata)
     this._lastSeen.set(isoString);
-    
-    // 2. Scrive tramite il tuo Service (Persistenza)
+
     this.localStorage.setItem(this.LAST_SEEN_KEY, isoString);
   }
 
@@ -128,7 +117,9 @@ export class NotificationsFacade {
       page: request.page - 1,
     };
     if (request.categories && request.categories.length > 0) {
-      const validCats = request.categories.filter((category) => category !== null);
+      const validCats = request.categories.filter(
+        (category) => category !== null,
+      );
       if (validCats.length > 0) params.categories = validCats;
     }
     return this.notificationService.getUserNotifications(params);
@@ -148,14 +139,14 @@ export class NotificationsFacade {
 
   fetchBadgeData() {
     const request: NotificationPaginatorRequest = {
-        page: 1, 
-        size: 5, 
-        categories: [] 
+      page: 1,
+      size: 5,
+      categories: [],
     };
-    
+
     this.getNotifications(request).subscribe((response) => {
-       const content = (response.content || []) as NotificationResponse[];
-       this._badgeNotifications.set(content);
+      const content = (response.content || []) as NotificationResponse[];
+      this._badgeNotifications.set(content);
     });
   }
 }

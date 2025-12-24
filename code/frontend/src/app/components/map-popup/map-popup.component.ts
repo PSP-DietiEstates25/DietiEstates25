@@ -1,7 +1,6 @@
 import { Component, inject, input, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import { CurrencyPipe } from '@angular/common';
 import { FullRealEstate } from '../../interfaces/full-real-estate';
 import { RoomsIconComponent } from '../../shared/icons/rooms-icon/rooms-icon.component';
 import { SquareMetersIconComponent } from '../../shared/icons/square-meters-icon/square-meters-icon.component';

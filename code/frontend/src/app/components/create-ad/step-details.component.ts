@@ -1,30 +1,22 @@
 import {
   Component,
-  OnInit,
   Signal,
   computed,
   effect,
   inject,
   signal,
 } from '@angular/core';
-import {
-  ReactiveFormsModule,
-  FormBuilder,
-  Validators,
-  FormGroup,
-} from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import {
-  CreateAdFacade,
-  PositionDraft,
-  UtilitiesDraft,
-} from './create-ad.facade';
+import { CreateAdFacade } from './create-ad.facade';
 import { MapComponent } from '../map/map.component';
 import { ToastrService } from 'ngx-toastr';
 import { GeoapifyService } from '../../manual_services/geoapify/geoapify.service';
 import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.component';
 import { NearTag } from '../../manual_services/geoapify/geoapify.service';
-import { switchMap, pipe, finalize } from 'rxjs';
+import { switchMap, finalize } from 'rxjs';
+import { UtilitiesDraft } from '../../interfaces/create-ad/utilities-draft';
+import { PositionDraft } from '../../interfaces/create-ad/position-draft';
 
 @Component({
   selector: 'app-step-details',
@@ -202,7 +194,7 @@ export class StepDetailsComponent {
               }),
             );
         }),
-        finalize(() => this.isLoading.set(false))
+        finalize(() => this.isLoading.set(false)),
       )
       .subscribe({
         next: (nearTagsResponse: NearTag[]) => {

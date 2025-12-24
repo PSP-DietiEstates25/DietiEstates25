@@ -1,7 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable, throwError, of, EMPTY, forkJoin } from 'rxjs';
 import { map, catchError, switchMap, tap, finalize } from 'rxjs/operators';
-
 import {
   RealEstateControllerService,
   EstateAgentControllerService,
@@ -12,55 +11,17 @@ import {
   UtilityControllerService,
 } from '../../services/services';
 
-import { GetRealEstates$Params } from '../../services/fn/real-estate-controller/get-real-estates';
 import { RealEstateResponse } from '../../services/models/real-estate-response';
-import { PageRealEstateResponse } from '../../services/models/page-real-estate-response';
-
 import { AuthService } from '../../manual_services/auth/auth.service';
-
 import { StafferRequest, StafferResponse } from '../../services/models';
 import { PaginatorRequest } from '../../interfaces/paginator-request';
 import { FullRealEstate } from '../../interfaces/full-real-estate';
 import { AdCategory } from '../../enums/ad-category.enum';
 import { EnergyClass } from '../../enums/energy-class.enum';
-
-export interface AdminAd {
-  id: number;
-  title: string;
-  city?: string | null;
-  price?: number | null;
-  active?: boolean | null;
-  createdAt?: string | null;
-}
-
-export type Role = 'ADMIN' | 'ESTATE_AGENT';
-
-export interface AdminUser {
-  id: number;
-  email: string;
-  role: Role;
-  active: boolean;
-  createdAt?: string;
-}
-
-export interface ListAdsOpts {
-  q?: string;
-  active?: boolean | '';
-}
-
-export interface AccountResponse {
-  id?: number;
-  email?: string;
-  role?: string;
-  locked?: boolean;
-  active?: boolean;
-}
-
-export interface AccountRequest {
-  email?: string;
-  password?: string;
-  role?: string;
-}
+import { Role } from '../../interfaces/role';
+import { AccountResponse } from '../../interfaces/account-response';
+import { AccountRequest } from '../../interfaces/account-request';
+import { AdminUser } from '../../interfaces/admin-user';
 
 @Injectable({ providedIn: 'root' })
 export class AdminDashboardFacade {
@@ -81,92 +42,6 @@ export class AdminDashboardFacade {
   success = signal<string | null>(null);
   error = signal<string | null>(null);
 
-  // ===== ADS =====
-  /*
-  fetchRealEstates(request: PaginatorRequest) {
-    const params = {
-      page: request.page - 1,
-      size: request.size,
-    };
-    return this.realEstateService.getRealEstates(params).pipe(
-      switchMap((response) => {
-        const requests = response.content!.map((realEstate) => {
-          const cadastralData = this.cadastralDataService.getCadastralDataById({
-            cadastraldataid: realEstate.cadastralDataId!,
-          });
-
-          const details = this.detailService
-            .getDetailById({ detailid: realEstate.detailId! })
-            .pipe(
-              switchMap((detail) => {
-                return forkJoin({
-                  geographicalPosition:
-                    this.geographicalPositionService.getGeographicalPositionById(
-                      {
-                        geographicalpositionid: detail.geographicalPositionId!,
-                      },
-                    ),
-                  utility: this.utilityService.getUtilityById({
-                    utilityid: detail.utilityId!,
-                  }),
-                });
-              }),
-            );
-
-          return forkJoin({
-            realEstate: of(realEstate),
-            cadastralData: cadastralData,
-            details: details,
-          }).pipe(
-            map((result) => {
-              return {
-                ...result.realEstate,
-                cadastralData: result.cadastralData,
-                geographicalPosition: result.details.geographicalPosition,
-                utility: result.details.utility,
-              };
-            }),
-          );
-        });
-
-        return forkJoin(requests).pipe(
-          map((realEstatesObservables) => {
-            return {
-              ...response,
-              fullRealEstates: realEstatesObservables,
-            };
-          }),
-        );
-      }),
-      tap((fullRealEstatesResponse) => {
-        const newRealEstates: FullRealEstate[] =
-          fullRealEstatesResponse.fullRealEstates.map((realEstate) => {
-            return {
-              ...realEstate,
-              geographicalPosition: realEstate.geographicalPosition,
-              utility: realEstate.utility,
-              cadastralData: {
-                ...realEstate.cadastralData,
-                energyClass: realEstate.cadastralData.energyClass as
-                  | 'A4'
-                  | 'A3'
-                  | 'A2'
-                  | 'A1'
-                  | 'B'
-                  | 'C'
-                  | 'D'
-                  | 'E'
-                  | 'F'
-                  | 'G',
-              },
-              category: realEstate.category as AdCategory,
-            };
-          });
-        this.realEstates.set(newRealEstates);
-      }),
-    );
-  }
-  */
   fetchRealEstates(request: PaginatorRequest) {
     const params = {
       page: request.page - 1,
@@ -249,16 +124,6 @@ export class AdminDashboardFacade {
         this.realEstates.set(prev);
         return of(void 0);
       }),
-      /*
-      switchMap(() =>
-        this.fetchRealEstates().pipe(
-          catchError((error) => {
-            console.error('[Facade] deleteAd error (reload)', error);
-            return of(void 0);
-          }),
-        ),
-      ),
-      */
       map(() => void 0),
     );
   }
@@ -272,15 +137,6 @@ export class AdminDashboardFacade {
       realestateid: adId,
       body,
     });
-    /*
-    .pipe(
-      switchMap(() => this.loadAds()),
-      catchError((error) => {
-        console.error('[Facade] updateAd error', error);
-        return of(void 0);
-      })
-    );
-    */
   }
 
   // crea un account nell'authorization server
@@ -346,8 +202,6 @@ export class AdminDashboardFacade {
         );
     }
   }
-
-  // ===== PASSWORD =====
 
   changePassword(
     currentPassword: string,

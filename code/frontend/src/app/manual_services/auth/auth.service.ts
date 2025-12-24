@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AccountResponse } from '../../components/admin-dashboard/admin-dashboard.facade';
 import { LocalStorageService } from '../local-storage/local-storage.service';
+import { AccountResponse } from '../../interfaces/account-response';
 
 export interface UserInfo {
   email: string;
@@ -81,7 +81,10 @@ export class AuthService {
   }
 
   isUser() {
-    return this.localStorageService.getItem('role') === 'USER' || this.localStorageService.getItem('role') === 'OIDC_USER';
+    return (
+      this.localStorageService.getItem('role') === 'USER' ||
+      this.localStorageService.getItem('role') === 'OIDC_USER'
+    );
   }
 
   setRole(role: string) {

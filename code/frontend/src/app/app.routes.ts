@@ -6,7 +6,6 @@ import { EditAdFacade } from './components/edit-ad/edit-ad.facade';
 import { EditLayoutComponent } from './components/edit-ad/edit-layout.component';
 import { RegisterComponent } from './components/register/register.component';
 import { HomeSelectorComponent } from './components/home-selector/home-selector.component';
-import { DetailControllerService } from './services/services';
 import { StepDetailsComponent } from './components/create-ad/step-details.component';
 import { StepCadastralComponent } from './components/create-ad/step-cadastral.component';
 import { StepBasicsComponent } from './components/create-ad/step-basics.component';
@@ -15,10 +14,8 @@ import { isEstateAgentGuard } from './_guards/estate-agent/is-estate-agent.guard
 import { StepPhotosComponent } from './components/create-ad/step-photos.component';
 import { StepReviewComponent } from './components/create-ad/step-review.component';
 import { AgentCreateLayoutComponent } from './components/create-ad/create-layout.component';
-import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
 import { AdDetailComponent } from './components/ad-detail/ad-detail.component';
 import { NotificationsPageComponent } from './components/notifications/notifications-page.component';
-import { isAdminGuard } from './_guards/admin/is-admin.guard';
 import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
 import { isEstateAgentOrAdminGuard } from './_guards/admin-or-agent/is-estate-agent-or-admin.guard';
 import { SearchLandingMapComponent } from './components/search-landing-map/search-landing-map.component';

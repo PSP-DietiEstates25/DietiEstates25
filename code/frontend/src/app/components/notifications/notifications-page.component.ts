@@ -1,10 +1,4 @@
-import {
-  Component,
-  effect,
-  HostListener,
-  inject,
-  OnDestroy,
-} from '@angular/core';
+import { Component, effect, inject, OnDestroy } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { NotificationsFacade } from './notifications.facade';
@@ -25,8 +19,8 @@ import { NotificationCategory } from '../../enums/notification-category.enum';
     FormsModule,
     NavbarComponent,
     NotificationsListComponent,
-    NotificationPaginatorComponent
-],
+    NotificationPaginatorComponent,
+  ],
   templateUrl: './notifications-page.component.html',
 })
 export class NotificationsPageComponent implements OnDestroy {

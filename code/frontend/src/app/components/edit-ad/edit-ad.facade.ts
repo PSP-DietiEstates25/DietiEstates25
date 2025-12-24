@@ -1,6 +1,6 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { EMPTY, from, Observable, of, Subject, throwError } from 'rxjs';
+import { EMPTY, from, of, Subject, throwError } from 'rxjs';
 import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 
 import {
@@ -19,38 +19,11 @@ import {
   RealEstateResponse,
   UtilityRequest,
 } from '../../services/models';
-
-export type Category = 'SALE' | 'RENT';
-
-export interface BasicsDraft {
-  category: Category;
-  description: string;
-}
-export interface UtilityDraft {
-  hasElevator: boolean;
-  hasDoorman: boolean;
-  hasAirConditioning: boolean;
-
-  nearPark: boolean;
-  nearPublicTransport: boolean;
-  nearSchool: boolean;
-}
-export interface GeographicalPositionDraft {
-  address: string;
-  region: string;
-  city: string;
-  municipality: string;
-  latitude: number;
-  longitude: number;
-  radius?: number;
-}
-export interface CadastralDataDraft {
-  price: number;
-  rooms: number;
-  floor: number;
-  energyClass: 'A4' | 'A3' | 'A2' | 'A1' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
-  squareMeters: number;
-}
+import { BasicsDraft } from '../../interfaces/create-ad/basic-draft';
+import { UtilitiesDraft } from '../../interfaces/create-ad/utilities-draft';
+import { PositionDraft } from '../../interfaces/create-ad/position-draft';
+import { CadastralDraft } from '../../interfaces/create-ad/cadastral-draft';
+import { Category } from '../../interfaces/category';
 
 @Injectable()
 export class EditAdFacade {
@@ -73,9 +46,9 @@ export class EditAdFacade {
   readonly mode = 'edit' as const;
 
   basics = signal<BasicsDraft | null>(null);
-  utility = signal<UtilityDraft | null>(null);
-  geographicalPosition = signal<GeographicalPositionDraft | null>(null);
-  cadastralData = signal<CadastralDataDraft | null>(null);
+  utility = signal<UtilitiesDraft | null>(null);
+  geographicalPosition = signal<PositionDraft | null>(null);
+  cadastralData = signal<CadastralDraft | null>(null);
   images = signal<File[]>([]);
 
   loading = signal(false);
@@ -101,15 +74,15 @@ export class EditAdFacade {
     return this.basics();
   }
 
-  getUtility(): UtilityDraft | null {
+  getUtility(): UtilitiesDraft | null {
     return this.utility();
   }
 
-  getGeographicalPosition(): GeographicalPositionDraft | null {
+  getGeographicalPosition(): PositionDraft | null {
     return this.geographicalPosition();
   }
 
-  getCadastralData(): CadastralDataDraft | null {
+  getCadastralData(): CadastralDraft | null {
     return this.cadastralData();
   }
 
@@ -121,29 +94,27 @@ export class EditAdFacade {
     this.basics.set(basicsDraft);
   }
 
-  setUtility(utilityDraft: UtilityDraft) {
+  setUtility(utilityDraft: UtilitiesDraft) {
     this.utility.set(utilityDraft);
   }
 
-  setGeographicalPosition(
-    geographicalPositionDraft: GeographicalPositionDraft,
-  ) {
+  setGeographicalPosition(geographicalPositionDraft: PositionDraft) {
     this.geographicalPosition.set(geographicalPositionDraft);
   }
 
-  setCadastralData(cadastralDataDraft: CadastralDataDraft) {
+  setCadastralData(cadastralDataDraft: CadastralDraft) {
     this.cadastralData.set(cadastralDataDraft);
   }
 
-  setUtilities(utilityDraft: UtilityDraft) {
+  setUtilities(utilityDraft: UtilitiesDraft) {
     this.setUtility(utilityDraft);
   }
 
-  setPosition(geographicalPositionDraft: GeographicalPositionDraft) {
+  setPosition(geographicalPositionDraft: PositionDraft) {
     this.setGeographicalPosition(geographicalPositionDraft);
   }
 
-  setCadastral(cadastralDraft: CadastralDataDraft) {
+  setCadastral(cadastralDraft: CadastralDraft) {
     this.setCadastralData(cadastralDraft);
   }
 
@@ -159,9 +130,6 @@ export class EditAdFacade {
     this.images.set([...(this.images() ?? []), ...(files ?? [])]);
   }
 
-  /**
-   * Carica l'annuncio esistente, popola segnali e ID.
-   */
   load(realEstateId: number) {
     if (Number.isNaN(realEstateId)) {
       const realEstateIdParam =
@@ -193,7 +161,6 @@ export class EditAdFacade {
           this.detailId.set(realEstateDto.detailId ?? null);
           this.cadastralDataId.set(realEstateDto.cadastralDataId ?? null);
 
-          // immagini esistenti -> File
           const existingImgs = realEstateDto.images ?? [];
           const files = existingImgs
             .map((b64, index) =>
@@ -311,10 +278,6 @@ export class EditAdFacade {
       .subscribe();
   }
 
-  /**
-   * UPDATE FLOW:
-   * update Utility -> update Geo -> update Detail -> update CadastralData -> update RealEstate (multipart)
-   */
   createAd() {
     const basics = this.basics();
     const utility = this.utility();
@@ -413,7 +376,6 @@ export class EditAdFacade {
             body: cadastralDataRequest,
           }),
         ),
-        // QUI: niente più base64. Inviamo multipart (data + images)
         switchMap(() => {
           const realEstateData: RealEstateRequest = {
             category: basics.category,

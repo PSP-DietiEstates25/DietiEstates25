@@ -12,7 +12,6 @@ import {
 import { environment } from '../../../environments/environment';
 import { GeocoderAutocomplete } from '@geoapify/geocoder-autocomplete';
 import * as L from 'leaflet';
-import 'mapbox-gl-leaflet';
 import { environmentMap } from '../../../environments/environment.map';
 
 @Component({

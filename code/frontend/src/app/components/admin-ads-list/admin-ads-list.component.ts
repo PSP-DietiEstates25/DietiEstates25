@@ -7,7 +7,6 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { AgentDashboardFacade } from '../agent-dashboard/agent-dashboard.facade';
 import { AdsPaginatorService } from '../../manual_services/ads_paginator/ads-paginator.service';
 import { ToastrService } from 'ngx-toastr';
 import { DeleteAdDialogComponent } from '../dialog/delete-ad-dialog/delete-ad-dialog.component';

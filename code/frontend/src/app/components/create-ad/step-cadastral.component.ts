@@ -9,9 +9,9 @@ import {
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CreateAdFacade } from './create-ad.facade';
-import { CadastralDataDraft } from '../edit-ad/edit-ad.facade';
 import { ToastrService } from 'ngx-toastr';
 import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.component';
+import { CadastralDraft } from '../../interfaces/create-ad/cadastral-draft';
 
 @Component({
   selector: 'app-step-cadastral',
@@ -20,14 +20,13 @@ import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.
   templateUrl: './step-cadastral.component.html',
 })
 export class StepCadastralComponent {
-  
   private formBuilder = inject(FormBuilder);
   private toastrService = inject(ToastrService);
   private facade = inject(CreateAdFacade);
   private routerService = inject(Router);
   private activatedRouter = inject(ActivatedRoute);
 
-  _savedCadastralData!: Signal<CadastralDataDraft | null>;
+  _savedCadastralData!: Signal<CadastralDraft | null>;
   isDiscardModalOpen = false;
 
   form = this.formBuilder.nonNullable.group({
@@ -65,13 +64,6 @@ export class StepCadastralComponent {
       }
     });
   }
-
-  /*
-  ngOnInit(): void {
-    const cadastralData = this.facade.cadastralData();
-    if (cadastralData) this.form.patchValue(cadastralData, { emitEvent: false });
-  }
-  */
 
   openDiscardModal() {
     this.isDiscardModalOpen = true;

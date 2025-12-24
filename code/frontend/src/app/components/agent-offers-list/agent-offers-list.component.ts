@@ -1,11 +1,4 @@
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  OnDestroy,
-  Signal,
-} from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { AgentDashboardFacade } from '../agent-dashboard/agent-dashboard.facade';
 import { FullOffer } from '../../interfaces/full-offer';
 import { OfferControllerService } from '../../services/services';

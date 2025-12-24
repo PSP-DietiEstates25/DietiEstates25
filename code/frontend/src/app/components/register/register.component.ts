@@ -6,15 +6,11 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
-
-import { Router } from '@angular/router';
 import { AuthService } from '../../manual_services/auth/auth.service';
 import { environment } from '../../../environments/environment';
 import { firstValueFrom } from 'rxjs';
-import { AccountRequest } from '../admin-dashboard/admin-dashboard.facade';
+import { AccountRequest } from '../../interfaces/account-request';
 import { UserControllerService } from '../../services/services';
-import { UserRequest } from '../../services/models';
-import { RegisterUser$Params } from '../../services/fn/user-controller/register-user';
 
 function matchPassword(group: AbstractControl): ValidationErrors | null {
   const p = group.get('password')?.value;

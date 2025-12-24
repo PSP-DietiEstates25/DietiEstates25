@@ -1,5 +1,5 @@
-import { Injectable, inject, signal, computed, Sanitizer } from '@angular/core';
-import { of, forkJoin, from, VirtualTimeScheduler } from 'rxjs';
+import { Injectable, inject, signal } from '@angular/core';
+import { of, forkJoin } from 'rxjs';
 import { map, switchMap, tap, catchError, finalize } from 'rxjs/operators';
 
 import { SearchControllerService } from '../../services/services/search-controller.service';
@@ -21,7 +21,6 @@ import {
   Detail,
   DetailResponse,
   GeographicalPosition,
-  Search,
   Utility,
 } from '../../services/models';
 import { AdCategory } from '../../enums/ad-category.enum';
@@ -42,12 +41,8 @@ export class SearchFacade {
   private cadastralDataService = inject(CadastralDataControllerService);
   private authService = inject(AuthService);
 
-  private _categoryCache = new Map<number, AdCategory>();
   private _cachedCategory = signal<AdCategory | null>(null);
-
   private _detailCache = new Map<number, Detail>();
-  private _cachedDetail = signal<Detail | null>(null);
-
   private _utilityCache = new Map<number, Utility>();
   private _cachedUtility = signal<Utility | null>(null);
 
@@ -247,18 +242,17 @@ export class SearchFacade {
     this.loading.set(true);
 
     return this.searchService.createSearch({ body: searchBody }).pipe(
-      switchMap((realEstateList) => 
-        this.mapRealEstatesToFullRealEstates(realEstateList)
+      switchMap((realEstateList) =>
+        this.mapRealEstatesToFullRealEstates(realEstateList),
       ),
       tap((searchCards) => {
         this.savedSearches.set(searchCards);
         this.searchCards.set(searchCards);
       }),
-      finalize(() => this.loading.set(false))
+      finalize(() => this.loading.set(false)),
     );
   }
 
-  // --- NUOVO METODO HELPER PER ARRICCHIRE I DATI ---
   private mapRealEstatesToFullRealEstates(realEstates: RealEstateResponse[]) {
     if (!realEstates || realEstates.length === 0) {
       return of([]);

@@ -7,7 +7,6 @@ import {
   Router,
 } from '@angular/router';
 import { EditAdFacade } from './edit-ad.facade';
-import { CreateAdFacade } from '../create-ad/create-ad.facade';
 
 @Component({
   selector: 'app-agent-edit-layout',
@@ -22,7 +21,7 @@ export class EditLayoutComponent implements OnInit {
 
   basicsValid = computed(() => !!this.facade.basics());
   detailsValid = computed(
-    () => !!(this.facade.utility() && this.facade.geographicalPosition())
+    () => !!(this.facade.utility() && this.facade.geographicalPosition()),
   );
   photosValid = computed(() => this.facade.images().length > 0);
   allValid = computed(() => this.facade.allValid());

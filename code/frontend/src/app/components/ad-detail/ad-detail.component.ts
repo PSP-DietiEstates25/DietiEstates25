@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AdDetailFacade } from './ad-detail.facade';
 import { OfferFormComponent } from '../offer/offer-form.component';
 import { VisitFormComponent } from '../visit/visit-form.component';
@@ -136,8 +136,8 @@ export class AdDetailComponent {
     }
   }
 
-  mapTag(t?: string): string {
-    switch (t) {
+  mapTag(tag?: string): string {
+    switch (tag) {
       case 'NEAR_SCHOOLS':
         return 'Vicino a scuole';
       case 'NEAR_PARKS':
@@ -145,7 +145,7 @@ export class AdDetailComponent {
       case 'NEAR_PUBLIC_TRANSPORT':
         return 'Vicina a trasporto pubblico';
       default:
-        return t ?? '';
+        return tag ?? '';
     }
   }
 }

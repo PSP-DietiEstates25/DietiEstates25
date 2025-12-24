@@ -11,15 +11,7 @@ import {
 } from '@angular/core';
 import * as L from 'leaflet';
 import { environment } from '../../../environments/environment';
-
-type Point = {
-  id?: number;
-  lat?: number;
-  lon?: number;
-  latitude?: number;
-  longitude?: number;
-  geographicalPosition?: { latitude?: number; longitude?: number };
-};
+import { Point } from '../../interfaces/point';
 
 @Component({
   selector: 'app-results-map',
@@ -39,7 +31,6 @@ type Point = {
   ],
 })
 export class ResultsMapComponent implements AfterViewInit, OnChanges {
-  
   @Input()
   points: Point[] = [];
 
@@ -59,15 +50,13 @@ export class ResultsMapComponent implements AfterViewInit, OnChanges {
   private markersLayer = L.layerGroup();
 
   ngAfterViewInit(): void {
-    // 0) Log d’aiuto
     console.log(
       '[ResultsMap] ngAfterViewInit. points:',
       this.points?.length,
       'center:',
-      this.center
+      this.center,
     );
 
-    // 1) Fix icone marker (usa assets copiati da angular.json)
     L.Marker.prototype.options.icon = L.icon({
       iconRetinaUrl: 'assets/leaflet/marker-icon-2x.png',
       iconUrl: 'assets/leaflet/marker-icon.png',
@@ -79,7 +68,6 @@ export class ResultsMapComponent implements AfterViewInit, OnChanges {
       shadowSize: [41, 41],
     });
 
-    // 2) Inizializza mappa con centro certo (fallback Roma)
     const center = this.center ?? { lat: 41.9028, lon: 12.4964 };
     this.map = L.map(this.mapEl.nativeElement, {
       center: [center.lat, center.lon],
@@ -87,7 +75,6 @@ export class ResultsMapComponent implements AfterViewInit, OnChanges {
       preferCanvas: true,
     });
 
-    // 3) Tile layer con fallback (niente key → OSM)
     const key = environment.geoapifyAPIKey?.trim();
     const useGeoapify = !!key && key.toLowerCase() !== 'secretkey';
     const tileLayer = useGeoapify
@@ -96,7 +83,7 @@ export class ResultsMapComponent implements AfterViewInit, OnChanges {
           {
             attribution: 'Powered by Geoapify | © OpenStreetMap contributors',
             maxZoom: 20,
-          }
+          },
         )
       : L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '© OpenStreetMap contributors',
@@ -106,13 +93,11 @@ export class ResultsMapComponent implements AfterViewInit, OnChanges {
 
     this.markersLayer.addTo(this.map);
 
-    // 4) Se il contenitore cambia dimensione / viene mostrato dopo, invalida size
     setTimeout(() => this.map.invalidateSize(), 0);
     new ResizeObserver(() => this.map?.invalidateSize()).observe(
-      this.mapEl.nativeElement
+      this.mapEl.nativeElement,
     );
 
-    // 5) DEBUG: se non hai punti, aggiungo 3 marker di test a Roma
     if (!this.points || this.points.length === 0) {
       console.warn('[ResultsMap] points vuoto: aggiungo 3 marker di test.');
       this.points = [
@@ -122,7 +107,6 @@ export class ResultsMapComponent implements AfterViewInit, OnChanges {
       ];
     }
 
-    // 6) Disegna
     this.redrawMarkers();
   }
 
@@ -137,13 +121,14 @@ export class ResultsMapComponent implements AfterViewInit, OnChanges {
     let added = 0;
 
     for (const point of this.points ?? []) {
-
       const latitude = Number(
-        point?.lat ?? point?.latitude ?? point?.geographicalPosition?.latitude
+        point?.lat ?? point?.latitude ?? point?.geographicalPosition?.latitude,
       );
 
       const longitude = Number(
-        point?.lon ?? point?.longitude ?? point?.geographicalPosition?.longitude
+        point?.lon ??
+          point?.longitude ??
+          point?.geographicalPosition?.longitude,
       );
 
       const isValid =
@@ -153,17 +138,23 @@ export class ResultsMapComponent implements AfterViewInit, OnChanges {
 
       if (!isValid) {
         if (!environment.production) {
-          console.warn('[ResultsMap] scarto punto per lat/lon invalidi:', point);
+          console.warn(
+            '[ResultsMap] scarto punto per lat/lon invalidi:',
+            point,
+          );
         }
         continue;
       }
 
       L.marker([latitude, longitude])
-        .on('click', () => point.id != null && this.select.emit(point.id as number))
+        .on(
+          'click',
+          () => point.id != null && this.select.emit(point.id as number),
+        )
         .addTo(this.markersLayer);
 
       bounds.extend([latitude, longitude]);
-      
+
       added++;
     }
 

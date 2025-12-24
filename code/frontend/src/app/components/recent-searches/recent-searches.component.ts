@@ -1,12 +1,10 @@
 import { Component, inject, Signal, computed, effect } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { SearchFacade } from '../../components/search/search.facade';
-import { Search, SearchResponse } from '../../services/models';
 import { SearchPaginatorService } from '../../manual_services/search-paginator/search-paginator.service';
 import { SearchControllerService } from '../../services/services';
 import { ToastrService } from 'ngx-toastr';
 import { environment } from '../../../environments/environment.development';
-import { FullRealEstate } from '../../interfaces/full-real-estate';
 import { FullSearch } from '../../interfaces/full-search';
 import { PriceIconComponent } from '../../shared/icons/price-icon/price-icon.component';
 import { SquareMetersIconComponent } from '../../shared/icons/square-meters-icon/square-meters-icon.component';
@@ -63,12 +61,12 @@ export class RecentSearchesComponent {
     this.facade.replaySearch(search).subscribe({
       next: () => {
         this.toastrService.success('Ricerca caricata con successo');
-        this.routerService.navigate(['/search']); 
+        this.routerService.navigate(['/search']);
       },
       error: (err) => {
         console.error(err);
         this.toastrService.error('Impossibile rieseguire la ricerca');
-      }
+      },
     });
   }
 }

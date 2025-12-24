@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { AgentDashboardFacade } from '../agent-dashboard/agent-dashboard.facade'; // Verifica il percorso corretto
 import { AdsPaginatorService } from '../../manual_services/ads_paginator/ads-paginator.service';
 import { environment } from '../../../environments/environment';
@@ -18,20 +18,17 @@ import { PriceIconComponent } from '../../shared/icons/price-icon/price-icon.com
 import { SquareMetersIconComponent } from '../../shared/icons/square-meters-icon/square-meters-icon.component';
 import { FloorIconComponent } from '../../shared/icons/floor-icon/floor-icon.component';
 import { RoomsIconComponent } from '../../shared/icons/rooms-icon/rooms-icon.component';
-import { EnergyClass } from '../../enums/energy-class.enum';
-import { GeographicalPositionIconComponent } from '../../shared/icons/geographical-position-icon/geographical-position-icon.component';
 import { EnergyClassIconComponent } from '../../shared/icons/energy-class-icon/energy-class-icon.component';
 import { AirConditioningIconComponent } from '../../shared/icons/air-conditioning-icon/air-conditioning-icon.component';
 import { ElevatorIconComponent } from '../../shared/icons/elevator-icon/elevator-icon.component';
 import { DoormanIconComponent } from '../../shared/icons/doorman-icon/doorman-icon.component';
 import { ToastrService } from 'ngx-toastr';
-import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.component';
 import { DeleteAdDialogComponent } from '../dialog/delete-ad-dialog/delete-ad-dialog.component';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-agent-ads-list',
-  standalone: true, // Assicurati che sia standalone
+  standalone: true,
   imports: [
     RouterLink,
     FormsModule,
