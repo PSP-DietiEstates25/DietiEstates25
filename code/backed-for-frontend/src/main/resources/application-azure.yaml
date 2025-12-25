@@ -4,4 +4,4 @@ server:
     session:
       cookie:
         secure: true
-        same-site: None
+        same-site: LAX
