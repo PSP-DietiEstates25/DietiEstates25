@@ -1,6 +1,14 @@
 .git
 .gitignore
+
 node_modules
 .angular
 npm-debug.log
+
+dist
+
+.vscode
+.idea
+.DS_Store
+
 Dockerfile.*
