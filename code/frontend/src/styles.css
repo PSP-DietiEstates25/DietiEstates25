@@ -1,0 +1,32 @@
+@import "tailwindcss";
+@import "ngx-toastr/toastr";
+
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+@layer components {
+  .link_style { @apply cursor-pointer rounded-xl border-2 border-transparent px-3 py-2 font-semibold hover:scale-105 hover:border-2 hover:border-amber-600 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:border-blue-600 dark:hover:bg-blue-200; }
+  .link_menu_style { @apply cursor-pointer font-semibold text-black hover:text-amber-500 dark:text-white; }
+  .logout_button_style { @apply cursor-pointer rounded-xl border-2 border-transparent px-3 py-2 font-semibold hover:scale-105 hover:border-2 hover:border-amber-600 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:border-blue-600 dark:hover:bg-blue-200; }
+  .input_main { @apply w-full rounded-2xl border-2 border-gray-300 bg-white px-4 py-3 outline-none focus:border-amber-600 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500; }
+  .btn_primary { @apply inline-flex cursor-pointer items-center justify-center rounded-2xl border-2 border-amber-600 px-4 py-2 font-semibold transition-transform hover:scale-105 hover:bg-amber-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-60 dark:border-blue-500 dark:hover:bg-blue-500 dark:hover:text-white; }
+  .btn_ghost { @apply inline-flex cursor-pointer items-center justify-center rounded-2xl border-2 border-transparent px-4 py-2 font-semibold transition hover:border-amber-600 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-60 dark:hover:border-blue-500 dark:hover:bg-slate-800; }
+  .form_error { @apply text-xs text-red-700 italic; }
+  .publish_button { @apply cursor-pointer rounded bg-green-800 px-3 py-2 text-sm text-white hover:scale-105 hover:bg-green-700 sm:text-base md:text-base; }
+  .discard_button { @apply flex cursor-pointer gap-2 rounded bg-red-800 px-3 py-2 text-sm text-white hover:scale-105 hover:bg-red-700 sm:text-base md:text-base; }
+  .paginator_prev_button { @apply ms-0 flex h-8 items-center justify-center rounded-s-lg border border-e-0 border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white; }
+  .paginator_next_button { @apply flex h-8 items-center justify-center rounded-e-lg border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white; }
+  .paginator_page_button { @apply flex h-8 cursor-pointer items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white; }
+  .accepted_offer_badge { @apply bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200; }
+  .rejected_offer_badge { @apply bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-200; }
+  .pending_offer_badge { @apply bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200; }
+  .countered_offer_badge { @apply bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200; }
+  .counter_offer_badge { @apply bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200; }
+}
+
+@layer base {
+  body { @apply min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100; }
+}

@@ -1,3 +1,5 @@
+import '@geoapify/geocoder-autocomplete/styles/round-borders.css'; 
+import * as L from 'leaflet';
 import {
   AfterViewInit,
   Component,
@@ -11,7 +13,6 @@ import {
 } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { GeocoderAutocomplete } from '@geoapify/geocoder-autocomplete';
-import * as L from 'leaflet';
 import { environmentMap } from '../../../environments/environment.map';
 
 @Component({

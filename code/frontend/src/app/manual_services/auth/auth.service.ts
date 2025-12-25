@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { AccountResponse } from '../../interfaces/account-response';
+import { environment } from '../../../environments/environment';
 
 export interface UserInfo {
   email: string;
@@ -12,12 +13,18 @@ export interface UserInfo {
   providedIn: 'root',
 })
 export class AuthService {
+  private apiUrl = environment.apiBaseUrl;
+  private csrfUrl = `${environment.apiBaseUrl}/csrf-token`;
+  private registerUrl = `${environment.apiBaseUrl}/auth/register`;
+  private logoutUrl = `${environment.apiBaseUrl}/logout`;
+  private userInfoUrl = `${environment.apiBaseUrl}/userinfo`;
+  private changeAdminPasswordUrl = `${environment.apiBaseUrl}/account/password`;
+
   private readonly localStorageService = inject(LocalStorageService);
   private userInfo = signal<UserInfo | null>(null);
 
   httpClient = inject(HttpClient);
 
-  url = 'http://localhost:8080/userinfo';
   httpOptions: { headers: HttpHeaders; withCredentials: boolean } = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
@@ -26,17 +33,17 @@ export class AuthService {
   };
 
   getUserInfo() {
-    return this.httpClient.get<any>(this.url, this.httpOptions);
+    return this.httpClient.get<any>(this.userInfoUrl, this.httpOptions);
   }
 
   logout() {
-    return this.httpClient.post('http://localhost:8080/logout', null, {
+    return this.httpClient.post(this.logoutUrl, null, {
       withCredentials: true,
     });
   }
 
   getCsrf() {
-    return this.httpClient.get('http://localhost:8080/csrf-token', {
+    return this.httpClient.get(this.csrfUrl, {
       withCredentials: true,
     });
   }
@@ -46,9 +53,8 @@ export class AuthService {
     password?: string;
     role?: string;
   }) {
-    const url = 'http://localhost:8080/auth/register';
     return this.httpClient.post<AccountResponse>(
-      url,
+      this.registerUrl,
       registerRequest,
       this.httpOptions,
     );
@@ -58,9 +64,8 @@ export class AuthService {
     oldPassword?: string;
     newPassword?: string;
   }) {
-    const url = 'http://localhost:8080/account/password';
     return this.httpClient.patch(
-      url,
+      this.changeAdminPasswordUrl,
       changeAdminPasswordRequest,
       this.httpOptions,
     );

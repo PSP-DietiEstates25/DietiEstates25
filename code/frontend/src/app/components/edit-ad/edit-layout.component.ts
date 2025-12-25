@@ -7,11 +7,16 @@ import {
   Router,
 } from '@angular/router';
 import { EditAdFacade } from './edit-ad.facade';
+import { CreateAdFacade } from '../create-ad/create-ad.facade';
 
 @Component({
   selector: 'app-agent-edit-layout',
   standalone: true,
   imports: [RouterLink, RouterLinkActive, RouterModule],
+  providers: [
+    EditAdFacade,
+    { provide: CreateAdFacade, useExisting: EditAdFacade },
+  ],
   templateUrl: './edit-layout.component.html',
 })
 export class EditLayoutComponent implements OnInit {
@@ -49,6 +54,6 @@ export class EditLayoutComponent implements OnInit {
   }
 
   cancelEdit() {
-    this.routerService.navigate(['/agent']);
+    this.routerService.navigate(['/']);
   }
 }

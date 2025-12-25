@@ -9,9 +9,8 @@ import {
 import { MenuToggleComponent } from '../../buttons/menu_toggle/menu-toggle.component';
 import { NotificationsFacade } from '../../../components/notifications/notifications.facade';
 import { AuthService } from '../../../manual_services/auth/auth.service';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { LocalStorageService } from '../../../manual_services/local-storage/local-storage.service';
-import { NotificationPaginatorRequest } from '../../../interfaces/notification-paginator-request';
 
 interface NavLink {
   label: string;

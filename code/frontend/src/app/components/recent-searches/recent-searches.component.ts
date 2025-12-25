@@ -4,7 +4,7 @@ import { SearchFacade } from '../../components/search/search.facade';
 import { SearchPaginatorService } from '../../manual_services/search-paginator/search-paginator.service';
 import { SearchControllerService } from '../../services/services';
 import { ToastrService } from 'ngx-toastr';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 import { FullSearch } from '../../interfaces/full-search';
 import { PriceIconComponent } from '../../shared/icons/price-icon/price-icon.component';
 import { SquareMetersIconComponent } from '../../shared/icons/square-meters-icon/square-meters-icon.component';

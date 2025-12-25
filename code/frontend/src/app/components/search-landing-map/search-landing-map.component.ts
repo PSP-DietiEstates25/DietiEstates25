@@ -33,20 +33,11 @@ import { FloorIconComponent } from '../../shared/icons/floor-icon/floor-icon.com
 import { EnergyClassIconComponent } from '../../shared/icons/energy-class-icon/energy-class-icon.component';
 
 // --- Icone Locali (Assicurati che i file siano in src/assets/) ---
-const iconRetinaUrl = 'assets/marker-icon-2x.png';
-const iconUrl = 'assets/marker-icon.png';
-const shadowUrl = 'assets/marker-shadow.png';
-const iconDefault = L.icon({
-  iconRetinaUrl,
-  iconUrl,
-  shadowUrl,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  tooltipAnchor: [16, -28],
-  shadowSize: [41, 41],
-});
-L.Marker.prototype.options.icon = iconDefault;
+const iconRetinaUrl = '/assets/leaflet/images/marker-icon-2x.png';
+const iconUrl = '/assets/leaflet/images/marker-icon.png';
+const shadowUrl = '/assets/leaflet/images/marker-shadow.png';
+
+L.Icon.Default.mergeOptions({ iconRetinaUrl, iconUrl, shadowUrl });
 // ----------------------------------------------------------------
 
 export interface MunicipalityToSelect {
@@ -194,8 +185,7 @@ export class SearchLandingMapComponent
 
     try {
       // 1. Cerchiamo l'ID forzando "type=city" per evitare la provincia
-      const apiKey = 'd6ef1142975941368b3831ce8487681b';
-      const searchUrl = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(this.cityName)}&type=city&limit=1&apiKey=${apiKey}`;
+      const searchUrl = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(this.cityName)}&type=city&limit=1&apiKey=${environment.geoapifyAPIKey}`;
 
       const searchResult: any = await lastValueFrom(this.http.get(searchUrl));
 

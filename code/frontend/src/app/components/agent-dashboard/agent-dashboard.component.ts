@@ -15,7 +15,6 @@ import {
   AgentDashboardFacade,
 } from './agent-dashboard.facade';
 import { AuthService } from '../../manual_services/auth/auth.service';
-import { environment } from '../../../environments/environment.development';
 import { OffersPaginatorComponent } from '../offers-paginator/offers-paginator.component';
 import { AgentOffersListComponent } from '../agent-offers-list/agent-offers-list.component';
 import { OffersPaginatorService } from '../../manual_services/offers_paginator/offers-paginator.service';

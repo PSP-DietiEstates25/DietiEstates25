@@ -1,8 +1,7 @@
 import { environment } from './environment';
 
-//MapLibre GL Map styles
 export const environmentMap = {
-  production: true,
+  production: false,
   apiKeyParameter: 'apiKey=',
   map_osm_bright:
     'https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}@2x.png?' +

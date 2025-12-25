@@ -1,28 +1,56 @@
-// auth-interceptor.fn.ts
 import { HttpErrorResponse, HttpEvent, HttpInterceptorFn } from '@angular/common/http';
 import { Observable, EMPTY, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
-const BFF_ORIGINS = ['http://localhost:8080']; // aggiungi qui eventuali altri host del BFF
+/**
+ * Adds withCredentials ONLY for calls that are meant to hit the BFF.
+ *
+ * Works with:
+ *  - absolute baseUrl (dev):  http://localhost:8080
+ *  - relative baseUrl (prod): /api
+ */
+function isAbsoluteUrl(url: string): boolean {
+  return /^https?:\/\//i.test(url);
+}
+
+function normalizeBase(base: string): string {
+  return (base ?? '').trim().replace(/\/+$/, '');
+}
+
+const API_BASE = normalizeBase(environment.apiBaseUrl);
 
 export const authCredentials: HttpInterceptorFn = (req, next): Observable<HttpEvent<unknown>> => {
-  // decide se aggiungere withCredentials
-  const isAbsolute = /^https?:\/\//i.test(req.url);
-  const hitsBff =
-    (!isAbsolute && req.url.startsWith('/')) || // chiamate relative (es. '/realestates')
-    BFF_ORIGINS.some(origin => req.url.startsWith(origin)); // chiamate assolute al BFF
+  const reqIsAbs = isAbsoluteUrl(req.url);
 
-  const reqWithCreds = (hitsBff && !req.withCredentials) ? req.clone({ withCredentials: true }) : req;
+  const bffOrigin = isAbsoluteUrl(API_BASE) ? new URL(API_BASE).origin : (typeof window !== 'undefined' ? window.location.origin : '');
+
+  const hitsBff = (() => {
+    if (reqIsAbs) {
+      return !!bffOrigin && req.url.startsWith(bffOrigin);
+    }
+
+    if (!API_BASE || API_BASE === '/') {
+      return req.url.startsWith('/');
+    }
+
+    if (!isAbsoluteUrl(API_BASE) && API_BASE.startsWith('/')) {
+      return req.url === API_BASE || req.url.startsWith(API_BASE + '/');
+    }
+
+    return typeof window !== 'undefined' && window.location.origin === bffOrigin && req.url.startsWith('/');
+  })();
+
+  const reqWithCreds =
+    hitsBff && !req.withCredentials ? req.clone({ withCredentials: true }) : req;
 
   return next(reqWithCreds).pipe(
     catchError((err: unknown) => {
       if (err instanceof HttpErrorResponse && err.status === 401 && hitsBff) {
-        // avvia login OIDC sul BFF (top-level redirect)
-        window.location.href = 'http://localhost:8080/oauth2/authorization/messaging-client-oidc';
-        return EMPTY; // interrompe la catena
+        window.location.assign(environment.loginUrl);
+        return EMPTY;
       }
       return throwError(() => err);
     })
   );
 };
-
