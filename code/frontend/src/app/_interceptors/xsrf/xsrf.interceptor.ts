@@ -3,15 +3,33 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { environment } from '../../../environments/environment';
 
-const BFF_ORIGIN = new URL(environment.apiBaseUrl).origin;
+function isAbsoluteUrl(url: string): boolean {
+  return /^https?:\/\//i.test(url);
+}
+
+function normalizeBase(base: string): string {
+  if (!base) return '';
+  return base.endsWith('/') && base !== '/' ? base.slice(0, -1) : base;
+}
+
+const API_BASE = normalizeBase(environment.apiBaseUrl);
 
 export const xsrfInterceptor: HttpInterceptorFn = (req, next) => {
-  const isAbsolute = /^https?:\/\//i.test(req.url);
-  const hitsBff =
-    (isAbsolute && req.url.startsWith(BFF_ORIGIN)) ||
-    (!isAbsolute && typeof window !== 'undefined' && window.location.origin === BFF_ORIGIN && req.url.startsWith('/'));
+  const isAbsReq = isAbsoluteUrl(req.url);
 
-  if (hitsBff && ['POST','PUT','PATCH','DELETE'].includes(req.method)) {
+  const hitsBff = (() => {
+    if (isAbsReq) {
+      return false;
+    }
+
+    if (!API_BASE || API_BASE === '/') return req.url.startsWith('/');
+    if (!isAbsoluteUrl(API_BASE) && API_BASE.startsWith('/')) {
+      return req.url === API_BASE || req.url.startsWith(API_BASE + '/');
+    }
+    return req.url.startsWith('/');
+  })();
+
+  if (hitsBff && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
     const token = inject(CookieService).get('XSRF-TOKEN');
     if (token) {
       req = req.clone({ setHeaders: { 'X-XSRF-TOKEN': token } });
