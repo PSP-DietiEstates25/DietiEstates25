@@ -1,85 +1,117 @@
-name: Build, Push & Deploy ALL (Dockerfile only)
+name: Build, Push and Deploy ALL (Dockerfile + ACR + Container Apps)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 env:
-  REGISTRY_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
-  RESOURCE_GROUP_NAME: dietiestates-resource-group
+  AZURE_RESOURCE_GROUP_NAME: dietiestates-resource-group
+  AZURE_CONTAINER_REGISTRY_NAME: dietiestatescontainerregistryne20251223
 
 jobs:
   build-push-deploy:
     runs-on: ubuntu-latest
-
     strategy:
       fail-fast: false
       matrix:
         include:
-          # === BACKEND (Dockerfile) ===
-          - name: authorization-server
+          # ===== BACKEND =====
+          - component: authorization-server
             workdir: code/authorization-server
             image: dietiestates-auth-server
             containerapp: dietiestates-auth-server
+            needs_node_build: "false"
 
-          - name: resource-server
+          - component: resource-server
             workdir: code/resource-server
             image: dietiestates-resource-server
             containerapp: dietiestates-resource-server
+            needs_node_build: "false"
 
-          - name: bff-server
+          - component: bff-server
             workdir: code/backed-for-frontend
             image: dietiestates-bff-server
             containerapp: dietiestates-bff-server
+            needs_node_build: "false"
 
-          # === FRONTEND (Dockerfile) ===
-          - name: web
+          # ===== FRONTEND =====
+          - component: web
             workdir: code/frontend
             image: dietiestates-web
             containerapp: dietiestates-web
+            needs_node_build: "true"
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Azure Login (Service Principal)
+      - name: Azure login (Service Principal)
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Resolve ACR login server (avoid wrong secrets)
+        id: acr
+        shell: bash
+        run: |
+          set -euo pipefail
+          LOGIN_SERVER="$(az acr show --name "${AZURE_CONTAINER_REGISTRY_NAME}" --query "loginServer" --output tsv)"
+          echo "ACR_LOGIN_SERVER=${LOGIN_SERVER}" >> "$GITHUB_ENV"
+          echo "login_server=${LOGIN_SERVER}" >> "$GITHUB_OUTPUT"
+
+      - name: Login to ACR (RBAC via az acr login)
+        shell: bash
+        run: |
+          set -euo pipefail
+          az acr login --name "${AZURE_CONTAINER_REGISTRY_NAME}"
+
       - name: Install/Upgrade Azure Container Apps extension
         shell: bash
         run: |
+          set -euo pipefail
           az extension add --name containerapp --upgrade
 
-      - name: Login to Azure Container Registry (ACR)
-        uses: azure/docker-login@v2
+      - name: Set up Node (web only)
+        if: ${{ matrix.needs_node_build == 'true' }}
+        uses: actions/setup-node@v4
         with:
-          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: ${{ matrix.workdir }}/package-lock.json
 
-      - name: Build image (Dockerfile)
+      - name: Build Angular dist (web only)
+        if: ${{ matrix.needs_node_build == 'true' }}
         working-directory: ${{ matrix.workdir }}
         shell: bash
         run: |
-          IMAGE_SHA="${REGISTRY_LOGIN_SERVER}/${{ matrix.image }}:${GITHUB_SHA}"
-          IMAGE_LATEST="${REGISTRY_LOGIN_SERVER}/${{ matrix.image }}:latest"
+          set -euo pipefail
+          npm ci
+          npm run build -- --configuration production
+
+      - name: Build Docker image
+        working-directory: ${{ matrix.workdir }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          IMAGE_SHA="${ACR_LOGIN_SERVER}/${{ matrix.image }}:${GITHUB_SHA}"
+          IMAGE_LATEST="${ACR_LOGIN_SERVER}/${{ matrix.image }}:latest"
 
           docker build -t "${IMAGE_SHA}" .
           docker tag "${IMAGE_SHA}" "${IMAGE_LATEST}"
 
-      - name: Push image
+      - name: Push Docker image
         shell: bash
         run: |
-          docker push "${REGISTRY_LOGIN_SERVER}/${{ matrix.image }}:${GITHUB_SHA}"
-          docker push "${REGISTRY_LOGIN_SERVER}/${{ matrix.image }}:latest"
+          set -euo pipefail
+          docker push "${ACR_LOGIN_SERVER}/${{ matrix.image }}:${GITHUB_SHA}"
+          docker push "${ACR_LOGIN_SERVER}/${{ matrix.image }}:latest"
 
-      - name: Deploy to Azure Container Apps
+      - name: Deploy (update Container App to new image)
         shell: bash
         run: |
+          set -euo pipefail
           az containerapp update \
             --name "${{ matrix.containerapp }}" \
-            --resource-group "${RESOURCE_GROUP_NAME}" \
-            --image "${REGISTRY_LOGIN_SERVER}/${{ matrix.image }}:${GITHUB_SHA}"
+            --resource-group "${AZURE_RESOURCE_GROUP_NAME}" \
+            --image "${ACR_LOGIN_SERVER}/${{ matrix.image }}:${GITHUB_SHA}"
