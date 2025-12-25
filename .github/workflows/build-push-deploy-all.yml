@@ -1,0 +1,85 @@
+name: Build, Push & Deploy ALL (Dockerfile only)
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+  REGISTRY_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
+  RESOURCE_GROUP_NAME: dietiestates-resource-group
+
+jobs:
+  build-push-deploy:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # === BACKEND (Dockerfile) ===
+          - name: authorization-server
+            workdir: code/authorization-server
+            image: dietiestates-auth-server
+            containerapp: dietiestates-auth-server
+
+          - name: resource-server
+            workdir: code/resource-server
+            image: dietiestates-resource-server
+            containerapp: dietiestates-resource-server
+
+          - name: bff-server
+            workdir: code/backed-for-frontend
+            image: dietiestates-bff-server
+            containerapp: dietiestates-bff-server
+
+          # === FRONTEND (Dockerfile) ===
+          - name: web
+            workdir: code/frontend
+            image: dietiestates-web
+            containerapp: dietiestates-web
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Azure Login (Service Principal)
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Install/Upgrade Azure Container Apps extension
+        shell: bash
+        run: |
+          az extension add --name containerapp --upgrade
+
+      - name: Login to Azure Container Registry (ACR)
+        uses: azure/docker-login@v2
+        with:
+          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build image (Dockerfile)
+        working-directory: ${{ matrix.workdir }}
+        shell: bash
+        run: |
+          IMAGE_SHA="${REGISTRY_LOGIN_SERVER}/${{ matrix.image }}:${GITHUB_SHA}"
+          IMAGE_LATEST="${REGISTRY_LOGIN_SERVER}/${{ matrix.image }}:latest"
+
+          docker build -t "${IMAGE_SHA}" .
+          docker tag "${IMAGE_SHA}" "${IMAGE_LATEST}"
+
+      - name: Push image
+        shell: bash
+        run: |
+          docker push "${REGISTRY_LOGIN_SERVER}/${{ matrix.image }}:${GITHUB_SHA}"
+          docker push "${REGISTRY_LOGIN_SERVER}/${{ matrix.image }}:latest"
+
+      - name: Deploy to Azure Container Apps
+        shell: bash
+        run: |
+          az containerapp update \
+            --name "${{ matrix.containerapp }}" \
+            --resource-group "${RESOURCE_GROUP_NAME}" \
+            --image "${REGISTRY_LOGIN_SERVER}/${{ matrix.image }}:${GITHUB_SHA}"
