@@ -17,6 +17,7 @@ public class LoginRedirectController implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("redirect:" + properties.loginUrl());
         registry.addViewController(properties.loginUrl()).setViewName("forward:/auth/index.html");
     }
 }
