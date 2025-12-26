@@ -16,6 +16,6 @@ public class ChangePasswordRequest {
 
     @NotEmpty(message = "New password is mandatory")
     @NotBlank(message = "New password is mandatory")
-    @Size(min = 5, max = 15, message = "New password length must be between 5 and 15 characters")
+    @Size(min = 5, max = 64, message = "New password length must be between 5 and 64 characters")
     private String newPassword;
 }

@@ -79,4 +79,4 @@ postLogoutRedirectUri: ${FRONTEND_SERVER_POST_LOGOUT_REDIRECT_URI:http://localho
 
 #Credenziali amministrative globali
 superAdminEmail: ${SUPER_ADMIN_EMAIL:admin@admin.com}
-superAdminPassword: ${SUPER_ADMIN_PASSWORD:password}
+superAdminPassword: ${SUPER_ADMIN_PASSWORD:adminpassword}

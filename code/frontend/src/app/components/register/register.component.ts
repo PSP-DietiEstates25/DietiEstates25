@@ -5,6 +5,8 @@ import {
   Validators,
   AbstractControl,
   ValidationErrors,
+  FormControl,
+  FormGroup,
 } from '@angular/forms';
 import { AuthService } from '../../manual_services/auth/auth.service';
 import { environment } from '../../../environments/environment';
@@ -31,23 +33,46 @@ export class RegisterComponent {
 
   loading = signal(false);
   errorMsg = signal<string | null>(null);
+  submitted = false;
 
-  registerForm = this.formBuilder.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
-    passwords: this.formBuilder.nonNullable.group(
+  registerForm = new FormGroup({
+    email: new FormControl('', [Validators.required, Validators.minLength(5)]),
+    passwords: new FormGroup(
       {
-        password: ['', Validators.required],
-        confirm: ['', Validators.required],
+        password: new FormControl('', [
+          Validators.required,
+          Validators.minLength(5),
+          Validators.maxLength(64),
+        ]),
+        confirm: new FormControl('', [
+          Validators.required,
+          Validators.minLength(5),
+          Validators.maxLength(64),
+        ]),
       },
       { validators: matchPassword },
     ),
   });
+
+  get email(){
+    return this.registerForm.get('email');
+  }
+
+  get password() {
+    return this.registerForm.get('passwords.password');
+  }
+
+  get current(){
+    return this.registerForm.get('passwords.current');
+  }
 
   onClickLogin(): void {
     window.location.href = environment.loginUrl;
   }
 
   async submit(): Promise<void> {
+    this.submitted = true;
+
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       this.errorMsg.set(
@@ -62,8 +87,8 @@ export class RegisterComponent {
     this.errorMsg.set(null);
 
     const raw = this.registerForm.getRawValue();
-    const email = raw.email.trim();
-    const password = raw.passwords.password.trim();
+    const email = raw.email!.trim();
+    const password = raw.passwords.password!.trim();
     const body = { email, password, role: 'USER' } as AccountRequest;
 
     try {

@@ -17,15 +17,16 @@
         formControlName="email"
         autocomplete="email"
         class="input_main"
-        placeholder="you@example.com"
       />
 
-      @if (email?.touched && email?.invalid) { @if (email?.errors?.['required'])
-      {
-      <p class="text-sm text-red-600 mt-1">L'email è obbligatoria</p>
-      } @if (email?.errors?.['minlength']) {
-      <p class="text-sm text-red-600 mt-1">Minimo 5 caratteri</p>
-      } }
+      @if (email?.touched && email?.invalid) {
+        @if (email?.errors?.['required']) {
+          <p class="text-sm text-red-600 mt-1">L'email è obbligatoria</p>
+        } 
+        @if (email?.errors?.['minlength']) {
+          <p class="text-sm text-red-600 mt-1">Minimo 5 caratteri</p>
+        }
+      }
     </div>
 
     <!-- PASSWORD -->
@@ -37,7 +38,6 @@
         formControlName="password"
         autocomplete="current-password"
         class="input_main"
-        placeholder="••••••••"
       />
 
       @if (password?.touched && password?.invalid) { @if
@@ -46,7 +46,7 @@
       } @if (password?.errors?.['minlength']) {
       <p class="text-sm text-red-600 mt-1">Minimo 5 caratteri</p>
       } @if (password?.errors?.['maxlength']) {
-      <p class="text-sm text-red-600 mt-1">Massimo 15 caratteri</p>
+      <p class="text-sm text-red-600 mt-1">Massimo 64 caratteri</p>
       } }
     </div>
 
