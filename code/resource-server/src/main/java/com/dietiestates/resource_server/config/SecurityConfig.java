@@ -37,11 +37,11 @@ public class SecurityConfig {
 
         http.cors(Customizer.withDefaults());
         http.csrf(csrf -> csrf.ignoringRequestMatchers(
-                "/api/users",
-                "/api/users/**",
-                "/api/v1/swagger-ui/**",
-                "/api/v1/v3/api-docs/**",
-                "/api/v1/openapi.json"
+                "/users",
+                "/users/**",
+                "/v1/swagger-ui/**",
+                "/v1/v3/api-docs/**",
+                "/v1/openapi.json"
         ));
         http.oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
@@ -49,45 +49,45 @@ public class SecurityConfig {
         http.authorizeHttpRequests(
                 req -> req
                         .requestMatchers(
-                                "/api/users",
-                                "/api/users/**",
-                                "/api/v1/swagger-ui/**",
-                                "/api/v1/swagger-ui.html",
-                                "/api/v1/v3/api-docs/**",
-                                "/api/v1/openapi.json",
-                                "/api/swagger-ui/**",
-                                "/api/swagger-ui.html",
-                                "/api/v3/api-docs/**",
-                                "/api/openapi.json"
+                                "/users",
+                                "/users/**",
+                                "/v1/swagger-ui/**",
+                                "/v1/swagger-ui.html",
+                                "/v1/v3/api-docs/**",
+                                "/v1/openapi.json",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/openapi.json"
                         ).permitAll()
                         .requestMatchers(
                                 "/images/**",
-                                "/api/estateagents",
-                                "/api/estateagents/**",
-                                "/api/admins",
-                                "/api/admins/**",
-                                "/api/realestates",
-                                "/api/realestates/**",
-                                "/api/notificationcategories",
-                                "/api/notificationcategories/**",
-                                "/api/searches",
-                                "/api/searches/**",
-                                "/api/offers",
-                                "/api/offers/**",
-                                "/api/visits",
-                                "/api/visits/**",
-                                "/api/cadastraldata",
-                                "/api/cadastraldata/**",
-                                "/api/cadastralfilters",
-                                "/api/cadastralfilters/**",
-                                "/api/details",
-                                "/api/details/**",
-                                "/api/geographicalpositions",
-                                "/api/geographicalpositions/**",
-                                "/api/utilities",
-                                "/api/utilities/**",
-                                "/api/notifications",
-                                "/api/notifications/**"
+                                "/estateagents",
+                                "/estateagents/**",
+                                "/admins",
+                                "/admins/**",
+                                "/realestates",
+                                "/realestates/**",
+                                "/notificationcategories",
+                                "/notificationcategories/**",
+                                "/searches",
+                                "/searches/**",
+                                "/offers",
+                                "/offers/**",
+                                "/visits",
+                                "/visits/**",
+                                "/cadastraldata",
+                                "/cadastraldata/**",
+                                "/cadastralfilters",
+                                "/cadastralfilters/**",
+                                "/details",
+                                "/details/**",
+                                "/geographicalpositions",
+                                "/geographicalpositions/**",
+                                "/utilities",
+                                "/utilities/**",
+                                "/notifications",
+                                "/notifications/**"
                         ).authenticated()
                         .anyRequest().denyAll()
         );

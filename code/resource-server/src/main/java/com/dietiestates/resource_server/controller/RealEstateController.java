@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/realestates")
+@RequestMapping("/realestates")
 @RequiredArgsConstructor
 public class RealEstateController {
 

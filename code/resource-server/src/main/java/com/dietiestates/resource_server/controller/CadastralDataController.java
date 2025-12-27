@@ -9,7 +9,7 @@ import com.dietiestates.resource_server.service.CadastralDataService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/cadastraldata")
+@RequestMapping("/cadastraldata")
 @RequiredArgsConstructor
 public class CadastralDataController {
 

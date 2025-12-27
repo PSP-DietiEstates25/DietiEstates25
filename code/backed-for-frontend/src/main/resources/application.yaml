@@ -69,8 +69,9 @@ spring:
             - id: auth_server_userinfo
               uri: ${app.authorization-server-base-url:https://localhost:9443}
               predicates:
-                - Path=/userinfo
+                - Path=/api/userinfo
               filters:
+                - StripPrefix=1
                 - TokenRelay=
                 - RemoveRequestHeader=Cookie
 
@@ -78,8 +79,9 @@ spring:
             - id: auth_server_account_password
               uri: ${app.authorization-server-base-url:https://localhost:9443}
               predicates:
-                - Path=/account/password
+                - Path=/api/account/password
               filters:
+                - StripPrefix=1
                 - TokenRelay=
                 - RemoveRequestHeader=Cookie
 
@@ -87,7 +89,9 @@ spring:
             - id: auth_server_register_account
               uri: ${app.authorization-server-base-url:https://localhost:9443}
               predicates:
-                - Path=/auth/register
+                - Path=/api/auth/register
+              filters:
+                - StripPrefix=1
 
             # RESOURCE SERVER
             # Swagger UI (springdoc default)
@@ -184,7 +188,7 @@ spring:
             - id: resource_server_realestate_images
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/images/**
+                - Path=/api/images/**
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
                 - RemoveRequestHeader=Cookie

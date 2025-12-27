@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/details")
+@RequestMapping("/details")
 public class DetailController {
 
     private final DetailService detailService;
