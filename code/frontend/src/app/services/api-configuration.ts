@@ -11,7 +11,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class ApiConfiguration {
-  rootUrl: string = 'https://dietiestates-web.ashydune-196c04c7.northeurope.azurecontainerapps.io/api';
+  rootUrl: string = 'https://dietiestates-bff-server.ashydune-196c04c7.northeurope.azurecontainerapps.io/api';
 }
 
 /**
