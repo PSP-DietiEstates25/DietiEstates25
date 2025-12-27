@@ -24,7 +24,7 @@ export class AuthCallbackComponent implements OnInit {
   this.authService.getUserInfo()
     .pipe(
       switchMap((userInfo) => {
-        if(userInfo.role[0] === "OIDC_USER"){
+        if(userInfo.role[0] === "OIDC_USER" || userInfo.role[0] === "USER"){
           return this.userService.registerUser({ 
               body: { email: userInfo.sub } 
           }).pipe(
