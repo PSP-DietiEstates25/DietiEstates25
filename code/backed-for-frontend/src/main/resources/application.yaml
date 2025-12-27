@@ -359,10 +359,10 @@ app:
   authorization-server-base-url: ${AUTHORIZATION_SERVER_BASE_URL:https://localhost:9443}
   resource-server-base-url: ${RESOURCE_SERVER_BASE_URL:http://localhost:8090}
   backend-for-frontend-server-base-url: ${BFF_SERVER_BASE_URL:http://localhost:8080}
-  register-url: ${BFF_SERVER_REGISTER_URL:/auth/register}
+  register-url: ${BFF_SERVER_REGISTER_URL:/api/auth/register}
   allowed-origin: ${BFF_SERVER_ALLOWED_ORIGIN:http://localhost:4200}
-  logout-url: ${BFF_SERVER_LOGOUT_URL:/logout}
-  callback-url: ${BFF_CALLBACK_URL:/auth/callback}
-  csrf-token-url: ${BFF_CSRF_URL:/csrf-token}
+  logout-url: ${BFF_SERVER_LOGOUT_URL:/api/logout}
+  callback-url: ${BFF_CALLBACK_URL:/api/auth/callback}
+  csrf-token-url: ${BFF_CSRF_URL:/api/csrf-token}
 
 
