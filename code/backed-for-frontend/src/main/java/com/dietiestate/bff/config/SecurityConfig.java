@@ -51,7 +51,7 @@ public class SecurityConfig {
                                 "/api/v1/swagger-ui/**",
                                 "/api/v1/v3/api-docs/**",
                                 "/api/v1/openapi.json",
-                                "/swagger-ui/**", "/v3/api-docs/**", "/openapi.json"
+                                "/api/swagger-ui/**", "/api/v3/api-docs/**", "/api/openapi.json"
                         )
                         .csrfTokenRepository(cookieCsrfTokenRepository)
                         .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
@@ -74,11 +74,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/", "/error", "/actuator/health", properties.csrfTokenUrl()).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/v3/api-docs/**",
-                                "/openapi.json",
-                                "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/openapi.json"
+                                "/api/swagger-ui/**",
+                                "/api/swagger-ui.html",
+                                "/api/v3/api-docs/**",
+                                "/api/openapi.json",
+                                "/api/swagger-ui/**", "/api/swagger-ui.html", "/api/v3/api-docs/**", "/api/openapi.json"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
