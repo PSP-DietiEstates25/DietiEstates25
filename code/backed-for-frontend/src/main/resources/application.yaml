@@ -362,7 +362,7 @@ app:
   register-url: ${BFF_SERVER_REGISTER_URL:/api/auth/register}
   allowed-origin: ${BFF_SERVER_ALLOWED_ORIGIN:http://localhost:4200}
   logout-url: ${BFF_SERVER_LOGOUT_URL:/api/logout}
-  callback-url: ${BFF_CALLBACK_URL:/api/auth/callback}
+  callback-url: ${BFF_CALLBACK_URL:/auth/callback}
   csrf-token-url: ${BFF_CSRF_URL:/api/csrf-token}
 
 
