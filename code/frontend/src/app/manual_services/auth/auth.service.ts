@@ -14,11 +14,11 @@ export interface UserInfo {
 })
 export class AuthService {
   private apiUrl = environment.apiBaseUrl;
-  private csrfUrl = `${environment.apiBaseUrl}/csrf-token`;
-  private registerUrl = `${environment.apiBaseUrl}/auth/register`;
-  private logoutUrl = `${environment.apiBaseUrl}/logout`;
-  private userInfoUrl = `${environment.apiBaseUrl}/userinfo`;
-  private changeAdminPasswordUrl = `${environment.apiBaseUrl}/account/password`;
+  private csrfUrl = `${environment.apiBaseUrl}/api/csrf-token`;
+  private registerUrl = `${environment.apiBaseUrl}/api/auth/register`;
+  private logoutUrl = `${environment.apiBaseUrl}/api/logout`;
+  private userInfoUrl = `${environment.apiBaseUrl}/api/userinfo`;
+  private changeAdminPasswordUrl = `${environment.apiBaseUrl}/api/account/password`;
 
   private readonly localStorageService = inject(LocalStorageService);
   private userInfo = signal<UserInfo | null>(null);
