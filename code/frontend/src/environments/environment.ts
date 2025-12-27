@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiBaseUrl: 'http://localhost:8080',
+  apiBaseUrl: 'http://localhost:8080/api',
   apiKeyParam: 'apiKey=',
   geoapifyAPIKey: 'key',
   loginUrl: 'http://localhost:8080/oauth2/authorization/messaging-client-oidc?prompt=login',
