@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { AccountResponse } from '../../interfaces/account-response';
 import { environment } from '../../../environments/environment';
+import { ApiConfiguration } from '../../services/api-configuration';
 
 export interface UserInfo {
   email: string;
@@ -13,12 +14,14 @@ export interface UserInfo {
   providedIn: 'root',
 })
 export class AuthService {
+  private apiConfiguration = inject(ApiConfiguration);
+
   private apiUrl = environment.apiBaseUrl;
-  private csrfUrl = `${environment.apiBaseUrl}/api/csrf-token`;
-  private registerUrl = `${environment.apiBaseUrl}/api/auth/register`;
-  private logoutUrl = `${environment.apiBaseUrl}/api/logout`;
-  private userInfoUrl = `${environment.apiBaseUrl}/api/userinfo`;
-  private changeAdminPasswordUrl = `${environment.apiBaseUrl}/api/account/password`;
+  private csrfUrl = `${this.apiConfiguration.rootUrl}/csrf-token`;
+  private registerUrl = `${this.apiConfiguration.rootUrl}/auth/register`;
+  private logoutUrl = `${this.apiConfiguration.rootUrl}/logout`;
+  private userInfoUrl = `${this.apiConfiguration.rootUrl}/userinfo`;
+  private changeAdminPasswordUrl = `${this.apiConfiguration.rootUrl}/account/password`;
 
   private readonly localStorageService = inject(LocalStorageService);
   private userInfo = signal<UserInfo | null>(null);
