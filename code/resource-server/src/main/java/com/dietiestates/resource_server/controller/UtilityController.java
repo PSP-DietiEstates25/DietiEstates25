@@ -9,7 +9,7 @@ import com.dietiestates.resource_server.service.UtilityService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/utilities")
+@RequestMapping("/api/utilities")
 @RequiredArgsConstructor
 public class UtilityController {
 

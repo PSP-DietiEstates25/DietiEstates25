@@ -9,7 +9,7 @@ import com.dietiestates.resource_server.service.GeographicalPositionService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/geographicalpositions")
+@RequestMapping("/api/geographicalpositions")
 @RequiredArgsConstructor
 public class GeographicalPositionController {
 

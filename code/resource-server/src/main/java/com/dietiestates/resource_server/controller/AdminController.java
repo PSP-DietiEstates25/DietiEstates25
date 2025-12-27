@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import com.dietiestates.resource_server.dto.request.StafferRequest;
 
 @RestController
-@RequestMapping("/admins")
+@RequestMapping("/api/admins")
 @RequiredArgsConstructor
 public class AdminController {
 

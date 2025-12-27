@@ -112,14 +112,14 @@ spring:
             - id: resource_server_register_user
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/users
+                - Path=/api/users
                 - Method=POST
 
             #GET /users/{userid}
             - id: resource_server_get_user_by_id
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/users/{userid}
+                - Path=/api/users/{userid}
                 - Method=GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -128,7 +128,7 @@ spring:
             - id: resource_server_register_admin
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/admins
+                - Path=/api/admins
                 - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -137,7 +137,7 @@ spring:
             - id: resource_server_get_admin_by_id
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/admins/{adminid}
+                - Path=/api/admins/{adminid}
                 - Method=GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -146,7 +146,7 @@ spring:
             - id: resource_server_register_estate_agents
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/estateagents
+                - Path=/api/estateagents
                 - Method=POST
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -155,7 +155,7 @@ spring:
             - id: resource_server_register_get_estate_agent_by_id
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/estateagents/{estateagentid}
+                - Path=/api/estateagents/{estateagentid}
                 - Method=GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -164,7 +164,7 @@ spring:
             - id: resource_server_real_estates
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/realestates
+                - Path=/api/realestates
                 - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -174,7 +174,7 @@ spring:
             - id: resource_server_get_put_delete_real_estate_by_id
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/realestates/{realestateid}
+                - Path=/api/realestates/{realestateid}
                 - Method=GET,PUT,DELETE
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -193,7 +193,7 @@ spring:
             - id: resource_server_searches
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/searches
+                - Path=/api/searches
                 - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -202,7 +202,7 @@ spring:
             - id: resource_server_get_search_by_id
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/searches/{searchid}
+                - Path=/api/searches/{searchid}
                 - Method=GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -211,7 +211,7 @@ spring:
             - id: resource_server_details
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/details
+                - Path=/api/details
                 - Method=POST
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -220,7 +220,7 @@ spring:
             - id: resource_server_get_put_detail_by_id
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/details/{detailid}
+                - Path=/api/details/{detailid}
                 - Method=GET,PUT
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -229,7 +229,7 @@ spring:
             - id: resource_server_geographical_positions
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/geographicalpositions
+                - Path=/api/geographicalpositions
                 - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -238,7 +238,7 @@ spring:
             - id: resource_server_get_put_geographical_position_by_id
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/geographicalpositions/{geographicalpositionid}
+                - Path=/api/geographicalpositions/{geographicalpositionid}
                 - Method=GET,PUT
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -247,7 +247,7 @@ spring:
             - id: resource_server_utilities
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/utilities
+                - Path=/api/utilities
                 - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -256,7 +256,7 @@ spring:
             - id: resource_server_get_put_utility_by_id
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/utilities/{utilityid}
+                - Path=/api/utilities/{utilityid}
                 - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -265,7 +265,7 @@ spring:
             - id: resource_server_cadastral_data
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/cadastraldata
+                - Path=/api/cadastraldata
                 - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -274,7 +274,7 @@ spring:
             - id: resource_server_get_put_cadastral_data_by_id
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/cadastraldata/{cadastraldataid}
+                - Path=/api/cadastraldata/{cadastraldataid}
                 - Method=GET,PUT
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -283,7 +283,7 @@ spring:
             - id: resource_server_cadastral_filters
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/cadastralfilters
+                - Path=/api/cadastralfilters
                 - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -292,7 +292,7 @@ spring:
             - id: resource_server_get_put_cadastral_filter_by_id
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/cadastralfilters/{cadastralfilterid}
+                - Path=/api/cadastralfilters/{cadastralfilterid}
                 - Method=GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -301,7 +301,7 @@ spring:
             - id: resource_server_realestate_offers
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/offers
+                - Path=/api/offers
                 - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -310,7 +310,7 @@ spring:
             - id: resource_server_get_patch_offer_by_id
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/offers/{offerid}
+                - Path=/api/offers/{offerid}
                 - Method=GET,PATCH
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -319,7 +319,7 @@ spring:
             - id: resource_server_realestate_visits
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/visits
+                - Path=/api/visits
                 - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -328,7 +328,7 @@ spring:
             - id: resource_server_get_patch_visit_by_id
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/visits/{visitid}
+                - Path=/api/visits/{visitid}
                 - Method=GET,PATCH
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -337,7 +337,7 @@ spring:
             - id: resource_server_notifications
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/notifications
+                - Path=/api/notifications
                 - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
@@ -346,7 +346,7 @@ spring:
             - id: resource_server_get_notification_by_id
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
-                - Path=/notifications/{notificationid}
+                - Path=/api/notifications/{notificationid}
                 - Method=GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc

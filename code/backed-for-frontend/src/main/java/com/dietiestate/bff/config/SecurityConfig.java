@@ -68,8 +68,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST,
                                 properties.registerUrl(),
-                                "/users",
-                                "/users/**"
+                                "/api/users",
+                                "/api/users/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/", "/error", "/actuator/health", properties.csrfTokenUrl()).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()

@@ -16,7 +16,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/searches")
+@RequestMapping("/api/searches")
 @RequiredArgsConstructor
 public class SearchController {
 

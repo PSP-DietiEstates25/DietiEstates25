@@ -14,7 +14,7 @@ import com.dietiestates.resource_server.dto.request.StafferRequest;
 import com.dietiestates.resource_server.exception.notfound.RoleNotFoundException;
 
 @RestController
-@RequestMapping("/estateagents")
+@RequestMapping("/api/estateagents")
 @RequiredArgsConstructor
 public class EstateAgentController {
 

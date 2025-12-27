@@ -16,7 +16,7 @@ import com.dietiestates.resource_server.service.OfferService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/offers")
+@RequestMapping("/api/offers")
 @RequiredArgsConstructor
 @Validated
 public class OfferController {

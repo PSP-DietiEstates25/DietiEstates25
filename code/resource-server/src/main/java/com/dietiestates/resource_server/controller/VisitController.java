@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/visits")
+@RequestMapping("/api/visits")
 @RequiredArgsConstructor
 public class VisitController {
 
