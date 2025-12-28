@@ -58,7 +58,7 @@ public class SecurityConfig {
                 )
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfiguration = new CorsConfiguration();
-                    corsConfiguration.setAllowedOrigins(List.of(properties.allowedOrigin()));
+                    corsConfiguration.setAllowedOrigins(List.of(properties.allowedOrigin(), properties.authorizationServerBaseUrl()));
                     corsConfiguration.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
                     corsConfiguration.setAllowedHeaders(List.of("Authorization","Content-Type","X-Requested-With","X-XSRF-TOKEN"));
                     corsConfiguration.setExposedHeaders(List.of("Set-Cookie"));
