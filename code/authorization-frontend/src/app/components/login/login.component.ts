@@ -11,6 +11,7 @@ import { environment } from '../../../environments/environment';
 import { SocialLoginButtons } from '../social-login-buttons/social-login-buttons';
 import { CookieService } from 'ngx-cookie-service';
 import { AccountService } from '../../_services/account/account.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -22,10 +23,11 @@ export class LoginComponent {
   private formBuilder = inject(FormBuilder);
   private cookieService = inject(CookieService);
   private accountService = inject(AccountService);
-  private toastrService = inject(Toast);
+  private toastrService = inject(ToastrService);
   loginProcessingUrl!: string;
 
   submitted = false;
+  accountDoesntExists = false;
   loading = false;
   loginForm = new FormGroup({
     email: new FormControl('' as string, [Validators.required, Validators.minLength(5)]),
@@ -41,11 +43,11 @@ export class LoginComponent {
   }
 
   get email() {
-    return this.loginForm.get('email')?.value;
+    return this.loginForm.get('email');
   }
 
   get password() {
-    return this.loginForm.get('password')?.value;
+    return this.loginForm.get('password');
   }
 
   goToRegister(): void {
@@ -66,18 +68,18 @@ export class LoginComponent {
       return;
     }
     
-    this.accountService.checkAccountExists({ email: this.email!}).subscribe({
+    this.accountService.checkAccountExists({ email: this.email?.value!}).subscribe({
       next: () => {
-
+        this.loading = true;
+        const nativeForm = event.target as HTMLFormElement;
+        nativeForm.submit();
+        this.accountDoesntExists = false;
       },
       error: (response) => {
-        if(response.sda) {
-
+        if(response.businessErrorCode === 1401) {
+          this.accountDoesntExists = true;
         }
       }
     });
-    this.loading = true;
-    const nativeForm = event.target as HTMLFormElement;
-    nativeForm.submit();
   }
 }
