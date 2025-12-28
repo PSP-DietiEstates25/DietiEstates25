@@ -47,7 +47,7 @@ public class SecurityConfig {
         http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers(properties.registerUrl(), properties.csrfUrl())
+                        .ignoringRequestMatchers(properties.registerUrl(), properties.csrfUrl(), "/api/account/**")
                         .csrfTokenRepository(csrfRepository)
                         .csrfTokenRequestHandler(csrfHandler)
                 )
