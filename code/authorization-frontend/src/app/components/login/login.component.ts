@@ -76,7 +76,7 @@ export class LoginComponent {
         this.accountDoesntExists = false;
       },
       error: (response) => {
-        if(response.businessErrorCode === 1401) {
+        if(response.businessErrorCode === 1404) {
           this.accountDoesntExists = true;
         }
       }
