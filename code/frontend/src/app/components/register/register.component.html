@@ -23,6 +23,9 @@
           <p class="text-sm text-red-600 mt-1">Minimo 5 caratteri</p>
         }
       }
+      @if (submitted && accountAlreadyExists) {
+        <p class="text-sm text-red-600 mt-1">L'email risulta già associata ad un account esistente.</p>
+      }
     </div>
 
     <div formGroupName="passwords">

@@ -21,6 +21,7 @@ import { AdminAdsListComponent } from '../admin-ads-list/admin-ads-list.componen
 import { LocalStorageService } from '../../manual_services/local-storage/local-storage.service';
 import { Role } from '../../interfaces/role';
 import { AdminUser } from '../../interfaces/admin-user';
+import { firstValueFrom } from 'rxjs';
 
 function matchValidator(a: string, b: string) {
   return (ctrl: AbstractControl) => {
@@ -74,6 +75,8 @@ export class AdminDashboardComponent {
   users = signal<AdminUser[]>([]);
   usersLoading = signal(false);
   roleFilter = signal<Role | ''>('');
+  accountAlreadyExists = false;
+  submitted = false;
 
   createForm = this.formBuilder.nonNullable.group(
     {
@@ -117,13 +120,28 @@ export class AdminDashboardComponent {
     });
   }
 
-  createUser() {
+  async createStaffer() {
+    this.submitted = true;
+
     if (this.createForm.invalid) {
       this.createForm.markAllAsTouched();
+      this.submitted = false;
       return;
     }
 
     const { email, role, password } = this.createForm.getRawValue();
+
+    try {
+      const exists = await firstValueFrom(this.authService.checkAccountExists({email: email}));
+      if (exists) {
+        this.accountAlreadyExists = true;
+        return;
+      }
+    } catch (err: any) {
+      console.log(err);
+    } finally {
+        this.loading.set(false);
+    }
 
     this.facade.createUser({ email, role, password }).subscribe({
       next: (response) => {

@@ -1,9 +1,11 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { AccountResponse } from '../../interfaces/account-response';
 import { environment } from '../../../environments/environment';
 import { ApiConfiguration } from '../../services/api-configuration';
+import { CheckAccountExistsRequest } from '../../interfaces/check-account-exists-request';
+import { catchError, of, throwError, map } from 'rxjs';
 
 export interface UserInfo {
   email: string;
@@ -22,6 +24,7 @@ export class AuthService {
   private logoutUrl = `${this.apiConfiguration.rootUrl}/logout`;
   private userInfoUrl = `${this.apiConfiguration.rootUrl}/userinfo`;
   private changeAdminPasswordUrl = `${this.apiConfiguration.rootUrl}/account/password`;
+  private checkAccountExistsUrl = `${this.apiConfiguration.rootUrl}/account`;
 
   private readonly localStorageService = inject(LocalStorageService);
   private userInfo = signal<UserInfo | null>(null);
@@ -71,6 +74,23 @@ export class AuthService {
       this.changeAdminPasswordUrl,
       changeAdminPasswordRequest,
       this.httpOptions,
+    );
+  }
+
+  checkAccountExists(request: CheckAccountExistsRequest){
+    const url = `${this.checkAccountExistsUrl}/${request.email}`;
+    return this.httpClient.get(url, {
+      withCredentials: true
+    }).pipe(
+      map(() => true),
+      catchError((response: HttpErrorResponse) => {
+        const body = response.error as any;
+        if(response.status === 404 && body.businessErrorCode === 1404){
+          return of(false)
+        }
+
+        return throwError(() => response);
+      })
     );
   }
 
