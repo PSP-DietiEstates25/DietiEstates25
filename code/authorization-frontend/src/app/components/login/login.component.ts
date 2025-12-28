@@ -10,6 +10,7 @@ import { Router, RouterLink } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { SocialLoginButtons } from '../social-login-buttons/social-login-buttons';
 import { CookieService } from 'ngx-cookie-service';
+import { AccountService } from '../../_services/account/account.service';
 
 @Component({
   selector: 'app-login',
@@ -20,13 +21,15 @@ import { CookieService } from 'ngx-cookie-service';
 export class LoginComponent {
   private formBuilder = inject(FormBuilder);
   private cookieService = inject(CookieService);
+  private accountService = inject(AccountService);
+  private toastrService = inject(Toast);
   loginProcessingUrl!: string;
 
   submitted = false;
   loading = false;
   loginForm = new FormGroup({
-    email: new FormControl('', [Validators.required, Validators.minLength(5)]),
-    password: new FormControl('', [
+    email: new FormControl('' as string, [Validators.required, Validators.minLength(5)]),
+    password: new FormControl('' as string, [
       Validators.required,
       Validators.minLength(5),
       Validators.maxLength(64),
@@ -38,11 +41,11 @@ export class LoginComponent {
   }
 
   get email() {
-    return this.loginForm.get('email');
+    return this.loginForm.get('email')?.value;
   }
 
   get password() {
-    return this.loginForm.get('password');
+    return this.loginForm.get('password')?.value;
   }
 
   goToRegister(): void {
@@ -62,7 +65,17 @@ export class LoginComponent {
       this.loginForm.markAllAsTouched();
       return;
     }
+    
+    this.accountService.checkAccountExists({ email: this.email!}).subscribe({
+      next: () => {
 
+      },
+      error: (response) => {
+        if(response.sda) {
+
+        }
+      }
+    });
     this.loading = true;
     const nativeForm = event.target as HTMLFormElement;
     nativeForm.submit();
