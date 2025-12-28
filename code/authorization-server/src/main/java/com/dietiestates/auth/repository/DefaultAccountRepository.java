@@ -7,6 +7,6 @@ import org.springframework.data.repository.CrudRepository;
 import com.dietiestates.auth.model.DefaultAccount;
 
 public interface DefaultAccountRepository extends CrudRepository<DefaultAccount, Long> {
-
+    boolean existsByEmail(String email);
     Optional<DefaultAccount> findByEmail(String email);
 }

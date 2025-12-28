@@ -7,10 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.security.Principal;
 
 @RestController
@@ -33,5 +31,13 @@ public class AccountController {
 
         accountService.changeOwnPassword(principal, req);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    }
+
+    @GetMapping("/{email}")
+    public ResponseEntity<Boolean> checkDefaultAccountExists(
+            @PathVariable String email
+    ){
+        var defaultAccountExists = accountService.checkDefaultAccountExists(email);
+        return ResponseEntity.status(HttpStatus.OK).body(defaultAccountExists);
     }
 }

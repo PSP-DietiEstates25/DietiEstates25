@@ -85,6 +85,16 @@ spring:
                 - TokenRelay=
                 - RemoveRequestHeader=Cookie
 
+            #GET /account/{email}
+            - id: auth_server_get_account_by_email
+              uri: ${app.authorization-server-base-url:https://localhost:9443}
+              predicates:
+                - Path=/api/account/{email}
+              filters:
+                - StripPrefix=1
+                - TokenRelay=
+                - RemoveRequestHeader=Cookie
+
             # /auth/register
             - id: auth_server_register_account
               uri: ${app.authorization-server-base-url:https://localhost:9443}

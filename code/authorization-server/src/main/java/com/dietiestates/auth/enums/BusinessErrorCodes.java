@@ -12,7 +12,7 @@ public enum BusinessErrorCodes {
     BAD_CREDENTIALS(1300, HttpStatus.BAD_REQUEST, "Login and / or Password is incorrect"),
 
     //NOT FOUND
-    ACCOUNT_NOT_FOUND(1404, HttpStatus.NOT_FOUND, "Account not found"),
+    DEFAULT_ACCOUNT_NOT_FOUND(1404, HttpStatus.NOT_FOUND, "Account not found"),
     ROLE_NOT_FOUND(1504, HttpStatus.NOT_FOUND, "Role not found"),
 
     //ALREADY EXISTS
