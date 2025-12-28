@@ -8,7 +8,7 @@ import com.dietiestates.auth.dto.response.ExceptionResponse;
 import com.dietiestates.auth.exception.alreadyexists.AccountAlreadyExistsException;
 
 @RestControllerAdvice
-public class AccountExceptionHandler {
+public class DefaultAccountExceptionHandler {
 
     @ExceptionHandler(AccountAlreadyExistsException.class)
     public ResponseEntity<ExceptionResponse> handleAlreadyExists(AccountAlreadyExistsException exception){
