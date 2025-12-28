@@ -12,6 +12,7 @@ import { SocialLoginButtons } from '../social-login-buttons/social-login-buttons
 import { CookieService } from 'ngx-cookie-service';
 import { AccountService } from '../../_services/account/account.service';
 import { ToastrService } from 'ngx-toastr';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -75,9 +76,11 @@ export class LoginComponent {
         nativeForm.submit();
         this.accountDoesntExists = false;
       },
-      error: (response) => {
-        if(response.businessErrorCode === 1404) {
+      error: (response: HttpErrorResponse) => {
+        const body = response.error as any;
+        if(response.status === 404 && body.businessErrorCode === 1404) {
           this.accountDoesntExists = true;
+          return;
         }
       }
     });
