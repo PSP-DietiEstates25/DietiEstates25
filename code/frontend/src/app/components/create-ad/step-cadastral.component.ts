@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  Signal,
-  inject,
-  effect,
-  computed,
-} from '@angular/core';
+import { Component, OnDestroy, computed, effect, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CreateAdFacade } from './create-ad.facade';
@@ -19,15 +12,17 @@ import { CadastralDraft } from '../../interfaces/create-ad/cadastral-draft';
   imports: [ReactiveFormsModule, DiscardDialogComponent],
   templateUrl: './step-cadastral.component.html',
 })
-export class StepCadastralComponent {
+export class StepCadastralComponent implements OnDestroy {
   private formBuilder = inject(FormBuilder);
   private toastrService = inject(ToastrService);
   private facade = inject(CreateAdFacade);
   private routerService = inject(Router);
   private activatedRouter = inject(ActivatedRoute);
 
-  _savedCadastralData!: Signal<CadastralDraft | null>;
+  private savedCadastralData = computed(() => this.facade.getCadastralData());
   isDiscardModalOpen = false;
+
+  private skipAutosave = false;
 
   form = this.formBuilder.nonNullable.group({
     price: [null as number | null, [Validators.required, Validators.min(0)]],
@@ -42,26 +37,19 @@ export class StepCadastralComponent {
 
   constructor() {
     effect(() => {
-      this._savedCadastralData = computed(() => this.facade.getCadastralData());
-      if (this._savedCadastralData()?.price !== null) {
-        this.form.patchValue({ price: this._savedCadastralData()?.price });
-      }
-      if (this._savedCadastralData()?.rooms !== null) {
-        this.form.patchValue({ rooms: this._savedCadastralData()?.rooms });
-      }
-      if (this._savedCadastralData()?.floor !== null) {
-        this.form.patchValue({ floor: this._savedCadastralData()?.floor });
-      }
-      if (this._savedCadastralData()?.energyClass !== null) {
-        this.form.patchValue({
-          energyClass: this._savedCadastralData()?.energyClass,
-        });
-      }
-      if (this._savedCadastralData()?.squareMeters !== null) {
-        this.form.patchValue({
-          squareMeters: this._savedCadastralData()?.squareMeters,
-        });
-      }
+      const saved: CadastralDraft | null = this.savedCadastralData();
+      if (!saved) return;
+
+      this.form.patchValue(
+        {
+          price: saved.price,
+          rooms: saved.rooms,
+          floor: saved.floor,
+          energyClass: saved.energyClass as any,
+          squareMeters: saved.squareMeters,
+        },
+        { emitEvent: false },
+      );
     });
   }
 
@@ -75,6 +63,7 @@ export class StepCadastralComponent {
 
   confirmDiscard() {
     this.closeDiscardModal();
+    this.skipAutosave = true;
     this.facade.clearSavedData();
     this.routerService.navigate(['/']);
     this.toastrService.error('Creazione annuncio interrotta!', 'Cancellazione');
@@ -100,5 +89,10 @@ export class StepCadastralComponent {
 
   saveFormData() {
     this.facade.setCadastral(this.form.getRawValue() as any);
+  }
+
+  ngOnDestroy() {
+    if (this.skipAutosave) return;
+    this.saveFormData();
   }
 }

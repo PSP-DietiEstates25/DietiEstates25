@@ -40,11 +40,7 @@ export class StepPhotosComponent {
     const files = Array.from(input.files ?? []);
     if (!files.length) return;
 
-    if (typeof (this.facade as any).addImages === 'function') {
-      (this.facade as any).addImages(files);
-    } else {
-      for (const file of files) this.facade.addImages(files);
-    }
+    this.facade.addImages(files);
 
     this.rebuildPreviews();
     input.value = '';
@@ -85,7 +81,7 @@ export class StepPhotosComponent {
   private rebuildPreviews() {
     this.clearPreviews();
     this.previews = (this.facade.images() ?? []).map((file) =>
-      URL.createObjectURL(file)
+      URL.createObjectURL(file),
     );
   }
 

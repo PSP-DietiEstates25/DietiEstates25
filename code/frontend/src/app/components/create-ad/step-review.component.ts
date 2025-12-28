@@ -3,6 +3,7 @@ import { CreateAdFacade } from './create-ad.facade';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-step-review',
@@ -18,6 +19,16 @@ export class StepReviewComponent implements OnDestroy {
   facade = inject(CreateAdFacade);
   canPublish = computed(() => this.facade.allValid());
   isDiscardModalOpen = false;
+
+  private sub = new Subscription();
+
+  constructor() {
+    this.sub.add(
+      this.facade.published$.subscribe(() => {
+        this.toastrService.success('Annuncio creato.', 'Successo');
+      }),
+    );
+  }
 
   openDiscardModal() {
     this.isDiscardModalOpen = true;
@@ -42,7 +53,6 @@ export class StepReviewComponent implements OnDestroy {
 
   publish() {
     this.facade.createAd();
-    this.toastrService.success('Annuncio creato.', 'Successo');
   }
 
   discard() {
@@ -52,6 +62,6 @@ export class StepReviewComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    this.facade.clearSavedData();
+    this.sub.unsubscribe();
   }
 }

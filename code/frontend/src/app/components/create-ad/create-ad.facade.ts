@@ -263,6 +263,9 @@ export class CreateAdFacade {
       )
       .subscribe((realEstateId: number) => {
         this.publishedSubject.next(realEstateId);
+
+        this.clearSavedData();
+
         this.routerService.navigateByUrl('/');
       });
   }

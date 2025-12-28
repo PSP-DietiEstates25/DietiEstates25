@@ -1,9 +1,9 @@
 import {
   Component,
-  Signal,
   computed,
   effect,
   inject,
+  OnDestroy,
   signal,
 } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
@@ -24,7 +24,7 @@ import { PositionDraft } from '../../interfaces/create-ad/position-draft';
   imports: [MapComponent, ReactiveFormsModule, DiscardDialogComponent],
   templateUrl: './step-details.component.html',
 })
-export class StepDetailsComponent {
+export class StepDetailsComponent implements OnDestroy {
   private activatedRoute = inject(ActivatedRoute);
   private geoapifyService = inject(GeoapifyService);
   private toastrService = inject(ToastrService);
@@ -36,8 +36,12 @@ export class StepDetailsComponent {
   submitted = false;
   isDiscardModalOpen = false;
 
-  _savedUtility!: Signal<UtilitiesDraft | null>;
-  _savedGeographicalPosition!: Signal<PositionDraft | null>;
+  private savedUtility = computed(() => this.facade.getUtility());
+  private savedGeographicalPosition = computed(() =>
+    this.facade.getGeographicalPosition(),
+  );
+
+  private skipAutosave = false;
 
   utilitiesForm = this.formBuilder.nonNullable.group({
     hasElevator: [false],
@@ -60,24 +64,22 @@ export class StepDetailsComponent {
 
   constructor() {
     effect(() => {
-      this._savedUtility = computed(() => this.facade.getUtility());
-      this._savedGeographicalPosition = computed(() =>
-        this.facade.getGeographicalPosition(),
-      );
-
-      const util = this._savedUtility();
+      const util: UtilitiesDraft | null = this.savedUtility();
       if (util) {
         this.utilitiesForm.patchValue(
           {
             hasAirConditioning: util.hasAirConditioning,
             hasDoorman: util.hasDoorman,
             hasElevator: util.hasElevator,
+            nearPark: util.nearPark,
+            nearPublicTransport: util.nearPublicTransport,
+            nearSchool: util.nearSchool,
           },
           { emitEvent: false },
         );
       }
 
-      const pos = this._savedGeographicalPosition();
+      const pos: PositionDraft | null = this.savedGeographicalPosition();
       if (pos) {
         this.positionForm.patchValue(
           {
@@ -98,23 +100,18 @@ export class StepDetailsComponent {
   get address() {
     return this.positionForm.get('address');
   }
-
   get region() {
     return this.positionForm.get('region');
   }
-
   get municipality() {
     return this.positionForm.get('municipality');
   }
-
   get city() {
     return this.positionForm.get('city');
   }
-
   get latitude() {
     return this.positionForm.get('latitude');
   }
-
   get longitude() {
     return this.positionForm.get('longitude');
   }
@@ -136,6 +133,7 @@ export class StepDetailsComponent {
 
   confirmDiscard() {
     this.closeDiscardModal();
+    this.skipAutosave = true;
     this.facade.clearSavedData();
     this.routerService.navigate(['/']);
     this.toastrService.error('Creazione annuncio interrotta!', 'Cancellazione');
@@ -207,7 +205,7 @@ export class StepDetailsComponent {
           });
 
           this.saveFormData();
-          this.saveFormData();
+
           this.routerService.navigate(['../cadastraldata'], {
             relativeTo: this.activatedRoute,
           });
@@ -219,5 +217,10 @@ export class StepDetailsComponent {
   saveFormData() {
     this.facade.setUtilities(this.utilitiesForm.getRawValue());
     this.facade.setPosition(this.positionForm.getRawValue());
+  }
+
+  ngOnDestroy() {
+    if (this.skipAutosave) return;
+    this.saveFormData();
   }
 }

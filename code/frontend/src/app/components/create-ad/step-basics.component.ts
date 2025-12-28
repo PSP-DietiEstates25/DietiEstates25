@@ -1,31 +1,28 @@
-import { Component, inject, effect, Signal, computed } from '@angular/core';
+import { Component, OnDestroy, computed, effect, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CreateAdFacade } from './create-ad.facade';
 import { ToastrService } from 'ngx-toastr';
 import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.component';
-import { BasicsDraft } from '../../interfaces/create-ad/basic-draft';
 import { Category } from '../../interfaces/category';
 
 @Component({
   selector: 'app-step-basics',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    DiscardDialogComponent,
-    DiscardDialogComponent,
-  ],
+  imports: [ReactiveFormsModule, DiscardDialogComponent],
   templateUrl: './step-basics.component.html',
 })
-export class StepBasicsComponent {
+export class StepBasicsComponent implements OnDestroy {
   private activatedRoute = inject(ActivatedRoute);
   private toastrService = inject(ToastrService);
   private formBuilder = inject(FormBuilder);
   private facade = inject(CreateAdFacade);
   private routerService = inject(Router);
 
-  _savedBasics!: Signal<BasicsDraft | null>;
+  private savedBasics = computed(() => this.facade.getBasics());
+
   isDiscardModalOpen = false;
+  private skipAutosave = false;
 
   form = this.formBuilder.nonNullable.group({
     category: ['SALE' as Category, Validators.required],
@@ -34,17 +31,16 @@ export class StepBasicsComponent {
 
   constructor() {
     effect(() => {
-      this._savedBasics = computed(() => this.facade.getBasics());
-      if (this._savedBasics()?.category !== null) {
-        this.form.patchValue({
-          category: this._savedBasics()?.category,
-        });
-      }
-      if (this._savedBasics()?.description !== null) {
-        this.form.patchValue({
-          description: this._savedBasics()?.description,
-        });
-      }
+      const saved = this.savedBasics();
+      if (!saved) return;
+
+      this.form.patchValue(
+        {
+          category: saved.category,
+          description: saved.description ?? '',
+        },
+        { emitEvent: false },
+      );
     });
   }
 
@@ -58,6 +54,7 @@ export class StepBasicsComponent {
 
   confirmDiscard() {
     this.closeDiscardModal();
+    this.skipAutosave = true;
     this.facade.clearSavedData();
     this.routerService.navigate(['/']);
     this.toastrService.error('Creazione annuncio interrotta!', 'Cancellazione');
@@ -68,10 +65,16 @@ export class StepBasicsComponent {
       this.form.markAllAsTouched();
       return;
     }
+
     this.facade.setBasics(this.form.getRawValue());
 
     this.routerService.navigate(['../details'], {
       relativeTo: this.activatedRoute,
     });
+  }
+
+  ngOnDestroy() {
+    if (this.skipAutosave) return;
+    this.facade.setBasics(this.form.getRawValue());
   }
 }
