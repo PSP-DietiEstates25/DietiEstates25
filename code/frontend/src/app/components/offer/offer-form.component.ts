@@ -38,12 +38,11 @@ export class OfferFormComponent {
   loginRequired = new EventEmitter<void>();
 
   loading = false;
-  isIncorrectAmount = false;
   successMessage = '';
   error = '';
 
   form = this.formBuilder.group({
-    amount: [null, [Validators.required, Validators.min(1)]],
+    amount: [null, [Validators.required, Validators.min(0.01)]],
   });
 
   async submitOffer() {
@@ -54,25 +53,20 @@ export class OfferFormComponent {
       this.loginRequired.emit();
       return;
     }
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    const currentAmount = this.form.controls.amount.value!;
-
-    if (currentAmount < this.realEstatePrice()) {
-      this.isIncorrectAmount = true;
-      return;
-    }
-
-    this.isIncorrectAmount = false;
     this.loading = true;
     try {
+      const amount = Number(this.form.value.amount);
+
       const body = {
         category: 'OFFER',
         status: 'PENDING',
-        amount: Number(this.form.value.amount),
+        amount,
       };
 
       await firstValueFrom(
