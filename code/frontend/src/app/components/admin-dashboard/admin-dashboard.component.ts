@@ -130,9 +130,16 @@ export class AdminDashboardComponent {
     }
 
     const { email, role, password } = this.createForm.getRawValue();
+    
+    const body = {
+      email: email,
+      role: role,
+      password: password
+    };
 
     try {
-      const exists = await firstValueFrom(this.authService.checkAccountExists({email: email}));
+      await firstValueFrom(this.authService.getCsrf());
+      const exists = await firstValueFrom(this.authService.register(body));
       if (exists) {
         this.accountAlreadyExists = true;
         return;

@@ -10,9 +10,9 @@ import { Router, RouterLink } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { SocialLoginButtons } from '../social-login-buttons/social-login-buttons';
 import { CookieService } from 'ngx-cookie-service';
-import { AccountService } from '../../_services/account/account.service';
+import { AuthService } from '../../_services/auth/auth.service';
 import { ToastrService } from 'ngx-toastr';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -23,13 +23,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class LoginComponent {
   private formBuilder = inject(FormBuilder);
   private cookieService = inject(CookieService);
-  private accountService = inject(AccountService);
+  private authService = inject(AuthService);
   private toastrService = inject(ToastrService);
   loginProcessingUrl!: string;
 
   submitted = false;
-  accountDoesntExists = false;
+  badCredentialsError = false;
   loading = false;
+
   loginForm = new FormGroup({
     email: new FormControl('' as string, [Validators.required, Validators.minLength(5)]),
     password: new FormControl('' as string, [
@@ -60,29 +61,38 @@ export class LoginComponent {
   }
 
   onSubmit(event: Event) {
-    //Prevenzione del comportamento nativo
     event.preventDefault();
     this.submitted = true;
+    this.badCredentialsError = false;
 
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
     }
+
+    this.loading = true;
+
+    const body = new HttpParams()
+      .set('username', this.email?.value!)
+      .set('password', this.password?.value!)
+      .set('_csrf', this.csrfToken());
     
-    this.accountService.checkAccountExists({ email: this.email?.value!}).subscribe({
-      next: () => {
-        this.loading = true;
-        const nativeForm = event.target as HTMLFormElement;
-        nativeForm.submit();
-        this.accountDoesntExists = false;
+    this.authService.login(body).subscribe({
+      next: (res) => {
+        this.loading = false;
+        window.location.href = res.redirectUrl;
       },
       error: (response: HttpErrorResponse) => {
+        this.loading = false;
+
         const body = response.error as any;
-        if(response.status === 404 && body.businessErrorCode === 1404) {
-          this.accountDoesntExists = true;
+        if (response.status === 401 && body.businessErrorCode === 1401) {
+          this.badCredentialsError = true;
           return;
         }
-      }
+
+        this.toastrService.error('Errore durante il login. Riprova.');
+      },
     });
   }
 }

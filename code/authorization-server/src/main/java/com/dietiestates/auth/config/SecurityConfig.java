@@ -3,6 +3,7 @@ package com.dietiestates.auth.config;
 import com.dietiestates.auth.federation.FederatedIdentityAuthenticationSuccessHandler;
 import com.dietiestates.auth.federation.UserRepositoryOAuth2UserHandler;
 import com.dietiestates.auth.repository.JpaRegisteredClientRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -37,7 +38,8 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain defaultSecurityFilterChain(
             HttpSecurity http,
-            AuthenticationSuccessHandler userRepositoryOAuth2UserHandler
+            AuthenticationSuccessHandler userRepositoryOAuth2UserHandler,
+            ObjectMapper objectMapper
     ) throws Exception {
 
         var csrfRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
@@ -70,6 +72,8 @@ public class SecurityConfig {
                         .loginProcessingUrl(properties.loginProcessingUrl())
                         .usernameParameter("username")
                         .passwordParameter("password")
+                        .successHandler(new SpaAuthenticationSuccessHandler(objectMapper))
+                        .failureHandler(new SpaAuthenticationFailureHandler(objectMapper, properties.loginUrl()))
                         .permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2

@@ -11,7 +11,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterSpec {
+public class AuthSpec {
 
     private String email;
     private String password;

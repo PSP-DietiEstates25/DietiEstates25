@@ -1,17 +1,17 @@
 package com.dietiestates.auth.mapper;
 
-import com.dietiestates.auth.dto.response.RegisterResponse;
+import com.dietiestates.auth.dto.response.AuthResponse;
 import com.dietiestates.auth.model.SecurityAccount;
-import com.dietiestates.auth.spec.RegisterSpec;
+import com.dietiestates.auth.spec.AuthSpec;
 import org.springframework.stereotype.Component;
 
-import com.dietiestates.auth.dto.request.RegisterRequest;
+import com.dietiestates.auth.dto.request.AuthRequest;
 
 @Component
-public class RegisterMapper {
+public class AuthMapper {
 
-    public RegisterSpec toSpec(RegisterRequest request) {
-        return RegisterSpec.builder()
+    public AuthSpec toSpec(AuthRequest request) {
+        return AuthSpec.builder()
                 .email(request.getEmail())
                 .password(request.getPassword())
                 .enabled(true)
@@ -19,8 +19,8 @@ public class RegisterMapper {
                 .build();
     }
 
-    public RegisterResponse fromEntity(SecurityAccount account) {
-        return RegisterResponse.builder()
+    public AuthResponse fromEntity(SecurityAccount account) {
+        return AuthResponse.builder()
                 .id(account.getDefaultAccount().getId())
                 .email(account.getDefaultAccount().getEmail())
                 .role(account.getDefaultAccount().getRole().getName().toString())

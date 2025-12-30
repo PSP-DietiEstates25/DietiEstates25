@@ -34,9 +34,6 @@ public class AccountService {
         // tokenRepository.revokeAllFor(acc.getId());
     }
 
-    public Boolean checkDefaultAccountExists(String email){
-        return defaultAccountVerifier.checkDefaultAccountAlreadyExists(email);
-    }
     private void checkPasswordMatched(String rawPassword, String actualPassword){
 
         if (!passwordEncoder.matches(rawPassword, actualPassword))

@@ -32,12 +32,4 @@ public class AccountController {
         accountService.changeOwnPassword(principal, req);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
-
-    @GetMapping("/{email}")
-    public ResponseEntity<Boolean> checkDefaultAccountExists(
-            @PathVariable String email
-    ){
-        var defaultAccountExists = accountService.checkDefaultAccountExists(email);
-        return ResponseEntity.status(HttpStatus.OK).body(defaultAccountExists);
-    }
 }

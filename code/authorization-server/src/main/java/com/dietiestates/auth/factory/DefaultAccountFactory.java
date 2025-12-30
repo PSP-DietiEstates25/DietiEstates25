@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.dietiestates.auth.model.DefaultAccount;
 import com.dietiestates.auth.model.Role;
-import com.dietiestates.auth.spec.RegisterSpec;
+import com.dietiestates.auth.spec.AuthSpec;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 public class DefaultAccountFactory {
 
     public DefaultAccount createAccountFromSpec(
-            RegisterSpec spec,
+            AuthSpec spec,
             PasswordEncoder passwordEncoder,
             Role role
     ) {

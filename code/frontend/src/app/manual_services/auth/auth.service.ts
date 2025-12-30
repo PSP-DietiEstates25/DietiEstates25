@@ -4,7 +4,6 @@ import { LocalStorageService } from '../local-storage/local-storage.service';
 import { AccountResponse } from '../../interfaces/account-response';
 import { environment } from '../../../environments/environment';
 import { ApiConfiguration } from '../../services/api-configuration';
-import { CheckAccountExistsRequest } from '../../interfaces/check-account-exists-request';
 import { catchError, of, throwError, map } from 'rxjs';
 
 export interface UserInfo {
@@ -63,6 +62,16 @@ export class AuthService {
       this.registerUrl,
       registerRequest,
       this.httpOptions,
+    ).pipe(
+      map(() => true),
+      catchError((response: HttpErrorResponse) => {
+        const body = response.error as any;
+        if(response.status === 403 && body.businessErrorCode === 1403){
+          return of(false)
+        }
+
+        return throwError(() => response);
+      })
     );
   }
 
@@ -74,23 +83,6 @@ export class AuthService {
       this.changeAdminPasswordUrl,
       changeAdminPasswordRequest,
       this.httpOptions,
-    );
-  }
-
-  checkAccountExists(request: CheckAccountExistsRequest){
-    const url = `${this.checkAccountExistsUrl}/${request.email}`;
-    return this.httpClient.get(url, {
-      withCredentials: true
-    }).pipe(
-      map(() => true),
-      catchError((response: HttpErrorResponse) => {
-        const body = response.error as any;
-        if(response.status === 404 && body.businessErrorCode === 1404){
-          return of(false)
-        }
-
-        return throwError(() => response);
-      })
     );
   }
 

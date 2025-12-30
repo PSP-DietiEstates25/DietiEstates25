@@ -9,7 +9,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder
-public class RegisterResponse {
+public class AuthResponse {
 
     private Long id;
     private String email;

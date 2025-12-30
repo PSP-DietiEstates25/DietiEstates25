@@ -27,9 +27,6 @@
           <p class="text-sm text-red-600 mt-1">Minimo 5 caratteri</p>
         }
       }
-      @if (submitted && accountDoesntExists){
-        <p class="text-sm text-red-600 mt-1">L'email non è associata a nessun account.</p>
-      }
     </div>
 
     <!-- PASSWORD -->
@@ -53,7 +50,9 @@
       } }
     </div>
 
-    <input type="hidden" name="_csrf" [value]="csrfToken()" />
+    @if (submitted && badCredentialsError){
+      <p class="text-sm text-red-600 mt-1">Email o password non valida</p>
+    }
 
     <button
       type="submit"

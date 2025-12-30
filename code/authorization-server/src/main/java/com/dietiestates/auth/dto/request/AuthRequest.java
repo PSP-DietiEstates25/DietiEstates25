@@ -16,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
-public class RegisterRequest {
+public class AuthRequest {
 
     @Email(message = "Email is not valid")
     @NotEmpty(message = "Email is mandatory")

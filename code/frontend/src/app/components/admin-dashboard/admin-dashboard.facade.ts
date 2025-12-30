@@ -144,7 +144,7 @@ export class AdminDashboardFacade {
     email: string,
     password: string,
     role?: Role,
-  ): Observable<AccountResponse> {
+  ) {
     const body: AccountRequest = { email, password, role };
     return this.authService.register(body);
   }

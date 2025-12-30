@@ -8,6 +8,6 @@ public class DefaultAccountAlreadyExistsException extends AppException {
     private static final long serialVersionUID = 1075231391306617908L;
 
     public DefaultAccountAlreadyExistsException() {
-        super(BusinessErrorCodes.ACCOUNT_ALREADY_EXISTS);
+        super(BusinessErrorCodes.DEFAULT_ACCOUNT_ALREADY_EXISTS);
     }
 }

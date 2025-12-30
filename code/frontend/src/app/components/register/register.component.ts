@@ -93,16 +93,16 @@ export class RegisterComponent {
     const body = { email, password, role: 'USER' } as AccountRequest;
 
     try {
-      const exists = await firstValueFrom(this.authService.checkAccountExists({email: email}));
+      await firstValueFrom(this.authService.getCsrf());
+
+      const exists = await firstValueFrom(this.authService.register(body));
+      
       if (exists) {
+        
         this.accountAlreadyExists = true;
         return;
       }
 
-      await firstValueFrom(this.authService.getCsrf());
-
-      await firstValueFrom(this.authService.register(body));
-      
       window.location.href = environment.loginUrl;
     } catch (err: any) {
       this.errorMsg.set(err?.error?.message || 'Registrazione non riuscita');
