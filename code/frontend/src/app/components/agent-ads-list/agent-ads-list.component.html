@@ -37,11 +37,13 @@
               class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
               [class]="badgeClass()"
             >
-              @if(realEstate.category === "SALE"){
-                VENDITA
-              } @else { 
-                AFFITTO
-              }
+              <h1 class="self-center">
+                @if(realEstate.category === "SALE"){
+                  VENDITA
+                } @else { 
+                  AFFITTO
+                }
+              </h1>
             </span>
 
             <!-- Caratteristiche + Servizi -->
@@ -57,7 +59,7 @@
                     class="size-6 text-black dark:text-white"
                   ></app-price-icon>
                   <p class="text-sm font-medium whitespace-nowrap">
-                    Prezzo: {{ realEstate.cadastralData?.price }} €
+                    Prezzo: {{ realEstate.cadastralData.price }} €
                   </p>
                 </div>
 
@@ -66,7 +68,7 @@
                     class="size-6 text-black dark:text-white"
                   ></app-rooms-icon>
                   <p class="text-sm font-medium whitespace-nowrap">
-                    Stanze: {{ realEstate.cadastralData?.rooms }}
+                    Stanze: {{ realEstate.cadastralData.rooms }}
                   </p>
                 </div>
 
@@ -76,7 +78,7 @@
                   ></app-square-meters-icon>
                   <p class="text-sm font-medium whitespace-nowrap">
                     Metri quadri:
-                    {{ realEstate.cadastralData?.squareMeters }} m²
+                    {{ realEstate.cadastralData.squareMeters }} m²
                   </p>
                 </div>
 
@@ -85,7 +87,7 @@
                     class="size-6 text-black dark:text-white"
                   ></app-floor-icon>
                   <p class="text-sm font-medium whitespace-nowrap">
-                    Piano: {{ realEstate.cadastralData?.floor }}
+                    Piano: {{ realEstate.cadastralData.floor }}
                   </p>
                 </div>
 
@@ -95,7 +97,7 @@
                   ></app-energy-class-icon>
                   <p class="text-sm font-medium whitespace-nowrap">
                     Classe energetica:
-                    {{ realEstate.cadastralData?.energyClass }}
+                    {{ realEstate.cadastralData.energyClass }}
                   </p>
                 </div>
               </section>

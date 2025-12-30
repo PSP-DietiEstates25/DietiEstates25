@@ -35,11 +35,13 @@
           class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
           [class]="badgeClass()"
         >
-          @if(realEstate.category === "SALE"){
-            VENDITA
-          } @else { 
-            AFFITTO
-          }
+          <h1 class="self-center">
+            @if(realEstate.category === "SALE"){
+              VENDITA
+            } @else { 
+              AFFITTO
+            }
+          </h1>
         </span>
 
         <!-- Caratteristiche + Servizi -->
