@@ -7,47 +7,28 @@
           Foto annuncio
         </h2>
         <p class="text-xs text-slate-500 dark:text-slate-400">
-          Aggiungi alcune immagini per rendere l’annuncio più attraente.
+          Aggiungi alcune immagini.
         </p>
       </div>
       <span
-        class="text-[11px] px-2 py-0.5 rounded-full border border-slate-200 text-slate-500 dark:border-slate-600 dark:text-slate-300"
-      >
-        Facoltativo
+        class="text-[11px] px-2 py-0.5 rounded-full border border-slate-200 text-slate-500 dark:border-slate-600 dark:text-slate-300">
+        Obbligatorio
       </span>
     </div>
 
-    <label
-      for="photos"
-      class="block text-xs font-medium text-slate-700 dark:text-slate-200"
-    >
+    <label for="photos" class="block text-xs font-medium text-slate-700 dark:text-slate-200">
       Carica foto
     </label>
 
     <div
-      class="rounded-xl border border-dashed border-slate-300 bg-slate-50/60 px-4 py-5 flex flex-col items-center justify-center gap-3 text-center dark:border-slate-600 dark:bg-slate-900/60"
-    >
+      class="rounded-xl border border-dashed border-slate-300 bg-slate-50/60 px-4 py-5 flex flex-col items-center justify-center gap-3 text-center dark:border-slate-600 dark:bg-slate-900/60">
       <div
-        class="flex items-center justify-center rounded-full border border-slate-200 w-10 h-10 dark:border-slate-600"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="w-5 h-5 text-slate-500 dark:text-slate-300"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M3.75 7.5l2.59-2.59A1.5 1.5 0 0 1 7.41 4.5h3.18a1.5 1.5 0 0 1 1.06.44l1.41 1.41h3.49a1.5 1.5 0 0 1 1.5 1.5v9a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5v-9z"
-          />
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M9 14.25 11.25 12 14.25 15.75M9 10.5h.007v.007H9z"
-          />
+        class="flex items-center justify-center rounded-full border border-slate-200 w-10 h-10 dark:border-slate-600">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-500 dark:text-slate-300" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M3.75 7.5l2.59-2.59A1.5 1.5 0 0 1 7.41 4.5h3.18a1.5 1.5 0 0 1 1.06.44l1.41 1.41h3.49a1.5 1.5 0 0 1 1.5 1.5v9a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5v-9z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 14.25 11.25 12 14.25 15.75M9 10.5h.007v.007H9z" />
         </svg>
       </div>
 
@@ -61,14 +42,10 @@
         </p>
       </div>
 
-      <input
-        id="photos"
-        type="file"
-        class="input_main mt-3 w-full max-w-xs cursor-pointer"
-        accept="image/*"
-        multiple
-        (change)="onFilesSelected($event)"
-      />
+      <input id="photos" type="file" class="sr-only" accept="image/*" multiple (change)="onFilesSelected($event)" />
+      <label for="photos" class="btn_primary mt-3 w-full max-w-xs cursor-pointer text-center">
+        Scegli immagini
+      </label>
     </div>
   </div>
 
@@ -81,26 +58,19 @@
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
       @for (url of previews; track url; let i = $index) {
       <div
-        class="relative aspect-square rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shadow-sm group dark:border-slate-700 dark:bg-slate-900"
-      >
-        <img
-          [src]="url"
-          alt="preview"
-          class="block w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
-        />
+        class="relative aspect-square rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shadow-sm group dark:border-slate-700 dark:bg-slate-900">
+        <img [src]="url" alt="preview"
+          class="block w-full h-full object-cover transition-transform duration-200 group-hover:scale-105" />
 
         <!-- piccolo sfumato in basso con indice -->
         <div
-          class="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/50 to-transparent flex items-end px-2 pb-1"
-        >
+          class="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/50 to-transparent flex items-end px-2 pb-1">
           <span class="text-[11px] text-white/90"> Foto {{ i + 1 }} </span>
         </div>
 
-        <button
-          type="button"
+        <button type="button"
           class="absolute top-2 right-2 rounded-full bg-black/60 px-2 py-1 text-[11px] font-medium text-white shadow-sm hover:bg-black/80 focus:outline-none focus:ring-2 focus:ring-white/70"
-          (click)="remove(i)"
-        >
+          (click)="remove(i)">
           Rimuovi
         </button>
       </div>
@@ -111,31 +81,17 @@
 
   <!-- Footer pulsanti -->
   <div
-    class="w-full col-span-3 flex flex-col-reverse gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:items-center sm:justify-between sm:px-20 mdpx_10 px-4 dark:border-slate-700"
-  >
+    class="w-full col-span-3 flex flex-col-reverse gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:items-center sm:justify-between sm:px-20 mdpx_10 px-4 dark:border-slate-700">
     <button class="btn_primary" type="button" (click)="previous()">
       Indietro
     </button>
 
     <div class="flex gap-2 justify-end">
-      <button
-        class="discard_button flex items-center gap-2"
-        type="button"
-        (click)="openDiscardModal()"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="size-5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-          />
+      <button class="discard_button flex items-center gap-2" type="button" (click)="openDiscardModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+          class="size-5">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
         </svg>
         <h4>Elimina</h4>
       </button>
@@ -147,8 +103,5 @@
   </div>
 </div>
 
-<app-discard-dialog
-  [open]="isDiscardModalOpen"
-  (confirm)="confirmDiscard()"
-  (cancel)="closeDiscardModal()"
-></app-discard-dialog>
+<app-discard-dialog [open]="isDiscardModalOpen" (confirm)="confirmDiscard()"
+  (cancel)="closeDiscardModal()"></app-discard-dialog>
