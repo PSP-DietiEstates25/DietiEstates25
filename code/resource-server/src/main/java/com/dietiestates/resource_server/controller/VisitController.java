@@ -20,7 +20,7 @@ public class VisitController {
     private final VisitService visitService;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('USER', 'OIDC_USER')")
+    @PreAuthorize("hasAnyAuthority('USER', 'OIDC_USER')")
     public ResponseEntity<VisitResponse> createVisit(
             @RequestBody VisitRequest request,
             @RequestParam Long realestateid,
