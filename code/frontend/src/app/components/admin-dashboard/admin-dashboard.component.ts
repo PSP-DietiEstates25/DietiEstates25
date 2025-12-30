@@ -122,6 +122,7 @@ export class AdminDashboardComponent {
 
   async createStaffer() {
     this.submitted = true;
+    this.accountAlreadyExists = false;
 
     if (this.createForm.invalid) {
       this.createForm.markAllAsTouched();
@@ -139,8 +140,8 @@ export class AdminDashboardComponent {
 
     try {
       await firstValueFrom(this.authService.getCsrf());
-      const exists = await firstValueFrom(this.authService.register(body));
-      if (exists) {
+      const created = await firstValueFrom(this.authService.register(body));
+      if (!created) {
         this.accountAlreadyExists = true;
         return;
       }

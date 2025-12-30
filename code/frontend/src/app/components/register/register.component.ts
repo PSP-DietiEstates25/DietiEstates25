@@ -73,6 +73,7 @@ export class RegisterComponent {
 
   async submit(): Promise<void> {
     this.submitted = true;
+    this.accountAlreadyExists = false;
 
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
@@ -94,11 +95,9 @@ export class RegisterComponent {
 
     try {
       await firstValueFrom(this.authService.getCsrf());
-
-      const exists = await firstValueFrom(this.authService.register(body));
+      const created = await firstValueFrom(this.authService.register(body));
       
-      if (exists) {
-        
+      if (!created) {
         this.accountAlreadyExists = true;
         return;
       }
