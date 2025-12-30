@@ -56,7 +56,15 @@
                   class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
                   [class]="badgeClass(offer.status!)"
                 >
-                  {{ offer.status }}
+                  @if (offer.status === "PENDING") {
+                    IN ATTESA
+                  } @else if (offer.status === "ACCEPTED") {
+                    ACCETTATA
+                  } @else if (offer.status === "REJECTED") {
+                    RIFIUTATA
+                  } @else if (offer.status === "COUNTERED") {
+                    NEGOZIATA
+                  }
                 </span>
               </div>
 
