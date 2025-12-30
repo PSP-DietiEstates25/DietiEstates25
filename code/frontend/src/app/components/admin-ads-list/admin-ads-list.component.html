@@ -31,15 +31,12 @@
         </div>
 
         <!--Categoria-->
-        <span
-          class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
-          [class]="badgeClass()"
-        >
+        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium" [class]="badgeClass()">
           <h1 class="self-center">
             @if(realEstate.category === "SALE"){
-              VENDITA
-            } @else { 
-              AFFITTO
+            VENDITA
+            } @else {
+            AFFITTO
             }
           </h1>
         </span>
@@ -146,8 +143,9 @@
               @if (realEstate.utility.nearPublicTransport) {
               <div class="flex items-center gap-2">
                 <app-near-public-transport-icon
-                  class="size-6 text-black dark:text-white"></app-near-public-transport-icon>
-                <p class="text-sm font-medium whitespace-nowrap">
+                  class="size-6 shrink-0 text-black dark:text-white"></app-near-public-transport-icon>
+
+                <p class="min-w-0 text-sm font-medium truncate">
                   Vicino a trasporto pubblico
                 </p>
               </div>
