@@ -57,6 +57,10 @@ export class AdminAdsListComponent implements OnDestroy {
   realEstateIdToRemove: WritableSignal<number | null> = signal(null);
   realEstatesLoading = this.facade.realEstatesLoading;
 
+  badgeClass(){
+    return 'real_estate_category_badge';
+  }
+  
   getImageUrl(path?: string) {
     return `${environment.apiBaseUrl}${path}`;
   }

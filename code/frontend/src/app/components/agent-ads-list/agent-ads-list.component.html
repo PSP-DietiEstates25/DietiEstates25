@@ -32,6 +32,18 @@
               </div>
             </div>
 
+            <!--Categoria-->
+            <span
+              class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
+              [class]="badgeClass()"
+            >
+              @if(realEstate.category === "SALE"){
+                VENDITA
+              } @else { 
+                AFFITTO
+              }
+            </span>
+
             <!-- Caratteristiche + Servizi -->
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
               <!-- Caratteristiche -->

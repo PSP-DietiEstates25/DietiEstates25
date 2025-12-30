@@ -66,6 +66,10 @@ export class AgentAdsListComponent implements OnDestroy {
   addOfferEmail = this.facade.addOfferEmail;
   addOfferLoading = this.facade.addOfferLoading;
 
+  badgeClass(){
+    return 'real_estate_category_badge';
+  }
+  
   getImageUrl(path?: string) {
     return `${environment.apiBaseUrl}${path}`;
   }

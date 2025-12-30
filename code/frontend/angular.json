@@ -33,7 +33,8 @@
             ],
             "styles": [
               "src/styles.css",
-              "node_modules/leaflet/dist/leaflet.css"
+              "node_modules/leaflet/dist/leaflet.css",
+              "node_modules/@geoapify/geocoder-autocomplete/styles/round-borders.css"
             ],
             "scripts": []
           },
@@ -67,7 +68,7 @@
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.production.ts"
+                  "with": "src/environments/environment.development.ts"
                 }
               ]
             }
@@ -105,7 +106,8 @@
             ],
             "styles": [
               "src/styles.css",
-              "node_modules/leaflet/dist/leaflet.css"
+              "node_modules/leaflet/dist/leaflet.css",
+              "node_modules/@geoapify/geocoder-autocomplete/styles/round-borders.css"
             ],
             "scripts": []
           }
