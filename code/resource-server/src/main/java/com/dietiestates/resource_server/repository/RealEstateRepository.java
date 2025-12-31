@@ -22,7 +22,7 @@ public interface RealEstateRepository extends CrudRepository<RealEstate, Long>, 
     }
 
     default boolean existsActiveByIdAndEstateAgentEmail(Long id, String estateAgentEmail){
-        return existsByIdAndEstateAgentEmailAndStatus(id, estateAgentEmail, RealEstateStatus.ACTIVE);
+        return existsByIdAndEstateAgent_EmailAndStatus(id, estateAgentEmail, RealEstateStatus.ACTIVE);
     }
 
     default List<RealEstate> findAllActive(){
@@ -30,13 +30,13 @@ public interface RealEstateRepository extends CrudRepository<RealEstate, Long>, 
     }
 
     default Page<RealEstate> findActiveByEstateAgentId(Long estateAgentId, Pageable pageable){
-        return findByEstateAgentIdAndStatus(estateAgentId, RealEstateStatus.ACTIVE, pageable);
+        return findByEstateAgent_IdAndStatus(estateAgentId, RealEstateStatus.ACTIVE, pageable);
     }
 
     //QUERY METHODS
     Optional<RealEstate> findByIdAndStatus(Long id, RealEstateStatus status);
     boolean existsByIdAndStatus(Long id, RealEstateStatus status);
-    boolean existsByIdAndEstateAgentEmailAndStatus(Long id, String estateAgentEmail, RealEstateStatus status);
+    boolean existsByIdAndEstateAgent_EmailAndStatus(Long id, String estateAgentEmail, RealEstateStatus status);
     List<RealEstate> findAllByStatus(RealEstateStatus status);
-    Page<RealEstate> findByEstateAgentIdAndStatus(Long estateAgentId, RealEstateStatus status, Pageable pageable);
+    Page<RealEstate> findByEstateAgent_IdAndStatus(Long estateAgentId, RealEstateStatus status, Pageable pageable);
 }
