@@ -44,6 +44,8 @@ export class OffersPageComponent implements OnDestroy {
       next: (results) => {
         this.totalPages = results.totalPages!;
         this.offers = results.content!;
+        console.log("fetched");
+        console.log(this.offers);
         this.initPages();
       },
       error: (response: HttpErrorResponse) => {

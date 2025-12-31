@@ -1698,6 +1698,9 @@
           "category": {
             "type": "string"
           },
+          "status": {
+            "type": "string"
+          },
           "images": {
             "type": "array",
             "items": {
@@ -1712,6 +1715,10 @@
             "format": "date-time"
           },
           "lastModifiedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedDate": {
             "type": "string",
             "format": "date-time"
           },
@@ -3130,6 +3137,13 @@
               "RENT"
             ]
           },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "DELETED"
+            ]
+          },
           "images": {
             "type": "array",
             "items": {
@@ -3144,6 +3158,10 @@
             "format": "date-time"
           },
           "lastModifiedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedDate": {
             "type": "string",
             "format": "date-time"
           },

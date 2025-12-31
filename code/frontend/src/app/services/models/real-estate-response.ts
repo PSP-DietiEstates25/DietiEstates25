@@ -6,10 +6,12 @@ export interface RealEstateResponse {
   cadastralDataId?: number;
   category?: string;
   createdDate?: string;
+  deletedDate?: string;
   description?: string;
   detailId?: number;
   estateAgentEmail?: string;
   id?: number;
   images?: Array<string>;
   lastModifiedDate?: string;
+  status?: string;
 }

@@ -10,6 +10,7 @@ export interface RealEstate {
   cadastralData?: CadastralData;
   category?: 'SALE' | 'RENT';
   createdDate?: string;
+  deletedDate?: string;
   description?: string;
   detail?: Detail;
   estateAgent?: EstateAgent;
@@ -17,4 +18,5 @@ export interface RealEstate {
   images?: Array<string>;
   lastModifiedDate?: string;
   negotiations?: Array<Negotiation>;
+  status?: 'ACTIVE' | 'DELETED';
 }
