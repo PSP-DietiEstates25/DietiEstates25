@@ -167,9 +167,11 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
     }
 
     @Override
-    public void deleteRealEstate(Long realEstateId, String estateAgentEmail) {
+    public void deleteRealEstate(Long realEstateId, String stafferEmail, String stafferRole) {
 
-        realEstateVerifier.checkRealEstateOwnedByEstateAgent(realEstateId, estateAgentEmail);
+        if(stafferRole.equals("ESTATE_AGENT"))
+            realEstateVerifier.checkRealEstateOwnedByEstateAgent(realEstateId, stafferEmail);
+        else realEstateVerifier.checkRealEstateOwnedByAdmin(realEstateId, stafferEmail);
 
         var realEstate = realEstateFinder.getRealEstateById(realEstateId);
         realEstate.softDelete();

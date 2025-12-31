@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -105,17 +106,14 @@ public class RealEstateController {
                                 .anyMatch(a -> a.getAuthority().equals("ADMIN"));
 
                 if (!isEstateAgent && !isAdmin) {
-                        // né agente né admin: non può modificare
                         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
                 }
 
                 String estateAgentEmail;
 
                 if (isEstateAgent) {
-                        // l’agente modifica il suo annuncio
                         estateAgentEmail = jwt.getSubject();
                 } else {
-                        // l’admin modifica l’annuncio MA l’annuncio resta associato all’agente che già ce l’ha
                         var existing = realEstateSerivce.getRealEstateById(realestateid);
                         estateAgentEmail = existing.getEstateAgentEmail();
                 }
@@ -127,11 +125,16 @@ public class RealEstateController {
         @DeleteMapping("/{realestateid}")
         public ResponseEntity<Void> deleteRealEstate(
                         @PathVariable Long realestateid,
-                        @AuthenticationPrincipal Jwt jwt
+                        @AuthenticationPrincipal Jwt jwt,
+                        Authentication authentication
         ) {
-                var estateAgentEmail = jwt.getSubject();
+                var stafferEmail = jwt.getSubject();
+                var stafferRole = authentication.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .filter(authority -> authority.equals("USER") || authority.equals("ESTATE_AGENT"))
+                        .findFirst().get();
 
-                realEstateSerivce.deleteRealEstate(realestateid, estateAgentEmail);
+                realEstateSerivce.deleteRealEstate(realestateid, stafferEmail, stafferRole);
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
 }

@@ -17,5 +17,5 @@ public interface RealEstateService {
     Page<RealEstateResponse> getEstateAgentRealEstates(String estateAgentEmail, Integer page, Integer size);
     Page<RealEstateResponse> getAdminRealEstates(String adminEmail, Integer page, Integer size);
     Page<RealEstateResponse> getSearchRealEstates(Long searchId, Integer page, Integer size);
-    void deleteRealEstate(Long realEstateId, String estateAgentEmail);
+    void deleteRealEstate(Long realEstateId, String stafferEmail, String stafferRole);
 }

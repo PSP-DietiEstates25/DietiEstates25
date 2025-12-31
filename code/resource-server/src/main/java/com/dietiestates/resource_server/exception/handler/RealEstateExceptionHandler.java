@@ -1,6 +1,7 @@
 package com.dietiestates.resource_server.exception.handler;
 
 import com.dietiestates.resource_server.exception.AppException;
+import com.dietiestates.resource_server.exception.notowned.RealEstateNotOwnedByAdminException;
 import com.dietiestates.resource_server.exception.notowned.RealEstateNotOwnedByEstateAgentException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,7 +19,12 @@ public class RealEstateExceptionHandler {
     }
 
     @ExceptionHandler(RealEstateNotOwnedByEstateAgentException.class)
-    public ResponseEntity<ExceptionResponse> handleNotOwnedBy(RealEstateNotOwnedByEstateAgentException exception) {
+    public ResponseEntity<ExceptionResponse> handleNotOwnedByEstateAgent(RealEstateNotOwnedByEstateAgentException exception) {
+        return AppException.responseEntityFactory(exception);
+    }
+
+    @ExceptionHandler(RealEstateNotOwnedByAdminException.class)
+    public ResponseEntity<ExceptionResponse> handleNotOwnedByAdmin(RealEstateNotOwnedByAdminException exception) {
         return AppException.responseEntityFactory(exception);
     }
 }
