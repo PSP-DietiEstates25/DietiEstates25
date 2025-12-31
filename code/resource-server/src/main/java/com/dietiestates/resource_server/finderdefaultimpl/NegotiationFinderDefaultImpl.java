@@ -22,23 +22,33 @@ public class NegotiationFinderDefaultImpl implements NegotiationFinder {
 
     @Override
     public Negotiation getRealEstateUserNegotiation(Long realEstateId, Long userId) throws NegotiationNotFoundException {
-        return negotiationRepository.findByRealEstateIdAndUserId(realEstateId, userId)
+        return negotiationRepository.findActiveByRealEstateIdAndUserId(realEstateId, userId)
                 .orElseThrow(NegotiationNotFoundException::new);
     }
 
     @Override
     public Negotiation getRealEstateEstateAgentNegotiation(Long realEstataId, Long userId) throws NegotiationNotFoundException {
-        return negotiationRepository.findByRealEstateIdAndEstateAgentId(realEstataId, userId)
+        return negotiationRepository.findActiveByRealEstateIdAndEstateAgentId(realEstataId, userId)
                 .orElseThrow(NegotiationNotFoundException::new);
     }
 
     @Override
-    public List<Negotiation> getAllUserNegotiations(Long userId){
-        return negotiationRepository.findByUserId(userId);
+    public List<Negotiation> getAllUserNegotiationsForActiveRealEstates(Long userId){
+        return negotiationRepository.findByUserIdAndActiveRealEstates(userId);
     }
 
     @Override
-    public List<Negotiation> getAllEstateAgentNegotiations(Long estateAgentId){
-        return negotiationRepository.findByEstateAgentId(estateAgentId);
+    public List<Negotiation> getAllUserNegotiationsForAllRealEstates(Long userId){
+        return negotiationRepository.findByUserIdAndAllRealEstates(userId);
+    }
+
+    @Override
+    public List<Negotiation> getAllEstateAgentNegotiationsForActiveRealEstates(Long estateAgentId){
+        return negotiationRepository.findByEstateAgentIdAndActiveRealEstates(estateAgentId);
+    }
+
+    @Override
+    public List<Negotiation> getAllEstateAgentNegotiationsForAllRealEstates(Long estateAgentId){
+        return negotiationRepository.findByEstateAgentIdAndAllRealEstates(estateAgentId);
     }
 }

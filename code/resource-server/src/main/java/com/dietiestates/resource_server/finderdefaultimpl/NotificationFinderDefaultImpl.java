@@ -35,7 +35,7 @@ public class NotificationFinderDefaultImpl implements NotificationFinder {
 
     @Override
     public Page<Notification> getUserNotifications(Long userId, List<String> notificationCategories, Pageable pageable) {
-        List<Negotiation> allUserNegotiations = negotiationFinder.getAllUserNegotiations(userId);
+        List<Negotiation> allUserNegotiations = negotiationFinder.getAllUserNegotiationsForActiveRealEstates(userId);
         List<Notification> allUserNotifications = extractAllNegotiationsNotifications(allUserNegotiations, notificationCategories);
         allUserNotifications.sort(Comparator.comparing(Notification::getCreatedDate).reversed());
         return PageUtils.toPage(allUserNotifications, pageable);

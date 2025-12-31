@@ -33,12 +33,12 @@ public class VisitFinderDefaultImpl implements VisitFinder {
 
 	@Override
 	public Page<Visit> getRealEstateVisits(Long realEstateId, Pageable pageable) {
-		return visitRepository.findByNegotiation_RealEstate_Id(realEstateId, pageable);
+		return visitRepository.findActiveByRealEstateId(realEstateId, pageable);
 	}
 
     @Override
     public Page<Visit> getAllEstateAgentVisits(Long estateAgentId, String status, Pageable pageable) {
-        List<Negotiation> allEstateAgentNegotiations = negotiationFinder.getAllEstateAgentNegotiations(estateAgentId);
+        List<Negotiation> allEstateAgentNegotiations = negotiationFinder.getAllEstateAgentNegotiationsForActiveRealEstates(estateAgentId);
         List<Visit> allNegotiationVisits = extractAllNegotiationsVisits(allEstateAgentNegotiations, status);
         allNegotiationVisits.sort(Comparator.comparing(Visit::getCreatedDate).reversed());
         return PageUtils.toPage(allNegotiationVisits, pageable);

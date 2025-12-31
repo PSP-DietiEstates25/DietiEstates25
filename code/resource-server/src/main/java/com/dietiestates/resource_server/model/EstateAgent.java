@@ -1,5 +1,6 @@
 package com.dietiestates.resource_server.model;
 
+import com.dietiestates.resource_server.enums.RealEstateStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -37,5 +38,13 @@ public class EstateAgent extends Staffer {
     public void addNegotiation(Negotiation negotiation){
         this.negotiations.add(negotiation);
         negotiation.setEstateAgent(this);
+    }
+
+    public List<RealEstate> getRealEstates(){
+        return realEstates.stream()
+                .filter(realEstate ->
+                        realEstate.getStatus() == RealEstateStatus.ACTIVE
+                )
+                .toList();
     }
 }

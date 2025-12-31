@@ -12,6 +12,7 @@ import com.dietiestates.resource_server.model.RealEstate;
 import com.dietiestates.resource_server.repository.NegotiationRepository;
 import com.dietiestates.resource_server.repository.RealEstateRepository;
 import com.dietiestates.resource_server.service.*;
+import com.dietiestates.resource_server.verifier.RealEstateVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -34,6 +35,7 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
     private final RealEstateFactory realEstateFactory;
     private final RealEstateFinder realEstateFinder;
     private final RealEstateMapper realEstateMapper;
+    private final RealEstateVerifier realEstateVerifier;
 
     private final EstateAgentFinder estateAgentFinder;
     private final AdminFinder adminFinder;
@@ -165,30 +167,13 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
     }
 
     @Override
-    @Transactional
-    public void deleteRealEstate(Long realEstateId) {
+    public void deleteRealEstate(Long realEstateId, String estateAgentEmail) {
+
+        realEstateVerifier.checkRealEstateOwnedByEstateAgent(realEstateId, estateAgentEmail);
 
         var realEstate = realEstateFinder.getRealEstateById(realEstateId);
+        realEstate.softDelete();
 
-        for (Negotiation negotiation : realEstate.getNegotiations()) {
-            negotiation.setRealEstate(null);
-            negotiationRepository.save(negotiation);
-        }
-
-        List<String> images = realEstate.getImages();
-        if (images != null && !images.isEmpty()) {
-            // Creiamo una copia della lista per evitare ConcurrentModificationException se necessario,
-            // anche se qui stiamo solo leggendo.
-            for (String imageUrl : images) {
-                try {
-                    storageService.deleteImageFromFileSystem(imageUrl);
-                } catch (IOException e) {
-                    // Log dell'errore, ma continuiamo per provare a cancellare le altre immagini
-                    System.err.println("Errore durante l'eliminazione dell'immagine: " + imageUrl + " - " + e.getMessage());
-                }
-            }
-        }
-        
-        realEstateRepository.delete(realEstate);
+        realEstateRepository.save(realEstate);
     }
 }

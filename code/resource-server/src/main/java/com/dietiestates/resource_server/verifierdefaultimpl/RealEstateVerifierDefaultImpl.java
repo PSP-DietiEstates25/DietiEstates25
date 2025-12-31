@@ -15,13 +15,13 @@ public class RealEstateVerifierDefaultImpl implements RealEstateVerifier {
 
     @Override
     public void checkRealEstateExists(Long id) throws RealEstateNotFoundException {
-        if(!realEstateRepository.existsById(id))
+        if(!realEstateRepository.existsActiveById(id))
             throw new RealEstateNotFoundException();
     }
 
     @Override
     public void checkRealEstateOwnedByEstateAgent(Long realEstateId, String estateAgentEmail) throws RealEstateNotOwnedByEstateAgentException {
-        if(!realEstateRepository.existsByIdAndEstateAgentEmail(realEstateId, estateAgentEmail))
+        if(!realEstateRepository.existsActiveByIdAndEstateAgentEmail(realEstateId, estateAgentEmail))
             throw new RealEstateNotOwnedByEstateAgentException();
     }
 }

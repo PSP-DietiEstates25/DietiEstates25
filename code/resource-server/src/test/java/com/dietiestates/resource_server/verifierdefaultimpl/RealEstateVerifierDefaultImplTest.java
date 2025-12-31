@@ -29,7 +29,7 @@ class RealEstateVerifierDefaultImplTest {
         Long realEstateId = 1L;
         String estateAgentEmail = "agent@example.com";
 
-        when(realEstateRepository.existsByIdAndEstateAgentEmail(realEstateId, estateAgentEmail))
+        when(realEstateRepository.existsActiveByIdAndEstateAgentEmail(realEstateId, estateAgentEmail))
                 .thenReturn(true);
 
         assertDoesNotThrow(() -> realEstateVerifier.checkRealEstateOwnedByEstateAgent(realEstateId, estateAgentEmail));
@@ -41,7 +41,7 @@ class RealEstateVerifierDefaultImplTest {
         Long realEstateId = 1L;
         String estateAgentEmail = "other@example.com";
 
-        when(realEstateRepository.existsByIdAndEstateAgentEmail(realEstateId, estateAgentEmail))
+        when(realEstateRepository.existsActiveByIdAndEstateAgentEmail(realEstateId, estateAgentEmail))
                 .thenReturn(false);
 
         assertThrows(RealEstateNotOwnedByEstateAgentException.class,

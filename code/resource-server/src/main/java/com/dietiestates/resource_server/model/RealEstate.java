@@ -1,6 +1,7 @@
 package com.dietiestates.resource_server.model;
 
 import com.dietiestates.resource_server.enums.RealEstateCategory;
+import com.dietiestates.resource_server.enums.RealEstateStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -9,7 +10,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -27,6 +27,10 @@ public class RealEstate {
     @Enumerated(EnumType.ORDINAL)
     @Column(nullable = false)
     private RealEstateCategory category;
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(nullable = false)
+    private RealEstateStatus status = RealEstateStatus.ACTIVE;
 
     @ElementCollection
     @CollectionTable(
@@ -50,6 +54,9 @@ public class RealEstate {
     @Column(insertable = false)
     private LocalDateTime lastModifiedDate;
 
+    @Column
+    private LocalDateTime deletedDate = null;
+
     @OneToMany(mappedBy = "realEstate", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Negotiation> negotiations = new ArrayList<>();
 
@@ -68,12 +75,14 @@ public class RealEstate {
     @Builder(builderMethodName = "builder")
     public RealEstate(
             String category,
+            String status,
             List<String> images,
             String description,
             EstateAgent estateAgent,
             CadastralData cadastralData,
             Detail detail) {
         this.category = RealEstateCategory.valueOf(category);
+        this.status = RealEstateStatus.valueOf(status);
         this.images = (images != null) ? new ArrayList<>(images) : new ArrayList<>();
         this.description = description;
         this.cadastralData = cadastralData;
@@ -84,5 +93,22 @@ public class RealEstate {
     public void addNegotiation(Negotiation negotiation) {
         negotiations.add(negotiation);
         negotiation.setRealEstate(this);
+    }
+
+    public void softDelete() {
+        if (this.status != RealEstateStatus.DELETED) {
+            this.status = RealEstateStatus.DELETED;
+
+            if (this.deletedDate == null) {
+                this.deletedDate = LocalDateTime.now();
+            }
+        }
+    }
+
+    public void restore() {
+        if (this.status == RealEstateStatus.DELETED) {
+            this.status = RealEstateStatus.ACTIVE;
+        }
+        this.deletedDate = null;
     }
 }

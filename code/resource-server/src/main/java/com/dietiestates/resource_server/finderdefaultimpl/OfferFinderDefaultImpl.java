@@ -47,7 +47,7 @@ public class OfferFinderDefaultImpl implements OfferFinder {
 
     @Override
     public Page<Offer> getAllUserOffers(Long userId, String status, Pageable pageable){
-        List<Negotiation> allUserNegotiations = negotiationFinder.getAllUserNegotiations(userId);
+        List<Negotiation> allUserNegotiations = negotiationFinder.getAllUserNegotiationsForAllRealEstates(userId);
         List<Offer> allNegotiationsOffers = extractAllNegotiationsOffers(allUserNegotiations, status);
         allNegotiationsOffers.sort(Comparator.comparing(Offer::getCreatedDate).reversed());
         return PageUtils.toPage(allNegotiationsOffers, pageable);
@@ -55,7 +55,7 @@ public class OfferFinderDefaultImpl implements OfferFinder {
 
     @Override
     public Page<Offer> getAllEstateAgentOffers(Long estateAgentId, String status, Pageable pageable){
-        List<Negotiation> allEstateAgentNegotiations = negotiationFinder.getAllEstateAgentNegotiations(estateAgentId);
+        List<Negotiation> allEstateAgentNegotiations = negotiationFinder.getAllEstateAgentNegotiationsForAllRealEstates(estateAgentId);
         List<Offer> allNegotiationOffers = extractAllNegotiationsOffers(allEstateAgentNegotiations, status);
         allNegotiationOffers.sort(Comparator.comparing(Offer::getCreatedDate).reversed());
         return PageUtils.toPage(allNegotiationOffers, pageable);

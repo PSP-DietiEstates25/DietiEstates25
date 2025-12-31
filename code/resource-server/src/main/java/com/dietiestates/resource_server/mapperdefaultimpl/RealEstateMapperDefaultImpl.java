@@ -37,7 +37,9 @@ public class RealEstateMapperDefaultImpl implements RealEstateMapper {
 				.id(realEstate.getId())
 				.createdDate(realEstate.getCreatedDate())
 				.lastModifiedDate(realEstate.getLastModifiedDate())
+                .deletedDate(realEstate.getDeletedDate())
 				.category(realEstate.getCategory() != null ? realEstate.getCategory().name() : null)
+                .status(realEstate.getStatus().name())
 				.images(imagesArr)
 				.description(realEstate.getDescription())
 				.estateAgentEmail(

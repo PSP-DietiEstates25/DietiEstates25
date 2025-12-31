@@ -17,10 +17,10 @@ public enum RealEstateCategory {
 
     public static Optional<RealEstateCategory> fromOrder(Integer orderCode) {
         if (orderCode == null) return Optional.empty();
-        for (RealEstateCategory adCategory: values()) {
-            if (adCategory.getOrder() == orderCode) return Optional.of(adCategory);
+        for (RealEstateCategory realEstateCategory: values()) {
+            if (realEstateCategory.getOrder() == orderCode) return Optional.of(realEstateCategory);
         }
-        throw new IllegalArgumentException("Invalid ad category code: " + orderCode);
+        throw new IllegalArgumentException("Invalid real estate category code: " + orderCode);
     }
 }
 

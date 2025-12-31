@@ -93,7 +93,8 @@ public class RealEstateController {
                         @RequestPart("data") @Valid RealEstateRequest request,
                         @RequestPart(value = "images", required = false) List<MultipartFile> images,
                         @AuthenticationPrincipal Jwt jwt,
-                        Authentication authentication) throws IOException {
+                        Authentication authentication
+        ) throws IOException {
 
                 boolean isEstateAgent = authentication.getAuthorities()
                                 .stream()
@@ -125,9 +126,12 @@ public class RealEstateController {
 
         @DeleteMapping("/{realestateid}")
         public ResponseEntity<Void> deleteRealEstate(
-                        @PathVariable Long realestateid) {
-                realEstateSerivce.deleteRealEstate(realestateid);
+                        @PathVariable Long realestateid,
+                        @AuthenticationPrincipal Jwt jwt
+        ) {
+                var estateAgentEmail = jwt.getSubject();
+
+                realEstateSerivce.deleteRealEstate(realestateid, estateAgentEmail);
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
-
 }

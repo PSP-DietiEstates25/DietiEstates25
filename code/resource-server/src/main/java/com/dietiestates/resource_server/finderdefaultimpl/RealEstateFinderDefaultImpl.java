@@ -22,13 +22,13 @@ public class RealEstateFinderDefaultImpl implements RealEstateFinder {
 	
 	@Override
 	public RealEstate getRealEstateById(Long id) throws RealEstateNotFoundException {
-		return realEstateRepository.findById(id)
+		return realEstateRepository.findActiveById(id)
 				.orElseThrow(RealEstateNotFoundException::new);
 	}
 
     @Override
     public Page<RealEstate> getEstateAgentRealEstates(Long estateAgentId, Pageable pageable) {
-        return realEstateRepository.findByEstateAgentId(estateAgentId, pageable);
+        return realEstateRepository.findActiveByEstateAgentId(estateAgentId, pageable);
     }
 
     @Override
@@ -39,11 +39,7 @@ public class RealEstateFinderDefaultImpl implements RealEstateFinder {
 
     @Override
     public List<RealEstate> getAllRealEstates() {
-        var realEstatesIterable = realEstateRepository.findAll();
-        var allRealEstates = new ArrayList<RealEstate>();
-        realEstatesIterable.forEach(allRealEstates::add);
-
-        return allRealEstates;
+        return realEstateRepository.findAllActive();
     }
 
     private List<RealEstate> getAdminEstateAgentsRealEstates(Admin admin) {
