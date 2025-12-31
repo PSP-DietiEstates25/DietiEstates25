@@ -1,13 +1,10 @@
 package com.dietiestates.resource_server.verifierdefaultimpl;
 
-import com.dietiestates.resource_server.enums.RealEstateStatus;
 import com.dietiestates.resource_server.exception.notowned.RealEstateNotOwnedByEstateAgentException;
 import com.dietiestates.resource_server.repository.RealEstateRepository;
-import com.dietiestates.resource_server.verifierdefaultimpl.RealEstateVerifierDefaultImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,7 +16,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class RealEstateVerifierDefaultImplTest {
 
-    @Mock(answer = Answers.CALLS_REAL_METHODS)
+    @Mock
     private RealEstateRepository realEstateRepository;
 
     @InjectMocks
@@ -31,12 +28,7 @@ class RealEstateVerifierDefaultImplTest {
         Long realEstateId = 1L;
         String estateAgentEmail = "agent@example.com";
 
-        when(realEstateRepository.existsByIdAndEstateAgent_EmailAndStatus(
-                realEstateId,
-                estateAgentEmail,
-                RealEstateStatus.ACTIVE
-            )
-        )
+        when(realEstateRepository.existsActiveByIdAndEstateAgentEmail(realEstateId, estateAgentEmail))
                 .thenReturn(true);
 
         assertDoesNotThrow(() -> realEstateVerifier.checkRealEstateOwnedByEstateAgent(realEstateId, estateAgentEmail));
@@ -48,12 +40,7 @@ class RealEstateVerifierDefaultImplTest {
         Long realEstateId = 1L;
         String estateAgentEmail = "other@example.com";
 
-        when(realEstateRepository.existsByIdAndEstateAgent_EmailAndStatus(
-                realEstateId,
-                estateAgentEmail,
-                RealEstateStatus.ACTIVE
-            )
-        )
+        when(realEstateRepository.existsActiveByIdAndEstateAgentEmail(realEstateId, estateAgentEmail))
                 .thenReturn(false);
 
         assertThrows(RealEstateNotOwnedByEstateAgentException.class,
