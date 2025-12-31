@@ -28,7 +28,7 @@
   } @else {
     <!--visibleItems si trasforma in realEstateOffers perchè si deve visualizzare una lista di real estates che hanno un offerta-->
     <section class="flex flex-col items-center justify-center gap-5">
-      @for (offer of offers; track offer.id) {
+      @for (offer of offers(); track offer.id) {
         @if (offer.category === "OFFER") {
           <div
             class="flex w-full max-w-4xl flex-col items-stretch justify-center gap-6 rounded-xl border border-slate-200 bg-white p-4 shadow-sm md:flex-row dark:border-slate-700 dark:bg-slate-800"

@@ -6,7 +6,6 @@ import { ToastrService } from 'ngx-toastr';
 import { FullOffer } from '../../interfaces/full-offer';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { VirtualTimeScheduler } from 'rxjs';
 
 @Component({
   selector: 'app-offers-list',
@@ -16,11 +15,17 @@ import { VirtualTimeScheduler } from 'rxjs';
 })
 export class OffersListComponent {
   facade = inject(OffersFacade);
+  offers!: Signal<FullOffer[]>;
   offerService = inject(OfferControllerService);
   offerPaginatorService = inject(OffersPaginatorService);
   toastrService = inject(ToastrService);
-  
-  offers = this.facade.offers();
+
+  constructor() {
+    effect(() => {
+      this.offers = computed(() => this.facade.offers());
+      console.log(this.offers());
+    });
+  }
 
   badgeClass(status: string) {
     switch (status) {
