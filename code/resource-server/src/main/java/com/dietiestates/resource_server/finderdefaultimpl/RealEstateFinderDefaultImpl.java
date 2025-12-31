@@ -22,7 +22,7 @@ public class RealEstateFinderDefaultImpl implements RealEstateFinder {
 	
 	@Override
 	public RealEstate getRealEstateById(Long id) throws RealEstateNotFoundException {
-		return realEstateRepository.findActiveById(id)
+		return realEstateRepository.findById(id)
 				.orElseThrow(RealEstateNotFoundException::new);
 	}
 
