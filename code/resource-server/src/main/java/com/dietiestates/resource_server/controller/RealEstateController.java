@@ -131,7 +131,7 @@ public class RealEstateController {
                 var stafferEmail = jwt.getSubject();
                 var stafferRole = authentication.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
-                        .filter(authority -> authority.equals("USER") || authority.equals("ESTATE_AGENT"))
+                        .filter(authority -> authority.equals("ADMIN") || authority.equals("ESTATE_AGENT"))
                         .findFirst().get();
 
                 realEstateSerivce.deleteRealEstate(realestateid, stafferEmail, stafferRole);
