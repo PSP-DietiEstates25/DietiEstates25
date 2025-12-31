@@ -10,6 +10,7 @@ export interface OfferResponse {
   createdDate?: string;
   estateAgentEmail?: string;
   id?: number;
+  isRealEstateDeleted?: boolean;
   lastModifiedDate?: string;
   realEstateId?: number;
   status?: string;

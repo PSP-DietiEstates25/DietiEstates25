@@ -88,4 +88,8 @@ export class AgentOffersListComponent implements OnDestroy {
         return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200';
     }
   }
+
+  deletedRealEstateBadge(){
+    return 'real_estate_deleted_badge';
+  }
 }

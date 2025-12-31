@@ -2116,6 +2116,9 @@
           "counterOfferId": {
             "type": "integer",
             "format": "int64"
+          },
+          "isRealEstateDeleted": {
+            "type": "boolean"
           }
         }
       },

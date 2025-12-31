@@ -41,4 +41,8 @@ export class OffersListComponent {
         return 'pending_offer_badge';
     }
   }
+
+  deletedRealEstateBadge(){
+    return 'real_estate_deleted_badge';
+  }
 }

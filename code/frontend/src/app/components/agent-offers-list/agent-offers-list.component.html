@@ -52,20 +52,30 @@
                   </div>
                 </div>
 
-                <span
-                  class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
-                  [class]="badgeClass(offer.status!)"
-                >
-                  @if (offer.status === "PENDING") {
-                    IN ATTESA
-                  } @else if (offer.status === "ACCEPTED") {
-                    ACCETTATA
-                  } @else if (offer.status === "REJECTED") {
-                    RIFIUTATA
-                  } @else if (offer.status === "COUNTERED") {
-                    NEGOZIATA
-                  }
-                </span>
+                @if (offer.isRealEstateDeleted){
+                  <span
+                    class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
+                    [class]="deletedRealEstateBadge()"
+                  >
+                    IMMOBILE ELIMINATO
+                  </span>
+                } @else {
+
+                  <span
+                    class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
+                    [class]="badgeClass(offer.status!)"
+                  >
+                    @if (offer.status === "PENDING") {
+                      IN ATTESA
+                    } @else if (offer.status === "ACCEPTED") {
+                      ACCETTATA
+                    } @else if (offer.status === "REJECTED") {
+                      RIFIUTATA
+                    } @else if (offer.status === "COUNTERED") {
+                      NEGOZIATA
+                    }
+                  </span>
+                }
               </div>
 
               <div class="mt-4 flex items-center justify-between">
@@ -83,7 +93,7 @@
                 </a>
               </div>
 
-              @if (offer.status === "PENDING") {
+              @if (offer.status === "PENDING" && !offer.isRealEstateDeleted) {
                 <div
                   class="mt-4 flex items-center justify-between gap-2 text-sm"
                 >
@@ -109,7 +119,7 @@
                     Controfferta
                   </button>
                 </div>
-                @if (counterId() === offer.id) {
+                @if (counterId() === offer.id && !offer.isRealEstateDeleted) {
                   <div
                     class="mt-3 flex flex-col gap-2 rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-sm dark:border-slate-700 dark:bg-slate-900/60"
                   >
