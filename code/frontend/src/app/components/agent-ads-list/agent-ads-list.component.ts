@@ -93,7 +93,6 @@ export class AgentAdsListComponent implements OnDestroy {
   }
 
   deleteAd(adId: number) {
-    console.log(adId);
     this.facade.deleteAd(adId).subscribe({
       next: () => {
         this.toastrService.success('Annuncio cancellato');

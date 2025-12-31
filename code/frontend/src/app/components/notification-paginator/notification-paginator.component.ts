@@ -16,7 +16,7 @@ export class NotificationPaginatorComponent {
   routerService = inject(Router);
 
   notificationRequest!: NotificationPaginatorRequest;
-  goToPage!: number;
+  goToPage: number = 1;
   page!: number;
   totalPages!: number;
 

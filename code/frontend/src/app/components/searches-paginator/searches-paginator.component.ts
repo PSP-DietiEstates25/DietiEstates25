@@ -18,7 +18,7 @@ export class SearchesPaginatorComponent {
   routerService = inject(Router);
 
   searchRequest!: SearchPaginatorRequest;
-  goToPage!: number;
+  goToPage: number = 1;
   page!: number;
   totalPages!: number;
 

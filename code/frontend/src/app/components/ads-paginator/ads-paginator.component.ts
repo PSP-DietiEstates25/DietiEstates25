@@ -16,7 +16,7 @@ export class AdsPaginatorComponent {
   routerService = inject(Router);
 
   adsRequest!: PaginatorRequest;
-  goToPage!: number;
+  goToPage: number = 1;
   page!: number;
   totalPages!: number;
 

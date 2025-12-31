@@ -12,6 +12,7 @@ export interface OfferResponse {
   id?: number;
   isRealEstateDeleted?: boolean;
   lastModifiedDate?: string;
+  realEstateAddress?: string;
   realEstateId?: number;
   status?: string;
   userEmail?: string;

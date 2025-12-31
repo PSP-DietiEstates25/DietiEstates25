@@ -175,6 +175,10 @@ export class AdminDashboardComponent {
     });
   }
 
+  deleteAd(adId: number) {
+    this.facade.deleteAd(adId).subscribe();
+  }
+  
   logout(): void {
     this.authService.logout().subscribe(() => {
       this.isAuthenticated = false;

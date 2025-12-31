@@ -17,7 +17,7 @@ export class VisitsPaginatorComponent {
   routerService = inject(Router);
 
   visitRequest!: PaginatorRequest;
-  goToPage!: number;
+  goToPage: number = 1;
   page!: number;
   totalPages!: number;
 

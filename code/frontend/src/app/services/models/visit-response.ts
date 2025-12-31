@@ -9,6 +9,7 @@ export interface VisitResponse {
   estateAgentEmail?: string;
   id?: number;
   lastModifiedDate?: string;
+  realEstateAddress?: string;
   realEstateId?: number;
   status?: string;
   time?: string;

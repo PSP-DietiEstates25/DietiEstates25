@@ -126,8 +126,7 @@ export class AgentDashboardComponent implements OnDestroy {
   setTab(t: 'visits' | 'ads' | 'offers') {
     this.active.set(t);
     if (t === 'visits' && !this.visits.length) this.fetchEstateAgentVisits();
-    if (t === 'ads' && !this.realEstates.length)
-      this.fetchEstateAgentRealEstates();
+    if (t === 'ads' && !this.realEstates.length) this.fetchEstateAgentRealEstates();
     if (t === 'offers' && !this.offers.length) this.fetchEstateAgentOffers();
   }
 
