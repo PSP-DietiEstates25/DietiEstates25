@@ -55,7 +55,7 @@ public class RealEstate {
     private LocalDateTime lastModifiedDate;
 
     @Column
-    private LocalDateTime deletedDate = null;
+    private LocalDateTime deletedDate;
 
     @OneToMany(mappedBy = "realEstate", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Negotiation> negotiations = new ArrayList<>();
