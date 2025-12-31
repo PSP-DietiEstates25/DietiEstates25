@@ -2,6 +2,7 @@ package com.dietiestates.resource_server.mapperdefaultimpl;
 
 import com.dietiestates.resource_server.dto.request.OfferRequest;
 import com.dietiestates.resource_server.dto.response.OfferResponse;
+import com.dietiestates.resource_server.enums.RealEstateStatus;
 import com.dietiestates.resource_server.mapper.OfferMapper;
 import com.dietiestates.resource_server.model.Offer;
 import com.dietiestates.resource_server.spec.OfferSpec;
@@ -49,6 +50,9 @@ public class OfferMapperDefaultImpl implements OfferMapper {
 				.amount(offer.getAmount())
                 .counterOfId(counterOfId)
                 .counterOfferId(counterOfferId)
+                .isRealEstateDeleted(
+                        offer.getNegotiation().getRealEstate().getStatus() != RealEstateStatus.ACTIVE
+                )
 				.build();
 	}
 

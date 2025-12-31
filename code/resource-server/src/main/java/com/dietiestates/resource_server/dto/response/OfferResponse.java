@@ -16,6 +16,7 @@ public class OfferResponse extends ProposalResponse {
     private BigDecimal amount;
     private Long counterOfId;
     private Long counterOfferId;
+    private Boolean isRealEstateDeleted;
 
     @Builder(builderMethodName = "offerResponseBuilder")
     public OfferResponse(
@@ -29,7 +30,8 @@ public class OfferResponse extends ProposalResponse {
             String estateAgentEmail,
             BigDecimal amount,
             Long counterOfId,
-            Long counterOfferId
+            Long counterOfferId,
+            Boolean isRealEstateDeleted
     ) {
         super(
                 id,
@@ -44,5 +46,6 @@ public class OfferResponse extends ProposalResponse {
         this.amount = amount;
         this.counterOfId = counterOfId;
         this.counterOfferId = counterOfferId;
+        this.isRealEstateDeleted = isRealEstateDeleted;
     }
 }
