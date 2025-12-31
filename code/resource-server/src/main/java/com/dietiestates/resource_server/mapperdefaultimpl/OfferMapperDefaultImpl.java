@@ -47,6 +47,13 @@ public class OfferMapperDefaultImpl implements OfferMapper {
 				.userEmail(offer.getNegotiation().getUser().getEmail())
 				.realEstateId(offer.getNegotiation().getRealEstate().getId())
                 .estateAgentEmail(offer.getNegotiation().getEstateAgent().getEmail())
+                .realEstateAddress(offer
+                        .getNegotiation()
+                        .getRealEstate()
+                        .getDetail()
+                        .getGeographicalPosition()
+                        .getAddress()
+                )
 				.amount(offer.getAmount())
                 .counterOfId(counterOfId)
                 .counterOfferId(counterOfferId)

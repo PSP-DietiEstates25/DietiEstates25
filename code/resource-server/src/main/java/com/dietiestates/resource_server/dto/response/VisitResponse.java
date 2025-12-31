@@ -27,6 +27,7 @@ public class VisitResponse extends ProposalResponse {
             String userEmail,
             Long realEstateId,
             String estateAgentEmail,
+            String realEstateAddress,
             LocalDate date,
             LocalTime time
     ) {
@@ -38,7 +39,8 @@ public class VisitResponse extends ProposalResponse {
                 status,
                 userEmail,
                 realEstateId,
-                estateAgentEmail
+                estateAgentEmail,
+                realEstateAddress
         );
         this.date = date;
         this.time = time;

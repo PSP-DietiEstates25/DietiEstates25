@@ -28,6 +28,7 @@ public class OfferResponse extends ProposalResponse {
             String userEmail,
             Long realEstateId,
             String estateAgentEmail,
+            String realEstateAddress,
             BigDecimal amount,
             Long counterOfId,
             Long counterOfferId,
@@ -41,7 +42,8 @@ public class OfferResponse extends ProposalResponse {
                 status,
                 userEmail,
                 realEstateId,
-                estateAgentEmail
+                estateAgentEmail,
+                realEstateAddress
         );
         this.amount = amount;
         this.counterOfId = counterOfId;

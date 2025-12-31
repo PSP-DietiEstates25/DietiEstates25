@@ -37,6 +37,13 @@ public class VisitMapperDefaultImpl implements VisitMapper {
 				.userEmail(visit.getNegotiation().getUser().getEmail())
 				.realEstateId(visit.getNegotiation().getRealEstate().getId())
                 .estateAgentEmail(visit.getNegotiation().getEstateAgent().getEmail())
+                .realEstateAddress(visit
+                        .getNegotiation()
+                        .getRealEstate()
+                        .getDetail()
+                        .getGeographicalPosition()
+                        .getAddress()
+                )
 				.date(visit.getDate())
 				.time(visit.getTime())
 				.build();

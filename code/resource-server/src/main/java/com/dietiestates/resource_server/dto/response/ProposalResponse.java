@@ -25,4 +25,5 @@ public class ProposalResponse {
     private String userEmail;
     private Long realEstateId;
     private String estateAgentEmail;
+    private String realEstateAddress;
 }
