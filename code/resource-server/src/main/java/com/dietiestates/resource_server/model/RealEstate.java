@@ -75,14 +75,12 @@ public class RealEstate {
     @Builder(builderMethodName = "builder")
     public RealEstate(
             String category,
-            String status,
             List<String> images,
             String description,
             EstateAgent estateAgent,
             CadastralData cadastralData,
             Detail detail) {
         this.category = RealEstateCategory.valueOf(category);
-        this.status = RealEstateStatus.valueOf(status);
         this.images = (images != null) ? new ArrayList<>(images) : new ArrayList<>();
         this.description = description;
         this.cadastralData = cadastralData;
