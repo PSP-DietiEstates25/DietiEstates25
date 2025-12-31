@@ -99,10 +99,15 @@
               >
                 <div class="flex items-start justify-between gap-3">
                   <div class="min-w-0">
-                    <div
-                      class="text-sm font-semibold text-slate-900 dark:text-white"
-                    >
-                      Immobile in "{{ offer.realEstateAddress }}"
+                    <div class="flex flex-col items-start justify-center">
+                      <div
+                        class="text-sm font-semibold text-slate-900 dark:text-white"
+                      >
+                        Immobile in:
+                      </div>
+                      <div class="text-xs font-medium text-slate-900 dark:text-white">
+                        "{{ offer.realEstateAddress }}"
+                      </div>
                     </div>
                   </div>
 
