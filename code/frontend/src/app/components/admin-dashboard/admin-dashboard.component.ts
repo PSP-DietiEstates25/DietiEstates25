@@ -56,7 +56,7 @@ export class AdminDashboardComponent {
   isAuthenticated = false;
   email = '';
 
-  realEstates: FullRealEstate[] = [];
+  realEstates = this.facade.realEstates;
 
   adsPaginatorRequest!: PaginatorRequest;
 

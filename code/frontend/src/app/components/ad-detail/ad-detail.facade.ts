@@ -93,8 +93,14 @@ export class AdDetailFacade {
 
     const city = geographicalPositionResponse?.city ?? null;
 
+    let category = null;
+
+    if(realEstateResponse.category === "SALE")
+      category = "Vendita";
+    else category = "Affitto";
+
     const titleParts = [
-      realEstateResponse.category || null,
+      category,
       city ? `a ${city}` : null,
       surface ? `— ${surface} m²` : null,
     ].filter(Boolean);

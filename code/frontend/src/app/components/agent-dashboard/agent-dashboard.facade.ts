@@ -26,6 +26,8 @@ import { AgentAdVM } from '../../interfaces/agent-ad-vm';
 
 @Injectable({ providedIn: 'root' })
 export class AgentDashboardFacade {
+  lastAdsRequest: PaginatorRequest | null = null;
+
   visits = signal<VisitResponse[]>([]);
   visitsLoading = signal(false);
   visitFilter = signal<'PENDING' | 'ACCEPTED' | 'REJECTED' | null>(null);
@@ -163,6 +165,9 @@ export class AgentDashboardFacade {
   }
 
   fetchRealEstates(request: PaginatorRequest) {
+    this.lastAdsRequest = request;
+    this.realEstatesLoading.set(true);
+    
     const params = {
       page: request.page - 1,
       size: request.size,
@@ -233,18 +238,21 @@ export class AgentDashboardFacade {
       tap((fullRealEstatesResponse) => {
         this.realEstates.set(fullRealEstatesResponse.fullRealEstates);
       }),
+      finalize(() => this.realEstatesLoading.set(false))
     );
   }
 
   deleteAd(adId: number): Observable<void> {
     const prev = this.realEstates();
+    this.realEstates.set(prev.filter(realEstate => realEstate.id !== adId));
     return this.realEstateService.deleteRealEstate({ realestateid: adId }).pipe(
+      switchMap(() => this.lastAdsRequest ? this.fetchRealEstates(this.lastAdsRequest) : of(null)),
+      map(() => void 0),
       catchError((error) => {
         console.error('[Facade] deleteAd error (delete)', error);
         this.realEstates.set(prev);
         return of(void 0);
       }),
-      map(() => void 0),
     );
   }
 

@@ -34,6 +34,8 @@ export class AdminDashboardFacade {
   private adminService = inject(AdminControllerService);
   private authService = inject(AuthService);
 
+  lastAdsRequest: PaginatorRequest | null = null;
+
   // stato annunci
   realEstates = signal<FullRealEstate[]>([]);
   realEstatesLoading = signal(false);
@@ -43,6 +45,10 @@ export class AdminDashboardFacade {
   error = signal<string | null>(null);
 
   fetchRealEstates(request: PaginatorRequest) {
+
+    this.lastAdsRequest = request;
+    this.realEstatesLoading.set(true);
+
     const params = {
       page: request.page - 1,
       size: request.size,
@@ -113,18 +119,22 @@ export class AdminDashboardFacade {
       tap((fullRealEstatesResponse) => {
         this.realEstates.set(fullRealEstatesResponse.fullRealEstates);
       }),
+      finalize(() => this.realEstatesLoading.set(false))
     );
   }
 
   deleteAd(adId: number): Observable<void> {
     const prev = this.realEstates();
+    this.realEstates.set(prev.filter(realEstate => realEstate.id !== adId));
+
     return this.realEstateService.deleteRealEstate({ realestateid: adId }).pipe(
+      switchMap(() => this.lastAdsRequest ? this.fetchRealEstates(this.lastAdsRequest) : of(null)),
+      map(() => void 0),
       catchError((error) => {
         console.error('[Facade] deleteAd error (delete)', error);
         this.realEstates.set(prev);
-        return of(void 0);
+        return throwError(() => error);
       }),
-      map(() => void 0),
     );
   }
 

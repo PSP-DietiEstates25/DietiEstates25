@@ -66,9 +66,9 @@ export class AgentDashboardComponent implements OnDestroy {
   isAuthenticated = false;
   email = '';
 
-  offers: OfferResponse[] = [];
-  visits: VisitResponse[] = [];
-  realEstates: FullRealEstate[] = [];
+  offers = this.facade.offers;
+  visits = this.facade.visits;
+  realEstates = this.facade.realEstates;
 
   offerPaginatorRequest!: OfferPaginatorRequest;
   visitPaginatorRequest!: VisitPaginatorRequest;
