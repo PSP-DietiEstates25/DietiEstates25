@@ -11,7 +11,6 @@ import { environment } from '../../../environments/environment';
 import { SocialLoginButtons } from '../social-login-buttons/social-login-buttons';
 import { CookieService } from 'ngx-cookie-service';
 import { AuthService } from '../../_services/auth/auth.service';
-import { ToastrService } from 'ngx-toastr';
 import { HttpErrorResponse, HttpParams } from '@angular/common/http';
 
 @Component({
@@ -24,7 +23,6 @@ export class LoginComponent {
   private formBuilder = inject(FormBuilder);
   private cookieService = inject(CookieService);
   private authService = inject(AuthService);
-  private toastrService = inject(ToastrService);
   loginProcessingUrl!: string;
 
   submitted = false;
@@ -32,7 +30,10 @@ export class LoginComponent {
   loading = false;
 
   loginForm = new FormGroup({
-    email: new FormControl('' as string, [Validators.required, Validators.minLength(5)]),
+    email: new FormControl('' as string, [
+      Validators.required,
+      Validators.minLength(5),
+    ]),
     password: new FormControl('' as string, [
       Validators.required,
       Validators.minLength(5),
@@ -76,7 +77,7 @@ export class LoginComponent {
       .set('username', this.email?.value!)
       .set('password', this.password?.value!)
       .set('_csrf', this.csrfToken());
-    
+
     this.authService.login(body).subscribe({
       next: (res) => {
         this.loading = false;
@@ -90,8 +91,6 @@ export class LoginComponent {
           this.badCredentialsError = true;
           return;
         }
-
-        this.toastrService.error('Errore durante il login. Riprova.');
       },
     });
   }

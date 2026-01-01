@@ -37,18 +37,10 @@ spring:
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope: openid, https://www.googleapis.com/auth/userinfo.profile, https://www.googleapis.com/auth/userinfo.email
             client-name: Sign in with Google
-          github-idp:
-            provider: github
-            client-id: ${GITHUB_CLIENT_ID}
-            client-secret: ${GITHUB_CLIENT_SECRET}
-            scope: user:email, read:user
-            client-name: Sign in with GitHub
         provider:
           google:
             issuer-uri: https://accounts.google.com
             user-name-attribute: email
-          github:
-            user-name-attribute: login
 
 logging:
   level:
