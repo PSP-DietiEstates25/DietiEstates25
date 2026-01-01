@@ -66,16 +66,8 @@ export class NavbarComponent implements OnInit {
   }
 
   logout(): void {
-    this.closeMenu();
-    this.authService.logout().subscribe(() => {
-      this.isAuthenticated = false;
-      this.email = '';
-
-      this.localStorageService.removeItem('isAuthenticated');
-      this.localStorageService.removeItem('role');
-
-      this.router.navigateByUrl('/');
-    });
+    this.authService.logoutAndRedirectToLogin();
+    this.email = '';
   }
 
   getUserInfo(): void {

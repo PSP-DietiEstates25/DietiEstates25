@@ -41,10 +41,6 @@ export class AuthService {
     return this.httpClient.get<any>(this.userInfoUrl, this.httpOptions);
   }
 
-  logout() {
-    this.logoutAndRedirectToLogin()
-  }
-
   logoutAndRedirectToLogin(): void {
     this.clearClientAuthState();
     window.location.assign('/api/logout');
