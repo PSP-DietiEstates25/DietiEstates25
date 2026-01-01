@@ -13,7 +13,7 @@ import {
   RealEstateResponse,
   VisitResponse,
 } from '../../services/models';
-import { forkJoin, of, Observable } from 'rxjs';
+import { forkJoin, of, Observable, throwError } from 'rxjs';
 import { map, tap, catchError, finalize, switchMap } from 'rxjs/operators';
 import { FullOffer } from '../../interfaces/full-offer';
 import { PaginatorRequest } from '../../interfaces/paginator-request';
@@ -83,7 +83,7 @@ export class AgentDashboardFacade {
 
   fetchVisits(request: VisitPaginatorRequest) {
     this.lastVisitRequest = request;
-    this.visitsLoading.set(false);
+    this.visitsLoading.set(true);
     const params = {
       size: request.size,
       page: request.page,
@@ -249,9 +249,8 @@ export class AgentDashboardFacade {
       switchMap(() => this.lastAdsRequest ? this.fetchRealEstates(this.lastAdsRequest) : of(null)),
       map(() => void 0),
       catchError((error) => {
-        console.error('[Facade] deleteAd error (delete)', error);
         this.realEstates.set(prev);
-        return of(void 0);
+        return throwError(() => error);
       }),
     );
   }
@@ -339,6 +338,7 @@ export class AgentDashboardFacade {
         this.offers.set(newOffers);
         this.offersLoading.set(false);
       }),
+      finalize(() => this.offersLoading.set(false)),
     );
   }
 

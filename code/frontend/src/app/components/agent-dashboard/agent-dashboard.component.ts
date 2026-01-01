@@ -118,23 +118,24 @@ export class AgentDashboardComponent implements OnDestroy {
         this.fetchEstateAgentVisits();
       }
       if (this.active() === 'ads') {
-        this.fetchEstateAgentOffers();
+        this.fetchEstateAgentRealEstates();
       }
     });
   }
 
   setTab(t: 'visits' | 'ads' | 'offers') {
     this.active.set(t);
-    if (t === 'visits' && !this.visits.length) this.fetchEstateAgentVisits();
-    if (t === 'ads' && !this.realEstates.length) this.fetchEstateAgentRealEstates();
-    if (t === 'offers' && !this.offers.length) this.fetchEstateAgentOffers();
+
+    if (t === 'visits' && this.visits().length === 0) this.fetchEstateAgentVisits();
+    if (t === 'ads' && this.realEstates().length === 0) this.fetchEstateAgentRealEstates();
+    if (t === 'offers' && this.offers().length === 0) this.fetchEstateAgentOffers();
   }
+
 
   fetchEstateAgentOffers() {
     this.facade.fetchOffers(this.offerPaginatorRequest).subscribe({
       next: (results) => {
         this.totalPages = results.totalPages!;
-        this.offers = results.content!;
         this.initPages();
       },
       error: (response: HttpErrorResponse) => {
@@ -150,7 +151,6 @@ export class AgentDashboardComponent implements OnDestroy {
     this.facade.fetchVisits(this.visitPaginatorRequest).subscribe({
       next: (results) => {
         this.totalPages = results.totalPages!;
-        this.offers = results.content!;
         this.initPages();
       },
       error: (response: HttpErrorResponse) => {
@@ -166,7 +166,6 @@ export class AgentDashboardComponent implements OnDestroy {
     this.facade.fetchRealEstates(this.adsPaginatorRequest).subscribe({
       next: (results) => {
         this.totalPages = results.totalPages!;
-        this.realEstates = results.fullRealEstates!;
         this.initPages();
       },
       error: (response: HttpErrorResponse) => {

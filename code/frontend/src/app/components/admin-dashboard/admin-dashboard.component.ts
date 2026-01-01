@@ -99,7 +99,7 @@ export class AdminDashboardComponent {
 
   setTab(t: 'ads' | 'users' | 'passwords') {
     this.active.set(t);
-    if (t === 'ads' && this.realEstates.length) {
+    if (t === 'ads' && this.realEstates().length) {
       this.fetchAdminRealEstates();
     }
   }
@@ -108,7 +108,6 @@ export class AdminDashboardComponent {
     this.facade.fetchRealEstates(this.adsPaginatorRequest).subscribe({
       next: (results) => {
         this.totalPages = results.totalPages!;
-        this.realEstates = results.fullRealEstates!;
         this.initPages();
       },
       error: (response: HttpErrorResponse) => {
