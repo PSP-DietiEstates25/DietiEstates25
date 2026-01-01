@@ -14,12 +14,43 @@ function normalizeBase(base: string): string {
 
 const API_BASE = normalizeBase(environment.apiBaseUrl);
 
+function getApiPathname(): string {
+  if (!API_BASE) return '';
+  if (isAbsoluteUrl(API_BASE)) {
+    try {
+      return new URL(API_BASE).pathname.replace(/\/+$/, '');
+    } catch {
+      return '';
+    }
+  }
+  return API_BASE.replace(/\/+$/, '');
+}
+
+const API_PATH = getApiPathname();
+
+function isSameOriginAbsUrl(url: string): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    const u = new URL(url);
+    return u.origin === window.location.origin;
+  } catch {
+    return false;
+  }
+}
+
 export const xsrfInterceptor: HttpInterceptorFn = (req, next) => {
   const isAbsReq = isAbsoluteUrl(req.url);
 
   const hitsBff = (() => {
     if (isAbsReq) {
-      return false;
+      if (!isSameOriginAbsUrl(req.url)) return false;
+      if (!API_PATH) return true;
+      try {
+        const u = new URL(req.url);
+        return u.pathname === API_PATH || u.pathname.startsWith(API_PATH + '/');
+      } catch {
+        return false;
+      }
     }
 
     if (!API_BASE || API_BASE === '/') return req.url.startsWith('/');

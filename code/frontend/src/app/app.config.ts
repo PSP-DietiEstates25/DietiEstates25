@@ -23,13 +23,5 @@ export const appConfig: ApplicationConfig = {
       withFetch(),
       withInterceptors([xsrfInterceptor, authCredentials]),
     ),
-    {
-      provide: ApiConfiguration,
-      useFactory: () => {
-        const config = new ApiConfiguration();
-        config.rootUrl = environment.apiBaseUrl; // "/api"
-        return config;
-    },
-},
   ],
 };

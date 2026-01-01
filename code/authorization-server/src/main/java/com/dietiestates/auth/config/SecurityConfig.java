@@ -90,6 +90,12 @@ public class SecurityConfig {
                                 new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
                                 new MediaTypeRequestMatcher(MediaType.APPLICATION_JSON)
                         )
+                )
+                .logout(logout -> logout
+                        .logoutSuccessUrl(properties.postLogoutRedirectUri())
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID", "XSRF-TOKEN")
                 );
 
         return http.build();

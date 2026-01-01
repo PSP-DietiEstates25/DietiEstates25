@@ -50,15 +50,25 @@ export class AuthService {
   logoutAndRedirectToLogin(): void {
     this.getCsrf()
       .pipe(
-        catchError(() => of(null)),
-        switchMap(() => this.logout().pipe(catchError(() => of(null)))),
-        finalize(() => {
-          this.clearClientAuthState();
-          window.location.replace('/login');
-        }
-    )
-  ).subscribe();
-}
+        catchError((err) => {
+          console.warn('[logout] GET csrf-token failed', err);
+          return of(null);
+        }),
+        switchMap(() =>
+          this.logout().pipe(
+            catchError((err) => {
+            console.warn('[logout] POST logout failed', err);
+            return of(null);
+          }),
+        ),
+      ),
+      finalize(() => {
+        this.clearClientAuthState();
+        window.location.replace('/');
+      }),
+    ).subscribe();
+  }
+
 
   getCsrf() {
     return this.httpClient.get(this.csrfUrl, {
