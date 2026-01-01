@@ -42,9 +42,7 @@ export class AuthService {
   }
 
   logout() {
-    return this.httpClient.post(this.logoutUrl, null, {
-      withCredentials: true,
-    });
+    this.logoutAndRedirectToLogin()
   }
 
   logoutAndRedirectToLogin(): void {
