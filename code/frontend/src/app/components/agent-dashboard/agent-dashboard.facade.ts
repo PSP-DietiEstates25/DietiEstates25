@@ -246,12 +246,21 @@ export class AgentDashboardFacade {
     const prev = this.realEstates();
     this.realEstates.set(prev.filter(realEstate => realEstate.id !== adId));
     return this.realEstateService.deleteRealEstate({ realestateid: adId }).pipe(
-      switchMap(() => this.lastAdsRequest ? this.fetchRealEstates(this.lastAdsRequest) : of(null)),
-      map(() => void 0),
       catchError((error) => {
         this.realEstates.set(prev);
         return throwError(() => error);
       }),
+      switchMap(() => 
+        this.lastAdsRequest
+          ? this.fetchRealEstates(this.lastAdsRequest).pipe(
+            catchError(refreshErr => {
+              console.error('[Facade] refresh after delete failed', refreshErr);
+              return of(null);
+            }),
+          )
+        : of(null),
+      ),
+      map(() => void 0),
     );
   }
 
