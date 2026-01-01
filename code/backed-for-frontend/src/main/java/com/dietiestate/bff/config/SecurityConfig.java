@@ -27,7 +27,9 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfLogoutHandler;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 
@@ -75,6 +77,7 @@ public class SecurityConfig {
                                 "/api/account/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/", "/error", "/actuator/health", properties.csrfTokenUrl()).permitAll()
+                        .requestMatchers(HttpMethod.GET, properties.logoutUrl()).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
                                 "/api/swagger-ui/**",
@@ -89,13 +92,18 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(new SimpleUrlAuthenticationSuccessHandler(properties.baseUri() + properties.callbackUrl())))
                 .logout(logout -> logout
-                        .logoutUrl(properties.logoutUrl())
+                        .logoutRequestMatcher(new OrRequestMatcher(
+                                PathPatternRequestMatcher.pathPattern(HttpMethod.GET,  properties.logoutUrl()),
+                                PathPatternRequestMatcher.pathPattern(HttpMethod.POST, properties.logoutUrl())
+                        ))
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
                         .deleteCookies("BFFSESSION", "XSRF-TOKEN", "JSESSIONID")
                         .addLogoutHandler(logoutHandler(cookieCsrfTokenRepository))
-                        .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK)))
-                .oauth2Client(Customizer.withDefaults());
+                        .logoutSuccessHandler((request, response, authentication) ->
+                                response.sendRedirect(properties.authorizationServerBaseUrl() + "/auth/logout")
+                        )
+                );
 
         return http.build();
     }

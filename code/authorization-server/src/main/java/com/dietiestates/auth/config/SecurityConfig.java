@@ -25,6 +25,7 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 
@@ -49,7 +50,7 @@ public class SecurityConfig {
         http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers(properties.registerUrl(), properties.csrfUrl(), "/account/**")
+                        .ignoringRequestMatchers(properties.registerUrl(), properties.csrfUrl(), "/account/**", "/auth/logout")
                         .csrfTokenRepository(csrfRepository)
                         .csrfTokenRequestHandler(csrfHandler)
                 )
@@ -92,11 +93,13 @@ public class SecurityConfig {
                         )
                 )
                 .logout(logout -> logout
+                        .logoutRequestMatcher(PathPatternRequestMatcher.pathPattern(HttpMethod.GET, "/auth/logout"))
                         .logoutSuccessUrl(properties.postLogoutRedirectUri())
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
                         .deleteCookies("JSESSIONID", "XSRF-TOKEN")
                 );
+
 
         return http.build();
     }

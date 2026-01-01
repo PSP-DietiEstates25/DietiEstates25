@@ -48,23 +48,8 @@ export class AuthService {
   }
 
   logoutAndRedirectToLogin(): void {
-    this.getCsrf()
-      .pipe(
-        catchError((err) => {
-          return of(null);
-        }),
-        switchMap(() =>
-          this.logout().pipe(
-            catchError((err) => {
-            return of(null);
-          }),
-        ),
-      ),
-      finalize(() => {
-        this.clearClientAuthState();
-        window.location.replace('/');
-      }),
-    ).subscribe();
+    this.clearClientAuthState();
+    window.location.assign('/api/logout');
   }
 
 
