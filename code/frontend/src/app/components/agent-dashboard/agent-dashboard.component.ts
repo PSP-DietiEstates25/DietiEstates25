@@ -266,16 +266,6 @@ export class AgentDashboardComponent implements OnDestroy {
   }
 
   logout(): void {
-    this.authService.logout().subscribe(() => {
-      this.isAuthenticated = false;
-      this.email = '';
-
-      this.localStorageService.removeItem('isAuthenticated');
-      this.localStorageService.removeItem('role');
-
-      this.routerService.navigateByUrl('/').then(() => {
-         window.location.reload();
-      });
-    });
+    this.authService.logoutAndRedirectToLogin();
   }
 }

@@ -4,7 +4,7 @@ import { LocalStorageService } from '../local-storage/local-storage.service';
 import { AccountResponse } from '../../interfaces/account-response';
 import { environment } from '../../../environments/environment';
 import { ApiConfiguration } from '../../services/api-configuration';
-import { catchError, of, throwError, map } from 'rxjs';
+import { catchError, finalize, map, of, throwError } from 'rxjs';
 
 export interface UserInfo {
   email: string;
@@ -47,6 +47,18 @@ export class AuthService {
     });
   }
 
+  logoutAndRedirectToLogin(): void {
+    this.logout()
+      .pipe(
+        catchError(() => of(null)),
+        finalize(() => {
+          this.clearClientAuthState();
+          window.location.replace(this.apiConfiguration.rootUrl + '/login');
+        }),
+      )
+      .subscribe();
+  }
+
   getCsrf() {
     return this.httpClient.get(this.csrfUrl, {
       withCredentials: true,
@@ -84,6 +96,11 @@ export class AuthService {
       changeAdminPasswordRequest,
       this.httpOptions,
     );
+  }
+
+  clearClientAuthState(): void {
+    this.localStorageService.clear();
+    this.userInfo.set(null);
   }
 
   isAuthenticated() {
