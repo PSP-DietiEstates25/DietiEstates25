@@ -51,13 +51,11 @@ export class AuthService {
     this.getCsrf()
       .pipe(
         catchError((err) => {
-          console.warn('[logout] GET csrf-token failed', err);
           return of(null);
         }),
         switchMap(() =>
           this.logout().pipe(
             catchError((err) => {
-            console.warn('[logout] POST logout failed', err);
             return of(null);
           }),
         ),

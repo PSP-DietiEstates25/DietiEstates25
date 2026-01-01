@@ -18,7 +18,7 @@ interface NavLink {
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent {
   private readonly localStorageService = inject(LocalStorageService);
   private readonly authService = inject(AuthService);
 
@@ -41,9 +41,11 @@ export class NavbarComponent implements OnInit {
     this.notifications.fetchBadgeData();
   }
 
+  /*
   ngOnInit(): void {
     this.getUserInfo();
   }
+    */
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
@@ -63,6 +65,7 @@ export class NavbarComponent implements OnInit {
     this.authService.logoutAndRedirectToLogin();
   }
 
+  /*
   getUserInfo(): void {
     this.authService.getUserInfo().subscribe({
       next: (userInfo) => {
@@ -79,6 +82,7 @@ export class NavbarComponent implements OnInit {
       },
     });
   }
+  */
 
   navLinks() {
     return this.allLinks;
