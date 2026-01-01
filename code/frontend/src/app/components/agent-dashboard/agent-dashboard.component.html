@@ -1,8 +1,6 @@
 <section class="container mx-auto space-y-6 px-4 py-6">
   <!-- HEADER + TABS -->
-  <header
-    class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
-  >
+  <header class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
     <div>
       <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
         Area Agente
@@ -14,26 +12,18 @@
     </div>
 
     <nav
-      class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50/70 px-1 py-1 dark:border-slate-700 dark:bg-slate-900/70"
-      aria-label="Navigazione area agente"
-    >
+      class="sticky top-20 md:top-16 z-40 flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50/90 backdrop-blur px-1 py-1 shadow-sm dark:border-slate-700 dark:bg-slate-900/80"
+      aria-label="Navigazione area agente">
+
       @for (t of tabs; track t.key) {
-        <button
-          type="button"
-          class="btn_ghost data-[active=true]:btn_primary rounded-full px-3 py-1.5 text-xs font-medium transition data-[active=true]:shadow-sm sm:text-sm"
-          [attr.data-active]="active() === t.key"
-          [class.btn_primary]="active() === t.key"
-          (click)="setTab(t.key)"
-        >
-          {{ t.label }}
-        </button>
+      <button type="button"
+        class="btn_ghost data-[active=true]:btn_primary rounded-full px-3 py-1.5 text-xs font-medium transition data-[active=true]:shadow-sm sm:text-sm"
+        [attr.data-active]="active() === t.key" [class.btn_primary]="active() === t.key" (click)="setTab(t.key)">
+        {{ t.label }}
+      </button>
       }
 
-      <button
-        type="button"
-        class="btn_ghost cursor-pointer rounded-full text-xs sm:text-sm"
-        (click)="logout()"
-      >
+      <button type="button" class="btn_ghost cursor-pointer rounded-full text-xs sm:text-sm" (click)="logout()">
         Logout
       </button>
     </nav>
@@ -41,150 +31,134 @@
 
   <!-- VISITS -->
   @if (active() === "visits") {
-    <section class="space-y-4">
-      <header class="flex items-end justify-between gap-3">
-        <div>
-          <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
-            Visite
-          </h1>
-          <p class="text-sm text-slate-600 dark:text-slate-400">
-            Visite proposte dagli utenti sugli annunci pubblicati.
-          </p>
-        </div>
-      </header>
-
-      <!-- Filtro -->
-      <div
-        class="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 bg-white/70 px-3 py-3 dark:border-slate-700 dark:bg-slate-900/70"
-      >
-        <div class="flex items-center gap-2">
-          <label
-            for="visit-status"
-            class="text-sm font-medium text-slate-700 dark:text-slate-200"
-          >
-            Stato visite
-          </label>
-          <select
-            id="visit-status"
-            class="input_main w-52"
-            [ngModel]="visitFilter"
-            (ngModelChange)="onVisitFilterChange($event)"
-          >
-            <option value="">Tutte</option>
-            <option value="PENDING">In attesa</option>
-            <option value="ACCEPTED">Accettate</option>
-            <option value="REJECTED">Rifiutate</option>
-          </select>
-        </div>
+  <section class="space-y-4">
+    <header class="flex items-end justify-between gap-3">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+          Visite
+        </h1>
+        <p class="text-sm text-slate-600 dark:text-slate-400">
+          Visite proposte dagli utenti sugli annunci pubblicati.
+        </p>
       </div>
+    </header>
 
-      @if (visitsLoading()) {
-        <div class="py-12 text-center text-sm text-slate-600 dark:text-slate-300">
-          Caricamento visite...
-        </div>
-      } @else if (visits().length === 0) {
-        <div class="col-span-full py-12 text-center text-slate-600 dark:text-slate-300">
-          <p class="text-sm">Non è stata prenotata nessuna visita.</p>
-          <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            Non appena verrà prenotata una visita per un immobile pubblicato, sarà visualizzata qui.
-          </p>
-        </div>
-      } @else {
-        <app-agent-visits-list></app-agent-visits-list>
-        <app-visits-paginator></app-visits-paginator>
-      }
-    </section>
+    <!-- Filtro -->
+    <div
+      class="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 bg-white/70 px-3 py-3 dark:border-slate-700 dark:bg-slate-900/70">
+      <div class="flex items-center gap-2">
+        <label for="visit-status" class="text-sm font-medium text-slate-700 dark:text-slate-200">
+          Stato visite
+        </label>
+        <select id="visit-status" class="input_main w-52" [ngModel]="visitFilter"
+          (ngModelChange)="onVisitFilterChange($event)">
+          <option value="">Tutte</option>
+          <option value="PENDING">In attesa</option>
+          <option value="ACCEPTED">Accettate</option>
+          <option value="REJECTED">Rifiutate</option>
+        </select>
+      </div>
+    </div>
+
+    @if (visitsLoading()) {
+    <div class="py-12 text-center text-sm text-slate-600 dark:text-slate-300">
+      Caricamento visite...
+    </div>
+    } @else if (visits().length === 0) {
+    <div class="col-span-full py-12 text-center text-slate-600 dark:text-slate-300">
+      <p class="text-sm">Non è stata prenotata nessuna visita.</p>
+      <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+        Non appena verrà prenotata una visita per un immobile pubblicato, sarà visualizzata qui.
+      </p>
+    </div>
+    } @else {
+    <app-agent-visits-list></app-agent-visits-list>
+    <app-visits-paginator></app-visits-paginator>
+    }
+  </section>
   }
 
   <!-- ADS -->
   @if (active() === "ads") {
-    <section class="space-y-4">
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 class="text-xl font-bold text-slate-900 dark:text-white">
-            I tuoi annunci
-          </h2>
-          <p class="text-xs text-slate-500 dark:text-slate-400">
-            Gestisci la lista degli immobili pubblicati come agente.
-          </p>
-        </div>
-        <a class="btn_primary cursor-pointer" routerLink="/basics">
-          Nuovo annuncio
-        </a>
+  <section class="space-y-4">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+          I tuoi annunci
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+          Gestisci la lista degli immobili pubblicati come agente.
+        </p>
       </div>
+      <a class="btn_primary cursor-pointer" routerLink="/basics">
+        Nuovo annuncio
+      </a>
+    </div>
 
-      @if (realEstatesLoading()) {
-        <div class="py-12 text-center text-sm text-slate-600 dark:text-slate-300">
-          Caricamento annunci…
-        </div>
-      } @else if (realEstates().length === 0) {
-        <div class="col-span-full py-12 text-center text-slate-600 dark:text-slate-300">
-          <p class="text-sm">Non hai pubblicato ancora annunci.</p>
-          <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            Crea il tuo primo annuncio per iniziare a ricevere visite e offerte.
-          </p>
-        </div>
-      } @else {
-        <app-agent-ads-list></app-agent-ads-list>
-        <app-ads-paginator></app-ads-paginator>
-      }
-    </section>
+    @if (realEstatesLoading()) {
+    <div class="py-12 text-center text-sm text-slate-600 dark:text-slate-300">
+      Caricamento annunci…
+    </div>
+    } @else if (realEstates().length === 0) {
+    <div class="col-span-full py-12 text-center text-slate-600 dark:text-slate-300">
+      <p class="text-sm">Non hai pubblicato ancora annunci.</p>
+      <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+        Crea il tuo primo annuncio per iniziare a ricevere visite e offerte.
+      </p>
+    </div>
+    } @else {
+    <app-agent-ads-list></app-agent-ads-list>
+    <app-ads-paginator></app-ads-paginator>
+    }
+  </section>
   }
 
   <!-- OFFERS -->
   @if (active() === "offers") {
-    <section class="space-y-4">
-      <header class="flex items-end justify-between gap-3">
-        <div>
-          <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
-            Offers
-          </h1>
-          <p class="text-sm text-slate-600 dark:text-slate-400">
-            Offerte proposte dagli utenti sugli annunci pubblicati.
-          </p>
-        </div>
-      </header>
-
-      <div
-        class="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 bg-white/70 px-3 py-3 dark:border-slate-700 dark:bg-slate-900/70"
-      >
-        <div class="flex items-center gap-2">
-          <label
-            for="offer-status"
-            class="text-sm font-medium text-slate-700 dark:text-slate-200"
-          >
-            Stato offerte
-          </label>
-          <select
-            id="offer-status"
-            class="input_main w-52"
-            [ngModel]="offerFilter"
-            (ngModelChange)="onOfferFilterChange($event)"
-          >
-            <option value="" selected>Tutte</option>
-            <option value="PENDING">In attesa</option>
-            <option value="ACCEPTED">Accettate</option>
-            <option value="REJECTED">Rifiutate</option>
-            <option value="COUNTERED">Controfferte</option>
-          </select>
-        </div>
+  <section class="space-y-4">
+    <header class="flex items-end justify-between gap-3">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+          Offers
+        </h1>
+        <p class="text-sm text-slate-600 dark:text-slate-400">
+          Offerte proposte dagli utenti sugli annunci pubblicati.
+        </p>
       </div>
+    </header>
 
-      @if (offersLoading()) {
-        <div class="py-12 text-center text-sm text-slate-600 dark:text-slate-300">
-          Caricamento offerte...
-        </div>
-      } @else if (offers().length === 0) {
-        <div class="col-span-full py-12 text-center text-slate-600 dark:text-slate-300">
-          <p class="text-sm">Non è stata prenotata nessuna offerta.</p>
-          <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            Non appena verrà proposta un'offerta per un immobile pubblicato, sarà visualizzata qui.
-          </p>
-        </div>
-      } @else {
-        <app-agent-offers-list></app-agent-offers-list>
-        <app-offers-paginator></app-offers-paginator>
-      }
-    </section>
+    <div
+      class="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 bg-white/70 px-3 py-3 dark:border-slate-700 dark:bg-slate-900/70">
+      <div class="flex items-center gap-2">
+        <label for="offer-status" class="text-sm font-medium text-slate-700 dark:text-slate-200">
+          Stato offerte
+        </label>
+        <select id="offer-status" class="input_main w-52" [ngModel]="offerFilter"
+          (ngModelChange)="onOfferFilterChange($event)">
+          <option value="" selected>Tutte</option>
+          <option value="PENDING">In attesa</option>
+          <option value="ACCEPTED">Accettate</option>
+          <option value="REJECTED">Rifiutate</option>
+          <option value="COUNTERED">Controfferte</option>
+        </select>
+      </div>
+    </div>
+
+    @if (offersLoading()) {
+    <div class="py-12 text-center text-sm text-slate-600 dark:text-slate-300">
+      Caricamento offerte...
+    </div>
+    } @else if (offers().length === 0) {
+    <div class="col-span-full py-12 text-center text-slate-600 dark:text-slate-300">
+      <p class="text-sm">Non è stata prenotata nessuna offerta.</p>
+      <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+        Non appena verrà proposta un'offerta per un immobile pubblicato, sarà visualizzata qui.
+      </p>
+    </div>
+    } @else {
+    <app-agent-offers-list></app-agent-offers-list>
+    <app-offers-paginator></app-offers-paginator>
+    }
+  </section>
   }
 </section>

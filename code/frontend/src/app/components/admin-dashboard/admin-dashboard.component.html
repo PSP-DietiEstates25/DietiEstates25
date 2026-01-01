@@ -1,8 +1,6 @@
 <section class="container mx-auto space-y-6 px-4 py-6">
   <!-- HEADER + TABS -->
-  <header
-    class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
-  >
+  <header class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
     <div>
       <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
         Area Admin
@@ -13,26 +11,18 @@
     </div>
 
     <nav
-      class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50/70 px-1 py-1 dark:border-slate-700 dark:bg-slate-900/70"
-      aria-label="Navigazione area admin"
-    >
+      class="sticky top-20 md:top-16 z-40 flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50/90 backdrop-blur px-1 py-1 shadow-sm dark:border-slate-700 dark:bg-slate-900/80"
+      aria-label="Navigazione area agente">
+
       @for (t of tabs; track t.key) {
-        <button
-          type="button"
-          class="btn_ghost data-[active=true]:btn_primary rounded-full px-3 py-1.5 text-xs font-medium transition data-[active=true]:shadow-sm sm:text-sm"
-          [attr.data-active]="active() === t.key"
-          [class.btn_primary]="active() === t.key"
-          (click)="setTab(t.key)"
-        >
-          {{ t.label }}
-        </button>
+      <button type="button"
+        class="btn_ghost data-[active=true]:btn_primary rounded-full px-3 py-1.5 text-xs font-medium transition data-[active=true]:shadow-sm sm:text-sm"
+        [attr.data-active]="active() === t.key" [class.btn_primary]="active() === t.key" (click)="setTab(t.key)">
+        {{ t.label }}
+      </button>
       }
 
-      <button
-        type="button"
-        class="btn_ghost cursor-pointer rounded-full text-xs sm:text-sm"
-        (click)="logout()"
-      >
+      <button type="button" class="btn_ghost cursor-pointer rounded-full text-xs sm:text-sm" (click)="logout()">
         Logout
       </button>
     </nav>
@@ -40,254 +30,189 @@
 
   <!-- ADS -->
   @if (active() === "ads") {
-    <section class="space-y-4">
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 class="text-xl font-bold text-slate-900 dark:text-white">
-            I tuoi annunci
-          </h2>
-          <p class="text-xs text-slate-500 dark:text-slate-400">
-            Gestisci la lista degli immobili pubblicati come agente.
-          </p>
-        </div>
+  <section class="space-y-4">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+          I tuoi annunci
+        </h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+          Gestisci la lista degli immobili pubblicati come agente.
+        </p>
       </div>
+    </div>
 
-      @if (this.facade.realEstatesLoading()) {
-        <div class="py-12 text-center text-sm text-slate-600 dark:text-slate-300">
-          Caricamento annunci…
-        </div>
-      } @else if (realEstates().length === 0) {
-        <div class="col-span-full py-12 text-center text-slate-600 dark:text-slate-300">
-          <p class="text-sm">Gli agenti creati non hanno ancora pubblicato annunci.</p>
-          <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            Attendi che almeno uno degli agenti che hai nominato pubblichi un annuncio per visualizzarlo qui
-          </p>
-        </div>
-      } @else {
-        <app-admin-ads-list></app-admin-ads-list>
-        <app-ads-paginator></app-ads-paginator>
-      }
-    </section>
+    @if (this.facade.realEstatesLoading()) {
+    <div class="py-12 text-center text-sm text-slate-600 dark:text-slate-300">
+      Caricamento annunci…
+    </div>
+    } @else if (realEstates().length === 0) {
+    <div class="col-span-full py-12 text-center text-slate-600 dark:text-slate-300">
+      <p class="text-sm">Gli agenti creati non hanno ancora pubblicato annunci.</p>
+      <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+        Attendi che almeno uno degli agenti che hai nominato pubblichi un annuncio per visualizzarlo qui
+      </p>
+    </div>
+    } @else {
+    <app-admin-ads-list></app-admin-ads-list>
+    <app-ads-paginator></app-ads-paginator>
+    }
+  </section>
   }
 
   <!-- USERS TAB -->
   @if (active() === "users") {
-    <section class="space-y-4">
-      <div>
-        <h2 class="text-xl font-bold text-slate-900 dark:text-white">
-          Gestione staffers
-        </h2>
-        <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
-          Crea rapidamente nuovi account amministratore o agenti.
-        </p>
-      </div>
+  <section class="space-y-4">
+    <div>
+      <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+        Gestione staffers
+      </h2>
+      <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+        Crea rapidamente nuovi account amministratore o agenti.
+      </p>
+    </div>
 
-      <div class="grid gap-4 lg:grid-cols-2">
-        <article
-          class="rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/70"
-        >
-          <h3 class="mb-3 font-semibold text-slate-900 dark:text-white">
-            Crea nuovo account per staffer
-          </h3>
-          <form [formGroup]="createForm" class="flex max-w-md flex-col gap-3">
-            <div>
-              <label
-                for="email"
-                class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200"
-              >
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                class="input_main"
-                formControlName="email"
-              />
-              @if (submitted && accountAlreadyExists) {
-                <p class="text-sm text-red-600 mt-1">L'email risulta già associata ad un account esistente.</p>
-              }
-            </div>
+    <div class="grid gap-4 lg:grid-cols-2">
+      <article
+        class="rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/70">
+        <h3 class="mb-3 font-semibold text-slate-900 dark:text-white">
+          Crea nuovo account per staffer
+        </h3>
+        <form [formGroup]="createForm" class="flex max-w-md flex-col gap-3">
+          <div>
+            <label for="email" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+              Email
+            </label>
+            <input id="email" type="email" class="input_main" formControlName="email" />
+            @if (submitted && accountAlreadyExists) {
+            <p class="text-sm text-red-600 mt-1">L'email risulta già associata ad un account esistente.</p>
+            }
+          </div>
 
-            <div>
-              <label
-                for="role2"
-                class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200"
-              >
-                Ruolo
-              </label>
-              <select id="role2" class="input_main" formControlName="role">
-                <option value="ESTATE_AGENT">Agente</option>
-                <option value="ADMIN">Admin</option>
-              </select>
-            </div>
+          <div>
+            <label for="role2" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+              Ruolo
+            </label>
+            <select id="role2" class="input_main" formControlName="role">
+              <option value="ESTATE_AGENT">Agente</option>
+              <option value="ADMIN">Admin</option>
+            </select>
+          </div>
 
-            <div>
-              <label
-                for="pwd"
-                class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200"
-              >
-                Password
-              </label>
-              <input
-                id="pwd"
-                type="password"
-                class="input_main"
-                formControlName="password"
-              />
-            </div>
+          <div>
+            <label for="pwd" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+              Password
+            </label>
+            <input id="pwd" type="password" class="input_main" formControlName="password" />
+          </div>
 
-            <div>
-              <label
-                for="pwd2"
-                class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200"
-              >
-                Conferma password
-              </label>
-              <input
-                id="pwd2"
-                type="password"
-                class="input_main w-full"
-                formControlName="confirm"
-              />
-              @if (
-                createForm.hasError("mismatch") &&
-                (createForm.dirty || createForm.touched)
-              ) {
-                <p class="mt-1 text-xs text-red-500">
-                  Le password non coincidono.
-                </p>
-              }
-            </div>
+          <div>
+            <label for="pwd2" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+              Conferma password
+            </label>
+            <input id="pwd2" type="password" class="input_main w-full" formControlName="confirm" />
+            @if (
+            createForm.hasError("mismatch") &&
+            (createForm.dirty || createForm.touched)
+            ) {
+            <p class="mt-1 text-xs text-red-500">
+              Le password non coincidono.
+            </p>
+            }
+          </div>
 
-            <button
-              type="button"
-              class="btn_primary mt-1 w-fit"
-              (click)="createStaffer()"
-              [disabled]="createForm.invalid"
-            >
-              Crea account
-            </button>
-          </form>
-        </article>
-      </div>
-    </section>
+          <button type="button" class="btn_primary mt-1 w-fit" (click)="createStaffer()"
+            [disabled]="createForm.invalid">
+            Crea account
+          </button>
+        </form>
+      </article>
+    </div>
+  </section>
   }
 
   <!-- PASSWORD TAB -->
   @if (active() === "passwords") {
-    <section class="max-w-xl space-y-4">
+  <section class="max-w-xl space-y-4">
+    <div>
+      <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+        Cambia password
+      </h2>
+      <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+        Aggiorna la password del tuo account amministratore.
+      </p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()"
+      class="grid gap-3 rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/70">
       <div>
-        <h2 class="text-xl font-bold text-slate-900 dark:text-white">
-          Cambia password
-        </h2>
-        <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
-          Aggiorna la password del tuo account amministratore.
+        <label for="cur" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+          Password attuale
+        </label>
+        <input id="cur" type="password" autocomplete="current-password" class="input_main w-full"
+          formControlName="currentPassword" />
+        @if (
+        formControls.currentPassword.touched &&
+        formControls.currentPassword.invalid
+        ) {
+        <p class="mt-1 text-xs text-red-600">Campo obbligatorio.</p>
+        }
+      </div>
+
+      <div>
+        <label for="new" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+          Nuova password
+        </label>
+        <input id="new" type="password" autocomplete="new-password" class="input_main w-full"
+          formControlName="newPassword" />
+        @if (
+        formControls.newPassword.touched &&
+        formControls.newPassword.hasError("minlength")
+        ) {
+        <p class="mt-1 text-xs text-red-600">Almeno 8 caratteri.</p>
+        }
+        @if (
+        formControls.newPassword.touched &&
+        formControls.newPassword.hasError("pattern")
+        ) {
+        <p class="mt-1 text-xs text-red-600">
+          Deve includere almeno una maiuscola, una minuscola e un numero.
         </p>
+        }
       </div>
 
-      <form
-        [formGroup]="form"
-        (ngSubmit)="submit()"
-        class="grid gap-3 rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/70"
-      >
-        <div>
-          <label
-            for="cur"
-            class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200"
-          >
-            Password attuale
-          </label>
-          <input
-            id="cur"
-            type="password"
-            autocomplete="current-password"
-            class="input_main w-full"
-            formControlName="currentPassword"
-          />
-          @if (
-            formControls.currentPassword.touched &&
-            formControls.currentPassword.invalid
-          ) {
-            <p class="mt-1 text-xs text-red-600">Campo obbligatorio.</p>
-          }
-        </div>
-
-        <div>
-          <label
-            for="new"
-            class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200"
-          >
-            Nuova password
-          </label>
-          <input
-            id="new"
-            type="password"
-            autocomplete="new-password"
-            class="input_main w-full"
-            formControlName="newPassword"
-          />
-          @if (
-            formControls.newPassword.touched &&
-            formControls.newPassword.hasError("minlength")
-          ) {
-            <p class="mt-1 text-xs text-red-600">Almeno 8 caratteri.</p>
-          }
-          @if (
-            formControls.newPassword.touched &&
-            formControls.newPassword.hasError("pattern")
-          ) {
-            <p class="mt-1 text-xs text-red-600">
-              Deve includere almeno una maiuscola, una minuscola e un numero.
-            </p>
-          }
-        </div>
-
-        <div>
-          <label
-            for="conf"
-            class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200"
-          >
-            Conferma nuova password
-          </label>
-          <input
-            id="conf"
-            type="password"
-            autocomplete="new-password"
-            class="input_main w-full"
-            formControlName="confirmNewPassword"
-          />
-          @if (form.touched && form.hasError("mismatch")) {
-            <p class="mt-1 text-xs text-red-600">Le password non coincidono.</p>
-          }
-        </div>
-
-        <button
-          class="btn_primary mt-1 w-fit"
-          [disabled]="loading() || form.invalid"
-        >
-          {{ loading() ? "Salvataggio…" : "Aggiorna password" }}
-        </button>
-
-        @if (success()) {
-          <p class="mt-1 text-sm text-green-600">
-            {{ success() }}
-          </p>
+      <div>
+        <label for="conf" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+          Conferma nuova password
+        </label>
+        <input id="conf" type="password" autocomplete="new-password" class="input_main w-full"
+          formControlName="confirmNewPassword" />
+        @if (form.touched && form.hasError("mismatch")) {
+        <p class="mt-1 text-xs text-red-600">Le password non coincidono.</p>
         }
-        @if (error()) {
-          <p class="mt-1 text-sm text-red-600">
-            {{ error() }}
-          </p>
-        }
-      </form>
-
-      <div class="mt-2">
-        <a
-          routerLink="/"
-          class="text-xs text-slate-600 underline dark:text-slate-300"
-        >
-          Torna alla dashboard
-        </a>
       </div>
-    </section>
+
+      <button class="btn_primary mt-1 w-fit" [disabled]="loading() || form.invalid">
+        {{ loading() ? "Salvataggio…" : "Aggiorna password" }}
+      </button>
+
+      @if (success()) {
+      <p class="mt-1 text-sm text-green-600">
+        {{ success() }}
+      </p>
+      }
+      @if (error()) {
+      <p class="mt-1 text-sm text-red-600">
+        {{ error() }}
+      </p>
+      }
+    </form>
+
+    <div class="mt-2">
+      <a routerLink="/" class="text-xs text-slate-600 underline dark:text-slate-300">
+        Torna alla dashboard
+      </a>
+    </div>
+  </section>
   }
 </section>
