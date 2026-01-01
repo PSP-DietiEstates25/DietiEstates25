@@ -114,7 +114,7 @@ export class MapComponent implements AfterViewInit {
 
   setMarkerIcon() {
     this.markerIcon = L.icon({
-      iconUrl: `https://api.geoapify.com/v1/icon/?type=awesome&color=%232ea2ff&size=large&scaleFactor=2&apiKey=${environment.geoapifyAPIKey}`,
+      iconUrl: environmentMap.map_house_marker_shadow,
       iconSize: [38, 56],
       iconAnchor: [19, 51],
       popupAnchor: [0, -60],
@@ -128,6 +128,7 @@ export class MapComponent implements AfterViewInit {
 
       if (this.marker) {
         this.marker.setLatLng([lat, lon]);
+        this.marker.setIcon(this.markerIcon);
       } else {
         this.marker = L.marker([lat, lon], {
           icon: this.markerIcon,
@@ -172,6 +173,7 @@ export class MapComponent implements AfterViewInit {
 
       if (this.marker) {
         this.marker.setLatLng([lat, lon]);
+        this.marker.setIcon(this.markerIcon);
       } else {
         this.marker = L.marker([lat, lon], {
           icon: this.markerIcon,

@@ -68,7 +68,7 @@
       <app-price-icon class="size-5 text-[#094585]"></app-price-icon>
 
       <div class="text-lg leading-tight font-bold text-[#094585]">
-        {{ currentCard.cadastralData?.price }}
+        {{ currentCard.cadastralData.price }} €
       </div>
     </div>
 
@@ -84,23 +84,23 @@
     >
       <span class="flex items-center gap-1">
         <app-rooms-icon class="size-5 text-black"></app-rooms-icon>
-        {{ currentCard.cadastralData?.rooms }}
+        {{ currentCard.cadastralData.rooms }}
       </span>
       <span class="flex items-center gap-1">
         <app-square-meters-icon
           class="size-5 text-black"
         ></app-square-meters-icon>
-        {{ currentCard.cadastralData?.squareMeters }} m²
+        {{ currentCard.cadastralData.squareMeters }} m²
       </span>
       <span class="flex items-center gap-1">
         <app-floor-icon class="size-5 text-black"></app-floor-icon>
-        {{ currentCard.cadastralData?.floor }}
+        {{ currentCard.cadastralData.floor }}
       </span>
       <span class="flex items-center gap-1">
         <app-energy-class-icon
           class="size-5 text-black"
         ></app-energy-class-icon>
-        {{ currentCard.cadastralData?.energyClass }}
+        {{ currentCard.cadastralData.energyClass }}
       </span>
     </div>
 

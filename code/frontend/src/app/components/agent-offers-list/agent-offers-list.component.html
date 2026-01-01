@@ -16,7 +16,7 @@
                     >
                       Immobile in:
                     </div>
-                    <div class="text-xs font-medium text-slate-900 dark:text-white">
+                    <div class="text-[10px] font-medium text-slate-900 dark:text-white">
                       "{{ offer.realEstateAddress }}"
                     </div>
                   </div>
@@ -62,12 +62,14 @@
                   € {{ offer.amount }}
                 </div>
 
+                <!--
                 <a
                   class="text-xs text-amber-700 hover:underline dark:text-amber-300"
                   [routerLink]="['/ad', offer.realEstateId]"
                 >
                   Vai al dettaglio →
                 </a>
+                -->
               </div>
 
               @if (offer.status === "PENDING" && !offer.isRealEstateDeleted) {
@@ -142,11 +144,16 @@
               >
                 <div class="flex items-start justify-between gap-3">
                   <div class="min-w-0">
+                    <div class="flex flex-col items-start justify-center">
                     <div
                       class="text-sm font-semibold text-slate-900 dark:text-white"
                     >
-                      Immobile in "{{ offer.realEstateAddress }}"
+                      Immobile in:
                     </div>
+                    <div class="text-[10px] font-medium text-slate-900 dark:text-white">
+                      "{{ offer.realEstateAddress }}"
+                    </div>
+                  </div>
                   </div>
 
                   <span

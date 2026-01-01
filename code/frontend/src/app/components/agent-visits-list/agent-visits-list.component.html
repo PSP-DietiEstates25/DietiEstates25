@@ -35,12 +35,14 @@
             Data proposta: {{ visit.date | date: "dd/MM/yyyy" }}, {{ visit.time | slice:0:5 }}
           </div>
 
+          <!--
           <a
             class="text-xs text-amber-700 hover:underline dark:text-amber-300"
             [routerLink]="['/ad', visit.realEstateId]"
           >
             Vai al dettaglio →
           </a>
+          -->
         </div>
 
         @if (visit.status === "PENDING") {
