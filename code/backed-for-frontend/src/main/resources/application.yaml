@@ -65,6 +65,16 @@ spring:
       server:
         webmvc:
           routes:
+            # AUTH SERVER /logout
+            - id: auth_server_logout
+              uri: ${app.authorization-server-base-url:https://localhost:9443}
+              predicates:
+                - Path=/api/logout
+              filters:
+                - StripPrefix=1
+                - TokenRelay=
+                - RemoveRequestHeader=Cookie
+
             # AUTH SERVER /auth/login
             - id: auth_server_userinfo
               uri: ${app.authorization-server-base-url:https://localhost:9443}
