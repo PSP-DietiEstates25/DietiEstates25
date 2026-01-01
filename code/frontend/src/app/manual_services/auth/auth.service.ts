@@ -53,7 +53,7 @@ export class AuthService {
         catchError(() => of(null)),
         finalize(() => {
           this.clearClientAuthState();
-          window.location.replace(this.apiConfiguration.rootUrl + '/login');
+          window.location.reload();
         }),
       )
       .subscribe();
