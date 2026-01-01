@@ -4,7 +4,7 @@ import { LocalStorageService } from '../local-storage/local-storage.service';
 import { AccountResponse } from '../../interfaces/account-response';
 import { environment } from '../../../environments/environment';
 import { ApiConfiguration } from '../../services/api-configuration';
-import { catchError, finalize, map, of, throwError } from 'rxjs';
+import { catchError, finalize, map, of, switchMap, throwError } from 'rxjs';
 
 export interface UserInfo {
   email: string;
@@ -48,16 +48,17 @@ export class AuthService {
   }
 
   logoutAndRedirectToLogin(): void {
-    this.logout()
+    this.getCsrf()
       .pipe(
         catchError(() => of(null)),
+        switchMap(() => this.logout().pipe(catchError(() => of(null)))),
         finalize(() => {
           this.clearClientAuthState();
-          window.location.replace(environment.loginUrl);
-        }),
-      )
-      .subscribe();
-  }
+          window.location.replace('/login');
+        }
+    )
+  ).subscribe();
+}
 
   getCsrf() {
     return this.httpClient.get(this.csrfUrl, {

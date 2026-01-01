@@ -10,6 +10,8 @@ import { xsrfInterceptor } from './_interceptors/xsrf/xsrf.interceptor';
 import { authCredentials } from './_interceptors/cookie/auth-credentials.interceptor';
 import { provideToastr } from 'ngx-toastr';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { environment } from '../environments/environment';
+import { ApiConfiguration } from './services/api-configuration';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,5 +23,13 @@ export const appConfig: ApplicationConfig = {
       withFetch(),
       withInterceptors([xsrfInterceptor, authCredentials]),
     ),
+    {
+      provide: ApiConfiguration,
+      useFactory: () => {
+        const config = new ApiConfiguration();
+        config.rootUrl = environment.apiBaseUrl; // "/api"
+        return config;
+    },
+},
   ],
 };
