@@ -56,17 +56,31 @@ export class AdDetailComponent {
 
   blobUrl?: string;
 
-  toSrc = (raw?: string | null): string => {
-    if (!raw) return '/assets/placeholder-house.jpg';
+  toSrc = (raw?: string | null): string | null => {
+    if (!raw) return null;
 
-    if (raw.startsWith('http') || raw.startsWith('data:')) return raw;
+    if (isHttp(raw) || isData(raw)) return raw;
 
-    // Le tue immagini sono SEMPRE già "/api/images/..."
-    if (raw.startsWith('/api/images/')) return raw;
+    if (raw.startsWith('/')) {
+      const base = (environment.apiBaseUrl ?? '').replace(/\/+$/, '');
+      if (!base) return raw;
 
-    // fallback (se mai arrivasse roba diversa)
-    return '/assets/placeholder-house.jpg';
+      if (raw === base || raw.startsWith(base + '/')) return raw;
+
+      return `${base}${raw}`;
+    }
+
+    if (raw.startsWith('?') || raw.length < 20) return null;
+
+    const mime = looksJpeg(raw)
+      ? 'image/jpeg'
+      : looksPng(raw)
+        ? 'image/png'
+        : 'image/*';
+
+    return `data:${mime};base64,${raw}`;
   };
+
 
 
   constructor() {
