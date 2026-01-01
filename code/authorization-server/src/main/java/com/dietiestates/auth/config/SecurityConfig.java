@@ -54,7 +54,7 @@ public class SecurityConfig {
                         .csrfTokenRequestHandler(csrfHandler)
                 )
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers(HttpMethod.POST, properties.registerUrl()).permitAll()
+                        .requestMatchers(HttpMethod.POST, properties.registerUrl(), "/logout").permitAll()
                         .requestMatchers(HttpMethod.GET, "/account/**").permitAll()
                         .requestMatchers(properties.loginProcessingUrl()).permitAll()
                         .requestMatchers("/auth/**", "/.well-known/**").permitAll()

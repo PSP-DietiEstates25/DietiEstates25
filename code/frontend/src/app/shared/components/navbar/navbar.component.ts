@@ -1,5 +1,11 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  Router,
+  NavigationEnd,
+  RouterLink,
+  RouterLinkActive,
+} from '@angular/router';
+
 import { MenuToggleComponent } from '../../buttons/menu_toggle/menu-toggle.component';
 import { NotificationsFacade } from '../../../components/notifications/notifications.facade';
 import { AuthService } from '../../../manual_services/auth/auth.service';
@@ -18,9 +24,10 @@ interface NavLink {
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
   private readonly localStorageService = inject(LocalStorageService);
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   readonly notifications = inject(NotificationsFacade);
 
@@ -41,11 +48,9 @@ export class NavbarComponent {
     this.notifications.fetchBadgeData();
   }
 
-  /*
   ngOnInit(): void {
     this.getUserInfo();
   }
-    */
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
@@ -62,10 +67,17 @@ export class NavbarComponent {
 
   logout(): void {
     this.closeMenu();
-    this.authService.logoutAndRedirectToLogin();
+    this.authService.logout().subscribe(() => {
+      this.isAuthenticated = false;
+      this.email = '';
+
+      this.localStorageService.removeItem('isAuthenticated');
+      this.localStorageService.removeItem('role');
+
+      this.router.navigateByUrl('/');
+    });
   }
 
-  /*
   getUserInfo(): void {
     this.authService.getUserInfo().subscribe({
       next: (userInfo) => {
@@ -82,7 +94,6 @@ export class NavbarComponent {
       },
     });
   }
-  */
 
   navLinks() {
     return this.allLinks;
