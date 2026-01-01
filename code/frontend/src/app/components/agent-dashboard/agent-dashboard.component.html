@@ -78,8 +78,21 @@
         </div>
       </div>
 
-      <app-agent-visits-list></app-agent-visits-list>
-      <app-visits-paginator></app-visits-paginator>
+      @if (visitsLoading()) {
+        <div class="py-12 text-center text-sm text-slate-600 dark:text-slate-300">
+          Caricamento visite...
+        </div>
+      } @else if (visits.length === 0) {
+        <div class="col-span-full py-12 text-center text-slate-600 dark:text-slate-300">
+          <p class="text-sm">Non è stata prenotata nessuna visita.</p>
+          <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            Non appena verrà prenotata una visita per un immobile pubblicato, sarà visualizzata qui.
+          </p>
+        </div>
+      } @else {
+        <app-agent-visits-list></app-agent-visits-list>
+        <app-visits-paginator></app-visits-paginator>
+      }
     </section>
   }
 
@@ -106,7 +119,7 @@
         </div>
       } @else if (realEstates.length === 0) {
         <div class="col-span-full py-12 text-center text-slate-600 dark:text-slate-300">
-          <p class="text-sm">Non hai ancora annunci.</p>
+          <p class="text-sm">Non hai pubblicato ancora annunci.</p>
           <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
             Crea il tuo primo annuncio per iniziare a ricevere visite e offerte.
           </p>
@@ -157,8 +170,21 @@
         </div>
       </div>
 
-      <app-agent-offers-list></app-agent-offers-list>
-      <app-offers-paginator></app-offers-paginator>
+      @if (offersLoading()) {
+        <div class="py-12 text-center text-sm text-slate-600 dark:text-slate-300">
+          Caricamento offerte...
+        </div>
+      } @else if (offers.length === 0) {
+        <div class="col-span-full py-12 text-center text-slate-600 dark:text-slate-300">
+          <p class="text-sm">Non è stata prenotata nessuna offerta.</p>
+          <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            Non appena verrà proposta un'offerta per un immobile pubblicato, sarà visualizzata qui.
+          </p>
+        </div>
+      } @else {
+        <app-agent-offers-list></app-agent-offers-list>
+        <app-offers-paginator></app-offers-paginator>
+      }
     </section>
   }
 </section>

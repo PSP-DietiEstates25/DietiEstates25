@@ -1,32 +1,4 @@
 <section>
-  <!--
-  @if (facade.error()) {
-    <div
-      class="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-900 dark:border-rose-900/40 dark:bg-rose-950/40 dark:text-rose-100"
-    >
-      {{ facade.error() }}
-    </div>
-  }
-
-  @if (facade.scanning()) {
-    <p class="text-xs text-slate-500 dark:text-slate-400">
-      Sto cercando altre offerte per riempire la pagina…
-    </p>
-  }
-
-	-->
-  @if (!facade.offersLoading() && offers().length === 0) {
-    <div
-      class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900/30"
-    >
-      <div class="text-sm font-semibold text-slate-800 dark:text-slate-200">
-        Nessuna offerta trovata
-      </div>
-      <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-        Non sono state ancora presentate offerte
-      </div>
-    </div>
-  } @else {
     <section class="flex flex-col items-center justify-center gap-5">
       @for (offer of offers(); track offer.id) {
         @if (offer.category === "OFFER") {
@@ -226,5 +198,4 @@
         }
       }
     </section>
-  }
 </section>

@@ -10,6 +10,19 @@
     </div>
   </header>
 
-  <app-offers-list></app-offers-list>
-  <app-offers-paginator></app-offers-paginator>
+  @if (this.facade.loading()) {
+    <div class="py-12 text-center text-sm text-slate-600 dark:text-slate-300">
+      Caricamento offerte...
+    </div>
+  } @else if (offers.length === 0) {
+    <div class="col-span-full py-12 text-center text-slate-600 dark:text-slate-300">
+      <p class="text-sm">Non hai presentato ancora offerte.</p>
+      <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+        Proponi una nuova offerta sulla pagina di un annuncio per visualizzarla qui.
+      </p>
+    </div>
+  } @else {
+    <app-offers-list></app-offers-list>
+    <app-offers-paginator></app-offers-paginator>
+  }
 </main>
