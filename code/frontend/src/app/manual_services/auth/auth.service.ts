@@ -53,7 +53,7 @@ export class AuthService {
         catchError(() => of(null)),
         finalize(() => {
           this.clearClientAuthState();
-          window.location.href = `${this.apiConfiguration.rootUrl}/login`
+          window.location.replace(environment.loginUrl);
         }),
       )
       .subscribe();
