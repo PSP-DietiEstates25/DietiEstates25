@@ -60,8 +60,4 @@ public class SearchFilterDefaultImpl implements SearchFilter {
 
         return searchesFilteredByCadastralData;
     }
-
-    private static boolean isTrue(Boolean v) {
-        return Boolean.TRUE.equals(v);
-    }
 }
