@@ -47,7 +47,7 @@ public class OfferServiceDefaultImpl implements OfferService {
 
     @Override
     public OfferResponse createOffer(OfferRequest request, Long realEstateId, String creatorEmail, String creatorRole) {
-        if(creatorRole.equals(Role.USER.name()))
+        if(creatorRole.equals(Role.USER.name()) || creatorRole.equals(Role.OIDC_USER.name()))
             return this.createUserOffer(request, realEstateId, creatorEmail);
         else return this.createEstateAgentCounterOffer(request, realEstateId, creatorEmail);
     }
@@ -98,7 +98,7 @@ public class OfferServiceDefaultImpl implements OfferService {
     @Override
     public Page<OfferResponse> getRealEstateOffers(Long realEstateId, String creatorEmail, String creatorRole, Integer page, Integer size) {
 
-        if(creatorRole.equals(Role.USER.name()))
+        if(creatorRole.equals(Role.USER.name()) || creatorRole.equals(Role.OIDC_USER.name()))
             return this.getRealEstateUserOffers(realEstateId, creatorEmail, page, size);
         else return this.getRealEstateEstateAgentOffers(realEstateId, creatorEmail, page, size);
     }
@@ -127,7 +127,7 @@ public class OfferServiceDefaultImpl implements OfferService {
 
     @Override
     public Page<OfferResponse> getOffers(String creatorEmail, String creatorRole, String status, Integer page, Integer size) {
-        if(creatorRole.equals(Role.USER.name()))
+        if(creatorRole.equals(Role.USER.name()) || creatorRole.equals(Role.OIDC_USER.name()))
             return this.getAllUserOffers(creatorEmail, status, page, size);
         else return this.getAllEstateAgentOffers(creatorEmail, status, page, size);
     }
