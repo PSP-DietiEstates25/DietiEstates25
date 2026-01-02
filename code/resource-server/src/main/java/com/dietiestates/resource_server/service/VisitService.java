@@ -3,7 +3,6 @@ package com.dietiestates.resource_server.service;
 import com.dietiestates.resource_server.dto.request.VisitRequest;
 import com.dietiestates.resource_server.dto.response.VisitResponse;
 import com.dietiestates.resource_server.exception.notowned.VisitNotOwnedByRealEstateException;
-import com.dietiestates.resource_server.repository.VisitRepository;
 import org.springframework.data.domain.Page;
 
 public interface VisitService {

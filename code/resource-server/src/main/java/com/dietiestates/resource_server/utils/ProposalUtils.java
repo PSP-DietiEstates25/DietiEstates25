@@ -10,7 +10,7 @@ public class ProposalUtils {
     public static ProposalStatus extractProposalStatus(String status){
         try {
             return ProposalStatus.valueOf(status.toUpperCase());
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException _) {
             throw new ProposalStatusNotFoundException();
         }
     }

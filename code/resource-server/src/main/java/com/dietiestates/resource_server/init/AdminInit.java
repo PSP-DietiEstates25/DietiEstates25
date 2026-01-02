@@ -1,8 +1,6 @@
 package com.dietiestates.resource_server.init;
 
 import com.dietiestates.resource_server.config.ResourceServerProperties;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import com.dietiestates.resource_server.model.Admin;

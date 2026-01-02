@@ -6,8 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import java.util.List;
-
 public interface SearchRepository extends CrudRepository<Search, Long>, PagingAndSortingRepository<Search, Long>{
     boolean existsById(Long id);
     boolean existsByIdAndUserEmail(Long id, String userEmail);

@@ -54,7 +54,7 @@ public class StorageServiceDefaultImpl implements StorageService {
     @Override
     public byte[] downloadImage(String fileName){
         var image = imageDataFinder.getByName(fileName);
-        return ImageUtils.decompressImage(image.getImageData());
+        return ImageUtils.decompressImage(image.getValue());
     }
 
     @Override

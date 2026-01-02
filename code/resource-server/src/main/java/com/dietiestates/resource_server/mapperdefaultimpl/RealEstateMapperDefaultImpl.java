@@ -61,9 +61,9 @@ public class RealEstateMapperDefaultImpl implements RealEstateMapper {
     public List<RealEstateResponse> createRealEstatesResponse(List<RealEstate> realEstates) {
         var response = new ArrayList<RealEstateResponse>();
 
-        realEstates.forEach(realEstate -> {
-            response.add(fromEntity(realEstate));
-        });
+        realEstates.forEach(realEstate ->
+            response.add(fromEntity(realEstate))
+        );
 
         return response;
     }

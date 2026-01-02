@@ -1,7 +1,5 @@
 package com.dietiestates.resource_server.verifierdefaultimpl;
 
-import com.dietiestates.resource_server.model.RealEstate;
-import com.dietiestates.resource_server.model.User;
 import com.dietiestates.resource_server.repository.NegotiationRepository;
 import com.dietiestates.resource_server.verifier.NegotiationVerifier;
 import lombok.RequiredArgsConstructor;

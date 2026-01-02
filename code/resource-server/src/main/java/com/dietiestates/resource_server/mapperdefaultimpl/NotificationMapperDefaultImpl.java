@@ -42,9 +42,9 @@ public class NotificationMapperDefaultImpl implements NotificationMapper {
     @Override
     public List<NotificationResponse> createNotificationsResponse(List<Notification> notifications){
         var notificationsResponse = new ArrayList<NotificationResponse>();
-        notifications.forEach((notification) -> {
-            notificationsResponse.add(this.fromEntity(notification));
-        });
+        notifications.forEach(notification ->
+            notificationsResponse.add(this.fromEntity(notification))
+        );
 
         return notificationsResponse;
     }

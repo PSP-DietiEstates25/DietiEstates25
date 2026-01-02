@@ -24,7 +24,7 @@ public class UserServiceDefaultImpl implements UserService {
 
     @Override
     public UserResponse setupRegister(UserRequest request) {
-        if(!userVerifier.checkUserAlreadyExists(request.getEmail()))
+        if(!Boolean.TRUE.equals(userVerifier.checkUserAlreadyExists(request.getEmail())))
             return register(request);
         else
             return getUserByEmail(request.getEmail());

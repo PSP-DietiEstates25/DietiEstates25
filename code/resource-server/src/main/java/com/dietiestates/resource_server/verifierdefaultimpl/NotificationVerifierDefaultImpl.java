@@ -1,8 +1,6 @@
 package com.dietiestates.resource_server.verifierdefaultimpl;
 
-import com.dietiestates.resource_server.enums.NotificationCategory;
 import com.dietiestates.resource_server.exception.notfound.NotificationNotFoundException;
-import com.dietiestates.resource_server.exception.notowned.NotificationNotOwnedByUserException;
 import com.dietiestates.resource_server.repository.NotificationRepository;
 import com.dietiestates.resource_server.verifier.NotificationVerifier;
 import lombok.RequiredArgsConstructor;

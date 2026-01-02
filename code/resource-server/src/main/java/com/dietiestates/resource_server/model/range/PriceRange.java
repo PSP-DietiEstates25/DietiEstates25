@@ -20,15 +20,12 @@ public class PriceRange {
 	
 	@Column(nullable = false, name = "max_price")
 	private BigDecimal maxPrice;
-	
-	public Boolean contains(BigDecimal price) {
-		
-		if(price != null && this.minPrice != null && this.maxPrice != null) {
-			
-			if(this.minPrice.compareTo(price) <= 0 && price.compareTo(this.maxPrice) <= 0)
-				return true;
-			else return false;
-		
-		} else return false;
-	}
+
+    public boolean contains(BigDecimal price) {
+        return price != null
+                && minPrice != null
+                && maxPrice != null
+                && minPrice.compareTo(price) <= 0
+                && price.compareTo(maxPrice) <= 0;
+    }
 }

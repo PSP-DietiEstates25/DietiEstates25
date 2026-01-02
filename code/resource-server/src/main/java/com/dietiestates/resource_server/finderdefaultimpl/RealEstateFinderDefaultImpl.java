@@ -46,9 +46,9 @@ public class RealEstateFinderDefaultImpl implements RealEstateFinder {
         var estateAgents = admin.getCreatedEstateAgents();
         var realEstates = new ArrayList<RealEstate>();
 
-        estateAgents.forEach(estateAgent -> {
-            realEstates.addAll(estateAgent.getRealEstates());
-        });
+        estateAgents.forEach(estateAgent ->
+            realEstates.addAll(estateAgent.getRealEstates())
+        );
 
         return realEstates;
     }

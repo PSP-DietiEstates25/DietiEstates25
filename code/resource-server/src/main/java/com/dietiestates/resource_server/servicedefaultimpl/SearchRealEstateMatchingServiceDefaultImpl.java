@@ -36,12 +36,10 @@ public class SearchRealEstateMatchingServiceDefaultImpl implements SearchRealEst
                 searchesFilteredByGeographicalPosition
         );
 
-        var searchesFilteredByCadastralData = searchFilter.filtlerSearchesByCadastralData(
+        return searchFilter.filtlerSearchesByCadastralData(
                 realEstate.getCadastralData(),
                 searchesFilteredByUtility
         );
-
-        return searchesFilteredByCadastralData;
     }
 
     @Override
@@ -58,11 +56,9 @@ public class SearchRealEstateMatchingServiceDefaultImpl implements SearchRealEst
                 realEstatesFilteredByGeographicalPosition
         );
 
-        var realEstatesByCadastralFilter = realEstateFilter.filterRealEstateByCadastralFilters(
+        return realEstateFilter.filterRealEstateByCadastralFilters(
                 search.getCadastralFilter(),
                 realEstatesByUtility
         );
-
-        return realEstatesByCadastralFilter;
     }
 }

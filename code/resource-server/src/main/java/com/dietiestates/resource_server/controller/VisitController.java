@@ -34,7 +34,7 @@ public class VisitController {
 
     @GetMapping("/{visitid}")
     public ResponseEntity<VisitResponse> getVisitById(
-            @PathVariable("realestateid") Long realestateid,
+            @RequestParam Long realestateid,
             @PathVariable Long visitid
     ) {
 

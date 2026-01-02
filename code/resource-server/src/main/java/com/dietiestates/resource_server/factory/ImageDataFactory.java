@@ -5,5 +5,5 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 public interface ImageDataFactory {
-    public ImageData createImage(MultipartFile file) throws IOException;
+    ImageData createImage(MultipartFile file) throws IOException;
 }

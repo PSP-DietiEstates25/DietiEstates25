@@ -1,6 +1,5 @@
 package com.dietiestates.resource_server.service;
 
-import com.dietiestates.resource_server.controller.GeographicalPositionController;
 import com.dietiestates.resource_server.dto.request.GeographicalPositionRequest;
 import com.dietiestates.resource_server.dto.response.GeographicalPositionResponse;
 

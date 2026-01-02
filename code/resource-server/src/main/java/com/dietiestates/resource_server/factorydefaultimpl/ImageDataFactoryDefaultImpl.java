@@ -15,7 +15,7 @@ public class ImageDataFactoryDefaultImpl implements ImageDataFactory {
         return ImageData.builder()
                 .name(file.getOriginalFilename())
                 .type(file.getContentType())
-                .imageData(ImageUtils.compressImage(file.getBytes()))
+                .value(ImageUtils.compressImage(file.getBytes()))
                 .build();
     }
 }

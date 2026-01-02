@@ -2,7 +2,6 @@ package com.dietiestates.resource_server.exception.handler;
 
 import com.dietiestates.resource_server.dto.response.ExceptionResponse;
 import com.dietiestates.resource_server.exception.AppException;
-import com.dietiestates.resource_server.exception.notfound.AdminNotFoundException;
 import com.dietiestates.resource_server.exception.notfound.SearchNotFoundException;
 import com.dietiestates.resource_server.exception.notowned.SearchNotOwnedByUserException;
 import org.springframework.http.ResponseEntity;

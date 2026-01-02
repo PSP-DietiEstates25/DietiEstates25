@@ -3,8 +3,6 @@ package com.dietiestates.resource_server.service;
 import com.dietiestates.resource_server.dto.request.SearchRequest;
 import com.dietiestates.resource_server.dto.response.RealEstateResponse;
 import com.dietiestates.resource_server.dto.response.SearchResponse;
-import com.dietiestates.resource_server.model.RealEstate;
-import com.dietiestates.resource_server.model.Search;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

@@ -5,6 +5,7 @@ import com.dietiestates.resource_server.model.CadastralFilter;
 import com.dietiestates.resource_server.model.GeographicalPosition;
 import com.dietiestates.resource_server.model.RealEstate;
 import com.dietiestates.resource_server.model.Utility;
+import com.dietiestates.resource_server.utils.MatchingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -38,32 +39,8 @@ public class RealEstateFilterDefaultImpl implements RealEstateFilter {
     public List<RealEstate> filterRealEstateByUtility(Utility utility, List<RealEstate> realEstatesToFilter) {
 
         return realEstatesToFilter.stream()
-                .filter(realEstate -> matchesUtilities(utility, realEstate.getDetail().getUtility()))
+                .filter(realEstate -> MatchingUtils.matchesUtilities(utility, realEstate.getDetail().getUtility()))
                 .toList();
-    }
-
-    @Override
-    public boolean matchesUtilities(Utility searchUtility, Utility realEstateUtility){
-
-        if(Boolean.TRUE.equals(searchUtility.getHasDoorman()) && !Boolean.TRUE.equals(realEstateUtility.getHasDoorman()))
-            return false;
-
-        if(Boolean.TRUE.equals(searchUtility.getHasElevator()) && !Boolean.TRUE.equals(realEstateUtility.getHasElevator()))
-            return false;
-
-        if(Boolean.TRUE.equals(searchUtility.getHasAirConditioning()) && !Boolean.TRUE.equals(realEstateUtility.getHasAirConditioning()))
-            return false;
-
-        if(Boolean.TRUE.equals(searchUtility.getNearPark()) && !Boolean.TRUE.equals(realEstateUtility.getNearPark()))
-            return false;
-
-        if(Boolean.TRUE.equals(searchUtility.getNearSchool()) && !Boolean.TRUE.equals(realEstateUtility.getNearSchool()))
-            return false;
-
-        if(Boolean.TRUE.equals(searchUtility.getNearPublicTransport()) && !Boolean.TRUE.equals(realEstateUtility.getNearPublicTransport()))
-            return false;
-
-        return true;
     }
 
     @Override

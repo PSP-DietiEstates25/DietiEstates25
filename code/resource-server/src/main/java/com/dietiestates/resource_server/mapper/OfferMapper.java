@@ -6,8 +6,6 @@ import com.dietiestates.resource_server.model.Offer;
 import com.dietiestates.resource_server.spec.OfferSpec;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
-
 public interface OfferMapper {
 	OfferSpec toSpec(OfferRequest request);
 	OfferResponse fromEntity(Offer offer);

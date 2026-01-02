@@ -1,6 +1,5 @@
 package com.dietiestates.resource_server.config;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -17,11 +16,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-
-
-
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -113,7 +108,7 @@ public class SecurityConfig {
             merged.addAll(scopeConv.convert(jwt));
 
             JwtAuthenticationConverter delegate = new JwtAuthenticationConverter();
-            delegate.setJwtGrantedAuthoritiesConverter(__ -> merged);
+            delegate.setJwtGrantedAuthoritiesConverter(_ -> merged);
             return delegate.convert(jwt);
         };
     }

@@ -3,9 +3,7 @@ package com.dietiestates.resource_server.service;
 import com.dietiestates.resource_server.dto.request.OfferRequest;
 import com.dietiestates.resource_server.dto.response.OfferResponse;
 import com.dietiestates.resource_server.model.Offer;
-import com.dietiestates.resource_server.spec.OfferSpec;
 import org.springframework.data.domain.Page;
-import org.springframework.security.core.Authentication;
 
 
 public interface OfferService {
@@ -20,8 +18,6 @@ public interface OfferService {
     Page<OfferResponse> getAllUserOffers(String userEmail, String status, Integer page, Integer size);
     Page<OfferResponse> getAllEstateAgentOffers(String estateAgentEmail, String status, Integer page, Integer size);
     OfferResponse updateOfferStatus(OfferRequest request, Long realEstateId, Long offerId);
-
     void createOfferNotification(Offer offer);
-
     String createOfferNotificationMessage(Offer offer);
 }

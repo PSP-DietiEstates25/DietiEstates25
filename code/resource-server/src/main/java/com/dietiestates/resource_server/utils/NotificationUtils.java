@@ -10,7 +10,7 @@ public class NotificationUtils {
     public static NotificationCategory extractNotificationCategory(String notificationCategory){
         try {
             return NotificationCategory.valueOf(notificationCategory.toUpperCase());
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException _) {
             throw new NotificationCategoryNotFoundException();
         }
     }

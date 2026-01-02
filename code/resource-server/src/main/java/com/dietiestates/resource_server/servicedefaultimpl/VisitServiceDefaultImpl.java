@@ -39,7 +39,7 @@ public class VisitServiceDefaultImpl implements VisitService {
     private final RealEstateFinder realEstateFinder;
     private final EstateAgentFinder estateAgentFinder;
 
-    private static final String createdDate =  "createdDate";
+    private static final String CREATED_DATE =  "createdDate";
 
 	@Override
 	public VisitResponse createVisit(VisitRequest request, Long realEstateId, String userEmail) {
@@ -72,7 +72,7 @@ public class VisitServiceDefaultImpl implements VisitService {
     @Override
     public Page<VisitResponse> getRealEstateVisits(Long realEstateId, Integer page, Integer size){
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(CREATED_DATE).descending());
         var realEstateVisits = visitFinder.getRealEstateVisits(realEstateId, pageable);
 
         return visitMapper.createPagedVisitsResponse(realEstateVisits);
@@ -81,7 +81,7 @@ public class VisitServiceDefaultImpl implements VisitService {
     @Override
     public Page<VisitResponse> getAllEstateAgentVisits(String estateAgentEmail, String status, Integer page, Integer size) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(CREATED_DATE).descending());
         var estateAgent = estateAgentFinder.getEstateAgentByEmail(estateAgentEmail);
         var visits = visitFinder.getAllEstateAgentVisits(estateAgent.getId(), status, pageable);
         return visitMapper.createPagedVisitsResponse(visits);
@@ -94,7 +94,6 @@ public class VisitServiceDefaultImpl implements VisitService {
 
         var visitSpec = visitMapper.toSpec(request);
         var visitToUpdate = visitFinder.getVisitById(visitId);
-        var negotiation = visitToUpdate.getNegotiation();
         visitToUpdate.setProposalStatus(ProposalStatus.valueOf(visitSpec.getStatus()));
 
         createVisitNotification(visitToUpdate);

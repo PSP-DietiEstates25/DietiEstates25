@@ -43,7 +43,7 @@ public class OfferServiceDefaultImpl implements OfferService {
     private final NotificationService notificationService;
     private final NegotiationService negotiationService;
 
-    private static final String createdDate = "createdDate";
+    private static final String CREATED_DATE = "createdDate";
 
     @Override
     public OfferResponse createOffer(OfferRequest request, Long realEstateId, String creatorEmail, String creatorRole) {
@@ -106,7 +106,7 @@ public class OfferServiceDefaultImpl implements OfferService {
     @Override
     public Page<OfferResponse> getRealEstateUserOffers(Long realEstateId, String userEmail, Integer page, Integer size) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(CREATED_DATE).descending());
         var user = userFinder.getUserByEmail(userEmail);
         var realEstateUserOffers = offerFinder.getRealEstateUserOffers(realEstateId, user.getId(), pageable);
 
@@ -118,7 +118,7 @@ public class OfferServiceDefaultImpl implements OfferService {
 
         realEstateVerifier.checkRealEstateOwnedByEstateAgent(realEstateId, estateAgentEmail);
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(CREATED_DATE).descending());
         var estateAgent = estateAgentFinder.getEstateAgentByEmail(estateAgentEmail);
         var realEstateEstateAgentOffers = offerFinder.getRealEstateEstateAgentOffers(realEstateId, estateAgent.getId(), pageable);
 
@@ -134,7 +134,7 @@ public class OfferServiceDefaultImpl implements OfferService {
 
     @Override
     public Page<OfferResponse> getAllUserOffers(String userEmail, String status, Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(CREATED_DATE).descending());
         var user = userFinder.getUserByEmail(userEmail);
         var offers = offerFinder.getAllUserOffers(user.getId(), status, pageable);
         return offerMapper.createPagedOffersResponse(offers);
@@ -142,7 +142,7 @@ public class OfferServiceDefaultImpl implements OfferService {
 
     @Override
     public Page<OfferResponse> getAllEstateAgentOffers(String estateAgentEmail, String status, Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(CREATED_DATE).descending());
         var estateAgent = estateAgentFinder.getEstateAgentByEmail(estateAgentEmail);
         var offers = offerFinder.getAllEstateAgentOffers(estateAgent.getId(), status, pageable);
         return offerMapper.createPagedOffersResponse(offers);

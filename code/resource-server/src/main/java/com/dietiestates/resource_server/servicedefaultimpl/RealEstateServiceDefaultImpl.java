@@ -48,7 +48,7 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
 
     private final NegotiationRepository negotiationRepository;
 
-    private static final String createdDate = "createdDate";
+    private static final String CREATED_DATE = "createdDate";
 
     @Override
     public RealEstateResponse createRealEstate(RealEstateRequest request, List<MultipartFile> images, String estateAgentEmail) throws IOException {
@@ -93,14 +93,14 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
 
     @Override
     public Page<RealEstateResponse> getRealEstates(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(CREATED_DATE).descending());
         var realEstates = realEstateRepository.findAll(pageable);
         return realEstateMapper.createPagedRealEstatesResponse(realEstates);
     }
 
     @Override
     public Page<RealEstateResponse> getEstateAgentRealEstates(String estateAgentEmail, Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(CREATED_DATE).descending());
         var estateAgent = estateAgentFinder.getEstateAgentByEmail(estateAgentEmail);
         var estateAgentRealEstates = realEstateFinder.getEstateAgentRealEstates(estateAgent.getId(), pageable);
         return realEstateMapper.createPagedRealEstatesResponse(estateAgentRealEstates);
@@ -108,7 +108,7 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
 
     @Override
     public Page<RealEstateResponse> getAdminRealEstates(String adminEmail, Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(CREATED_DATE).descending());
         var admin = adminFinder.getAdminByEmail(adminEmail);
         var adminRealEstates = realEstateFinder.getAdminRealEstates(admin, pageable);
         return realEstateMapper.createPagedRealEstatesResponse(adminRealEstates);

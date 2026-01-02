@@ -2,6 +2,7 @@ package com.dietiestates.resource_server.filterdefaultimpl;
 
 import com.dietiestates.resource_server.filter.SearchFilter;
 import com.dietiestates.resource_server.model.*;
+import com.dietiestates.resource_server.utils.MatchingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -35,32 +36,8 @@ public class SearchFilterDefaultImpl implements SearchFilter {
     public List<Search> filterSearchesByUtility(Utility utility, List<Search> searchesToFilter) {
 
         return searchesToFilter.stream()
-                .filter(search -> matchesUtilities(search.getDetail().getUtility(), utility))
+                .filter(search -> MatchingUtils.matchesUtilities(search.getDetail().getUtility(), utility))
                 .toList();
-    }
-
-    @Override
-    public boolean matchesUtilities(Utility searchUtility, Utility realEstateUtility){
-
-        if(Boolean.TRUE.equals(searchUtility.getHasDoorman()) && !Boolean.TRUE.equals(realEstateUtility.getHasDoorman()))
-            return false;
-
-        if(Boolean.TRUE.equals(searchUtility.getHasElevator()) && !Boolean.TRUE.equals(realEstateUtility.getHasElevator()))
-            return false;
-
-        if(Boolean.TRUE.equals(searchUtility.getHasAirConditioning()) && !Boolean.TRUE.equals(realEstateUtility.getHasAirConditioning()))
-            return false;
-
-        if(Boolean.TRUE.equals(searchUtility.getNearPark()) && !Boolean.TRUE.equals(realEstateUtility.getNearPark()))
-            return false;
-
-        if(Boolean.TRUE.equals(searchUtility.getNearSchool()) && !Boolean.TRUE.equals(realEstateUtility.getNearSchool()))
-            return false;
-
-        if(Boolean.TRUE.equals(searchUtility.getNearPublicTransport()) && !Boolean.TRUE.equals(realEstateUtility.getNearPublicTransport()))
-            return false;
-
-        return true;
     }
 
     @Override
@@ -82,5 +59,9 @@ public class SearchFilterDefaultImpl implements SearchFilter {
         });
 
         return searchesFilteredByCadastralData;
+    }
+
+    private static boolean isTrue(Boolean v) {
+        return Boolean.TRUE.equals(v);
     }
 }

@@ -22,5 +22,5 @@ public class ImageData {
 
     @Lob
     @Column(name="data", length = 1000)
-    private byte[] imageData;
+    private byte[] value;
 }

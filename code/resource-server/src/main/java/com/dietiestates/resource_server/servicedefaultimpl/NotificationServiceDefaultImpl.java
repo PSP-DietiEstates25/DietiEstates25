@@ -16,7 +16,6 @@ import com.dietiestates.resource_server.service.NegotiationService;
 import com.dietiestates.resource_server.service.NotificationService;
 import com.dietiestates.resource_server.spec.NegotiationSpec;
 import com.dietiestates.resource_server.spec.NotificationSpec;
-import com.dietiestates.resource_server.verifier.NotificationVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,7 +38,7 @@ public class NotificationServiceDefaultImpl implements NotificationService {
     private final NegotiationService negotiationService;
     private final UserFinder userFinder;
 
-    private static final String createdDate = "createdDate";
+    private static final String CREATED_DATE = "createdDate";
 
 	@Override
 	public NotificationResponse createNotification(
@@ -98,7 +97,7 @@ public class NotificationServiceDefaultImpl implements NotificationService {
 
     @Override
     public Page<NotificationResponse> getUserNotifications(String userEmail, List<String> notificationCategories, Integer page, Integer size){
-        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(CREATED_DATE).descending());
         var user = userFinder.getUserByEmail(userEmail);
         var notifications = notificationFinder.getUserNotifications(user.getId(), notificationCategories, pageable);
         return notificationMapper.createPagedNotificationsResponse(notifications);
@@ -109,7 +108,7 @@ public class NotificationServiceDefaultImpl implements NotificationService {
 
         var negotiation = negotiationFinder.getNegotiationById(negotationId);
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(CREATED_DATE).descending());
         var notifications = notificationFinder.getNegotiationNotifications(negotiation.getId(), pageable);
 
         return notificationMapper.createPagedNotificationsResponse(notifications);

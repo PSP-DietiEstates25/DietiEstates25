@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EnableJpaAuditing
 @EnableConfigurationProperties(ResourceServerProperties.class)
 public class ResourceServerApplication {
-	public static void main(String[] args) {
+	static void main(String[] args) {
 		SpringApplication.run(ResourceServerApplication.class, args);
 	}
 }

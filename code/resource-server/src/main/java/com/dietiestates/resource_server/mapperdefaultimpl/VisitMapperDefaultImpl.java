@@ -52,9 +52,9 @@ public class VisitMapperDefaultImpl implements VisitMapper {
     @Override
     public List<VisitResponse> createVisitsResponse(List<Visit> visits) {
         var visitsResponse = new ArrayList<VisitResponse>();
-        visits.forEach((visit) -> {
-            visitsResponse.add(this.fromEntity(visit));
-        });
+        visits.forEach(visit ->
+            visitsResponse.add(this.fromEntity(visit))
+        );
 
         return visitsResponse;
     }
