@@ -7,7 +7,6 @@ import com.dietiestates.resource_server.model.Negotiation;
 import com.dietiestates.resource_server.model.RealEstate;
 import com.dietiestates.resource_server.model.Visit;
 import com.dietiestates.resource_server.repository.VisitRepository;
-import com.dietiestates.resource_server.verifierdefaultimpl.VisitVerifierDefaultImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

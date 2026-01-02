@@ -6,7 +6,6 @@ import com.dietiestates.resource_server.finder.RealEstateFinder;
 import com.dietiestates.resource_server.model.Negotiation;
 import com.dietiestates.resource_server.model.Offer;
 import com.dietiestates.resource_server.model.RealEstate;
-import com.dietiestates.resource_server.verifierdefaultimpl.OfferVerifierDefaultImpl;
 import com.dietiestates.resource_server.repository.OfferRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
