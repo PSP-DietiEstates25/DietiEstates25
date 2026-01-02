@@ -97,14 +97,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    public Converter<Jwt, ? extends AbstractAuthenticationToken> jwtAuthenticationConverter() {
+    public Converter<Jwt, AbstractAuthenticationToken> jwtAuthenticationConverter() {
 
-        //convertitore per claim "roles" new jwt
         JwtGrantedAuthoritiesConverter rolesConv = new JwtGrantedAuthoritiesConverter();
         rolesConv.setAuthorityPrefix("");
         rolesConv.setAuthoritiesClaimName("role");
-
-        //convertitore per scopes
+        
         JwtGrantedAuthoritiesConverter scopeConv = new JwtGrantedAuthoritiesConverter();
         scopeConv.setAuthorityPrefix("SCOPE_");
         scopeConv.setAuthoritiesClaimName("scope");
