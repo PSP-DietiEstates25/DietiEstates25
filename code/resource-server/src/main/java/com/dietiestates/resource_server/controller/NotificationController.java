@@ -55,4 +55,3 @@ public class NotificationController {
         return ResponseEntity.status(HttpStatus.OK).body(notifications);
     }
 }
-

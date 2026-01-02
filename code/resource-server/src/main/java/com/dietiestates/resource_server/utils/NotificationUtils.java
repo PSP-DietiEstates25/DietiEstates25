@@ -2,12 +2,10 @@ package com.dietiestates.resource_server.utils;
 
 import com.dietiestates.resource_server.enums.NotificationCategory;
 import com.dietiestates.resource_server.exception.notfound.NotificationCategoryNotFoundException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
 public class NotificationUtils {
+
+    private NotificationUtils(){}
 
     public static NotificationCategory extractNotificationCategory(String notificationCategory){
         try {

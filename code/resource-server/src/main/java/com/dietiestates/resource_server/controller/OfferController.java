@@ -4,6 +4,7 @@ import com.dietiestates.resource_server.enums.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,8 +37,14 @@ public class OfferController {
         var creatorEmail = jwt.getSubject();
         var creatorRole = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .filter(authority -> authority.equals(Role.USER.name()) || authority.equals(Role.ESTATE_AGENT.name()))
-                .findFirst().get().toString();
+                .filter(
+                        authority ->
+                                    authority.equals(Role.USER.name()) ||
+                                    authority.equals(Role.OIDC_USER.name()) ||
+                                    authority.equals(Role.ESTATE_AGENT.name())
+                )
+                .findFirst()
+                .orElseThrow(() -> new AccessDeniedException("Missing required role"));
 
         var offer = offerService.createOffer(request, realestateid, creatorEmail, creatorRole);
         return ResponseEntity.status(HttpStatus.CREATED).body(offer);
@@ -67,8 +74,13 @@ public class OfferController {
         var creatorEmail = jwt.getSubject();
         var creatorRole = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .filter(authority -> authority.equals(Role.USER.name()) || authority.equals(Role.ESTATE_AGENT.name()))
-                .findFirst().get().toString();
+                .filter(authority ->
+                                    authority.equals(Role.USER.name()) ||
+                                    authority.equals(Role.ESTATE_AGENT.name()) ||
+                                    authority.equals(Role.OIDC_USER.name())
+                )
+                .findFirst()
+                .orElseThrow(() -> new AccessDeniedException("Missing required role"));
 
         if(realestateid != null){
             var offers = offerService.getRealEstateOffers(realestateid, creatorEmail, creatorRole, page, size);

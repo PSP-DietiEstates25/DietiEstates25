@@ -39,7 +39,7 @@ public class VisitServiceDefaultImpl implements VisitService {
     private final RealEstateFinder realEstateFinder;
     private final EstateAgentFinder estateAgentFinder;
 
-    private final String createdDate =  "createdDate";
+    private static final String createdDate =  "createdDate";
 
 	@Override
 	public VisitResponse createVisit(VisitRequest request, Long realEstateId, String userEmail) {
@@ -95,7 +95,6 @@ public class VisitServiceDefaultImpl implements VisitService {
         var visitSpec = visitMapper.toSpec(request);
         var visitToUpdate = visitFinder.getVisitById(visitId);
         var negotiation = visitToUpdate.getNegotiation();
-        var user = negotiation.getUser();
         visitToUpdate.setProposalStatus(ProposalStatus.valueOf(visitSpec.getStatus()));
 
         createVisitNotification(visitToUpdate);

@@ -16,6 +16,7 @@ import com.dietiestates.resource_server.service.NegotiationService;
 import com.dietiestates.resource_server.service.NotificationService;
 import com.dietiestates.resource_server.spec.NegotiationSpec;
 import com.dietiestates.resource_server.spec.NotificationSpec;
+import com.dietiestates.resource_server.verifier.NotificationVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,7 +39,7 @@ public class NotificationServiceDefaultImpl implements NotificationService {
     private final NegotiationService negotiationService;
     private final UserFinder userFinder;
 
-    private final String createdDate = "createdDate";
+    private static final String createdDate = "createdDate";
 
 	@Override
 	public NotificationResponse createNotification(
@@ -90,7 +91,6 @@ public class NotificationServiceDefaultImpl implements NotificationService {
             String userEmail
     ) throws NotificationNotOwnedByUserException {
 
-        //notificationVerifier.checkNotificationOwnedByUser(notificationId, userEmail);
 		var notification = notificationFinder.getNotificationById(notificationId);
 
 		return notificationMapper.fromEntity(notification);

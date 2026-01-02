@@ -19,17 +19,4 @@ public class NotificationVerifierDefaultImpl implements NotificationVerifier {
         if(!notificationRepository.existsById(id))
             throw new NotificationNotFoundException();
     }
-
-    /*
-    @Override
-    public void checkNotificationOwnedByUser(
-            Long id,
-            String userEmail
-    ) throws NotificationNotOwnedByUserException {
-
-        if(!notificationRepository.exists(id, NotificationCategory.valueOf(notificationCategoryName)))
-            throw new NotificationNotOwnedByUserException();
-    }
-
-     */
 }

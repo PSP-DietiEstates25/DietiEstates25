@@ -28,7 +28,7 @@ public abstract class Staffer {
 			foreignKey = @ForeignKey(name = "STAFFER_ADMIN_ID_FK"))
 	private Admin admin;
 
-	public Staffer(String email, Admin admin) {
+	protected Staffer(String email, Admin admin) {
 		this.email = email;
 		admin.addStaffer(this);
 	}

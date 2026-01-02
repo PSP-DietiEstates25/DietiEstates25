@@ -1,16 +1,14 @@
 package com.dietiestates.resource_server.utils;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
-@RequiredArgsConstructor
 public class PageUtils {
+
+    private PageUtils() {}
 
     public static <T> Page<T> toPage(List<T> list, Pageable pageable) {
         Long start = pageable.getOffset();

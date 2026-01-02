@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -59,11 +60,14 @@ public class StorageServiceDefaultImpl implements StorageService {
     @Override
     public String uploadImageToFileSystem(MultipartFile file) throws IOException {
 
-        String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
-        String ext = "";
+        String originalFilenameRaw =
+                Objects.requireNonNull(file.getOriginalFilename(), "Missing original filename");
 
+        String originalFilename = StringUtils.cleanPath(originalFilenameRaw);
+
+        String ext = "";
         int dotIndex = originalFilename.lastIndexOf('.');
-        if (dotIndex != -1) {
+        if (dotIndex != -1 && dotIndex < originalFilename.length() - 1) {
             ext = originalFilename.substring(dotIndex);
         }
 
@@ -81,6 +85,7 @@ public class StorageServiceDefaultImpl implements StorageService {
 
         return "/images/" + storedFileName;
     }
+
 
     @Override
     public byte[] downloadImageFromFileSystem(String fileName) throws IOException {

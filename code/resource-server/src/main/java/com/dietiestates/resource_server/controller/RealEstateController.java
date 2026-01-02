@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -70,11 +71,6 @@ public class RealEstateController {
                                 .anyMatch(a -> a.getAuthority()
                                                 .equals(Role.ADMIN.name()));
 
-                boolean isUser = authentication.getAuthorities()
-                                .stream()
-                                .anyMatch(a -> a.getAuthority()
-                                                .equals(Role.USER.name()));
-
                 if (isEstateAgent) {
                         var estateAgentEmail = jwt.getSubject();
                         pagedRealEstates = realEstateSerivce.getEstateAgentRealEstates(estateAgentEmail, page, size);
@@ -85,7 +81,6 @@ public class RealEstateController {
                         pagedRealEstates = realEstateSerivce.getRealEstates(page, size);
                 }
 
-                System.out.println(pagedRealEstates.toString());
                 return ResponseEntity.status(HttpStatus.OK).body(pagedRealEstates);
         }
 
@@ -133,7 +128,8 @@ public class RealEstateController {
                 var stafferRole = authentication.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .filter(authority -> authority.equals(Role.ADMIN.name()) || authority.equals(Role.ESTATE_AGENT.name()))
-                        .findFirst().get();
+                        .findFirst()
+                        .orElseThrow(() -> new AccessDeniedException("Missing required role"));
 
                 realEstateSerivce.deleteRealEstate(realestateid, stafferEmail, stafferRole);
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

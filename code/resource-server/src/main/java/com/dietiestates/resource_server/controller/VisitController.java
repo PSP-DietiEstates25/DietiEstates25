@@ -34,7 +34,7 @@ public class VisitController {
 
     @GetMapping("/{visitid}")
     public ResponseEntity<VisitResponse> getVisitById(
-            @PathVariable Long realestateid,
+            @PathVariable("realestateid") Long realestateid,
             @PathVariable Long visitid
     ) {
 
@@ -70,7 +70,6 @@ public class VisitController {
             @PathVariable Long visitid,
             @AuthenticationPrincipal Jwt jwt
     ) {
-        var estateAgentEmail = jwt.getSubject();
 
         var visit = visitService.updateVisitStatus(request, realestateid, visitid);
         return ResponseEntity.status(HttpStatus.OK).body(visit);

@@ -8,6 +8,8 @@ import java.util.zip.Inflater;
 
 public class ImageUtils {
 
+    private ImageUtils() {}
+
     public static byte[] compressImage(byte[] data) throws IOException {
         try (Deflater deflater = new Deflater(Deflater.BEST_COMPRESSION);
              ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length)) {

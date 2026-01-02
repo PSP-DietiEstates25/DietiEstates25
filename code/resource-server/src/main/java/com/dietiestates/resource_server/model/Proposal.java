@@ -46,7 +46,7 @@ public abstract class Proposal {
 			foreignKey = @ForeignKey(name = "PROPOSAL_NEGOTIATION_ID_FK"))
 	private Negotiation negotiation;
 	
-	public Proposal(
+	protected Proposal(
 			String proposalCategory,
 			String proposalStatus,
 			Negotiation negotiation

@@ -43,7 +43,7 @@ public class OfferServiceDefaultImpl implements OfferService {
     private final NotificationService notificationService;
     private final NegotiationService negotiationService;
 
-    private final String createdDate = "createdDate";
+    private static final String createdDate = "createdDate";
 
     @Override
     public OfferResponse createOffer(OfferRequest request, Long realEstateId, String creatorEmail, String creatorRole) {

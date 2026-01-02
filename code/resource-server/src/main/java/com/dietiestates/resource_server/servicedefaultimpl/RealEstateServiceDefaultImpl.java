@@ -48,7 +48,8 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
 
     private final NegotiationRepository negotiationRepository;
 
-    private final String createdDate = "createdDate";
+    private static final String createdDate = "createdDate";
+
     @Override
     public RealEstateResponse createRealEstate(RealEstateRequest request, List<MultipartFile> images, String estateAgentEmail) throws IOException {
 

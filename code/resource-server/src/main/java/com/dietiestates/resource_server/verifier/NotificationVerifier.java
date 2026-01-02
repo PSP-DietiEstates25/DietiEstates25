@@ -5,5 +5,4 @@ import com.dietiestates.resource_server.exception.notowned.NotificationNotOwnedB
 
 public interface NotificationVerifier {
     void checkNotificationExists(Long id) throws NotificationNotFoundException;
-    //void checkNotificationOwnedByUser(Long id, String userEmail) throws NotificationNotOwnedByUserException;
 }
