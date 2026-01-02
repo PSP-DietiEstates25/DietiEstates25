@@ -3,11 +3,10 @@ package com.dietiestates.resource_server.servicedefaultimpl;
 import com.dietiestates.resource_server.dto.request.RealEstateRequest;
 import com.dietiestates.resource_server.dto.response.RealEstateResponse;
 import com.dietiestates.resource_server.enums.RealEstateCategory;
+import com.dietiestates.resource_server.enums.Role;
 import com.dietiestates.resource_server.factory.RealEstateFactory;
-import com.dietiestates.resource_server.filter.RealEstateFilter;
 import com.dietiestates.resource_server.finder.*;
 import com.dietiestates.resource_server.mapper.RealEstateMapper;
-import com.dietiestates.resource_server.model.Negotiation;
 import com.dietiestates.resource_server.model.RealEstate;
 import com.dietiestates.resource_server.repository.NegotiationRepository;
 import com.dietiestates.resource_server.repository.RealEstateRepository;
@@ -49,6 +48,7 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
 
     private final NegotiationRepository negotiationRepository;
 
+    private final String createdDate = "createdDate";
     @Override
     public RealEstateResponse createRealEstate(RealEstateRequest request, List<MultipartFile> images, String estateAgentEmail) throws IOException {
 
@@ -92,14 +92,14 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
 
     @Override
     public Page<RealEstateResponse> getRealEstates(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
         var realEstates = realEstateRepository.findAll(pageable);
         return realEstateMapper.createPagedRealEstatesResponse(realEstates);
     }
 
     @Override
     public Page<RealEstateResponse> getEstateAgentRealEstates(String estateAgentEmail, Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
         var estateAgent = estateAgentFinder.getEstateAgentByEmail(estateAgentEmail);
         var estateAgentRealEstates = realEstateFinder.getEstateAgentRealEstates(estateAgent.getId(), pageable);
         return realEstateMapper.createPagedRealEstatesResponse(estateAgentRealEstates);
@@ -107,7 +107,7 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
 
     @Override
     public Page<RealEstateResponse> getAdminRealEstates(String adminEmail, Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
         var admin = adminFinder.getAdminByEmail(adminEmail);
         var adminRealEstates = realEstateFinder.getAdminRealEstates(admin, pageable);
         return realEstateMapper.createPagedRealEstatesResponse(adminRealEstates);
@@ -169,7 +169,7 @@ public class RealEstateServiceDefaultImpl implements RealEstateService {
     @Override
     public void deleteRealEstate(Long realEstateId, String stafferEmail, String stafferRole) {
 
-        if(stafferRole.equals("ESTATE_AGENT"))
+        if(stafferRole.equals(Role.ESTATE_AGENT.name()))
             realEstateVerifier.checkRealEstateOwnedByEstateAgent(realEstateId, stafferEmail);
         else realEstateVerifier.checkRealEstateOwnedByAdmin(realEstateId, stafferEmail);
 

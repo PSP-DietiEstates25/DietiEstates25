@@ -31,7 +31,7 @@ public class AdminServiceDefaultImpl implements AdminService {
 
     private final EstateAgentFinder estateAgentFinder;
 
-	@Override
+    @Override
 	public StafferResponse register(StafferRequest request, String creatorEmail) throws RoleNotFoundException {
 		
 		var adminSpec = stafferMapper.toSpec(request);
@@ -52,7 +52,9 @@ public class AdminServiceDefaultImpl implements AdminService {
     @Override
     public CreatedStaffersResponse getCreatedStaffers(String adminEmail, Integer page, Integer size) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        String createdDate = "createdDate";
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
         var admin =  adminFinder.getAdminByEmail(adminEmail);
 
         var createdAdmins = this.getCreatedAdmins(admin, pageable);

@@ -39,6 +39,8 @@ public class VisitServiceDefaultImpl implements VisitService {
     private final RealEstateFinder realEstateFinder;
     private final EstateAgentFinder estateAgentFinder;
 
+    private final String createdDate =  "createdDate";
+
 	@Override
 	public VisitResponse createVisit(VisitRequest request, Long realEstateId, String userEmail) {
 
@@ -70,7 +72,7 @@ public class VisitServiceDefaultImpl implements VisitService {
     @Override
     public Page<VisitResponse> getRealEstateVisits(Long realEstateId, Integer page, Integer size){
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
         var realEstateVisits = visitFinder.getRealEstateVisits(realEstateId, pageable);
 
         return visitMapper.createPagedVisitsResponse(realEstateVisits);
@@ -79,7 +81,7 @@ public class VisitServiceDefaultImpl implements VisitService {
     @Override
     public Page<VisitResponse> getAllEstateAgentVisits(String estateAgentEmail, String status, Integer page, Integer size) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
         var estateAgent = estateAgentFinder.getEstateAgentByEmail(estateAgentEmail);
         var visits = visitFinder.getAllEstateAgentVisits(estateAgent.getId(), status, pageable);
         return visitMapper.createPagedVisitsResponse(visits);
@@ -118,14 +120,18 @@ public class VisitServiceDefaultImpl implements VisitService {
 
     public String createVisitNotificationMessage(Visit visit){
         String message = null;
+        String visitMessage = "La visita prenotata in data ";
+        String realEstateMessage = " per l'immobile in ";
+        String quotationMark = "\"";
+        String alle = " alle ";
         String estateAgentEmail = visit.getNegotiation().getEstateAgent().getEmail();
         String realEstateAddress = visit.getNegotiation().getRealEstate().getDetail().getGeographicalPosition().getAddress();
 
         if (visit.getProposalCategory().equals(ProposalCategory.VISIT)){
             if (visit.getProposalStatus().equals(ProposalStatus.ACCEPTED))
-                message = "La visita prenotata in data " + visit.getDate().toString() + " alle " + visit.getTime().toString() + " per l'immobile in " + realEstateAddress + " è stata accettata, contatta l'agente al seguente recapito: " + estateAgentEmail + ".";
+                message = visitMessage + visit.getDate().toString() + alle + visit.getTime().toString() + realEstateMessage + quotationMark + realEstateAddress + quotationMark + " è stata accettata, contatta l'agente al seguente recapito: " + estateAgentEmail + ".";
             else if (visit.getProposalStatus().equals(ProposalStatus.REJECTED))
-                message = "La visita prenotata in data " + visit.getDate().toString() + " alle " + visit.getTime().toString() + " per l'immobile in " + realEstateAddress + " è stata rifiutata, riprova con una nuova prenotazione.";
+                message = visitMessage + visit.getDate().toString() + alle + visit.getTime().toString() + realEstateMessage + quotationMark + realEstateAddress + quotationMark + " è stata rifiutata, riprova con una nuova prenotazione.";
         }
 
         return message;

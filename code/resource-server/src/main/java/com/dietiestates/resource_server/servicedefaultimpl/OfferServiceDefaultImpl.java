@@ -6,6 +6,7 @@ import com.dietiestates.resource_server.dto.response.OfferResponse;
 import com.dietiestates.resource_server.enums.NotificationCategory;
 import com.dietiestates.resource_server.enums.ProposalCategory;
 import com.dietiestates.resource_server.enums.ProposalStatus;
+import com.dietiestates.resource_server.enums.Role;
 import com.dietiestates.resource_server.factory.OfferFactory;
 import com.dietiestates.resource_server.finder.*;
 import com.dietiestates.resource_server.mapper.OfferMapper;
@@ -42,9 +43,11 @@ public class OfferServiceDefaultImpl implements OfferService {
     private final NotificationService notificationService;
     private final NegotiationService negotiationService;
 
+    private final String createdDate = "createdDate";
+
     @Override
     public OfferResponse createOffer(OfferRequest request, Long realEstateId, String creatorEmail, String creatorRole) {
-        if(creatorRole.equals("USER"))
+        if(creatorRole.equals(Role.USER.name()))
             return this.createUserOffer(request, realEstateId, creatorEmail);
         else return this.createEstateAgentCounterOffer(request, realEstateId, creatorEmail);
     }
@@ -92,9 +95,10 @@ public class OfferServiceDefaultImpl implements OfferService {
 		return offerMapper.fromEntity(offer);
 	}
 
+    @Override
     public Page<OfferResponse> getRealEstateOffers(Long realEstateId, String creatorEmail, String creatorRole, Integer page, Integer size) {
 
-        if(creatorRole.equals("USER"))
+        if(creatorRole.equals(Role.USER.name()))
             return this.getRealEstateUserOffers(realEstateId, creatorEmail, page, size);
         else return this.getRealEstateEstateAgentOffers(realEstateId, creatorEmail, page, size);
     }
@@ -102,7 +106,7 @@ public class OfferServiceDefaultImpl implements OfferService {
     @Override
     public Page<OfferResponse> getRealEstateUserOffers(Long realEstateId, String userEmail, Integer page, Integer size) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
         var user = userFinder.getUserByEmail(userEmail);
         var realEstateUserOffers = offerFinder.getRealEstateUserOffers(realEstateId, user.getId(), pageable);
 
@@ -114,7 +118,7 @@ public class OfferServiceDefaultImpl implements OfferService {
 
         realEstateVerifier.checkRealEstateOwnedByEstateAgent(realEstateId, estateAgentEmail);
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
         var estateAgent = estateAgentFinder.getEstateAgentByEmail(estateAgentEmail);
         var realEstateEstateAgentOffers = offerFinder.getRealEstateEstateAgentOffers(realEstateId, estateAgent.getId(), pageable);
 
@@ -123,14 +127,14 @@ public class OfferServiceDefaultImpl implements OfferService {
 
     @Override
     public Page<OfferResponse> getOffers(String creatorEmail, String creatorRole, String status, Integer page, Integer size) {
-        if(creatorRole.equals("USER"))
+        if(creatorRole.equals(Role.USER.name()))
             return this.getAllUserOffers(creatorEmail, status, page, size);
         else return this.getAllEstateAgentOffers(creatorEmail, status, page, size);
     }
 
     @Override
     public Page<OfferResponse> getAllUserOffers(String userEmail, String status, Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
         var user = userFinder.getUserByEmail(userEmail);
         var offers = offerFinder.getAllUserOffers(user.getId(), status, pageable);
         return offerMapper.createPagedOffersResponse(offers);
@@ -138,7 +142,7 @@ public class OfferServiceDefaultImpl implements OfferService {
 
     @Override
     public Page<OfferResponse> getAllEstateAgentOffers(String estateAgentEmail, String status, Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
         var estateAgent = estateAgentFinder.getEstateAgentByEmail(estateAgentEmail);
         var offers = offerFinder.getAllEstateAgentOffers(estateAgent.getId(), status, pageable);
         return offerMapper.createPagedOffersResponse(offers);
@@ -159,6 +163,7 @@ public class OfferServiceDefaultImpl implements OfferService {
         return offerMapper.fromEntity(offerToUpdate);
     }
 
+    @Override
     public void createOfferNotification(Offer offer){
 
         var message = createOfferNotificationMessage(offer);
@@ -173,8 +178,12 @@ public class OfferServiceDefaultImpl implements OfferService {
         notificationService.createNotification(notificationRequest);
     }
 
+    @Override
     public String createOfferNotificationMessage(Offer offer){
         String message = null;
+        String offerMessage = "L'offerta di ";
+        String realEstateMessage = " per l'immobile in ";
+        String quotationMark = "\"";
         String estateAgentEmail = offer.getNegotiation().getEstateAgent().getEmail();
         String realEstateAddress = offer.getNegotiation().getRealEstate().getDetail().getGeographicalPosition().getAddress();
         String offerAmount = offer.getAmount().toString () + "€";
@@ -186,11 +195,11 @@ public class OfferServiceDefaultImpl implements OfferService {
 
         if (offer.getProposalCategory().equals(ProposalCategory.OFFER)){
             if (offer.getProposalStatus().equals(ProposalStatus.ACCEPTED))
-                message = "L'offerta di " + offerAmount + " per l'immobile in " + realEstateAddress + " è stata accettata, contatta l'agente al seguente recapito: " + estateAgentEmail + ".";
+                message = offerMessage + offerAmount + realEstateMessage + quotationMark + realEstateAddress + quotationMark + " è stata accettata, contatta l'agente al seguente recapito: " + estateAgentEmail + ".";
             else if (offer.getProposalStatus().equals(ProposalStatus.REJECTED))
-                message = "L'offerta di " + offerAmount + " per l'immobile in " + realEstateAddress + " è stata rifiutata, riprova con una nuova offerta.";
+                message = offerMessage + offerAmount + realEstateMessage + quotationMark + realEstateAddress + quotationMark + " è stata rifiutata, riprova con una nuova offerta.";
             else if (offer.getProposalStatus().equals(ProposalStatus.COUNTERED))
-                message = "L'offerta di " + offerAmount + " per l'immobile in" + realEstateAddress + " è stata negoziata, con una controfferta dal valore di " + counterOfferAmount + ".";
+                message = offerMessage + offerAmount + realEstateMessage + quotationMark + realEstateAddress + quotationMark + " è stata negoziata, con una controfferta dal valore di " + counterOfferAmount + ".";
         }
 
         return message;

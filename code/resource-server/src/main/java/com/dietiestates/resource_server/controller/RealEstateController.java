@@ -1,5 +1,6 @@
 package com.dietiestates.resource_server.controller;
 
+import com.dietiestates.resource_server.enums.Role;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -62,17 +63,17 @@ public class RealEstateController {
                 boolean isEstateAgent = authentication.getAuthorities()
                                 .stream()
                                 .anyMatch(a -> a.getAuthority()
-                                                .equals("ESTATE_AGENT"));
+                                                .equals(Role.ESTATE_AGENT.name()));
 
                 boolean isAdmin = authentication.getAuthorities()
                                 .stream()
                                 .anyMatch(a -> a.getAuthority()
-                                                .equals("ADMIN"));
+                                                .equals(Role.ADMIN.name()));
 
                 boolean isUser = authentication.getAuthorities()
                                 .stream()
                                 .anyMatch(a -> a.getAuthority()
-                                                .equals("USER"));
+                                                .equals(Role.USER.name()));
 
                 if (isEstateAgent) {
                         var estateAgentEmail = jwt.getSubject();
@@ -99,11 +100,11 @@ public class RealEstateController {
 
                 boolean isEstateAgent = authentication.getAuthorities()
                                 .stream()
-                                .anyMatch(a -> a.getAuthority().equals("ESTATE_AGENT"));
+                                .anyMatch(a -> a.getAuthority().equals(Role.ESTATE_AGENT.name()));
 
                 boolean isAdmin = authentication.getAuthorities()
                                 .stream()
-                                .anyMatch(a -> a.getAuthority().equals("ADMIN"));
+                                .anyMatch(a -> a.getAuthority().equals(Role.ADMIN.name()));
 
                 if (!isEstateAgent && !isAdmin) {
                         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -131,7 +132,7 @@ public class RealEstateController {
                 var stafferEmail = jwt.getSubject();
                 var stafferRole = authentication.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
-                        .filter(authority -> authority.equals("ADMIN") || authority.equals("ESTATE_AGENT"))
+                        .filter(authority -> authority.equals(Role.ADMIN.name()) || authority.equals(Role.ESTATE_AGENT.name()))
                         .findFirst().get();
 
                 realEstateSerivce.deleteRealEstate(realestateid, stafferEmail, stafferRole);

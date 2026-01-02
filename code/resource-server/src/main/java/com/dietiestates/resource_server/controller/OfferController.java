@@ -1,5 +1,6 @@
 package com.dietiestates.resource_server.controller;
 
+import com.dietiestates.resource_server.enums.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class OfferController {
         var creatorEmail = jwt.getSubject();
         var creatorRole = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .filter(authority -> authority.equals("USER") || authority.equals("ESTATE_AGENT"))
+                .filter(authority -> authority.equals(Role.USER.name()) || authority.equals(Role.ESTATE_AGENT.name()))
                 .findFirst().get().toString();
 
         var offer = offerService.createOffer(request, realestateid, creatorEmail, creatorRole);
@@ -66,7 +67,7 @@ public class OfferController {
         var creatorEmail = jwt.getSubject();
         var creatorRole = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .filter(authority -> authority.equals("USER") || authority.equals("ESTATE_AGENT"))
+                .filter(authority -> authority.equals(Role.USER.name()) || authority.equals(Role.ESTATE_AGENT.name()))
                 .findFirst().get().toString();
 
         if(realestateid != null){

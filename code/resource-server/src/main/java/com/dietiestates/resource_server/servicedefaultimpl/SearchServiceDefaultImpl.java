@@ -59,7 +59,8 @@ public class SearchServiceDefaultImpl implements SearchService {
     @Override
     public Page<SearchResponse> getUserSearches(String userEmail, Integer page, Integer size) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        String createdDate = "createdDate";
+        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
         var user = userFinder.getUserByEmail(userEmail);
         var userSearches = searchFinder.getUserSearches(user.getId(), pageable);
 

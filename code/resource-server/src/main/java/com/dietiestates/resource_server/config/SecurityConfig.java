@@ -102,7 +102,7 @@ public class SecurityConfig {
         JwtGrantedAuthoritiesConverter rolesConv = new JwtGrantedAuthoritiesConverter();
         rolesConv.setAuthorityPrefix("");
         rolesConv.setAuthoritiesClaimName("role");
-        
+
         JwtGrantedAuthoritiesConverter scopeConv = new JwtGrantedAuthoritiesConverter();
         scopeConv.setAuthorityPrefix("SCOPE_");
         scopeConv.setAuthoritiesClaimName("scope");

@@ -37,7 +37,9 @@ public class NotificationServiceDefaultImpl implements NotificationService {
     private final NegotiationFinder negotiationFinder;
     private final NegotiationService negotiationService;
     private final UserFinder userFinder;
-	
+
+    private final String createdDate = "createdDate";
+
 	@Override
 	public NotificationResponse createNotification(
 			NotificationRequest request
@@ -67,11 +69,11 @@ public class NotificationServiceDefaultImpl implements NotificationService {
             var negotiation = negotiationService.setupNegotiation(negotiationSpec);
 
             var notificationSpec = NotificationSpec.builder()
-                    .message("Un nuovo annuncio è disponibile per la ricerca a \"" +
-                            search.getDetail().getGeographicalPosition().getRegion() + ", " +
-                            search.getDetail().getGeographicalPosition().getCity() + ", " +
-                            search.getDetail().getGeographicalPosition().getMunicipality() + "\""
-                    )
+                    .message(newRealEstateAviableMessage(
+                            search.getDetail().getGeographicalPosition().getRegion(),
+                            search.getDetail().getGeographicalPosition().getCity(),
+                            search.getDetail().getGeographicalPosition().getMunicipality()
+                    ))
                     .notificationCategory(NotificationCategory.NEW_PROPERTIES.toString())
                     .isVisible(true)
                     .negotiationId(negotiation.getId())
@@ -96,7 +98,7 @@ public class NotificationServiceDefaultImpl implements NotificationService {
 
     @Override
     public Page<NotificationResponse> getUserNotifications(String userEmail, List<String> notificationCategories, Integer page, Integer size){
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
         var user = userFinder.getUserByEmail(userEmail);
         var notifications = notificationFinder.getUserNotifications(user.getId(), notificationCategories, pageable);
         return notificationMapper.createPagedNotificationsResponse(notifications);
@@ -107,11 +109,16 @@ public class NotificationServiceDefaultImpl implements NotificationService {
 
         var negotiation = negotiationFinder.getNegotiationById(negotationId);
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(createdDate).descending());
         var notifications = notificationFinder.getNegotiationNotifications(negotiation.getId(), pageable);
 
         return notificationMapper.createPagedNotificationsResponse(notifications);
     }
 
+    private String newRealEstateAviableMessage(String region, String city, String municipality) {
+        var opening = "Un nuovo annuncio è disponibile per la ricerca in \"";
+        var geographicalMessage = region + ", " + city + ", " + municipality + "\"";
 
+        return opening + geographicalMessage;
+    }
 }
