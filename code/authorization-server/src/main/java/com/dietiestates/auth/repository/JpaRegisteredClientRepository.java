@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
@@ -26,7 +27,7 @@ public class JpaRegisteredClientRepository implements RegisteredClientRepository
     private final ClientRepository clientRepository;
     private final ObjectMapper objectMapper;
 
-    public JpaRegisteredClientRepository(ClientRepository clientRepository, ObjectMapper objectMapper) {
+    public JpaRegisteredClientRepository(ClientRepository clientRepository, @Qualifier("authorizationObjectMapper") ObjectMapper objectMapper) {
         Assert.notNull(clientRepository, "clientRepository cannot be null");
         Assert.notNull(objectMapper, "objectMapper cannot be null");
         this.clientRepository = clientRepository;

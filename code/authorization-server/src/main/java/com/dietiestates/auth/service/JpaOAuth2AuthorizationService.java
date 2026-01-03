@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
@@ -44,7 +45,7 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
     public JpaOAuth2AuthorizationService(
             AuthorizationRepository authorizationRepository,
             RegisteredClientRepository registeredClientRepository,
-            ObjectMapper objectMapper) {
+            @Qualifier("authorizationObjectMapper") ObjectMapper objectMapper) {
         Assert.notNull(authorizationRepository, "authorizationRepository cannot be null");
         Assert.notNull(registeredClientRepository, "registeredClientRepository cannot be null");
         Assert.notNull(objectMapper, "objectMapper cannot be null");
