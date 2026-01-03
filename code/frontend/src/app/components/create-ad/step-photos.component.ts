@@ -1,4 +1,4 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, effect, inject, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CreateAdFacade } from './create-ad.facade';
 import { ToastrService } from 'ngx-toastr';
@@ -10,7 +10,7 @@ import { DiscardDialogComponent } from '../dialog/discard-dialog/discard-dialog.
   imports: [DiscardDialogComponent],
   templateUrl: './step-photos.component.html',
 })
-export class StepPhotosComponent {
+export class StepPhotosComponent implements OnDestroy {
   private activatedRoute = inject(ActivatedRoute);
   private toastrService = inject(ToastrService);
   private facade = inject(CreateAdFacade);
@@ -25,47 +25,23 @@ export class StepPhotosComponent {
     effect(() => this.rebuildPreviews());
   }
 
+  ngOnDestroy() {
+    this.clearObjectUrls();
+  }
+
   onFilesSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     const files = Array.from(input.files ?? []);
     if (!files.length) return;
 
-    const anyFacade = this.facade as any;
-    const isEdit = anyFacade?.mode === 'edit';
-
-    if (isEdit && typeof anyFacade?.existingImageUrls === 'function') {
-      anyFacade.existingImageUrls.set([]);
-      if (typeof anyFacade?.setImages === 'function') {
-        anyFacade.setImages(files);
-      } else {
-        this.facade.setImages(files);
-      }
-
-      this.toastrService.info(
-        'Nuove immagini caricate: sostituiranno quelle esistenti al salvataggio.',
-        'Immagini',
-      );
-    } else {
-      // create: aggiungo
-      this.facade.addImages(files);
-    }
+    this.facade.addImages(files);
 
     input.value = '';
     this.rebuildPreviews();
   }
 
   remove(index: number) {
-    const existingCount = this.getExistingUrls().length;
-
-    if (index < existingCount) {
-      this.toastrService.info(
-        'Per cambiare le immagini esistenti, carica un nuovo set di immagini.',
-        'Info',
-      );
-      return;
-    }
-
-    this.facade.removeImage(index - existingCount);
+    this.facade.removeImage(index);
     this.rebuildPreviews();
   }
 
@@ -102,18 +78,22 @@ export class StepPhotosComponent {
   }
 
   private rebuildPreviews() {
-    for (const u of this.objectUrls) URL.revokeObjectURL(u);
-    this.objectUrls = [];
+    this.clearObjectUrls();
 
     const existing = this.getExistingUrls();
-    const files = this.facade.images() ?? [];
+    const files = (this.facade as any)?.images?.() ?? this.facade.getImages?.() ?? [];
 
-    const fileUrls = files.map((f) => {
+    const fileUrls = (files as File[]).map((f) => {
       const url = URL.createObjectURL(f);
       this.objectUrls.push(url);
       return url;
     });
 
     this.previews = [...existing, ...fileUrls];
+  }
+
+  private clearObjectUrls() {
+    for (const u of this.objectUrls) URL.revokeObjectURL(u);
+    this.objectUrls = [];
   }
 }
