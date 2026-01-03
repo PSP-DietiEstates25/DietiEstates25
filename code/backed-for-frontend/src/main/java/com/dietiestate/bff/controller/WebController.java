@@ -2,7 +2,6 @@ package com.dietiestate.bff.controller;
 
 import com.dietiestate.bff.config.BackendForFrontendServerProperties;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 

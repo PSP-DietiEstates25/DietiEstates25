@@ -56,7 +56,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(HttpMethod.POST, properties.registerUrl(), "/logout").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/account/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/account/**").permitAll()
                         .requestMatchers(properties.loginProcessingUrl()).permitAll()
                         .requestMatchers("/auth/**", "/.well-known/**").permitAll()
                         .requestMatchers("/oauth2/authorization/**", "/login/oauth2/**").permitAll()

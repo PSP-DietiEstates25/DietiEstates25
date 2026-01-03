@@ -56,6 +56,7 @@ export class EditAdFacade {
 
   private savedSubject = new Subject<number>();
   saved$ = this.savedSubject.asObservable();
+  published$ = this.saved$;
 
   private editingId = signal<number | null>(null);
 
@@ -444,5 +445,21 @@ export class EditAdFacade {
       console.warn('Immagine non in base64 valido, la salto:', base64Like, e);
       return null;
     }
+  }
+
+  clearSavedData(){
+    this.basics.set(null);
+    this.utility.set(null);
+    this.geographicalPosition.set(null);
+    this.cadastralData.set(null);
+    this.images.set([]);
+
+    this.error.set(null);
+
+    this.detailId.set(null);
+    this.geographicalPositionId.set(null);
+    this.utilityId.set(null);
+    this.cadastralDataId.set(null);
+    this.editingId.set(null);
   }
 }

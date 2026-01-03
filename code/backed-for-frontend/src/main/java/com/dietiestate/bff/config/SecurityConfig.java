@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
@@ -40,6 +39,10 @@ public class SecurityConfig {
 
     private final BackendForFrontendServerProperties properties;
 
+    private static final String ALL_SWAGGER_UI_URI = "/api/swagger-ui/**";
+    private static final String ALL_V3_API_DOCS_URI = "/api/v3/api-docs/**";
+    private static final String OPENAPI_JSON_URI = "/api/openapi.json";
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -53,7 +56,7 @@ public class SecurityConfig {
                                 "/api/v1/swagger-ui/**",
                                 "/api/v1/v3/api-docs/**",
                                 "/api/v1/openapi.json",
-                                "/api/swagger-ui/**", "/api/v3/api-docs/**", "/api/openapi.json"
+                                ALL_SWAGGER_UI_URI, ALL_V3_API_DOCS_URI, OPENAPI_JSON_URI
                         )
                         .csrfTokenRepository(cookieCsrfTokenRepository)
                         .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
@@ -80,11 +83,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, properties.logoutUrl()).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
-                                "/api/swagger-ui/**",
+                                ALL_SWAGGER_UI_URI,
                                 "/api/swagger-ui.html",
-                                "/api/v3/api-docs/**",
-                                "/api/openapi.json",
-                                "/api/swagger-ui/**", "/api/swagger-ui.html", "/api/v3/api-docs/**", "/api/openapi.json"
+                                ALL_V3_API_DOCS_URI,
+                                OPENAPI_JSON_URI,
+                                "/api/swagger-ui.html"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
