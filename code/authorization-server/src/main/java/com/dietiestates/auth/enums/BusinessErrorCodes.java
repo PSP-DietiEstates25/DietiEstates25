@@ -32,10 +32,4 @@ public enum BusinessErrorCodes {
         this.message = message;
         this.httpStatus = status;
     }
-
-    BusinessErrorCodes(int code, HttpStatus status) {
-        this.code = code;
-        this.httpStatus = status;
-        this.message = "";
-    }
 }

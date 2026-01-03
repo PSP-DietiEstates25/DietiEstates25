@@ -67,7 +67,7 @@ public class JacksonConfig {
     public abstract static class SecurityAccountDecoratorMixin {
 
         @JsonCreator
-        public SecurityAccountDecoratorMixin(
+        protected SecurityAccountDecoratorMixin(
                 @JsonProperty("defaultAccount") DefaultAccount defaultAccount,
                 @JsonProperty("enabled") Boolean enabled,
                 @JsonProperty("locked") Boolean locked,
@@ -89,7 +89,7 @@ public class JacksonConfig {
     public abstract static class DefaultAccountMixin {
 
         @JsonCreator
-        public DefaultAccountMixin(
+        protected DefaultAccountMixin(
                 @JsonProperty("id") Long id,
                 @JsonProperty("email") String email,
                 @JsonProperty("password") String password,
@@ -110,7 +110,7 @@ public class JacksonConfig {
     public abstract static class RoleMixin {
 
         @JsonCreator
-        public RoleMixin(
+        protected RoleMixin(
                 @JsonProperty("id") Integer id,
                 @JsonProperty("name") RoleName name,
                 @JsonProperty("createdDate") LocalDateTime createdDate,

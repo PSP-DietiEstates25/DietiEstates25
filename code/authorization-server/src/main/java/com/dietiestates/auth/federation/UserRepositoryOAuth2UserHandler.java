@@ -27,8 +27,6 @@ public class UserRepositoryOAuth2UserHandler implements Consumer<OAuth2User> {
     @Transactional
     public void accept(OAuth2User user) {
         if (this.defaultAccountRepository.findByEmail(user.getAttribute("email")).isEmpty()) {
-            
-            System.out.println("Saving first-time user: name=" + user.getName() + ", claims=" + user.getAttributes() + ", authorities=" + user.getAuthorities());
 
             String randomPsw = passwordEncoder.encode(UUID.randomUUID().toString());
 
@@ -41,14 +39,6 @@ public class UserRepositoryOAuth2UserHandler implements Consumer<OAuth2User> {
 
             this.defaultAccountRepository.save(defaultAccount);
         }
-    }
-
-    private String resolveProviderId(){
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth instanceof OAuth2AuthenticationToken token) {
-            return token.getAuthorizedClientRegistrationId();
-        }
-        return null;
     }
 }
 

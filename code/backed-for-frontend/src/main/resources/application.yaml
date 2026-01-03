@@ -263,7 +263,7 @@ spring:
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/api/utilities
-                - Method=POST,GET,PUT
+                - Method=POST,GET
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 
@@ -272,7 +272,7 @@ spring:
               uri: ${app.resource-server-base-url:http://localhost:8090}
               predicates:
                 - Path=/api/utilities/{utilityid}
-                - Method=POST,GET
+                - Method=POST,GET,PUT
               filters:
                 - RelayTokenIfExists=messaging-client-oidc
 

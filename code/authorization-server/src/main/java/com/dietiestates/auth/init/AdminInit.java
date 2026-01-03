@@ -34,11 +34,6 @@ public class AdminInit {
                     .password(passwordEncoder.encode(properties.superAdminPassword()))
                     .role(roleRepository.findByName(RoleName.ADMIN).get())
                     .build();
-            var securityAccountDecorator = SecurityAccount.builder()
-                    .defaultAccount(defaultAccount)
-                    .enabled(true)
-                    .locked(false)
-                    .build();
 
             defaultAccountRepository.save(defaultAccount);
         }
