@@ -81,9 +81,9 @@ export class StepPhotosComponent implements OnDestroy {
     this.clearObjectUrls();
 
     const existing = this.getExistingUrls();
-    const files = (this.facade as any)?.images?.() ?? this.facade.getImages?.() ?? [];
+    const files: File[] = (this.facade as any)?.images?.() ?? [];
 
-    const fileUrls = (files as File[]).map((f) => {
+    const fileUrls = files.map((f) => {
       const url = URL.createObjectURL(f);
       this.objectUrls.push(url);
       return url;

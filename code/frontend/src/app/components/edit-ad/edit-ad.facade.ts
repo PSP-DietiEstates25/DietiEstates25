@@ -382,12 +382,12 @@ export class EditAdFacade {
             cadastralDataId,
           };
 
-          const body: any = { data: realEstateData };
-
-          if (imgs && imgs.length > 0) {
-            body.images = imgs as Blob[];
-          }
-
+          const body: any = {
+            data: realEstateData,
+            images: imgs as Blob[], 
+            existingImages: JSON.stringify(this.existingImageUrls()),
+          };
+          
           return this.realEstateService.updateRealEstate$Response({
             realestateid: realestateId,
             body,
