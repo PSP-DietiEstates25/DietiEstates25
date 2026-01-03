@@ -29,7 +29,6 @@ public class AccountService {
 
         defaultAccount.setPassword(passwordEncoder.encode(request.getNewPassword()));
         defaultAccountRepository.save(defaultAccount);
-        // tokenRepository.revokeAllFor(acc.getId());
     }
 
     private void checkPasswordMatched(String rawPassword, String actualPassword){

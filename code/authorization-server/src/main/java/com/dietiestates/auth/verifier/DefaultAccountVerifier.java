@@ -17,12 +17,12 @@ public class DefaultAccountVerifier {
     }
 
     public void checkDefaultAccountAlreadyExists(String email){
-        if(!checkDefaultAccountExists(email))
+        if(!Boolean.TRUE.equals(checkDefaultAccountExists(email)))
             throw new DefaultAccountNotFoundException();
     }
 
     public void checkDefaultAccountDoesntExists(String email){
-        if(checkDefaultAccountExists(email))
+        if(Boolean.TRUE.equals(checkDefaultAccountExists(email)))
             throw new DefaultAccountAlreadyExistsException();
     }
 }

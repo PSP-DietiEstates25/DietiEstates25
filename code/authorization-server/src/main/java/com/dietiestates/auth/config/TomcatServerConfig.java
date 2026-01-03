@@ -18,7 +18,7 @@ public class TomcatServerConfig {
 
     @Bean
     public WebServerFactoryCustomizer<TomcatServletWebServerFactory> connectorCustomizer() {
-        return (tomcat) -> tomcat.addAdditionalConnectors(createHttpConnector());
+        return tomcat -> tomcat.addAdditionalConnectors(createHttpConnector());
     }
 
     private Connector createHttpConnector() {

@@ -1,10 +1,11 @@
 package com.dietiestates.auth.model;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,6 +28,7 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SecurityAccount implements UserDetails, Principal, Serializable {
 
+    @Serial
     private static final long serialVersionUID = 6511396009113031709L;
 
     private DefaultAccount defaultAccount;
@@ -75,9 +77,9 @@ public class SecurityAccount implements UserDetails, Principal, Serializable {
             return List.of();
         }
 
-        return List.of(defaultAccount.getAccountRole()).stream()
+        return Stream.of(defaultAccount.getAccountRole())
                 .map(role -> new SimpleGrantedAuthority(role.getName().toString()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @JsonProperty("authorities")

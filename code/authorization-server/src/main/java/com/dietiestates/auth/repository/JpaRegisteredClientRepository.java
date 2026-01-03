@@ -167,8 +167,12 @@ public class JpaRegisteredClientRepository implements RegisteredClientRepository
         }
         if (value instanceof CharSequence charSequence) {
             String string = charSequence.toString().trim();
-            try { map.put(key, Duration.parse(string)); return; } catch (Exception ignored) {}
-            try { map.put(key, Duration.ofSeconds(Long.parseLong(string))); } catch (Exception ignored) {}
+            try { map.put(key, Duration.parse(string)); return; } catch (Exception _) {
+                //lasciato vuoto dall'implementazione di default
+            }
+            try { map.put(key, Duration.ofSeconds(Long.parseLong(string))); } catch (Exception _) {
+                //lasciato vuoto dall'implementazione di default
+            }
         }
     }
 

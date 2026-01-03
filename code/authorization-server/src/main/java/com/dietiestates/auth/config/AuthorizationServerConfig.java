@@ -53,17 +53,17 @@ public class AuthorizationServerConfig {
         http
                 .cors(Customizer.withDefaults())
                 .securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
-                .with(authorizationServerConfigurer, (authorizationServer) ->
+                .with(authorizationServerConfigurer, authorizationServer ->
                         authorizationServer
                                 .oidc(oidc -> oidc.userInfoEndpoint(userInfo -> userInfo
                                         .userInfoMapper(userInfoMapper()))
                                 )
                 )
-                .authorizeHttpRequests((authorize) ->
+                .authorizeHttpRequests(authorize ->
                         authorize
                                 .anyRequest().authenticated()
                 )
-                .exceptionHandling((exceptions) -> exceptions
+                .exceptionHandling(exceptions -> exceptions
                         .defaultAuthenticationEntryPointFor(
                                 new LoginUrlAuthenticationEntryPoint(properties.loginUrl()),
                                 new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
@@ -95,7 +95,7 @@ public class AuthorizationServerConfig {
     @Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtTokenCustomizer() {
         var federated = new FederatedIdentityIdTokenCustomizer();
-        return (context) -> {
+        return context -> {
             if (OAuth2TokenType.ACCESS_TOKEN
                     .equals(context.getTokenType())) {
                 context.getClaims().claims(claims -> {
