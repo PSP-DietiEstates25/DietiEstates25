@@ -19,7 +19,7 @@ import { OffersPaginatorComponent } from '../offers-paginator/offers-paginator.c
 import { AgentOffersListComponent } from '../agent-offers-list/agent-offers-list.component';
 import { OffersPaginatorService } from '../../manual_services/offers_paginator/offers-paginator.service';
 import { ToastrService } from 'ngx-toastr';
-import { OfferResponse, VisitResponse } from '../../services/models';
+import { OfferResponse, RealEstateResponse, VisitResponse } from '../../services/models';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FullOffer } from '../../interfaces/full-offer';
 import { OfferPaginatorRequest } from '../../interfaces/offer-paginator-request';
@@ -66,9 +66,9 @@ export class AgentDashboardComponent implements OnDestroy {
   isAuthenticated = false;
   email = '';
 
-  offers = this.facade.offers;
-  visits = this.facade.visits;
-  realEstates = this.facade.realEstates;
+  offers: OfferResponse[] = [];
+  visits: VisitResponse[] = [];
+  realEstates: RealEstateResponse[] = [];
 
   offerPaginatorRequest!: OfferPaginatorRequest;
   visitPaginatorRequest!: VisitPaginatorRequest;
@@ -77,7 +77,6 @@ export class AgentDashboardComponent implements OnDestroy {
   totalPages!: number;
   page!: number;
 
-  // Tabs
   tabs: Array<{ key: 'visits' | 'ads' | 'offers'; label: string }> = [
     { key: 'visits', label: 'Visite' },
     { key: 'ads', label: 'Annunci' },
@@ -85,7 +84,6 @@ export class AgentDashboardComponent implements OnDestroy {
   ];
   active = signal<'visits' | 'ads' | 'offers'>('visits');
 
-  // Stato esposto
   visitsLoading = this.facade.visitsLoading;
   visitFilter!: 'PENDING' | 'ACCEPTED' | 'REJECTED' | null;
 
@@ -99,7 +97,6 @@ export class AgentDashboardComponent implements OnDestroy {
   addOfferEmail = this.facade.addOfferEmail;
   addOfferLoading = this.facade.addOfferLoading;
 
-  // Counter-offer (stessi nomi)
   counterId = this.facade.counterId;
   counterMessage = this.facade.counterMessage;
 
@@ -126,9 +123,9 @@ export class AgentDashboardComponent implements OnDestroy {
   setTab(t: 'visits' | 'ads' | 'offers') {
     this.active.set(t);
 
-    if (t === 'visits' && this.visits().length === 0) this.fetchEstateAgentVisits();
-    if (t === 'ads' && this.realEstates().length === 0) this.fetchEstateAgentRealEstates();
-    if (t === 'offers' && this.offers().length === 0) this.fetchEstateAgentOffers();
+    if (t === 'visits' && this.visits.length === 0) this.fetchEstateAgentVisits();
+    if (t === 'ads' && this.realEstates.length === 0) this.fetchEstateAgentRealEstates();
+    if (t === 'offers' && this.offers.length === 0) this.fetchEstateAgentOffers();
   }
 
 
@@ -136,7 +133,8 @@ export class AgentDashboardComponent implements OnDestroy {
     this.facade.fetchOffers(this.offerPaginatorRequest).subscribe({
       next: (results) => {
         this.totalPages = results.totalPages!;
-        this.initPages();
+        this.offers = results.content!;
+        this.initOffersPages();
       },
       error: (response: HttpErrorResponse) => {
         if (response.error === 500) {
@@ -151,7 +149,8 @@ export class AgentDashboardComponent implements OnDestroy {
     this.facade.fetchVisits(this.visitPaginatorRequest).subscribe({
       next: (results) => {
         this.totalPages = results.totalPages!;
-        this.initPages();
+        this.visits = results.content!;
+        this.initAdsPages();
       },
       error: (response: HttpErrorResponse) => {
         if (response.error === 500) {
@@ -166,7 +165,8 @@ export class AgentDashboardComponent implements OnDestroy {
     this.facade.fetchRealEstates(this.adsPaginatorRequest).subscribe({
       next: (results) => {
         this.totalPages = results.totalPages!;
-        this.initPages();
+        this.realEstates = results.content!;
+        this.initVisitsPages();
       },
       error: (response: HttpErrorResponse) => {
         if (response.error === 500) {
@@ -254,9 +254,19 @@ export class AgentDashboardComponent implements OnDestroy {
     this.facade.sendCounter().subscribe();
   }
 
-  initPages() {
+  initAdsPages() {
+    this.adsPaginatorService.setPagesNumber(this.totalPages);
+    this.page = this.adsPaginatorService.page();
+  }
+
+  initOffersPages() {
     this.offerPaginatorService.setPagesNumber(this.totalPages);
     this.page = this.offerPaginatorService.page();
+  }
+
+  initVisitsPages() {
+    this.visitPaginatorService.setPagesNumber(this.totalPages);
+    this.page = this.visitPaginatorService.page();
   }
 
   ngOnDestroy(): void {

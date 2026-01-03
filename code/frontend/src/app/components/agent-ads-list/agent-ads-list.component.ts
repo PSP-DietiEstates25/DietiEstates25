@@ -1,7 +1,10 @@
 import {
   Component,
+  computed,
+  effect,
   inject,
   OnDestroy,
+  Signal,
   signal,
   WritableSignal,
 } from '@angular/core';
@@ -25,6 +28,7 @@ import { DoormanIconComponent } from '../../shared/icons/doorman-icon/doorman-ic
 import { ToastrService } from 'ngx-toastr';
 import { DeleteAdDialogComponent } from '../dialog/delete-ad-dialog/delete-ad-dialog.component';
 import { HttpErrorResponse } from '@angular/common/http';
+import { FullRealEstate } from '../../interfaces/full-real-estate';
 
 @Component({
   selector: 'app-agent-ads-list',
@@ -56,7 +60,7 @@ export class AgentAdsListComponent implements OnDestroy {
 
   isDiscardModalOpen = false;
 
-  realEstates = this.facade.realEstates;
+  realEstates!: Signal<FullRealEstate[]>;
   realEstateIdToRemove: WritableSignal<number | null> = signal(null);
   realEstatesLoading = this.facade.realEstatesLoading;
 
@@ -65,6 +69,12 @@ export class AgentAdsListComponent implements OnDestroy {
   addOfferAmount = this.facade.addOfferAmount;
   addOfferEmail = this.facade.addOfferEmail;
   addOfferLoading = this.facade.addOfferLoading;
+
+  constructor() {
+    effect(() => {
+      this.realEstates = computed(() => this.facade.realEstates());
+    });
+  }
 
   badgeClass(){
     return 'real_estate_category_badge';

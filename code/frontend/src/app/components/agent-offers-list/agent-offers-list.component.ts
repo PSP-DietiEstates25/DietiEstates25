@@ -4,13 +4,12 @@ import { FullOffer } from '../../interfaces/full-offer';
 import { OfferControllerService } from '../../services/services';
 import { OffersPaginatorService } from '../../manual_services/offers_paginator/offers-paginator.service';
 import { ToastrService } from 'ngx-toastr';
-import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-agent-offers-list',
-  imports: [RouterLink, FormsModule, DatePipe],
+  imports: [FormsModule, DatePipe],
   templateUrl: './agent-offers-list.component.html',
   styleUrl: './agent-offers-list.component.scss',
 })

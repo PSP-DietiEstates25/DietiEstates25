@@ -23,7 +23,6 @@ export class OffersListComponent {
   constructor() {
     effect(() => {
       this.offers = computed(() => this.facade.offers());
-      console.log(this.offers());
     });
   }
 
