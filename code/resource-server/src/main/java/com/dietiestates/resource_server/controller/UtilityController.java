@@ -47,7 +47,7 @@ public class UtilityController {
             @RequestBody UtilityRequest request
     ) {
 
-        var dto = utilityService.updateUtility(utilityid, request);
-        return ResponseEntity.ok(dto);
+        var utility = utilityService.updateUtility(utilityid, request);
+        return ResponseEntity.ok(utility);
     }
 }

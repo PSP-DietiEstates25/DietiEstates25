@@ -1,5 +1,7 @@
 package com.dietiestates.auth.model;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -30,7 +32,10 @@ import lombok.ToString;
 @EqualsAndHashCode
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Role {
+public class Role implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

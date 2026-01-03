@@ -1,19 +1,15 @@
 package com.dietiestates.auth.federation;
 
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 import com.dietiestates.auth.enums.RoleName;
 import com.dietiestates.auth.model.DefaultAccount;
-import com.dietiestates.auth.model.Role;
 import com.dietiestates.auth.repository.DefaultAccountRepository;
 import com.dietiestates.auth.repository.RoleRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;

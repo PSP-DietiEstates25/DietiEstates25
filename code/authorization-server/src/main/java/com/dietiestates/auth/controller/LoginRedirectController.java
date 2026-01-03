@@ -1,10 +1,7 @@
 package com.dietiestates.auth.controller;
 
 import com.dietiestates.auth.config.AuthorizationServerProperties;
-import com.dietiestates.auth.model.Authorization;
-import com.dietiestates.auth.service.AccountService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

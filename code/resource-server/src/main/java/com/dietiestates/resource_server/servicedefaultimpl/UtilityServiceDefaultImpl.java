@@ -52,7 +52,6 @@ public class UtilityServiceDefaultImpl implements UtilityService {
     }
 
     @Override
-    @Transactional
     public UtilityResponse updateUtility(Long id, UtilityRequest request) {
 
         var utilitySpec = utilityMapper.toSpec(request);

@@ -22,7 +22,7 @@ public class TomcatServerConfig {
     }
 
     private Connector createHttpConnector() {
-        Connector connector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
+        Connector connector = new Connector(org.springframework.boot.tomcat.TomcatWebServerFactory.DEFAULT_PROTOCOL);
         connector.setScheme("http");
         connector.setPort(properties.authorizationServerBaseHttpPort());
         connector.setSecure(false);

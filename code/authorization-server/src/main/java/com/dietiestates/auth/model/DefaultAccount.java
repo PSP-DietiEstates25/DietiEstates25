@@ -1,5 +1,6 @@
 package com.dietiestates.auth.model;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -32,6 +33,7 @@ import lombok.ToString;
 @EntityListeners(AuditingEntityListener.class)
 public class DefaultAccount implements Account, Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1086473393170997760L;
 
     @Id

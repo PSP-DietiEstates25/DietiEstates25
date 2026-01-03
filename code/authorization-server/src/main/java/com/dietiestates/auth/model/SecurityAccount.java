@@ -33,7 +33,6 @@ public class SecurityAccount implements UserDetails, Principal, Serializable {
     private Boolean enabled;
     private Boolean locked;
 
-    //temporaneo per la deserializzazione delle authorities
     private Collection<? extends GrantedAuthority> tempAuthorities;
 
     @Builder(builderMethodName = "builder")
