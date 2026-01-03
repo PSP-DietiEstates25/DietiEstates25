@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -22,14 +24,11 @@ public class AccountController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> changePassword(
             @RequestBody @Valid ChangePasswordRequest req,
-            Principal principal
+            @AuthenticationPrincipal Jwt jwt
     ) {
+        var email = jwt.getSubject();
 
-        if (principal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        accountService.changeOwnPassword(principal, req);
+        accountService.changeOwnPassword(email, req);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 }

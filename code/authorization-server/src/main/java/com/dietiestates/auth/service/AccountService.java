@@ -23,9 +23,9 @@ public class AccountService {
     private final DefaultAccountRepository defaultAccountRepository;
 
     @Transactional
-    public void changeOwnPassword(Principal principal, ChangePasswordRequest request) {
+    public void changeOwnPassword(String email, ChangePasswordRequest request) {
 
-        DefaultAccount defaultAccount = defaultAccountFinder.getDefaultAccountByEmail(principal.getName());
+        DefaultAccount defaultAccount = defaultAccountFinder.getDefaultAccountByEmail(email);
 
         checkPasswordMatched(request.getOldPassword(), defaultAccount.getAccountPassword());
 
