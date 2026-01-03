@@ -80,9 +80,10 @@ spring:
               uri: ${app.authorization-server-base-url:https://localhost:9443}
               predicates:
                 - Path=/api/account/password
+                - Method=PATCH
               filters:
                 - StripPrefix=1
-                - TokenRelay=
+                - RelayTokenIfExists=messaging-client-oidc
                 - RemoveRequestHeader=Cookie
 
             #GET /account/{email}

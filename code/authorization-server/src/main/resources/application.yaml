@@ -41,6 +41,9 @@ spring:
           google:
             issuer-uri: https://accounts.google.com
             user-name-attribute: email
+      resourceserver:
+        jwt:
+          issuer-uri: ${AUTHORIZATION_SERVER_BASE_URI:https://localhost:9443}
 
 logging:
   level:

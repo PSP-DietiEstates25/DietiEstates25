@@ -10,15 +10,23 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
@@ -29,6 +37,9 @@ import org.springframework.security.web.servlet.util.matcher.PathPatternRequestM
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -37,6 +48,26 @@ public class SecurityConfig {
 
     @Bean
     @Order(2)
+    public SecurityFilterChain accountApiChain(HttpSecurity http) throws Exception {
+
+        http
+                .securityMatcher("/account/**")
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.PATCH, "/account/password").hasAuthority("ADMIN")
+                        .anyRequest().authenticated()
+                )
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                );
+
+        return http.build();
+    }
+
+
+    @Bean
+    @Order(3)
     public SecurityFilterChain defaultSecurityFilterChain(
             HttpSecurity http,
             AuthenticationSuccessHandler userRepositoryOAuth2UserHandler,
@@ -50,11 +81,11 @@ public class SecurityConfig {
         http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers(properties.registerUrl(), properties.csrfUrl(), "/account/**", "/auth/logout")
+                        .ignoringRequestMatchers(properties.registerUrl(), properties.csrfUrl(), "/auth/logout")
                         .csrfTokenRepository(csrfRepository)
                         .csrfTokenRequestHandler(csrfHandler)
                 )
-                .authorizeHttpRequests(authz -> authz
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, properties.registerUrl(), "/logout").permitAll()
                         .requestMatchers(properties.loginProcessingUrl()).permitAll()
                         .requestMatchers("/auth/**", "/.well-known/**").permitAll()
@@ -103,6 +134,27 @@ public class SecurityConfig {
         return http.build();
     }
 
+    @Bean
+    public Converter<Jwt, AbstractAuthenticationToken> jwtAuthenticationConverter() {
+
+        JwtGrantedAuthoritiesConverter rolesConv = new JwtGrantedAuthoritiesConverter();
+        rolesConv.setAuthorityPrefix("");
+        rolesConv.setAuthoritiesClaimName("role");
+
+        JwtGrantedAuthoritiesConverter scopeConv = new JwtGrantedAuthoritiesConverter();
+        scopeConv.setAuthorityPrefix("SCOPE_");
+        scopeConv.setAuthoritiesClaimName("scope");
+
+        return jwt -> {
+            Set<GrantedAuthority> merged = new HashSet<>();
+            merged.addAll(rolesConv.convert(jwt));
+            merged.addAll(scopeConv.convert(jwt));
+
+            JwtAuthenticationConverter delegate = new JwtAuthenticationConverter();
+            delegate.setJwtGrantedAuthoritiesConverter(_ -> merged);
+            return delegate.convert(jwt);
+        };
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
