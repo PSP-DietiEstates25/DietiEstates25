@@ -76,7 +76,7 @@ public class SecurityConfig {
                                 "/api/users",
                                 "/api/users/**"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.GET,
+                        .requestMatchers(HttpMethod.PATCH,
                                 "/api/account/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/", "/error", "/actuator/health", properties.csrfTokenUrl()).permitAll()

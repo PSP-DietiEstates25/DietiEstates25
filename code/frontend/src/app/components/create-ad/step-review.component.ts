@@ -17,17 +17,28 @@ export class StepReviewComponent implements OnDestroy {
   private activatedRoute = inject(ActivatedRoute);
 
   facade = inject(CreateAdFacade);
+
   canPublish = computed(() => this.facade.allValid());
   isDiscardModalOpen = false;
 
   private sub = new Subscription();
 
   constructor() {
-    this.sub.add(
-      this.facade.published$.subscribe(() => {
-        this.toastrService.success('Annuncio creato.', 'Successo');
-      }),
-    );
+    const anyFacade = this.facade as any;
+
+    const success$ = anyFacade?.published$ ?? anyFacade?.saved$;
+
+    if (success$ && typeof success$.subscribe === 'function') {
+      this.sub.add(
+        success$.subscribe(() => {
+          const isEdit = anyFacade?.mode === 'edit';
+          this.toastrService.success(
+            isEdit ? 'Modifiche salvate.' : 'Annuncio creato.',
+            'Successo',
+          );
+        }),
+      );
+    }
   }
 
   openDiscardModal() {
@@ -39,10 +50,20 @@ export class StepReviewComponent implements OnDestroy {
   }
 
   confirmDiscard() {
+    const anyFacade = this.facade as any;
+    const isEdit = anyFacade?.mode === 'edit';
+
     this.closeDiscardModal();
-    this.facade.clearSavedData();
-    this.routerService.navigate(['/']);
-    this.toastrService.error('Creazione annuncio interrotta!', 'Cancellazione');
+
+    if (typeof anyFacade?.clearSavedData === 'function') {
+      anyFacade.clearSavedData();
+    }
+
+    this.routerService.navigate([isEdit ? '/agent' : '/']);
+    this.toastrService.error(
+      isEdit ? 'Modifica annuncio interrotta!' : 'Creazione annuncio interrotta!',
+      'Cancellazione',
+    );
   }
 
   previous() {
@@ -56,9 +77,18 @@ export class StepReviewComponent implements OnDestroy {
   }
 
   discard() {
-    this.facade.clearSavedData();
-    this.routerService.navigate(['/']);
-    this.toastrService.error('Creazione annuncio interrotta!', 'Cancellazione');
+    const anyFacade = this.facade as any;
+    const isEdit = anyFacade?.mode === 'edit';
+
+    if (typeof anyFacade?.clearSavedData === 'function') {
+      anyFacade.clearSavedData();
+    }
+
+    this.routerService.navigate([isEdit ? '/agent' : '/']);
+    this.toastrService.error(
+      isEdit ? 'Modifica annuncio interrotta!' : 'Creazione annuncio interrotta!',
+      'Cancellazione',
+    );
   }
 
   ngOnDestroy() {
