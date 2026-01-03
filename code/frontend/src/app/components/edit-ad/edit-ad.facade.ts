@@ -50,6 +50,7 @@ export class EditAdFacade {
   geographicalPosition = signal<PositionDraft | null>(null);
   cadastralData = signal<CadastralDraft | null>(null);
   images = signal<File[]>([]);
+  existingImageUrls = signal<string[]>([]);
 
   loading = signal(false);
   error = signal<string | null>(null);
@@ -60,16 +61,18 @@ export class EditAdFacade {
 
   private editingId = signal<number | null>(null);
 
-  allValid = computed(
-    () =>
-      !!(
-        this.basics() &&
-        this.utility() &&
-        this.geographicalPosition() &&
-        this.cadastralData() &&
-        this.images().length > 0
-      ),
-  );
+  allValid = computed(() => {
+    const hasAnyImages =
+      this.images().length > 0 || this.existingImageUrls().length > 0;
+
+    return !!(
+      this.basics() &&
+      this.utility() &&
+      this.geographicalPosition() &&
+      this.cadastralData() &&
+      hasAnyImages
+    );
+  });
 
   getBasics(): BasicsDraft | null {
     return this.basics();
@@ -162,14 +165,8 @@ export class EditAdFacade {
           this.detailId.set(realEstateDto.detailId ?? null);
           this.cadastralDataId.set(realEstateDto.cadastralDataId ?? null);
 
-          const existingImgs = realEstateDto.images ?? [];
-          const files = existingImgs
-            .map((b64, index) =>
-              this.base64ToFile(b64, `existing-${index}.jpg`),
-            )
-            .filter((file): file is File => !!file);
-
-          this.images.set(files);
+          this.existingImageUrls.set((realEstateDto.images ?? []).filter(Boolean) as string[]);
+          this.images.set([]);
 
           const detailId = realEstateDto.detailId;
           const cadastralDataId = realEstateDto.cadastralDataId;
@@ -385,14 +382,18 @@ export class EditAdFacade {
             cadastralDataId,
           };
 
+          const body: any = { data: realEstateData };
+
+          if (imgs && imgs.length > 0) {
+            body.images = imgs as Blob[];
+          }
+
           return this.realEstateService.updateRealEstate$Response({
             realestateid: realestateId,
-            body: {
-              data: realEstateData,
-              images: imgs as Blob[],
-            },
+            body,
           });
         }),
+
         catchError((error) => {
           this.error.set(
             error?.error?.message ||
@@ -453,6 +454,7 @@ export class EditAdFacade {
     this.geographicalPosition.set(null);
     this.cadastralData.set(null);
     this.images.set([]);
+    this.existingImageUrls.set([]);
 
     this.error.set(null);
 

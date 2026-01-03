@@ -17,22 +17,12 @@ export class StepPhotosComponent {
   private routerService = inject(Router);
 
   previews: string[] = [];
+  private objectUrls: string[] = [];
+
   isDiscardModalOpen = false;
 
   constructor() {
-    effect(() => {
-      const imgs = this.facade.getImages();
-      this.clearPreviews();
-      this.previews = (imgs ?? []).map((file) => URL.createObjectURL(file));
-    });
-  }
-
-  ngOnInit() {
-    this.rebuildPreviews();
-  }
-
-  ngOnDestroy() {
-    this.clearPreviews();
+    effect(() => this.rebuildPreviews());
   }
 
   onFilesSelected(event: Event) {
@@ -40,14 +30,42 @@ export class StepPhotosComponent {
     const files = Array.from(input.files ?? []);
     if (!files.length) return;
 
-    this.facade.addImages(files);
+    const anyFacade = this.facade as any;
+    const isEdit = anyFacade?.mode === 'edit';
 
-    this.rebuildPreviews();
+    if (isEdit && typeof anyFacade?.existingImageUrls === 'function') {
+      anyFacade.existingImageUrls.set([]);
+      if (typeof anyFacade?.setImages === 'function') {
+        anyFacade.setImages(files);
+      } else {
+        this.facade.setImages(files);
+      }
+
+      this.toastrService.info(
+        'Nuove immagini caricate: sostituiranno quelle esistenti al salvataggio.',
+        'Immagini',
+      );
+    } else {
+      // create: aggiungo
+      this.facade.addImages(files);
+    }
+
     input.value = '';
+    this.rebuildPreviews();
   }
 
   remove(index: number) {
-    this.facade.removeImage(index);
+    const existingCount = this.getExistingUrls().length;
+
+    if (index < existingCount) {
+      this.toastrService.info(
+        'Per cambiare le immagini esistenti, carica un nuovo set di immagini.',
+        'Info',
+      );
+      return;
+    }
+
+    this.facade.removeImage(index - existingCount);
     this.rebuildPreviews();
   }
 
@@ -61,9 +79,9 @@ export class StepPhotosComponent {
 
   confirmDiscard() {
     this.closeDiscardModal();
-    this.facade.clearSavedData();
+    (this.facade as any)?.clearSavedData?.();
     this.routerService.navigate(['/']);
-    this.toastrService.error('Creazione annuncio interrotta!', 'Cancellazione');
+    this.toastrService.error('Operazione interrotta!', 'Cancellazione');
   }
 
   previous() {
@@ -78,15 +96,24 @@ export class StepPhotosComponent {
     });
   }
 
-  private rebuildPreviews() {
-    this.clearPreviews();
-    this.previews = (this.facade.images() ?? []).map((file) =>
-      URL.createObjectURL(file),
-    );
+  private getExistingUrls(): string[] {
+    const anyFacade = this.facade as any;
+    return anyFacade?.existingImageUrls?.() ?? [];
   }
 
-  private clearPreviews() {
-    for (const url of this.previews) URL.revokeObjectURL(url);
-    this.previews = [];
+  private rebuildPreviews() {
+    for (const u of this.objectUrls) URL.revokeObjectURL(u);
+    this.objectUrls = [];
+
+    const existing = this.getExistingUrls();
+    const files = this.facade.images() ?? [];
+
+    const fileUrls = files.map((f) => {
+      const url = URL.createObjectURL(f);
+      this.objectUrls.push(url);
+      return url;
+    });
+
+    this.previews = [...existing, ...fileUrls];
   }
 }

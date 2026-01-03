@@ -28,7 +28,13 @@ export class EditLayoutComponent implements OnInit {
   detailsValid = computed(
     () => !!(this.facade.utility() && this.facade.geographicalPosition()),
   );
-  photosValid = computed(() => this.facade.images().length > 0);
+
+  photosValid = computed(() => {
+    return (
+      this.facade.images().length > 0 ||
+      this.facade.existingImageUrls().length > 0
+    );
+  });
   allValid = computed(() => this.facade.allValid());
 
   realestateId!: number;
