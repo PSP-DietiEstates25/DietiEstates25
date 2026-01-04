@@ -11,7 +11,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-import { AgentDashboardFacade } from '../agent-dashboard/agent-dashboard.facade'; // Verifica il percorso corretto
+import { AgentDashboardFacade } from '../agent-dashboard/agent-dashboard.facade';
 import { AdsPaginatorService } from '../../manual_services/ads_paginator/ads-paginator.service';
 import { environment } from '../../../environments/environment';
 import { NearParkIconComponent } from '../../shared/icons/near-park-icon/near-park-icon.component';
@@ -29,6 +29,7 @@ import { ToastrService } from 'ngx-toastr';
 import { DeleteAdDialogComponent } from '../dialog/delete-ad-dialog/delete-ad-dialog.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FullRealEstate } from '../../interfaces/full-real-estate';
+import { AdsPaginatorComponent } from '../ads-paginator/ads-paginator.component';
 
 @Component({
   selector: 'app-agent-ads-list',
@@ -49,6 +50,7 @@ import { FullRealEstate } from '../../interfaces/full-real-estate';
     ElevatorIconComponent,
     DoormanIconComponent,
     DeleteAdDialogComponent,
+    AdsPaginatorComponent
   ],
   templateUrl: './agent-ads-list.component.html',
   styleUrl: './agent-ads-list.component.scss',
