@@ -134,7 +134,7 @@ export class AgentDashboardComponent implements OnDestroy {
       next: (results) => {
         this.totalPages = results.totalPages!;
         this.offers = results.content!;
-        this.initOffersPages();
+        this.initPages();
       },
       error: (response: HttpErrorResponse) => {
         if (response.error === 500) {
@@ -150,7 +150,7 @@ export class AgentDashboardComponent implements OnDestroy {
       next: (results) => {
         this.totalPages = results.totalPages!;
         this.visits = results.content!;
-        this.initAdsPages();
+        this.initPages();
       },
       error: (response: HttpErrorResponse) => {
         if (response.error === 500) {
@@ -166,7 +166,7 @@ export class AgentDashboardComponent implements OnDestroy {
       next: (results) => {
         this.totalPages = results.totalPages!;
         this.realEstates = results.content!;
-        this.initVisitsPages();
+        this.initPages();
       },
       error: (response: HttpErrorResponse) => {
         if (response.error === 500) {
@@ -267,6 +267,11 @@ export class AgentDashboardComponent implements OnDestroy {
   initVisitsPages() {
     this.visitPaginatorService.setPagesNumber(this.totalPages);
     this.page = this.visitPaginatorService.page();
+  }
+
+  initPages() {
+    this.offerPaginatorService.setPagesNumber(this.totalPages);
+    this.page = this.offerPaginatorService.page();
   }
 
   ngOnDestroy(): void {
