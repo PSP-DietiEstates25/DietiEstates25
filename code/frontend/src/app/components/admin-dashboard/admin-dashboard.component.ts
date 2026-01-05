@@ -23,6 +23,23 @@ import { Role } from '../../interfaces/role';
 import { AdminUser } from '../../interfaces/admin-user';
 import { firstValueFrom } from 'rxjs';
 
+import {FormGroup, ValidatorFn } from '@angular/forms';
+
+export function passwordsMatchValidator(
+  passwordKey: string,
+  confirmKey: string,
+): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const group = control as FormGroup;
+    const pwd = group.get(passwordKey)?.value;
+    const conf = group.get(confirmKey)?.value;
+
+    if (!pwd || !conf) return null;
+    return pwd === conf ? null : { mismatch: true };
+  };
+}
+
+
 function matchValidator(a: string, b: string) {
   return (ctrl: AbstractControl) => {
     const v1 = ctrl.get(a)?.value;
@@ -63,6 +80,8 @@ export class AdminDashboardComponent {
   totalPages!: number;
   page!: number;
 
+  private readonly PASSWORD_MIN_LEN = 5;
+
   tabs = [
     { key: 'ads' as const, label: 'Annunci' },
     { key: 'users' as const, label: 'Utenti' },
@@ -82,8 +101,14 @@ export class AdminDashboardComponent {
     {
       email: ['', [Validators.required, Validators.email]],
       role: ['ESTATE_AGENT' as Role, [Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      confirm: ['', [Validators.required]],
+    password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(this.PASSWORD_MIN_LEN),
+        ],
+      ],
+    confirm: ['', [Validators.required]],
     },
     { validators: matchPassword },
   );
@@ -125,7 +150,6 @@ export class AdminDashboardComponent {
 
     if (this.createForm.invalid) {
       this.createForm.markAllAsTouched();
-      this.submitted = false;
       return;
     }
 
@@ -190,8 +214,7 @@ export class AdminDashboardComponent {
         '',
         [
           Validators.required,
-          Validators.minLength(8),
-          Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/),
+          Validators.minLength(this.PASSWORD_MIN_LEN)
         ],
       ],
       confirmNewPassword: ['', [Validators.required]],
