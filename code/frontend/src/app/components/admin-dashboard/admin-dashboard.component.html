@@ -64,9 +64,6 @@
   @if (active() === "users") {
   <section class="space-y-4">
     <div>
-      <h2 class="text-xl font-bold text-slate-900 dark:text-white">
-        Gestione staffers
-      </h2>
       <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
         Crea rapidamente nuovi account amministratore o agenti.
       </p>
@@ -76,7 +73,7 @@
       <article
         class="rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/70">
         <h3 class="mb-3 font-semibold text-slate-900 dark:text-white">
-          Crea nuovo account per staffer
+          Crea nuovo account
         </h3>
         <form [formGroup]="createForm" class="flex max-w-md flex-col gap-3">
           <div>
@@ -169,15 +166,7 @@
         formControls.newPassword.touched &&
         formControls.newPassword.hasError("minlength")
         ) {
-        <p class="mt-1 text-xs text-red-600">Almeno 8 caratteri.</p>
-        }
-        @if (
-        formControls.newPassword.touched &&
-        formControls.newPassword.hasError("pattern")
-        ) {
-        <p class="mt-1 text-xs text-red-600">
-          Deve includere almeno una maiuscola, una minuscola e un numero.
-        </p>
+        <p class="mt-1 text-xs text-red-600">Almeno 5 caratteri.</p>
         }
       </div>
 
