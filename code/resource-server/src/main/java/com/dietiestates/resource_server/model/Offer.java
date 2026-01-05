@@ -22,7 +22,6 @@ public class Offer extends Proposal {
     @OneToOne
     @JoinColumn(
             name = "counter_of_offer_id",
-            nullable = true,
             foreignKey = @ForeignKey(name = "OFFER_OF_OFFER_ID")
     )
     private Offer counterOf = null;
