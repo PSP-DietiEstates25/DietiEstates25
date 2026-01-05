@@ -37,7 +37,7 @@ public class RealEstate {
             name = "real_estate_image",
             joinColumns = @JoinColumn(
                     name = "real_estate_id",
-                    foreignKey = @ForeignKey(name = "RE_IMAGE_REALESTATE_ID_FK")
+                    foreignKey = @ForeignKey(name = "REAL_ESTATE_IMAGE_REALESTATE_ID_FK")
             )
     )
     @Column(name = "content", nullable = false)
@@ -79,7 +79,8 @@ public class RealEstate {
             String description,
             EstateAgent estateAgent,
             CadastralData cadastralData,
-            Detail detail) {
+            Detail detail
+    ) {
         this.category = RealEstateCategory.valueOf(category);
         this.images = (images != null) ? new ArrayList<>(images) : new ArrayList<>();
         this.description = description;

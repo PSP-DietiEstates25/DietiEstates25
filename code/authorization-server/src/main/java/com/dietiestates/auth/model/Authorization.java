@@ -21,11 +21,9 @@ public class Authorization {
     private String principalName;
     private String authorizationGrantType;
 
-    // small string ok con length
     @Column(length = 1000)
     private String authorizedScopes;
 
-    // ====== GRANDI STRINGHE -> TEXT/LONGVARCHAR (NO @Lob) ======
     @JdbcTypeCode(SqlTypes.LONGVARCHAR)
     @Column(columnDefinition = "text")
     private String attributes;
