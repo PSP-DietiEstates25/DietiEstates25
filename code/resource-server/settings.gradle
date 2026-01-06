@@ -1,24 +1,24 @@
-// settings.gradle (Groovy)
+import org.gradle.api.initialization.resolve.RepositoriesMode
 
 pluginManagement {
     repositories {
-        gradlePluginPortal()
-
-        maven { url = uri("https://repo1.maven.org/maven2") }
-
-        // Fallback standard
+        maven { url = uri("https://repo.spring.io/milestone") }
+        maven { url = uri("https://repo.spring.io/snapshot") }
         mavenCentral()
+        gradlePluginPortal()
     }
 }
 
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
 
     repositories {
-        maven { url = uri("https://repo1.maven.org/maven2") }
         mavenCentral()
+        maven { url = uri("https://repo.maven.apache.org/maven2") }
+        maven { url = uri("https://repo1.maven.org/maven2") } 
+        maven { url = uri("https://repo.spring.io/milestone") }
+        maven { url = uri("https://repo.spring.io/snapshot") }
     }
 }
 
 rootProject.name = "resource-server"
-
