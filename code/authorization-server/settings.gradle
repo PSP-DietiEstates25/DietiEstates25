@@ -1,9 +1,23 @@
+def CENTRAL = System.getenv("MAVEN_CENTRAL_URL") ?: "https://repo1.maven.org/maven2"
+def SPRING_MILESTONE = "https://repo.spring.io/milestone"
+def SPRING_SNAPSHOT  = "https://repo.spring.io/snapshot"
+
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        mavenCentral()
-        maven { url = uri("https://repo.spring.io/milestone") }
-        maven { url = uri("https://repo.spring.io/snapshot") }
+        maven { url = uri(CENTRAL) }
+        maven { url = uri(SPRING_MILESTONE) }
+        maven { url = uri(SPRING_SNAPSHOT) }
     }
 }
-rootProject.name = 'authorization-server'
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        maven { url = uri(CENTRAL) }
+        maven { url = uri(SPRING_MILESTONE) }
+        maven { url = uri(SPRING_SNAPSHOT) }
+    }
+}
+
+rootProject.name = "authorization-server"
