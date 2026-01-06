@@ -1,7 +1,10 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        mavenCentral()
+
+        def central = System.getenv("MAVEN_CENTRAL_URL") ?: "https://repo1.maven.org/maven2"
+        maven { url = uri(central) }
+
         maven { url = uri("https://repo.spring.io/milestone") }
         maven { url = uri("https://repo.spring.io/snapshot") }
     }
@@ -9,9 +12,10 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
-
     repositories {
-        mavenCentral()
+        def central = System.getenv("MAVEN_CENTRAL_URL") ?: "https://repo1.maven.org/maven2"
+        maven { url = uri(central) }
+
         maven { url = uri("https://repo.spring.io/milestone") }
         maven { url = uri("https://repo.spring.io/snapshot") }
     }
