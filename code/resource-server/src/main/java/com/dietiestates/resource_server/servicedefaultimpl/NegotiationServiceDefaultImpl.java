@@ -28,17 +28,34 @@ public class NegotiationServiceDefaultImpl implements NegotiationService {
 
     @Override
     public Negotiation setupNegotiation(NegotiationSpec negotiationSpec) {
-        if(!negotiationVerifier.checkNegotiationAlreadyExists(negotiationSpec.getUserEmail(), negotiationSpec.getRealEstateId()))
+        // === EXTERNAL ===
+        if (negotiationSpec.getUserEmail() == null || negotiationSpec.getUserEmail().isBlank()) {
+            if (!negotiationVerifier.checkNegotiationAlreadyExists(null, negotiationSpec.getRealEstateId(), negotiationSpec.getEstateAgentEmail())) {
+                return createNegotiation(negotiationSpec); // createNegotiation deve essere null-safe (vedi sotto)
+            }
+            return negotiationFinder.getActiveExternalNegotiation(
+                    negotiationSpec.getRealEstateId(),
+                    estateAgentFinder.getEstateAgentByEmail(negotiationSpec.getEstateAgentEmail()).getId()
+            );
+        }
+
+        // === USER ===
+        if (!negotiationVerifier.checkNegotiationAlreadyExists(negotiationSpec.getUserEmail(), negotiationSpec.getRealEstateId(), negotiationSpec.getEstateAgentEmail())) {
             return createNegotiation(negotiationSpec);
-        else return getNegotiationByUserAndRealEstate(negotiationSpec);
+        }
+        return getNegotiationByUserAndRealEstate(negotiationSpec);
     }
 
     @Override
     public Negotiation createNegotiation(NegotiationSpec negotiationSpec){
 
-        var user = userFinder.getUserByEmail(negotiationSpec.getUserEmail());
         var estateAgent = estateAgentFinder.getEstateAgentByEmail(negotiationSpec.getEstateAgentEmail());
         var realEstate = realEstateFinder.getRealEstateById(negotiationSpec.getRealEstateId());
+
+        var user = (negotiationSpec.getUserEmail() == null || negotiationSpec.getUserEmail().isBlank())
+                ? null
+                : userFinder.getUserByEmail(negotiationSpec.getUserEmail());
+
 
         var negotiation = negotiationFactory.createNegotiationFromSpec(user, estateAgent, realEstate);
         negotiationRepository.save(negotiation);

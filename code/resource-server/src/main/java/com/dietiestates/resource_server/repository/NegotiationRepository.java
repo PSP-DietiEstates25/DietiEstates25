@@ -31,7 +31,6 @@ public interface NegotiationRepository extends CrudRepository<Negotiation, Long>
         return findByEstateAgent_IdAndRealEstate_Status(estateAgentId, RealEstateStatus.ACTIVE);
     }
 
-
     //for all real estates
     default List<Negotiation> findByUserIdAndAllRealEstates(Long userId){
         return findByUser_Id(userId);
@@ -39,6 +38,19 @@ public interface NegotiationRepository extends CrudRepository<Negotiation, Long>
 
     default List<Negotiation> findByEstateAgentIdAndAllRealEstates(Long estateAgentId){
         return findByEstateAgent_Id(estateAgentId);
+    }
+
+    //for external offer where user is null
+    default boolean existsActiveExternalNegotiation(Long realEstateId, String estateAgentEmail) {
+        return existsByRealEstate_IdAndEstateAgent_EmailAndUserIsNullAndRealEstate_Status(
+                realEstateId, estateAgentEmail, RealEstateStatus.ACTIVE
+        );
+    }
+
+    default Optional<Negotiation> findActiveExternalNegotiation(Long realEstateId, Long estateAgentId) {
+        return findByRealEstate_IdAndEstateAgent_IdAndUserIsNullAndRealEstate_Status(
+                realEstateId, estateAgentId, RealEstateStatus.ACTIVE
+        );
     }
 
     //QUERY
@@ -60,4 +72,17 @@ public interface NegotiationRepository extends CrudRepository<Negotiation, Long>
     //for all real estates
     List<Negotiation> findByUser_Id(Long userId);
     List<Negotiation> findByEstateAgent_Id(Long estateAgentId);
+
+    //for external offer where user is null
+    boolean existsByRealEstate_IdAndEstateAgent_EmailAndUserIsNullAndRealEstate_Status(
+            Long realEstateId,
+            String estateAgentEmail,
+            RealEstateStatus status
+    );
+
+    Optional<Negotiation> findByRealEstate_IdAndEstateAgent_IdAndUserIsNullAndRealEstate_Status(
+            Long realEstateId,
+            Long estateAgentId,
+            RealEstateStatus status
+    );
 }

@@ -1,5 +1,5 @@
 package com.dietiestates.resource_server.verifier;
 
 public interface NegotiationVerifier {
-    Boolean checkNegotiationAlreadyExists(String userEmail, Long realEstateId);
+    boolean checkNegotiationAlreadyExists(String userEmail, Long realEstateId, String estateAgentEmail);
 }

@@ -12,7 +12,10 @@ public class NegotiationVerifierDefaultImpl implements NegotiationVerifier {
     private final NegotiationRepository negotiationRepository;
 
     @Override
-    public Boolean checkNegotiationAlreadyExists(String userEmail, Long realEstateId) {
+    public boolean checkNegotiationAlreadyExists(String userEmail, Long realEstateId, String estateAgentEmail) {
+        if (userEmail == null || userEmail.isBlank()) {
+            return negotiationRepository.existsActiveExternalNegotiation(realEstateId, estateAgentEmail);
+        }
         return negotiationRepository.existsByUserEmailAndRealEstateId(userEmail, realEstateId);
     }
 }

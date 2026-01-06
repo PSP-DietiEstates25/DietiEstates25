@@ -33,6 +33,12 @@ public class NegotiationFinderDefaultImpl implements NegotiationFinder {
     }
 
     @Override
+    public Negotiation getActiveExternalNegotiation(Long realEstateId, Long estateAgentId) {
+        return negotiationRepository.findActiveExternalNegotiation(realEstateId, estateAgentId)
+                .orElseThrow(NegotiationNotFoundException::new);
+    }
+
+    @Override
     public List<Negotiation> getAllRealEstateEstateAgentNegotiationsForActiveRealEstate(Long realEstateId, Long estateAgentId) {
         return negotiationRepository.findAllActiveByRealEstateIdAndEstateAgentId(realEstateId, estateAgentId);
     }

@@ -9,6 +9,7 @@ public interface NegotiationFinder {
     Negotiation getNegotiationById(Long id) throws NegotiationNotFoundException;
     Negotiation getRealEstateUserNegotiation(Long realEstateId, Long userId) throws NegotiationNotFoundException;
     Negotiation getRealEstateEstateAgentNegotiation(Long realEstateId, Long estateAgentId) throws NegotiationNotFoundException;
+    Negotiation getActiveExternalNegotiation(Long realEstateId, Long estateAgentId);
     List<Negotiation> getAllRealEstateEstateAgentNegotiationsForActiveRealEstate(Long realEstateId, Long estateAgentId);
     List<Negotiation> getAllUserNegotiationsForActiveRealEstates(Long userId);
     List<Negotiation> getAllUserNegotiationsForAllRealEstates(Long userId);
