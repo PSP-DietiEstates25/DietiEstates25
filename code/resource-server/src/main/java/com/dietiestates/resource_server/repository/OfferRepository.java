@@ -12,4 +12,6 @@ public interface OfferRepository extends CrudRepository<Offer, Long>, PagingAndS
     boolean existsByIdAndNegotiationId(Long id, Long negotiationId);
     Page<Offer> findByNegotiationId(Long negotiationId, Pageable pageable);
     Page<Offer> findByNegotiationIdAndProposalStatus(Long negotiationId, ProposalStatus proposalStatus, Pageable pageable);
+    Page<Offer> findByNegotiationRealEstateIdAndNegotiationEstateAgentId(Long realEstateId, Long estateAgentId, Pageable pageable);
+
 }

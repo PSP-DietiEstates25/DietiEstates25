@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,8 +17,7 @@ import lombok.ToString;
 @ToString
 public class OfferRequest extends ProposalRequest {
 
-    @NotEmpty(message = "Amount is mandatory")
-    @NotBlank(message = "Amount is mandatory")
+    @NotNull(message = "Amount is mandatory")
     @Positive(message = "Amount must be a positive number")
     private BigDecimal amount;
 

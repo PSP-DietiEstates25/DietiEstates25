@@ -23,6 +23,10 @@ public interface NegotiationRepository extends CrudRepository<Negotiation, Long>
         return findByUser_IdAndRealEstate_Status(userId, RealEstateStatus.ACTIVE);
     }
 
+    default List<Negotiation> findAllActiveByRealEstateIdAndEstateAgentId(Long realEstateId, Long estateAgentId) {
+        return findAllByRealEstate_IdAndEstateAgent_IdAndRealEstate_Status(realEstateId, estateAgentId, RealEstateStatus.ACTIVE);
+    }
+
     default List<Negotiation> findByEstateAgentIdAndActiveRealEstates(Long estateAgentId){
         return findByEstateAgent_IdAndRealEstate_Status(estateAgentId, RealEstateStatus.ACTIVE);
     }
@@ -47,6 +51,11 @@ public interface NegotiationRepository extends CrudRepository<Negotiation, Long>
     //for active real estates
     List<Negotiation> findByUser_IdAndRealEstate_Status(Long userId, RealEstateStatus status);
     List<Negotiation> findByEstateAgent_IdAndRealEstate_Status(Long estateAgentId, RealEstateStatus status);
+    List<Negotiation> findAllByRealEstate_IdAndEstateAgent_IdAndRealEstate_Status(
+            Long realEstateId,
+            Long estateAgentId,
+            RealEstateStatus status
+    );
 
     //for all real estates
     List<Negotiation> findByUser_Id(Long userId);

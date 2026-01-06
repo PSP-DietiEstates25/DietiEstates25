@@ -29,6 +29,7 @@ public class OfferMapperDefaultImpl implements OfferMapper {
 
         Long counterOfId = null;
         Long counterOfferId = null;
+        String userEmail = null;
 
         if (offer.getCounterOf() != null) {
             counterOfId = offer.getCounterOf().getId();
@@ -38,13 +39,17 @@ public class OfferMapperDefaultImpl implements OfferMapper {
             counterOfferId = offer.getCounterOffer().getId();
         }
 
+        if (offer.getNegotiation().getUser() != null) {
+            userEmail = offer.getNegotiation().getUser().getEmail();
+        }
+
 		return OfferResponse.offerResponseBuilder()
 				.id(offer.getId())
 				.createdDate(offer.getCreatedDate())
 				.lastModifiedDate(offer.getLastModifiedDate())
 				.category(offer.getProposalCategory().toString())
 				.status(offer.getProposalStatus().toString())
-				.userEmail(offer.getNegotiation().getUser().getEmail())
+				.userEmail(userEmail)
 				.realEstateId(offer.getNegotiation().getRealEstate().getId())
                 .estateAgentEmail(offer.getNegotiation().getEstateAgent().getEmail())
                 .realEstateAddress(offer

@@ -10,6 +10,7 @@ public interface OfferService {
 	OfferResponse createOffer(OfferRequest request, Long realEstateId, String creatorEmail, String creatorRole);
     OfferResponse createUserOffer(OfferRequest request, Long realEstateId, String userEmail);
     OfferResponse createEstateAgentCounterOffer(OfferRequest request, Long realEstateId, String estateAgentEmail);
+    OfferResponse createEstateAgentExternalOffer(OfferRequest request, Long realEstateId, String estateAgentEmail);
     OfferResponse getOfferById(Long realEstateId, Long offerId);
     Page<OfferResponse> getRealEstateOffers(Long realEstateId, String creatorEmail, String creatorRole, Integer page, Integer size);
     Page<OfferResponse> getRealEstateUserOffers(Long realEstateId, String userEmail, Integer page, Integer size);

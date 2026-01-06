@@ -434,9 +434,8 @@ export class AgentDashboardFacade {
   createExternalOffer() {
     const adId = this.addOfferForId();
     const amount = this.addOfferAmount();
-    const email = (this.addOfferEmail() || '').trim();
 
-    if (adId == null || amount == null || isNaN(amount) || !email) {
+    if (adId == null || amount == null || isNaN(amount)) {
       return of(void 0);
     }
 

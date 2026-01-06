@@ -49,7 +49,12 @@ public class OfferServiceDefaultImpl implements OfferService {
     public OfferResponse createOffer(OfferRequest request, Long realEstateId, String creatorEmail, String creatorRole) {
         if(creatorRole.equals(Role.USER.name()) || creatorRole.equals(Role.OIDC_USER.name()))
             return this.createUserOffer(request, realEstateId, creatorEmail);
-        else return this.createEstateAgentCounterOffer(request, realEstateId, creatorEmail);
+        else {
+            if (request.getCounterOfId() == null)
+                return this.createEstateAgentExternalOffer(request, realEstateId, creatorEmail);
+            else
+                return this.createEstateAgentCounterOffer(request, realEstateId, creatorEmail);
+        }
     }
 
 	@Override
@@ -86,7 +91,30 @@ public class OfferServiceDefaultImpl implements OfferService {
 
         return offerMapper.fromEntity(counterOffer);
     }
-	
+
+    @Override
+    public OfferResponse createEstateAgentExternalOffer(OfferRequest request, Long realEstateId, String estateAgentEmail){
+
+        realEstateVerifier.checkRealEstateOwnedByEstateAgent(realEstateId, estateAgentEmail);
+
+        var offerSpec = offerMapper.toSpec(request);
+        var realEstate = realEstateFinder.getRealEstateById(realEstateId);
+
+        var negotiationSpec = NegotiationSpec.builder()
+                .realEstateId(realEstateId)
+                .estateAgentEmail(estateAgentEmail)
+                .userEmail(null)
+                .build();
+
+        var negotiation = negotiationService.setupNegotiation(negotiationSpec);
+
+        var offer = offerFactory.createOfferFromSpec(offerSpec, negotiation);
+        offer.setProposalCategory(ProposalCategory.OFFER);
+        offerRepository.save(offer);
+
+        return offerMapper.fromEntity(offer);
+    }
+
 	@Override
 	public OfferResponse getOfferById(Long realEstateId, Long offerId) {
         offerVerifier.checkOfferOwnedByRealEstate(offerId, realEstateId);

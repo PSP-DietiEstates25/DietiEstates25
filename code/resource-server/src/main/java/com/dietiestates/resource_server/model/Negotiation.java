@@ -32,7 +32,6 @@ public class Negotiation {
 
     @ManyToOne
     @JoinColumn(
-            nullable = false,
             name = "user_id",
             foreignKey = @ForeignKey(name = "NEGOTIATION_USER_ID_FK"))
     private User user;
@@ -62,7 +61,12 @@ public class Negotiation {
             EstateAgent estateAgent,
             RealEstate realEstate
     ){
-        user.addNegotiation(this);
+        this.user = user;
+
+        if (user != null) {
+            user.addNegotiation(this);
+        }
+
         estateAgent.addNegotiation(this);
         realEstate.addNegotiation(this);
     }

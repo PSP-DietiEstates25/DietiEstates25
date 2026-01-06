@@ -41,8 +41,10 @@ public class OfferFinderDefaultImpl implements OfferFinder {
 
     @Override
     public Page<Offer> getRealEstateEstateAgentOffers(Long realEstateId, Long estateAgentId, Pageable pageable) {
-        var negotiation = negotiationFinder.getRealEstateEstateAgentNegotiation(realEstateId, estateAgentId);
-        return offerRepository.findByNegotiationId(negotiation.getId(), pageable);
+        List<Negotiation> negotiations = negotiationFinder.getAllRealEstateEstateAgentNegotiationsForActiveRealEstate(realEstateId, estateAgentId);
+        List<Offer> allOffers = extractAllNegotiationsOffers(negotiations, null);
+        allOffers.sort(Comparator.comparing(Offer::getCreatedDate).reversed());
+        return PageUtils.toPage(allOffers, pageable);
     }
 
     @Override

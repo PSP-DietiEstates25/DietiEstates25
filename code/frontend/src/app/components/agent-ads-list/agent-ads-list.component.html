@@ -195,20 +195,13 @@
                 class="mt-1 grid grid-cols-1 gap-2 rounded-xl border border-slate-700 bg-slate-900/60 p-3 sm:grid-cols-3">
                 <div class="col-span-1 sm:col-span-2">
                   <label class="mb-1 block text-xs font-medium">
-                    Email offerente
-                  </label>
-                  <input type="email" class="input_main w-full" [ngModel]="addOfferEmail()"
-                    (ngModelChange)="addOfferEmail.set($event)" placeholder="es. mario.rossi@mail.com" />
-                </div>
-                <div class="col-span-1">
-                  <label class="mb-1 block text-xs font-medium">
                     Importo (€)
                   </label>
                   <input type="number" class="input_main w-full" [ngModel]="addOfferAmount() ?? ''" (ngModelChange)="
                             addOfferAmount.set(
                               $event === '' || $event == null ? null : +$event
                             )
-                          " placeholder="es. 250000" />
+                          "/>
                 </div>
                 <div class="col-span-1 mt-1 flex justify-end gap-2 sm:col-span-3">
                   <button type="button" class="btn_primary cursor-pointer" [disabled]="addOfferLoading()"

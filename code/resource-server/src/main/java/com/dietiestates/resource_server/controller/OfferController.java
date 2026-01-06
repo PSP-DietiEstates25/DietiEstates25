@@ -1,6 +1,7 @@
 package com.dietiestates.resource_server.controller;
 
 import com.dietiestates.resource_server.enums.Role;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class OfferController {
     @PostMapping
     @PreAuthorize("hasAnyAuthority('USER', 'ESTATE_AGENT', 'OIDC_USER')")
     public ResponseEntity<OfferResponse> createOffer(
-            @RequestBody OfferRequest request,
+            @RequestBody @Valid OfferRequest request,
             @RequestParam Long realestateid,
             @AuthenticationPrincipal Jwt jwt,
             Authentication authentication
